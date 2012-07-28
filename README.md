@@ -41,15 +41,23 @@ development as I am with Windows development, but you should still help me make 
       docs, which are very complete. If you're on Ubuntu, this process is actually nice and easy.
 + Install Mogu 
     - Clone this repository.
+
         cd path/to/Mogu
         make development    # For using the built-in Wt server
+
 *or*
+
         make production     # For using fcgi
         sudo make install
+
 + Configure Mogu to suit your needs: 
+
     vim /etc/mogu/mogu.conf
+
 + Let 'er rip:
+
     mogu start
+
 + Test by pointing your browser to http://localhost:9090 (or whatever port you set in mogu.conf)
 If you get a blank screen, it's running. If you get an error, it's not. 
 
@@ -61,6 +69,7 @@ You can also set some other variables here, such as your Redis database, port, h
 These commands can always bet set from the command line, or in your mogu.conf file. Use them liberally, because
 with them you can easily copy your site to other databases, back up your site, test changes, and so on. 
 Here are the options:
+
     --redis-host 0.0.0.0    #default is 'localhost'
     --redis-port 0000       #default is 6379
     --redis-select 0        #default is 0
@@ -73,12 +82,15 @@ The init script creates a single widget, called 'wrapper', which is empty, but w
 are added into your application. You can do anything you want to the wrapper with css. It's got a class. The class is called wrapper.
 
 Now, you're ready for hello, world.
+
     mogu newfile hello
+
 Will create a new file in your current directory. The file will have one line: #!/usr/bin/env python
 This is really so that if you use VIM, syntax highlighting will be configured for python already, as we'll be
 using Python syntax, even though you *do not need to know Python*.
 
 To create hello world, all you need is this:
+
     widgets['hello_world'] = {
         type    :   "text",  
         content :   "Hello, World!"
@@ -86,6 +98,7 @@ To create hello world, all you need is this:
 
 Really, that's it.
 You can then run:
+
     mogu import --filename hello
     mogu add-child hello_world to wrapper
 
@@ -95,7 +108,9 @@ You should see "Hello World" on your screen. Yay.
 ## Mogu Syntax ##
 
 Mogu has a couple of syntactical caveats. In the example above, we really should have written
+
     type    :   "{text}"
+
 It will work either way in the case of the type field, but this isn't always the case. The reason is that 
 some text must be wrapped with special characters in order for the Mogu C++ bits to understand how to parse
 the information. The type field is alawys the same data type, however, so it doesn't matter, as it is auto-corrected.
@@ -103,7 +118,7 @@ the information. The type field is alawys the same data type, however, so it doe
 <table>
 <tr>
 <td> First Char </td>
- <td> Last Char <td>
+ <td> Last Char </td>
 <td> Data Type </td>
 </tr>
 <tr>
