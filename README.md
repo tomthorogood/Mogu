@@ -42,13 +42,14 @@ development as I am with Windows development, but you should still help me make 
 + Install Mogu 
     - Clone this repository.
 
-        cd path/to/Mogu
-        make development    # For using the built-in Wt server
+
+    cd path/to/Mogu
+    make development    # For using the built-in Wt server
 
 *or*
 
-        make production     # For using fcgi
-        sudo make install
+    make production     # For using fcgi
+    sudo make install
 
 + Configure Mogu to suit your needs: 
 
