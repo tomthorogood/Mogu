@@ -64,7 +64,9 @@ If you get a blank screen, it's running. If you get an error, it's not.
 ## Hello, Web! ##
 
 To build your first Mogu web application, all you need to do is create a folder you want to work from and run
+
     mogu init
+    
 You can also set some other variables here, such as your Redis database, port, hostname, and authorization.
 These commands can always bet set from the command line, or in your mogu.conf file. Use them liberally, because
 with them you can easily copy your site to other databases, back up your site, test changes, and so on. 
