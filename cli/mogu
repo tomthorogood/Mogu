@@ -1,0 +1,207 @@
+#!/usr/bin/env python
+from mogu_py import *
+from argparse import ArgumentParser
+from redis import Redis
+#import mogu.io
+import sys
+
+VERSION="0.7.27 alpha"
+
+parser = ArgumentParser(description="The command line utility for interacting with your Mogu web aplication")
+parser.add_argument("command", nargs='+', type=str, action="store", help="The command you want to run (see readme for available commands")
+
+#Mogu specific variables
+parser.add_argument("--node-type", dest="node", type=str, action="store", help="The sort of node you're interacting with (event/widget)")
+
+
+# Options for configuring your Redis connection
+parser.add_argument("--redis-select", type=int,dest="redis_db", action="store", default=0, help="Optional Redis database number (default is 0)")
+parser.add_argument("--redis-port", type=int, dest="redis_port", action="store", default=6379,help="Optional Redis port (default is 6379)")
+parser.add_argument("--redis-host", type=str, dest="redis_host", action="store", default="localhost", help="Optional Redis host (default is localhost)")
+parser.add_argument("--redis-auth", type=str, dest="redis_auth", action="store", default=None,help="Optional Redis auth password (default is None)")
+
+# Boolean options for interacting with the Redis environment
+parser.add_argument("--redis-flush", dest="flushdb", action="store_true", default=False, help="If importing a Mogu database, flushes the selected database first. CAREFUL!")
+parser.add_argument("--assume-yes", dest="yes", action="store_true", default=False, help="Will assume yes to all questions. EXTRA CAREFUL!")
+parser.add_argument("--test-only", dest="testing", action="store_true", default=False, help="Displays various information depending on the command, making no changes to your database.")
+parser.add_argument("--filename", dest="filename", action="store", default=None, help="The filename that will be used by some commands, such as for importing or exporting. See the readme for extra information.")
+args = parser.parse_args()
+
+# Check for required commands and get confirmations for certain commands
+
+command = args.command[0]
+
+db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
+
+# mogu import --filename F [--redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
+if command == "import":
+    if not args.filename: 
+        error = fail("You have told me that you want to import a file, but have not given me a file to import.")
+        print("%s\n You can fix this by using the --filename option. ex:  ./mogu import --filename /path/to/file")%error
+        sys.exit()
+
+    if args.flushdb:
+        message = warn("WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (args.redis_db, args.redis_host, args.redis_port))
+        if not confirm(message,args.yes):
+            print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
+            sys.exit()
+    package = importdb.evaluate_file(args.filename)
+    add_widget_set(db, package, args.testing, args.flushdb)
+    add_global_events(db, package.global_events)
+
+# mogo export --filename F [--resis-port --redis-host --redis-select --redis-auth]
+if command == "export":
+    if not args.filename:
+        error = fail("You have told me that you want to export the database, but have not given me a filename to write to.")
+        print("%s\n You can fix this by using the --filename option. ex: ./mogu export --filename /path/to/file")%error
+        sys.exit()
+    
+    export(db,args.filename)
+
+# mogu remove-child child-name [parent ...]
+if command == "remove-child":
+    child = args.command[1].replace("widgets.","")
+    child = "widgets.%s" % child
+    parents = None
+    if len(args.command) > 2:
+        parents = [arg for arg in args.command[2:]]
+    if not parents:
+        child_lists = [key for key in db.keys("*.children")]
+        for node in child_lists:
+            if child in db.lrange(node, 0, db.llen(node)):
+                print info("Removing %s from %s" % (child, node))
+                db.lrem(node,child)
+    else:
+        child_lists = ["widgets.%s.children" % parent.replace("widgets.","") for parent in parents]
+        for node in child_lists:
+            if child in db.lrange(node, 0, db.llen(node)):
+                print info("Removing %s from %s" % (child, node))
+                db.lrem(node,child)
+
+# mogu view-children parent-name
+if command == "view-children":
+    parent = args.command[1].replace("widgets.","")
+    parent = "widgets.%s.children" % parent
+    print(db.lrange(parent,0,db.llen(parent)))
+
+
+# mogu insert-child child-name (before|after) sibling-name in parent-name
+if command == "insert-child":
+    child = "widgets.%s" % args.command[1].replace("widgets.","")
+    preposition = args.command[2]
+    sibling = "widgets.%s" % args.command[3]
+    if args.command[4] == "in":
+        parent = 5
+    else:
+        parent = 4
+    parent = "widgets.%s" % args.command[parent].replace("widgets.","")
+    
+    try:
+        assert(db.exists(parent))
+        assert(db.exists(child))
+    except AssertionError as e:
+        message = fail("Please make sure that both ")
+        message += info(child) + " and " + info(parent)
+        message += fail(" exist before trying again!")
+        print(message)
+        sys.exit()
+
+    list_node = "%s.children" % parent
+    current_list = db.lrange(list_node,0,db.llen(list_node))
+    sibloc = current_list.index(sibling)
+    if preposition == "after":
+        sibloc += 1
+    current_list.insert(sibloc,child)
+    if confirm(warn("After this operation, the child list of %s will look like this: %s" % (parent, str(current_list)))):
+        db.linsert(list_node, preposition, sibling, child)
+
+#mogu relate widget-1 widget-2
+if command == "relate":
+    widget1 = "widgets.%s" % args.command[1].replace("widgets.","")
+    widget2 = "widgets.%s" % args.command[2].replace("widgets.","")
+    parents=[None,None]
+    message = None
+    children_lists = [key for key in db.keys("*.children")]
+    for child in (widget1,widget2):
+        for  _list in children_lists:
+            if child in db.lrange(_list,0,db.llen(_list)):
+                if child is widget1:
+                    parents[0] = _list.replace(".children","")
+                else:
+                    parents[1] = _list.replace(".children","")
+    if parents[0] == parents[1]:
+        message = info(widget1) + " and " +info(widget2) + " are " + info("siblings")
+    elif parents[0] == widget2:
+        message = info(widget1) + " is a direct descendent of " + info(widget2)
+    elif parents[1] == widget1:
+        message = info(widget2) + " is a direct descendent of " + info(widget1) 
+    else:
+        complex_relation_analysis(db,widget1,widget2)
+    if message:
+        print(message)
+
+#mogu get-child-index child-name [child-name ...]
+if command == "get-child-index":
+    for widget in args.command[1:]:
+        widget = "widgets.%s" % widget.replace("widgets.","")
+        parent = find_parent(db, widget)
+        siblings = full_list(db, "%s.children" % parent)
+        index = siblings.index(widget)
+        output = info(widget) + " :\t%s" % ok(str(index))
+        print output
+
+#mogu meta-add key value
+# meta values do not influence the behaviour of your application, but only serve
+# to aid you in building it 
+if command == "meta-add":
+    key = args.command[1]
+    value = args.command[2]
+    db.lpush("meta.%s"%key,value)
+
+#mogu meta-check key value
+if command == "meta-check":
+    var = args.command[1]
+    key = "meta.%s" % var
+    keytype = db.type(key)
+    if keytype == "string":
+        message = info(var)
+        message += ": "
+        mesage += ok(db.get(key))
+    elif keytype == "list":
+        message = info(var)
+        message += ": "
+        message += ok(full_list(db,key))
+    else:
+        message = ""
+        dct = db.hgetall(key)
+        for entry in dct:
+            message += info(entry)
+            message += "\t:\t"
+            message += ok(dct[entry])
+            message += "\n"
+    print(message)
+
+#mogu delete key
+if command == "delete":
+    key = args.command[1]
+    if (db.exists(key)):
+        warning = warn("%s will be permanently deleted. THERE IS NO UNDO!")
+        if confirm(warning, args.yes):
+            db.delete(key)
+        else:
+            print(ok("No changes were made."))
+    else:
+        print(fail("%s does not exist in this database." % key))
+        print("For your safety, we have disabled auto key-complete when deleting. You must use the full key name.")
+
+#mogu meta-css-classes
+if command == "meta-css-classes":
+    css_classes = parse_css(db)
+    print css_classes
+    css_classes.sort()
+    for _class in css_classes:
+        print ok(_class)
+
+if command == "version":
+    print VERSION
+

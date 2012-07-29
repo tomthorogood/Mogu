@@ -42,7 +42,6 @@ development as I am with Windows development, but you should still help me make 
 + Install Mogu 
     - Clone this repository.
 
-
     cd path/to/Mogu
     make development    # For using the built-in Wt server
 
