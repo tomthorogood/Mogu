@@ -1,11 +1,24 @@
 #!/usr/bin/env python
+CONFIG_FILE = "/etc/mogu/mogu.conf"
+
 from mogu_py import *
 from argparse import ArgumentParser
 from redis import Redis
+from ConfigParser import SafeConfigParser
+from ConfigParser import NoOptionError
+
 #import mogu.io
 import sys
 
 VERSION="0.7.27 alpha"
+
+config = SafeConfigParser()
+config.read(CONFIG_FILE)
+
+try:
+    auth = config.get("redis_instance", "auth")
+except NoOptionError:
+    auth = None
 
 parser = ArgumentParser(description="The command line utility for interacting with your Mogu web aplication")
 parser.add_argument("command", nargs='+', type=str, action="store", help="The command you want to run (see readme for available commands")
@@ -15,16 +28,43 @@ parser.add_argument("--node-type", dest="node", type=str, action="store", help="
 
 
 # Options for configuring your Redis connection
-parser.add_argument("--redis-select", type=int,dest="redis_db", action="store", default=0, help="Optional Redis database number (default is 0)")
-parser.add_argument("--redis-port", type=int, dest="redis_port", action="store", default=6379,help="Optional Redis port (default is 6379)")
-parser.add_argument("--redis-host", type=str, dest="redis_host", action="store", default="localhost", help="Optional Redis host (default is localhost)")
-parser.add_argument("--redis-auth", type=str, dest="redis_auth", action="store", default=None,help="Optional Redis auth password (default is None)")
+parser.add_argument("--redis-select", 
+        type=int, dest="redis_db", 
+        action="store", default=config.get("redis_instance","database"), 
+        help="Optional Redis database number (default is read from config file)")
+
+parser.add_argument("--redis-port", 
+        type=int, dest="redis_port", 
+        action="store", default=config.get("redis_instance","port"),
+        help="Optional Redis port (default is read from config file)")
+
+parser.add_argument("--redis-host", 
+        type=str, dest="redis_host", 
+        action="store", default=config.get("redis_instance","host"), 
+        help="Optional Redis host (default is read from config file")
+
+parser.add_argument("--redis-auth", 
+        type=str, dest="redis_auth", action="store", 
+        default=auth,help="Optional Redis auth password (can be set in config file)")
 
 # Boolean options for interacting with the Redis environment
-parser.add_argument("--redis-flush", dest="flushdb", action="store_true", default=False, help="If importing a Mogu database, flushes the selected database first. CAREFUL!")
-parser.add_argument("--assume-yes", dest="yes", action="store_true", default=False, help="Will assume yes to all questions. EXTRA CAREFUL!")
-parser.add_argument("--test-only", dest="testing", action="store_true", default=False, help="Displays various information depending on the command, making no changes to your database.")
-parser.add_argument("--filename", dest="filename", action="store", default=None, help="The filename that will be used by some commands, such as for importing or exporting. See the readme for extra information.")
+parser.add_argument("--redis-flush", 
+        dest="flushdb", action="store_true", 
+        default=False, 
+        help="If importing a Mogu database, flushes the selected database first. CAREFUL!")
+
+parser.add_argument("--assume-yes", 
+        dest="yes", action="store_true", default=False, 
+        help="Will assume yes to all questions. EXTRA CAREFUL!")
+
+parser.add_argument("--test-only", 
+        dest="testing", action="store_true", default=False, 
+        help="Displays various information depending on the command, making no changes to your database.")
+
+parser.add_argument("--filename", 
+        dest="filename", action="store", default=None, 
+        help="The filename that will be used by some commands, such as for importing or exporting. See the readme for extra information.")
+
 args = parser.parse_args()
 
 # Check for required commands and get confirmations for certain commands
@@ -41,7 +81,9 @@ if command == "import":
         sys.exit()
 
     if args.flushdb:
-        message = warn("WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (args.redis_db, args.redis_host, args.redis_port))
+        message = warn(
+                "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
+                    args.redis_db, args.redis_host, args.redis_port))
         if not confirm(message,args.yes):
             print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
             sys.exit()
@@ -201,6 +243,11 @@ if command == "meta-css-classes":
     css_classes.sort()
     for _class in css_classes:
         print ok(_class)
+
+if command == "start":
+    cli_command = "mogu-server --docroot %s --http-address %s --http-port %s" % (
+            config.get("local_server","root"), config.get("local_server", "address"), config.get("local_server", "port"))
+    os.system(cli_command)
 
 if command == "version":
     print VERSION
