@@ -20,6 +20,7 @@
 #include <Parsers/StyleParser.h>
 #include <Events/Bindery.h>
 #include <Static.h>
+#include <Mogu.h>
 
 // REMOVE WHEN IN PRODUCTION
 #include <iostream>

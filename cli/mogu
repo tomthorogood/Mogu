@@ -249,6 +249,26 @@ if command == "start":
             config.get("local_server","root"), config.get("local_server", "address"), config.get("local_server", "port"))
     os.system(cli_command)
 
+if command == "newfile":
+    filename = args.command[1]
+    f = open(filename,"w")
+    f.write("#!/usr/bin/env python\n")
+    f.write("# Mogu Import File %s" % filename)
+    f.write("\n\n")
+    f.close()
+
+if command == "init":
+    # First, check to make sure there isn't a Mogu application
+    # already configured in the database
+    if len(db.keys("*")) is not 0:
+        if not confirm(
+                warn("It appears that there is already information in the currently selected database. Initializing a project here may overwrite data already present. It is recommended that you select a different database (with --redis-select) instead."),
+                    args.yes):
+            print(ok("No changes were made."))
+            sys.exit()
+    db.hset("widgets.wrapper","type","{container}")
+    print(ok("Mogu project has been initialized! Go Mogu!"))
+
 if command == "version":
     print VERSION
 
