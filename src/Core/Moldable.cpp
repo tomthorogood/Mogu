@@ -19,6 +19,7 @@
 #include <Parsers/NodeValueParser.h>
 #include <Parsers/StyleParser.h>
 #include <Events/Bindery.h>
+#include <Static.h>
 
 // REMOVE WHEN IN PRODUCTION
 #include <iostream>
@@ -37,6 +38,7 @@ GooVariables::GooVariables() : children()
 {
     propertyFlags       =0;
     actionBlocking      =0;
+    type				=0;
     link_is_internal    = false;
 
     content         = "";
@@ -56,11 +58,6 @@ Moldable::Moldable(
 
 {
     nodes.add(constructorNode);
-    cout << constructorNode << endl;
-    if (constructorNode == "widgets.footer_logo")
-    {
-        bool d = 1;
-    }
     bindery =0;
     setContentVariables();
 }
@@ -106,6 +103,7 @@ void Moldable::setContentVariables()
     using namespace Parsers::StyleParser;
 
     typeFlags = Parsers::StyleParser::getWidgetType(this);
+    baseVariables.type = typeFlags;
 
     /*Set the various property flags of this widget. */
 
@@ -125,6 +123,11 @@ void Moldable::setContentVariables()
     {
         baseVariables.propertyFlags |= Properties::has_children;
     }
+    if (widgetIsNamed(this))
+    {
+    	baseVariables.propertyFlags |= Properties::is_named;
+    }
+
     if (typeFlags == Enums::WidgetTypes::stacked_container)
     {
         baseVariables.propertyFlags |= Properties::is_stacked;
@@ -175,7 +178,6 @@ Moldable::load()
             do_if_has_events();
         }
     }
-
 }
 
 void Moldable::addGoo (const string& nodeName)
@@ -285,6 +287,31 @@ void Moldable::do_if_is_link()
     addWidget(_anchor);
 }
 
+void Moldable::do_if_is_named()
+{
+	/* If the parent widget of a named widget is not named, we cannot
+	 * continue. However, children of named widgets will be able to use
+	 * the name to register themselves with the path handling service.
+	 */
+	using namespace Parsers::StyleParser;
+	Moldable* __parent = (Moldable*) parent();
+	bool parent_is_named = __parent->isNamed();
+	if (parent_is_named)
+	{
+		Mogu* app = Application::mogu();
+		std::string parent_name = getWidgetName(__parent);
+		if (app->searchPathTree(parent_name))
+		{
+			if (widgetHasStackIndex(this))
+			{
+				int my_index = getWidgetStackIndex(this);
+				std::string my_name = getWidgetName(this);
+				app->registerWithParent(parent_name, my_index, my_name);
+			}
+		}
+	}
+}
+
 void Moldable::do_if_has_events()
 {
     bindery = new Events::EventBindery(this);
@@ -317,6 +344,17 @@ bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
     return !((baseVariables.actionBlocking & action) ||
             /* Or if the general BLOCK is in place, blocking all actions. */
             (baseVariables.actionBlocking & Enums::SignalActions::BLOCK));
+}
+
+bool Moldable::isNamed()
+{
+	uint8_t named = Enums::SignalTypes::is_named;
+	return (baseVariables.propertyFlags & named) == named;
+}
+
+const uint8_t& Moldable::getType() const
+{
+	return baseVariables.type;
 }
 
 Redis::strvector* Moldable::getNodeList()

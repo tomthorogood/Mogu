@@ -13,6 +13,11 @@
 
 class Mogu : public Wt::WApplication
 {
+	void handlePathChange(std::string path);
+	StackedWidgetTree __path_tree;
+	bool searchPathTree(std::string name);
+	void registerWithParent(
+			std::string parent, int child_index, std::string child_name);
 public:
     Mogu(const Wt::WEnvironment& env);
 };

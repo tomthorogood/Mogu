@@ -19,7 +19,7 @@ namespace Parsers
 {
 namespace StyleParser
 {
-
+using std::string;
 using Goo::Moldable;
 
 WidgetType getWidgetType(Moldable* broadcaster)
@@ -60,6 +60,39 @@ string getWidgetText(Moldable* broadcaster)
     Parsers::NodeValueParser parser(reply_str, broadcaster);
     text_content = parser.getValue()->getString();
     return text_content;
+}
+
+
+bool widgetIsNamed(Moldable* broadcaster)
+{
+	bool named = false;
+	string nodeName = broadcaster->getNodeList()->at(0);
+	Redis::command("hexists", nodeName, "name");
+	return (bool) Redis::getInt();
+}
+
+string getWidgetName(Moldable* broadcaster)
+{
+	string nodeName = broadcaster->getNodeList()->at(0);
+	Redis::command("hget", nodeName, "name");
+	return Redis::toString();
+}
+
+bool widgetHasStackIndex(Moldable* broadcaster)
+{
+	bool indexed = false;
+	string nodeName = broadcaster->getNodeList()->at(0);
+	Redis::command("hexists", nodeName, "index");
+	return (bool) Redis::getInt();
+}
+
+int getWidgetStackIndex(Moldable* broadcaster)
+{
+	string nodeName = broadcaster->getNodeList()->at(0);
+	Redis::command("hget", nodeName, "index");
+	string reply_str = Redis::toString();
+	Parsers::NodeValueParser parser(reply_str,broadcaster);
+	return parser.getValue()->getInt();
 }
 
 string getWidgetInternalPath(Moldable* broadcaster)

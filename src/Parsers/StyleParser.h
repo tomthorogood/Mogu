@@ -14,7 +14,6 @@
 namespace Parsers
 {
 
-using std::string;
 typedef Enums::WidgetTypes::WidgetTypes WidgetType;
 
 namespace StyleParser
@@ -22,11 +21,13 @@ namespace StyleParser
 
 
 WidgetType getWidgetType(Goo::Moldable* broadcaster);
-string getWidgetStyleClass(Goo::Moldable* broadcaster);
-string getWidgetText(Goo::Moldable* broadcaster);
-string getWidgetInternalPath(Goo::Moldable*  broadcaster);
-string getWidgetImgSource(Goo::Moldable* broadcaster);
-string getWidgetLinkLocation(Goo::Moldable* broadcaster);
+std::string getWidgetStyleClass(Goo::Moldable* broadcaster);
+std::string getWidgetText(Goo::Moldable* broadcaster);
+std::string getWidgetInternalPath(Goo::Moldable*  broadcaster);
+std::string getWidgetImgSource(Goo::Moldable* broadcaster);
+std::string getWidgetLinkLocation(Goo::Moldable* broadcaster);
+std::string getWidgetName(Goo::Moldable* broadcaster);
+int getWidgetStackIndex(Goo::Moldable* broadcaster);
 
 Wt::WAnimation::AnimationEffect getWidgetAnimation(
         Goo::Moldable* broadcaster);
@@ -39,6 +40,8 @@ bool widgetHasChildren(Goo::Moldable* broadcaster);
 bool widgetHasStyling(Goo::Moldable* broadcaster);
 bool widgetHasAnimation(Goo::Moldable* broadcaster);
 bool widgetBlocksActions(Goo::Moldable* broadcaster);
+bool widgetIsNamed(Goo::Moldable* broadcaster);
+bool widgetHasStackIndex(Goo::Moldable* broadcaster);
 
 uint8_t getActionBlock(Goo::Moldable* broadcaster);
 

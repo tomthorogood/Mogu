@@ -26,12 +26,12 @@ struct GooVariables
     Redis::strvector children;
     uint8_t propertyFlags; //!<\sa Enums::SignalTypes::Properties
     uint8_t actionBlocking;
+    uint8_t type;
     bool link_is_internal;
 
     std::string location;    //!< Used for external links only.
     std::string source;      //!< URI for image file, if applicable.
     std::string content;
-
 
     GooVariables();
 };
@@ -102,6 +102,9 @@ private:
      */
     void do_if_has_children();
 
+    /*!\brief Registers the widget as a named widget. */
+    void do_if_is_named();
+
 
 public:
     /*!\brief The standard (and only!) constrcutor for a ModdableGoo instance.
@@ -165,6 +168,10 @@ public:
     Redis::strvector* getNodeList();
 
     bool allowsAction(Enums::SignalActions::SignalAction action);
+
+    bool isNamed();
+
+    const uint8_t& getType() const;
 
 };
 

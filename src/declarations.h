@@ -81,8 +81,10 @@ namespace Redis
     typedef TurnLeft::Utils::HungryVector <std::string> strvector;
 }
 
-
+class Mogu;
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
+typedef std::map <std::string, int> WidgetContents;
+typedef std::map <std::string, WidgetContents> StackedWidgetTree;
 class redisReply;
 
 #endif /* DECLARATIONS_H_ */
