@@ -1,4 +1,4 @@
-# Mogu: Bend the Web # 
+# Mogu: Bend the Web 
 
 ## What is Mogu? ##
 Mogu is a web framework designed with the end user in mind. We developers, we're great and all,
