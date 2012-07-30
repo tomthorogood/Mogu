@@ -250,12 +250,37 @@ if command == "start":
     os.system(cli_command)
 
 if command == "newfile":
-    filename = args.command[1]
+    filename = args.filename
     f = open(filename,"w")
     f.write("#!/usr/bin/env python\n")
     f.write("# Mogu Import File %s" % filename)
     f.write("\n\n")
     f.close()
+
+if command == "export-widget":
+    try:
+        widget = args.command[1]
+    except:
+        error = fail("You have told me that you want to export a widget from the database, but have not told me what widget to export.")
+        print("%s\nYou can fix this by making sure to pass the widget name: mogu export-widget widget_name --filename file")
+        sys.exit()
+    filename = args.filename
+    if not args.filename:
+        error = fail("You have told me that you want to export a widget from the database, but have not given me a filename to write to.")
+        print("%s\n You can fix this by using the --filename option. ex: ./mogu export --filename /path/to/file")%error
+        sys.exit()
+
+    widget = "widgets.%s" % (widget.replace("widgets.",""))
+    output = []
+    output.append( export_widget_dict(db,widget) )
+    output.append( export_widget_events(db, widget) )
+    output.append( export_widget_children(db, widget) )
+    output_str = "\n\n".join(output)
+    f = open(filename, "w")
+    f.write(output_str)
+    f.close()
+    clean_file(filename)
+
 
 if command == "init":
     # First, check to make sure there isn't a Mogu application

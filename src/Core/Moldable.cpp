@@ -290,26 +290,34 @@ void Moldable::do_if_is_link()
 
 void Moldable::do_if_is_named()
 {
-	/* If the parent widget of a named widget is not named, we cannot
-	 * continue. However, children of named widgets will be able to use
-	 * the name to register themselves with the path handling service.
-	 */
+
 	using namespace Parsers::StyleParser;
+	Mogu* app = Application::mogu();
+	std::string my_name = getWidgetName(this);
+
+	/* Register this widget within the application path tree. */
+	WidgetRegistration* record = new WidgetRegistration();
+	record->pointer = this;
+	app->registerPath(my_name, record);
+
+	/* If the parent widget of a named widget is not named, this widget will
+	 * be registered in the trunk of the path tree.
+	 */
 	Moldable* __parent = (Moldable*) parent();
 	bool parent_is_named = __parent->isNamed();
+
 	if (parent_is_named)
 	{
-		Mogu* app = Application::mogu();
 		std::string parent_name = getWidgetName(__parent);
+
 		if (app->searchPathTree(parent_name))
 		{
-			if (widgetHasStackIndex(this))
-			{
-				int my_index = getWidgetStackIndex(this);
-				std::string my_name = getWidgetName(this);
-				app->registerWithParent(parent_name, my_index, my_name);
-			}
+			app->registerWithParent(parent_name, my_name);
 		}
+	}
+	else
+	{
+		record->trunk = true;
 	}
 }
 

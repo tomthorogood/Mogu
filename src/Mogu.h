@@ -11,16 +11,26 @@
 #include <declarations.h>
 #include <Wt/WApplication>
 
+struct WidgetRegistration
+{
+	Goo::Moldable* pointer;
+	bool trunk;
+	TurnLeft::Utils::HungryVector <std::string> children;
+	WidgetRegistration();
+};
+
+
 class Mogu : public Wt::WApplication
 {
 	void handlePathChange(std::string path);
-	StackedWidgetTree __path_tree;
+	RegisteredPaths registered_paths;
+	Goo::Moldable* __wrapper;
 
 public:
     Mogu(const Wt::WEnvironment& env);
-	bool searchPathTree(std::string name) const;
-	void registerWithParent(
-			std::string parent, int child_index, std::string child_name);
+	bool searchPathTree(std::string name);
+	void registerPath(std::string name, WidgetRegistration* record);
+	void registerWithParent(std::string parent_name, std::string child_name);
 };
 
 

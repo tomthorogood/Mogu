@@ -20,6 +20,57 @@ def test(filename):
     except Exception as e:
         raise MoguImportException(filename, e.__str__())
 
+def export_widget_dict(db,widget):
+        output = "widgets[\"%s\"] = {\n" %widget.replace("widgets.","")
+        entries = db.hgetall(widget)
+        dict_keys = []
+        for entry in entries:
+            value = entries[entry].replace("\"","\\\"")
+            dict_keys.append("\t\"%s\"   :   \"%s\"" % (entry, value))
+        output += ",\n".join(dict_keys)
+        output += "\n}\n\n"
+        return output
+
+def export_widget_events(db,widget):
+    event_nodes = db.keys("%s.events.*" %widget)
+    output = ""
+    if event_nodes:
+        output = "events[\"%s\"] = [\n" % widget.replace("widgets.","")
+        event_dicts = []
+        for event in event_nodes:
+            entries = db.hgetall(event)
+            event_dict = "\t{\n"
+            dict_keys = []
+            for entry in entries:
+                value = entries[entry].replace("\"","\\\"")
+                dict_keys.append("\t\t\"%s\"    :   \"%s\"" % (entry,value))
+            event_dict += ",\n".join(dict_keys)
+            event_dict += "\n}"
+            event_dicts.append(event_dict)
+        output += ",\n".join(event_dicts)
+        output += "\n]\n\n"
+    return output
+
+def export_widget_children(db,widget):
+    output = ""
+    if db.exists("%s.children" % widget):
+        output = "tree[\"%s\"] = [\n" % widget.replace("widgets.","")
+        children = db.lrange("%s.children" % widget, 0, db.llen("%s.children" % widget))
+        children = ["\t\"%s\"" % child.replace("widgets.","") for child in children]
+        output += ",\n".join(children)
+        output += "\n]\n\n"
+    return output
+
+
+def clean_file(filename):
+    f = open(filename,'r')
+    output = f.read()
+    output = output.replace("\n\"","\"\n")
+    f.close()
+    f = open(filename,'w')
+    f.write(output)
+    f.close()
+
 
 def export(db, filename):
     f = open(filename, 'w')
@@ -30,43 +81,16 @@ def export(db, filename):
             ]
 
     for widget in widgets:
-        output = "widgets[\"%s\"] = {\n" %widget.replace("widgets.","")
-        entries = db.hgetall(widget)
-        dict_keys = []
-        for entry in entries:
-            value = entries[entry].replace("\"","\\\"")
-            dict_keys.append("\t\"%s\"   :   \"%s\"" % (entry, value))
-        output += ",\n".join(dict_keys)
-        output += "}\n"
+        output = export_widget_dict(db,widget)
         f.write(output)
 
     for widget in widgets:
-        event_nodes = db.keys("%s.events.*" %widget)
-        if event_nodes:
-            output = "events[\"%s\"] = [\n" % widget.replace("widgets.","")
-            event_dicts = []
-            for event in event_nodes:
-                entries = db.hgetall(event)
-                event_dict = "\t{\n"
-                dict_keys = []
-                for entry in entries:
-                    value = entries[entry].replace("\"","\\\"")
-                    dict_keys.append("\t\t\"%s\"    :   \"%s\"" % (entry,value))
-                event_dict += ",\n".join(dict_keys)
-                event_dict += "\n}"
-                event_dicts.append(event_dict)
-            output += ",\n".join(event_dicts)
-            output += "\n]\n"
+            output = export_widget_events(db,widget)
             f.write(output)
 
     for widget in widgets:
-        if db.exists("%s.children" % widget):
-            output = "tree[\"%s\"] = [\n" % widget.replace("widgets.","")
-            children = db.lrange("%s.children" % widget, 0, db.llen("%s.children" % widget))
-            children = ["\t\"%s\"" % child.replace("widgets.","") for child in children]
-            output += ",\n".join(children)
-            output += "\n]\n"
-            f.write(output)
+        output = export_widget_children(db,widget)
+        f.write(output)
 
     global_events = db.keys("events.*")
     for event in global_events:
@@ -110,11 +134,4 @@ def export(db, filename):
         f.write("\n")
 
     f.close()
-    f = open(filename,'r')
-    output = f.read()
-    output = output.replace("\n\"","\"\n")
-    f.close()
-    f = open(filename,'w')
-    f.write(output)
-    f.close()
-
+    clean_file(filename)

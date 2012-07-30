@@ -12,6 +12,8 @@ FamilyMemberParser::FamilyMemberParser()
     enumMap["siblings"] =   Family::siblings;
     enumMap["child"]    =   Family::child;
     enumMap["sibling"]  =   Family::sibling;
+    enumMap["app"] 		=	Family::application;
+    enumMap["application"] =Family::application;
 }
 
 WidgetTypeParser::WidgetTypeParser()

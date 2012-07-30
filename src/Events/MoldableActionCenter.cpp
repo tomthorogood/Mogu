@@ -14,6 +14,8 @@
 #include <Parsers/Parsers.h>
 #include <Wt/WStackedWidget>
 #include <Core/Moldable.h>
+#include <Static.h>
+#include <Mogu.h>
 
 namespace Events
 {
@@ -106,7 +108,8 @@ void submitBroadcast(BroadcastMessage* broadcast)
     /* If this is a nuclear event, we lastly have to do one more
      * calculation of listeners.
      */
-    if (signalType & TypeBits::specific_listeners)
+    if ( (signalType & TypeBits::specific_listeners)
+    		&& broadcast->getListenerType() != Enums::Family::application)
     {
         getNuclearFamily(broadcast);
     }
@@ -207,6 +210,18 @@ void directListeners(BroadcastMessage* broadcast)
 {
     namespace Action = Enums::SignalActions;
     Listeners* listeners = listenerMap[broadcast];
+    if (broadcast->getListenerType() == Enums::Family::application)
+    {
+    	if (broadcast->getAction() == Action::set_internal_path)
+    	{
+
+    		Application::mogu()->setInternalPath(
+    				broadcast->getMessage()->getString()
+    		);
+    	}
+    	return; // Avoid side effects with non-existent Moldable listeners
+    }
+
     switch(broadcast->getAction())
     {
 

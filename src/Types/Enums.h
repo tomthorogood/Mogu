@@ -16,7 +16,8 @@ enum _Family {
     children        =2,
     siblings        =3,
     child           =4,
-    sibling         =5
+    sibling         =5,
+    application		=6
 };
 } //namespace Family
 
@@ -130,6 +131,7 @@ enum SignalAction{
     rebroadcast         =0x8,
     set_style           =0x10,
     set_index           =0x20,
+    set_internal_path	=0x30,
     BLOCK               =0x40
 };
 }
