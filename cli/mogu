@@ -259,7 +259,7 @@ if command == "newfile":
 
 if command == "export-widget":
     try:
-        widget = args.command[1]
+        widgets = args.command[1:]
     except:
         error = fail("You have told me that you want to export a widget from the database, but have not told me what widget to export.")
         print("%s\nYou can fix this by making sure to pass the widget name: mogu export-widget widget_name --filename file")
@@ -269,18 +269,21 @@ if command == "export-widget":
         error = fail("You have told me that you want to export a widget from the database, but have not given me a filename to write to.")
         print("%s\n You can fix this by using the --filename option. ex: ./mogu export --filename /path/to/file")%error
         sys.exit()
-
-    widget = "widgets.%s" % (widget.replace("widgets.",""))
-    output = []
-    output.append( export_widget_dict(db,widget) )
-    output.append( export_widget_events(db, widget) )
-    output.append( export_widget_children(db, widget) )
-    output_str = "\n\n".join(output)
+    
     f = open(filename, "w")
-    f.write(output_str)
+
+    for widget in widgets:
+        widget = "widgets.%s" % (widget.replace("widgets.",""))
+        output = []
+        output.append( export_widget_dict(db,widget) )
+        output.append( export_widget_events(db, widget) )
+        output.append( export_widget_children(db, widget) )
+        output_str = "\n\n".join(output)
+        f.write(output_str)
+    
     f.close()
     clean_file(filename)
-
+#END export-widget
 
 if command == "init":
     # First, check to make sure there isn't a Mogu application
