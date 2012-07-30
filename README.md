@@ -41,9 +41,10 @@ development as I am with Windows development, but you should still help me make 
       docs, which are very complete. If you're on Ubuntu, this process is actually nice and easy.
 + Install Mogu 
     - Clone this repository.
+You have two build options; one links to Wt's 'wthttp' library for development; the other to 'wtfcgi' for deployment.
 
     cd path/to/Mogu
-    make development    # For using the built-in Wt server
+    make  # For using the built-in Wt server
 
 *or*
 
