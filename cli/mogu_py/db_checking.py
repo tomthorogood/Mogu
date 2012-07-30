@@ -91,6 +91,7 @@ class Type_Assertions:
     LISTENERS =     (Wrappers.CURLY_BRACES,)
     EVENTS =        (Wrappers.NONE,Wrappers.ANGLE_BRACKETS)
     BLOCK  =        (Wrappers.CURLY_BRACES,)
+    NAME    =       (Wrappers.NONE,)
 
 key_checklist = {
         "type"  :       Type_Assertions.TYPE,
@@ -109,7 +110,8 @@ key_checklist = {
         "message"   :   Type_Assertions.MESSAGE,
         "listeners" :   Type_Assertions.LISTENERS,
         "events"    :   Type_Assertions.EVENTS,
-        "block"     :   Type_Assertions.BLOCK
+        "block"     :   Type_Assertions.BLOCK,
+        "name"      :   Type_Assertions.NAME
         }
 
 def is_wrapped(value,start,finish):

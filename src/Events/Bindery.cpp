@@ -110,6 +110,7 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 
 void EventBindery::clickSlot()
 {
+	bool debug = true;
     handleVoidSignal(Triggers::click);
 }
 void EventBindery::mouseoverSlot()

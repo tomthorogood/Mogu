@@ -43,6 +43,11 @@ BroadcastMessage::BroadcastMessage(
     __action = (Action::SignalAction)
             processor->getValue(Labels::action)->getInt();
 
+    if (__action == Action::set_internal_path)
+    {
+    	bool stop = true;
+    }
+
     if (__signal_type & TypeBit::specific_listeners)
     {
         __listener_type = (Listeners::_Family)

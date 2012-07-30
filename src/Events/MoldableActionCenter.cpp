@@ -37,10 +37,11 @@ void submitBroadcast(BroadcastMessage* broadcast)
     namespace TypeBits = Enums::SignalTypes;
     unsigned char signalType = broadcast->getSignalType();
 
-    if (signalType == 123)
+    if (broadcast->getAction() == Enums::SignalActions::set_internal_path)
     {
-        bool debug = true;
+    	bool debug = true;
     }
+
     // Verify the integrity of this broadcast.
     if (signalType < SIGNALRANGE[0] || signalType > SIGNALRANGE[1])
     {
@@ -214,10 +215,9 @@ void directListeners(BroadcastMessage* broadcast)
     {
     	if (broadcast->getAction() == Action::set_internal_path)
     	{
-
-    		Application::mogu()->setInternalPath(
-    				broadcast->getMessage()->getString()
-    		);
+    		std::string path = broadcast->getMessage()->getString();
+    		Nodes::ReadType __TEST__ = broadcast->getMessageType();
+    		Application::mogu()->setInternalPath(path);
     	}
     	return; // Avoid side effects with non-existent Moldable listeners
     }
@@ -247,11 +247,9 @@ void directListeners(BroadcastMessage* broadcast)
     case Action::set_index:{
         int new_index = broadcast->getMessage()->getInt();
         int num_listeners = listeners->size();
-        std::cout << "Num Listeners: " << num_listeners;
         for (int w = 0; w < num_listeners; w++)
         {
             Moldable* widget = listeners->at(w);
-            std::cout << widget->getNodeList()->at(0) << std::endl;
             if (widget->allowsAction(Action::set_index))
             {
                 Wt::WStackedWidget* stack =

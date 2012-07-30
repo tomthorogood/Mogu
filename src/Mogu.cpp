@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <TurnLeftLib/Utils/explosion.h>
 #include <Wt/WStackedWidget>
+#include <Parsers/StyleParser.h>
 
 WidgetRegistration::WidgetRegistration()
 :	children()
@@ -37,67 +38,23 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     __wrapper = new Goo::Moldable(outermost_container);
     root()->addWidget(__wrapper);
     internalPathChanged().connect(this, &Mogu::handlePathChange);
+    resolveRegisteredPaths();
 }
 
-bool Mogu::searchPathTree(std::string widget_name)
+bool Mogu::widgetIsRegistered(std::string widget_name)
 {
-	RegisteredPaths::iterator iter;
-	iter = registered_paths.find(widget_name);
+	WidgetRegister::iterator iter;
+	iter = widgetRegister.find(widget_name);
 
-	return (iter != registered_paths.end());
+	return (iter != widgetRegister.end());
 }
 
-void Mogu::registerPath(std::string name, WidgetRegistration* record)
+void Mogu::registerWidget(std::string name, Goo::Moldable* widget)
 {
-	registered_paths[name] = record;
+	widgetRegister[name] = widget;
 }
 
 void Mogu::handlePathChange(std::string path)
 {
-	TurnLeft::Utils::Explosion explosion(path);
-	std::string sections[16];
-	explosion.explode('/', sections);
-	int num_sections = explosion.getNumWords();
-
-	for (
-			int i = 0;
-			i < num_sections-1; //Don't recurse into the last path appendage
-			i++)
-	{
-		std::string name = sections[i];
-		std::string next = sections[i+i];
-		bool registered = searchPathTree(name);
-		if (!registered) return;
-		WidgetRegistration* record = registered_paths[name];
-		Goo::Moldable* me = record->pointer;
-		if (!record->trunk)
-		{
-			TurnLeft::Utils::HungryVector<std::string>::iterator iter;
-			iter = std::find(
-					record->children.begin(), record->children.end(),next);
-			if (iter != record->children.end())
-			{
-				if (searchPathTree(next))
-				{
-					Goo::Moldable* child = registered_paths[next]->pointer;
-					Wt::WStackedWidget* stack =
-							(Wt::WStackedWidget*) me->widget(0);
-					stack->setCurrentWidget(child);
-				}
-			}
-		}
-		else
-		{
-			if (me->isHidden())
-			{
-				me->show();
-			}
-		}
-	}
-}
-
-void Mogu::registerWithParent(
-		std::string parent_name, std::string child_name)
-{
-	registered_paths[parent_name]->children.add(child_name);
+//TODO
 }

@@ -127,6 +127,7 @@ void Moldable::setContentVariables()
     if (widgetIsNamed(this))
     {
     	baseVariables.propertyFlags |= Properties::is_named;
+    	do_if_is_named();
     }
 
     if (typeFlags == Enums::WidgetTypes::stacked_container)
@@ -219,6 +220,7 @@ Moldable::createContent()
         baseVariables.actionBlocking =
                 Parsers::StyleParser::getActionBlock(this);
     }
+
     if (typeFlags & is_link)
     {
         do_if_is_link();
@@ -290,35 +292,10 @@ void Moldable::do_if_is_link()
 
 void Moldable::do_if_is_named()
 {
-
 	using namespace Parsers::StyleParser;
 	Mogu* app = Application::mogu();
 	std::string my_name = getWidgetName(this);
-
-	/* Register this widget within the application path tree. */
-	WidgetRegistration* record = new WidgetRegistration();
-	record->pointer = this;
-	app->registerPath(my_name, record);
-
-	/* If the parent widget of a named widget is not named, this widget will
-	 * be registered in the trunk of the path tree.
-	 */
-	Moldable* __parent = (Moldable*) parent();
-	bool parent_is_named = __parent->isNamed();
-
-	if (parent_is_named)
-	{
-		std::string parent_name = getWidgetName(__parent);
-
-		if (app->searchPathTree(parent_name))
-		{
-			app->registerWithParent(parent_name, my_name);
-		}
-	}
-	else
-	{
-		record->trunk = true;
-	}
+	app->registerWidget(my_name, this);
 }
 
 void Moldable::do_if_has_events()

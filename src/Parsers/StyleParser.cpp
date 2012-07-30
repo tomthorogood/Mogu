@@ -68,7 +68,9 @@ bool widgetIsNamed(Moldable* broadcaster)
 	bool named = false;
 	string nodeName = broadcaster->getNodeList()->at(0);
 	Redis::command("hexists", nodeName, "name");
-	return (bool) Redis::getInt();
+	const char* __TEST__ = nodeName.c_str();
+	named = Redis::getInt();
+	return named;
 }
 
 string getWidgetName(Moldable* broadcaster)

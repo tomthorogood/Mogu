@@ -68,7 +68,6 @@ string toString()
 
 long long getInt()
 {
-
     long long ret_int = reply->integer;
     done(reply);
     return ret_int;

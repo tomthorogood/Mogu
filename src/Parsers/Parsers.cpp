@@ -110,6 +110,7 @@ SignalActionParser::SignalActionParser()
     enumMap["rebroadcast"]  = Action::rebroadcast;
     enumMap["set_style"]    = Action::set_style;
     enumMap["set_index"]    = Action::set_index;
+    enumMap["set_path"]		= Action::set_internal_path;
     enumMap["block"]        = Action::BLOCK;
 }
 

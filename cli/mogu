@@ -271,7 +271,7 @@ if command == "export-widget":
         sys.exit()
     
     f = open(filename, "w")
-
+    f.write("#!/usr/bin/env python\n")
     for widget in widgets:
         widget = "widgets.%s" % (widget.replace("widgets.",""))
         output = []

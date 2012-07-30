@@ -82,9 +82,8 @@ namespace Redis
 }
 
 class Mogu;
-struct WidgetRegistration;
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
-typedef std::map <std::string, WidgetRegistration*> RegisteredPaths;
+typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
 class redisReply;
 
 #endif /* DECLARATIONS_H_ */

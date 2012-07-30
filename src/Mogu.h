@@ -23,14 +23,15 @@ struct WidgetRegistration
 class Mogu : public Wt::WApplication
 {
 	void handlePathChange(std::string path);
-	RegisteredPaths registered_paths;
+	WidgetRegister widgetRegister;
 	Goo::Moldable* __wrapper;
+
+	void resolveRegisteredPaths();
 
 public:
     Mogu(const Wt::WEnvironment& env);
-	bool searchPathTree(std::string name);
-	void registerPath(std::string name, WidgetRegistration* record);
-	void registerWithParent(std::string parent_name, std::string child_name);
+	bool widgetIsRegistered(std::string name);
+	void registerWidget(std::string name, Goo::Moldable* widget);
 };
 
 

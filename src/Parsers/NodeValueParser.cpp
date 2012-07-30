@@ -41,7 +41,10 @@ void NodeValueParser::set_value_type(
     {
         __first_char = value.at(0);
     }
-
+    if (__first_char == '/')
+    {
+    	bool dbg = true;
+    }
     /* The polished value will be the 'nugget' at the center of
      * all the interpretive wrappers.
      */
@@ -56,14 +59,29 @@ void NodeValueParser::set_value_type(
         if (__first_char != ENUM_INT_CAST &&
             __first_char != ENUM_REPR_CAST)
         {
-            polished_value = polish(value);
+        	switch(__first_char)
+			{
+			case '[':
+			case '^':
+			case '{':
+			case '<':
+			case '@':
+			case '`':
+			case '~':
+				polished_value = polish(value);
+				break;
+			default:
+				polished_value = value;
+			}
         }
         else
         {
             /* If not, then it's a wrapper declaration, which has one at
              * the beginning, and one at the end.
              */
-            polished_value = value.substr(1,value.length()-1);
+
+        		polished_value = value.substr(1,value.length()-1);
+
         }
     }
     /* If we already have a polished value, just copy it. */
