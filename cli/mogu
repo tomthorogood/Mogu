@@ -10,7 +10,7 @@ from ConfigParser import NoOptionError
 #import mogu.io
 import sys
 
-VERSION="0.7.27 alpha"
+VERSION="0.8.03 alpha"
 
 config = SafeConfigParser()
 config.read(CONFIG_FILE)

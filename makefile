@@ -38,6 +38,7 @@ $(turnleft):
 	cd TurnLeftLib && $(MAKE) && sudo $(MAKE) install && $(MAKE) clean
 
 upgrade:
+	cp /etc/mogu/mogu.conf cli/mogu.conf
 	$(MAKE) uninstall
 	$(MAKE)
 	$(MAKE) install
