@@ -16,6 +16,7 @@
 #include <TurnLeftLib/Utils/explosion.h>
 #include <Wt/WStackedWidget>
 #include <Parsers/StyleParser.h>
+#include <Perspectives/PerspectiveHandler.h>
 
 WidgetRegistration::WidgetRegistration()
 :	children()
@@ -38,7 +39,6 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     __wrapper = new Goo::Moldable(outermost_container);
     root()->addWidget(__wrapper);
     internalPathChanged().connect(this, &Mogu::handlePathChange);
-    resolveRegisteredPaths();
 }
 
 bool Mogu::widgetIsRegistered(std::string widget_name)
@@ -56,5 +56,6 @@ void Mogu::registerWidget(std::string name, Goo::Moldable* widget)
 
 void Mogu::handlePathChange(std::string path)
 {
-//TODO
+	std::string perspective = path.substr(1,path.length()-1);
+	Perspective::Handler::mold(perspective);
 }
