@@ -44,5 +44,7 @@ upgrade:
 	$(MAKE) install
 
 clean:
-	rm -f mogu-server 
 	rm -rf $(objects)
+
+purge: clean
+	rm -rf mogu-server
