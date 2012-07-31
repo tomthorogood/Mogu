@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from db_checking import *
 import os,sys
 
@@ -15,15 +16,18 @@ class UnknownWidgetTypeError(Exception):
     def __str__(self):
         return self.value
 
-def add_tree(tree,db):
-    for widget_name in tree:
-        if not db.exists("widgets.%s" % widget_name):
-            raise MissingChildError(widget_name)
 
-    for widget_name in tree:
-        db.delete("widgets.%s.children" % widget_name)
-        for branch in tree[widget_name]:
-            db.rpush("widgets.%s.children" % widget_name, "widgets.%s" % branch)
+def add_list(node,entries,db,merge=False):
+    if not merge:
+        db.delete(node)
+    for entry in entries:
+        db.rpush(node,entry)
+
+def add_dict(node, dictionary, db, merge=False):
+    if not merge:
+        db.delete(node)
+    for key in dictionary:
+        db.hset(node,key,dictionary[key])
 
 def check_widgets(widgets):
     try:
@@ -58,44 +62,48 @@ def check_events(events,db,test=False):
         print e
         sys.exit()
 
-def add_dict(node,dictionary,db):
-    db.delete(node)
-    for key in dictionary:
-        db.hset(node,key,dictionary[key])
 
-def add_widget(short_name,args,db):
+def add_tree(tree, db, merge=False):
+    for widget_name in tree:
+        if not db.exists("widgets.%s" % widget_name):
+            raise MissingChildError(widget_name)
+
+    for widget_name in tree:
+        node = "widgets.%s.children" % widget_name.replace("widgets.","")
+        add_list(node, tree[widget_name], db, merge)
+
+def add_widget(short_name,args,db, merge=False):
     name = "widgets.%s" % short_name
-    add_dict(name,args,db)
+    add_dict(name,args,db,merge)
 
-def add_event(widget_name,event_num,args,db):
+def add_event(widget_name, event_num, args, db, merge=False):
     name = "widgets.%s.events.%d" % (widget_name, event_num)
-    add_dict(name,args,db)
+    add_dict(name,args,db,merge)
 
-def add_perspective_mold(perspective_name, mold_num, mold, db):
+def add_perspective_mold(perspective_name, mold_num, mold, db, merge=False):
     name = "perspectives.%s.%d" % (perspective_name, mold_num)
-    for entry in mold:
-        db.hset(name, entry, mold[entry])
+    add_dict(name,mold,db,merge)
 
-def add_perspective(perspective_name,molds, db, test=False):
+def add_perspective(perspective_name,molds, db, test=False, merge=False):
     i = 0
     for mold in molds:
         i+=1
         mold = check_perspective_mold(mold)
         if not test:
-            add_perspective_mold(perspective_name, i, mold, db)
+            add_perspective_mold(perspective_name, i, mold, db, merge)
 
-def add_global_event(event_name,args,db):
+def add_global_event(event_name, args, db, merge=False):
     name = "events.%s" % event_name
-    add_dict(name,args,db)
+    add_dict(name, args, db, merge)
 
-def add_widget_set(db, package, test=False, flush=False):
+def add_widget_set(db, package, test=False, flush=False, merge=False):
     widgets = package.widgets
     widgets = check_widgets(widgets)
     if not test:
         if flush:
             db.flushdb()
         for widget in widgets:
-            add_widget(widget,widgets[widget],db)
+            add_widget(widget, widgets[widget], db, merge)
     events = package.events
     if events:
         events = check_events(events,db,test)
@@ -104,33 +112,31 @@ def add_widget_set(db, package, test=False, flush=False):
                 num_events = 0
                 for event in events[widget]:
                     num_events += 1
-                    add_event(widget,num_events,event,db)
+                    add_event(widget, num_events, event,db, merge)
     children = package.tree
     if children and not test:
-        add_tree(children,db)
+        add_tree(children, db, merge)
 
-def add_global_events(db,events,test=False):
+def add_global_events(db,events,test=False, merge=False):
     for event in events:
         args = check_event_values(event,events[event])
         if not test:
-            add_global_event(event,args,db)
+            add_global_event(event, args,db, merge)
 
-def add_perspectives(db, perspectives, test=False):
+def add_perspectives(db, perspectives, test=False, merge=False):
     for perspective in perspectives:
-        add_perspective(perspective,perspectives[perspective],db,test)
+        add_perspective(perspective, perspectives[perspective], db, test, merge)
 
 
-def add_meta_value(db, name, value, test=False):
+def add_meta_value(db, name, value, test=False, merge=False):
     node = "meta.%s" % name
     if isinstance(value,str) and not test:
         db.set(node,value)
     elif isinstance(value,dict):
-        for entry in value:
-            db.hset(node,entry,value[entry])
+        add_dict(node,value,merge)
     elif isinstance(value,list):
-        for entry in value:
-            db.rpush(node,entry)
+        add_list(node,value,merge)
 
-def add_meta_values(db, values, test=False):
+def add_meta_values(db, values, test=False, merge=False):
     for entry in values:
-        add_meta_value(db,entry,values[entry],test)
+        add_meta_value(db,entry,values[entry],test, merge)

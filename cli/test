@@ -1,0 +1,5 @@
+widgets["test"] = {
+    "name"  :   "test",
+    "type"  :   "{text}",
+    "content"   :   "Hello"
+}

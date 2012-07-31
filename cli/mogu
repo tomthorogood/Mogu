@@ -65,6 +65,12 @@ parser.add_argument("--filename",
         dest="filename", action="store", default=None, 
         help="The filename that will be used by some commands, such as for importing or exporting. See the readme for extra information.")
 
+parser.add_argument("--merge",
+        dest="merge", action="store_true", default=False,
+        help="Will not delete nodes before setting values, which could result in unexpected behaviour, but can make things easier when adding one-offs."
+        )
+
+
 args = parser.parse_args()
 
 # Check for required commands and get confirmations for certain commands
@@ -73,7 +79,7 @@ command = args.command[0]
 
 db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
 
-# mogu import --filename F [--redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
+# mogu import --filename F [--merge --redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
 if command == "import":
     if not args.filename: 
         error = fail("You have told me that you want to import a file, but have not given me a file to import.")
@@ -88,10 +94,11 @@ if command == "import":
             print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
             sys.exit()
     package = importdb.evaluate_file(args.filename)
-    add_widget_set(db, package, args.testing, args.flushdb)
-    add_global_events(db, package.global_events)
-    add_meta_values(db, package.meta)
-    add_perspectives(db, package.perspectives)
+
+    add_widget_set(db, package, args.testing, args.flushdb, args.merge)
+    add_global_events(db, package.global_events, args.testing, args.merge)
+    add_meta_values(db, package.meta, args.testing, args.merge)
+    add_perspectives(db, package.perspectives, args.testing, args.merge)
 
 # mogo export --filename F [--resis-port --redis-host --redis-select --redis-auth]
 if command == "export":
