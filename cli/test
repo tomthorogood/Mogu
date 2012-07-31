@@ -1,5 +1,1613 @@
-widgets["test"] = {
-    "name"  :   "test",
-    "type"  :   "{text}",
-    "content"   :   "Hello"
+#!/usr/bin/env python
+#Mogu Import File: test 
+
+widgets["firsts_title_1"] = \
+{
+	"content"	:	"There's a first time for ",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring section_title"
 }
+
+
+
+widgets["future_title_1"] = \
+{
+	"content"	:	"We're here for you,  ",
+	"type"	:	"{text}",
+	"class"	:	"inline future_coloring section_title"
+}
+
+
+
+widgets["firsts_title_2"] = \
+{
+	"content"	:	"everything",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["future_title_2"] = \
+{
+	"content"	:	"always",
+	"type"	:	"{text}",
+	"class"	:	"inline future_coloring title_accent"
+}
+
+
+
+widgets["finances_description_text"] = \
+{
+	"content"	:	"This course will also provide a checklist for the older students that are ready to start (or already are) making their way in the big bad world. Here, they'll be able to keep track of their finances and bills and, at any time, may receive financial advice at no cost from one of <a class=\"finances_coloring\" href=\"http://www.clearpointccs.org\" target=\"_blank\">ClearPoint's</a> certified counselors. Financial Firsts is more than just a course -- it's meant to have a positive influence on students for the rest of their lives.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["footer_links_2_1"] = \
+{
+	"content"	:	"Development Blog (Coming Soon!)",
+	"type"	:	"{text}",
+	"class"	:	"footer_link linkified grayed_out"
+}
+
+
+
+widgets["footer_links_2_2"] = \
+{
+	"content"	:	"Find a Bug? (Coming Soon!)",
+	"type"	:	"{text}",
+	"class"	:	"footer_link linkified grayed_out"
+}
+
+
+
+widgets["descriptions"] = \
+{
+	"type"	:	"{stacked}",
+	"class"	:	"container_left",
+	"name"	:	"descriptions"
+}
+
+
+
+widgets["module_2_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_2_title_text"] = \
+{
+	"content"	:	"Budget",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["module_6_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["welcome_title_1"] = \
+{
+	"content"	:	"Welcome to ",
+	"type"	:	"{text}",
+	"class"	:	"inline welcome_coloring section_title"
+}
+
+
+
+widgets["welcome_title_2"] = \
+{
+	"content"	:	"Financial Firsts",
+	"type"	:	"{text}",
+	"class"	:	"inline welcome_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_3_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["smenu"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"sidemenu oProfile",
+	"block"	:	"{set_index}",
+	"name"	:	"side menu"
+}
+
+
+
+widgets["firsts_module_7_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_modules_stack"] = \
+{
+	"type"	:	"{stacked}",
+	"name"	:	"modules"
+}
+
+
+
+widgets["content_top"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"content_top",
+	"name"	:	"top"
+}
+
+
+
+widgets["my_first"] = \
+{
+	"content"	:	"My first ",
+	"type"	:	"{text}",
+	"class"	:	"firsts_coloring section_title inline"
+}
+
+
+
+widgets["welcome_description_text"] = \
+{
+	"content"	:	"Financial Firsts is a program developed by <a class=\"profile_coloring\" href=\"http://www.clearpointccs.org\" target=\"_blank\">ClearPoint Credit Counseling Solutions</a>. With a grant from <a class=\"profile_coloring\" href=\"http://www.chase.com\" target=\"_blank\">Chase Bank</a>, we have been able to dedicate resources to create a fully interactive online version of this content. This portal will offer not only educational resources for teachers and parents, but also online assessments and supplemental material for students. Additionally, students will have the opportunity to participate in a game as the progress through the material, ensuring real-life application of the lessons learned. Explore the categories to your left to learn more about Financial Firsts!",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["profile_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"profile"
+}
+
+
+
+widgets["side_profile"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionProfile",
+	"events"	:	"on"
+}
+
+
+
+widgets["future_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"future"
+}
+
+
+
+widgets["firsts_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"firsts"
+}
+
+
+
+widgets["module_5_title_text"] = \
+{
+	"content"	:	"Credit Card",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_4_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["firsts_module_8_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["side_finances"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFinances",
+	"events"	:	"on"
+}
+
+
+
+widgets["friends_description_text"] = \
+{
+	"content"	:	"Financial Firsts understands the need for interaction when learning new material. Students progressing through the course will be able to easily connect to others in their class, or nationwide that are in the same place they are. As they progress through the course, they'll be given digital currency to be spent on updating their avatar's look, and practicing the skills learned in the module they've just completed. Students who pay close attention will be rewarded with all the best in-game lifestyle, and those who have trouble will be given the opportunity to re-take a module to keep up with the Jonses.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["module_1_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_5_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["friends_title_1"] = \
+{
+	"content"	:	"It's better with ",
+	"type"	:	"{text}",
+	"class"	:	"inline friends_coloring section_title"
+}
+
+
+
+widgets["friends_title_2"] = \
+{
+	"content"	:	"friends",
+	"type"	:	"{text}",
+	"class"	:	"inline friends_coloring title_accent"
+}
+
+
+
+widgets["footer_links_1"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"footer_column inline",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["footer_links_2"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"footer_column inline",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["module_8_title_text"] = \
+{
+	"content"	:	"College Degree",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_2_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_menu_bar"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"horizontal_menu_bar GRAY_VERTICAL_GRADIENT"
+}
+
+
+
+widgets["firsts_module_6_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_module_2_description"] = \
+{
+	"content"	:	" Budgeting is a necessary skill. It's no fun (okay, well maybe it is for some of us), but it is vital. Much like flossing and getting your oil changed, it's just something that has to be done. The in-class materials for this unit will provide worksheets for your students so that they can fill in their own budgets, as well as an opportunity for them to talk to their family about household costs. After all, being aware of the cost is half the battle of keeping it down. The online portion will have students create a budget for their avatars, which will directly impact the rest of their avatar's progres, and unlock special abilities for their avatar depending on how their budget it set.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_4_description"] = \
+{
+	"content"	:	" There are as many car models to choose from as there are inspirational foreign words in the dictionary. They sound cool, they look cool, they suit each and every personality type. Which one to buy? Or maybe lease? New? Used? Don't forget insurance! It's not a decision to take lightly, and an auto loan has dire consequences when entered into naively. You'll have all the tools you need to walk your students through their first car-buying experience, and their avatars here at FinancialFirsts.org will get to do the same. Your students will also learn what rules to establish in their vehicles to keep their friends (and their investment) safe.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_6_description"] = \
+{
+	"content"	:	" Once credit is established, keeping an eye on it is just as important as making sure to pay it off. Checking your report for errors, understanding what it means and how it influences everything from getting more credit to getting a better job are details that are often overlooked. Not anymore.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_8_description"] = \
+{
+	"content"	:	" Getting a college degree is becoming more and more important, and rising college freshmen need to know what lies ahead. Student loans, scholarships, room and board, even a choice in major could have huge implications for decades down the line. Much like with choosing a car, there's a college for everyone, but they need to know what they're looking for in order to get the degree they'll use. And what about life after that coveted pomp and circumstance? \"What a long, strange, trip it's been...\".",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["%s_text"] = \
+{
+	"content"	:	"College Degree",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["module_3_title_text"] = \
+{
+	"content"	:	"Job",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["footer_logo"] = \
+{
+	"class"	:	"linkified inline",
+	"content"	:	"ClearPoint's Financial Firsts",
+	"source"	:	"/resources/mogu/images/ff_logo.png",
+	"type"	:	"{image}",
+	"events"	:	"on",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["wrapper"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"wrapper"
+}
+
+
+
+widgets["firsts_module_3_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["firsts_module_7_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["friends_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"friends"
+}
+
+
+
+widgets["side_friends"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFriends",
+	"events"	:	"on"
+}
+
+
+
+widgets["finances_title_1"] = \
+{
+	"content"	:	"A place to call ",
+	"type"	:	"{text}",
+	"class"	:	"inline finances_coloring section_title"
+}
+
+
+
+widgets["finances_title_2"] = \
+{
+	"content"	:	"home",
+	"type"	:	"{text}",
+	"class"	:	"inline finances_coloring title_accent"
+}
+
+
+
+widgets["module_4_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_8_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_6_title_text"] = \
+{
+	"content"	:	"Credit Score",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_title"] = \
+{
+	"type"	:	"{stacked}",
+	"class"	:	"module_title"
+}
+
+
+
+widgets["firsts_module_1_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["smenu_inner"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"optionbackground"
+}
+
+
+
+widgets["firsts_module_5_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_mod_name_1"] = \
+{
+	"content"	:	"Bank Account",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_2"] = \
+{
+	"content"	:	"Budget",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_3"] = \
+{
+	"content"	:	"Job",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_4"] = \
+{
+	"content"	:	"Car",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_5"] = \
+{
+	"content"	:	"Credit Card",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_6"] = \
+{
+	"content"	:	"Credit Score",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_7"] = \
+{
+	"content"	:	"Home Away from Home",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_8"] = \
+{
+	"content"	:	"College Degree",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["profile_description_text"] = \
+{
+	"content"	:	"Students will have at-a-glance access to their progress through the course, including assessment scores, in-game currency, connections with other students, and so on. As an educator, you will have access to the students' assessment information as well, and will be able to monitory your students' progress through the course. Additionally, you'll be able to download offline material for use in the classroom, or get assistance from our counselors if you're having trouble imparting certain information.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["module_1_title_text"] = \
+{
+	"content"	:	"Bank Account",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["side_future"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFuture",
+	"events"	:	"on"
+}
+
+
+
+widgets["side_firsts"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFirsts",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_module_2_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["firsts_module_6_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["finances_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"finances"
+}
+
+
+
+widgets["welcome_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"welcome"
+}
+
+
+
+widgets["footer_links_1_1"] = \
+{
+	"content"	:	"About",
+	"type"	:	"{text}",
+	"class"	:	"footer_link linkified",
+	"events"	:	"on"
+}
+
+
+
+widgets["content_bottom"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"content_bottom"
+}
+
+
+
+widgets["footer_links_1_2"] = \
+{
+	"content"	:	"ClearPoint Credit Counseling Solutions",
+	"type"	:	"{link}",
+	"location"	:	"http://www.clearpointccs.org",
+	"class"	:	"footer_link"
+}
+
+
+
+widgets["firsts_module_1"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_2"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["footer_links_1_3"] = \
+{
+	"content"	:	"Facebook",
+	"type"	:	"{link}",
+	"location"	:	"http://www.facebook.com/knowyourmoney",
+	"class"	:	"footer_link"
+}
+
+
+
+widgets["firsts_module_3"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["footer_links_1_4"] = \
+{
+	"content"	:	"Twitter",
+	"type"	:	"{link}",
+	"location"	:	"http://www.twitter.com/KnowYourMoneyUS",
+	"class"	:	"footer_link"
+}
+
+
+
+widgets["firsts_module_4"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_5"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_6"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_7"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_8"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_3_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_7_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_4_title_text"] = \
+{
+	"content"	:	"Car",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_4_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_module_8_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["footer_container"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"footer_container",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["firsts_module_1_description"] = \
+{
+	"content"	:	" In this unit, students will learn the banking basics. Credit unions, banks, savings, checking -- they may seem second nature to you, but without a solid financial education, young adults may not be able to make the most of their money. The in-class material will include example checks and worksheets for your students to use to practice, and the online supplements will reinforce this material by having students set up a bank account for their avatar. Additionally, they will have the opportunity to try their hand at balancing a checkbook, receiving a special badge for an exemplary balancing act.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_3_description"] = \
+{
+	"content"	:	" Before you get your first paycheck, you'll need to know where to get it <i>from</i>. Along with making good career decisions, knowing when to work and when to volunteer, and understanding the steps to progress, there's the added challenge of keeping in mind how much of your paycheck is spent before you get it. This module will give students the knowledge not only to use their paycheck wisely and know what their pay stub means, but how to enter into the big bad world of gainful employment in a way that will benefit them not only now, but ten years from now.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_5_description"] = \
+{
+	"content"	:	" There comes a time in everyone's life where they need something they just can't afford. Whether it's their first root canal or a sudden cross-country move, establishing and maintaining good credit is perhaps the most vital skill of financial literacy. The first credit card is the most important. Where to get help, what to look for, and protecting yourself from identity theft are all included in order to make sure the first credit card is the road to financial freedom, not entrapment. The students' avatars will also have their first credit accounts here, with temptations to overuse them to boot.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_7_description"] = \
+{
+	"content"	:	" Whether an apartment, frat house, condo, or house boat, there's nothing like your first home away from home. There's also nothing ready to tempt you into financial ruin like having your own space to fill with stuff. Knowing what kind of home you can afford, what to look for in a lease, and how to keep those landlords smiling are all important steps to an easier time later on. Users' avatars will have their own opportunity to get a home here and, of course, fill it with stuff. In the classroom, they'll get to see an example lease and a move-in checklist, and you'll have everything you need to help them understand it.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["module_7_title_text"] = \
+{
+	"content"	:	"Home Away from Home",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["profile_title_1"] = \
+{
+	"content"	:	"A friendly dashboard ",
+	"type"	:	"{text}",
+	"class"	:	"inline profile_coloring section_title"
+}
+
+
+
+widgets["future_description_text"] = \
+{
+	"content"	:	"Students may elect to get long-term assistance from <a class=\"future_coloring\" href=\"http://www.clearpoint.com\" target=\"_blank\">ClearPoint</a>, so that we can help them with their big decisions, or get in touch if it seems like they're having trouble. Students can use our educational tools to start planning for the future no matter how far along they are, all for free. We believe in consumer health through financial education.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_description_text"] = \
+{
+	"content"	:	"The Financial Firsts program focuses on real-life applications of financial responsibility. We'll walk students through what to do with their first paycheck to how to buy their first house. This twelve-part course is designed to be used by high-school and college-aged individuals, with additional content forthcoming for children between five and 12. It is our intent to deliver a responsive, interactive course at no cost that will prepare today's youth for a bright adulthood.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_1_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["profile_title_2"] = \
+{
+	"content"	:	"for everyone",
+	"type"	:	"{text}",
+	"class"	:	"inline profile_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_5_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+events["side_profile"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oProfile",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^1^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionProfile_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionProfile",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{click}",
+	"message"	:	"/profile",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["side_finances"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFinances",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFinances",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^4^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFinances_on",
+	"listeners"	:	"{self}"
+}
+
+
+]
+
+events["footer_logo"] = \
+[
+	{
+	"signal"	:	"^123^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"events.reset_descriptions"
+}
+
+
+]
+
+events["side_friends"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^3^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFriends_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFriends",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFriends",
+	"nextAction"	:	"{set_style}"
+}
+
+
+]
+
+events["firsts_mod_name_1"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^0^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_2"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^1^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_3"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^2^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_4"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^3^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_5"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^4^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_6"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^5^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_7"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^6^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_8"] = \
+[
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^7^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["side_future"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFuture_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFuture",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFuture",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^5^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["side_firsts"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFirsts_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFirsts",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFirsts",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^119^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^2^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^113^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["footer_links_1_1"] = \
+[
+	{
+	"signal"	:	"^123^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"events.reset_descriptions"
+}
+
+
+]
+
+tree["descriptions"] = \
+[
+	"welcome_description",
+	"profile_description",
+	"firsts_description",
+	"friends_description",
+	"finances_description",
+	"future_description"
+]
+
+tree["module_2_title"] = \
+[
+	"my_first",
+	"module_2_title_text"
+]
+
+tree["module_6_title"] = \
+[
+	"my_first",
+	"module_6_title_text"
+]
+
+tree["smenu"] = \
+[
+	"smenu_inner"
+]
+
+tree["firsts_modules_stack"] = \
+[
+	"firsts_module_1",
+	"firsts_module_2",
+	"firsts_module_3",
+	"firsts_module_4",
+	"firsts_module_5",
+	"firsts_module_6",
+	"firsts_module_7",
+	"firsts_module_8"
+]
+
+tree["content_top"] = \
+[
+	"smenu",
+	"descriptions"
+]
+
+tree["profile_description"] = \
+[
+	"profile_title_1",
+	"profile_title_2",
+	"profile_description_text"
+]
+
+tree["future_description"] = \
+[
+	"future_title_1",
+	"future_title_2",
+	"future_description_text"
+]
+
+tree["firsts_description"] = \
+[
+	"firsts_module_title",
+	"firsts_menu_bar",
+	"firsts_modules_stack"
+]
+
+tree["firsts_module_4_units"] = \
+[
+	"firsts_module_4_description"
+]
+
+tree["firsts_module_8_units"] = \
+[
+	"firsts_module_8_description"
+]
+
+tree["module_1_title"] = \
+[
+	"my_first",
+	"module_1_title_text"
+]
+
+tree["module_5_title"] = \
+[
+	"my_first",
+	"module_5_title_text"
+]
+
+tree["footer_links_1"] = \
+[
+	"footer_links_1_1",
+	"footer_links_1_2",
+	"footer_links_1_3",
+	"footer_links_1_4"
+]
+
+tree["footer_links_2"] = \
+[
+	"footer_links_2_1",
+	"footer_links_2_2"
+]
+
+tree["firsts_menu_bar"] = \
+[
+	"firsts_mod_name_1",
+	"firsts_mod_name_2",
+	"firsts_mod_name_3",
+	"firsts_mod_name_4",
+	"firsts_mod_name_5",
+	"firsts_mod_name_6",
+	"firsts_mod_name_7",
+	"firsts_mod_name_8"
+]
+
+tree["wrapper"] = \
+[
+	"content_top",
+	"content_bottom"
+]
+
+tree["firsts_module_3_units"] = \
+[
+	"firsts_module_3_description"
+]
+
+tree["firsts_module_7_units"] = \
+[
+	"firsts_module_7_description"
+]
+
+tree["friends_description"] = \
+[
+	"friends_title_1",
+	"friends_title_2",
+	"friends_description_text"
+]
+
+tree["module_4_title"] = \
+[
+	"my_first",
+	"module_4_title_text"
+]
+
+tree["module_8_title"] = \
+[
+	"my_first",
+	"module_8_title_text"
+]
+
+tree["firsts_module_title"] = \
+[
+	"module_1_title",
+	"module_2_title",
+	"module_3_title",
+	"module_4_title",
+	"module_5_title",
+	"module_6_title",
+	"module_7_title",
+	"module_8_title"
+]
+
+tree["smenu_inner"] = \
+[
+	"side_profile",
+	"side_firsts",
+	"side_friends",
+	"side_finances",
+	"side_future"
+]
+
+tree["firsts_module_2_units"] = \
+[
+	"firsts_module_2_description"
+]
+
+tree["firsts_module_6_units"] = \
+[
+	"firsts_module_6_description"
+]
+
+tree["finances_description"] = \
+[
+	"finances_title_1",
+	"finances_title_2",
+	"finances_description_text"
+]
+
+tree["welcome_description"] = \
+[
+	"welcome_title_1",
+	"welcome_title_2",
+	"welcome_description_text"
+]
+
+tree["content_bottom"] = \
+[
+	"footer_container"
+]
+
+tree["firsts_module_1"] = \
+[
+	"firsts_module_1_units",
+	"firsts_module_1_tests"
+]
+
+tree["firsts_module_2"] = \
+[
+	"firsts_module_2_units",
+	"firsts_module_2_tests"
+]
+
+tree["firsts_module_3"] = \
+[
+	"firsts_module_3_units",
+	"firsts_module_3_tests"
+]
+
+tree["firsts_module_4"] = \
+[
+	"firsts_module_4_units",
+	"firsts_module_4_tests"
+]
+
+tree["firsts_module_5"] = \
+[
+	"firsts_module_5_units",
+	"firsts_module_5_tests"
+]
+
+tree["firsts_module_6"] = \
+[
+	"firsts_module_6_units",
+	"firsts_module_6_tests"
+]
+
+tree["firsts_module_7"] = \
+[
+	"firsts_module_7_units",
+	"firsts_module_7_tests"
+]
+
+tree["firsts_module_8"] = \
+[
+	"firsts_module_8_units",
+	"firsts_module_8_tests"
+]
+
+tree["module_3_title"] = \
+[
+	"my_first",
+	"module_3_title_text"
+]
+
+tree["module_7_title"] = \
+[
+	"my_first",
+	"module_7_title_text"
+]
+
+tree["footer_container"] = \
+[
+	"footer_logo",
+	"footer_links_1",
+	"footer_links_2"
+]
+
+tree["firsts_module_1_units"] = \
+[
+	"firsts_module_1_description"
+]
+
+tree["firsts_module_5_units"] = \
+[
+	"firsts_module_5_description"
+]
+
+perspectives["firsts"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFirsts",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["firsts"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFirsts",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+global_events["reset_descriptions"] = \
+{
+	"action"	:	"{set_index}",
+	"signal"	:	"^112^",
+	"message"	:	"^0^",
+	"listeners"	:	"{children}"
+}
+
+
+

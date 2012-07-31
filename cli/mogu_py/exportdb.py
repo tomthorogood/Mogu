@@ -72,11 +72,14 @@ def export_widget_events(db,widget):
 
 def export_perspective(db,perspective):
     perspective_nodes = db.keys("perspectives.%s.*" % perspective.replace("perspectives.",""))
+    if (len(perspective_nodes) is 0):
+        return ""
     output = ""
     title = dict_entry_line("perspectives",perspective.replace("perspectives.",""))
     perspective_dicts = []
     for node in perspective_nodes:
         perspective_dicts.append(dict_str(db.hgetall(node)))
+    body = list_str(perspective_dicts,"")
     output = "%s%s" % (title,body)
     return output
 
@@ -125,6 +128,11 @@ def export(db, filename):
         f.write(output)
 
     perspectives = db.keys("perspectives.*")
+    perspectives_ = []
+    for p in perspectives:
+        ex = p.split('.')
+        perspectives_.append(ex[1])
+    perspectives = perspectives_
     for perspective in perspectives:
         output = export_perspective(db,perspective)
         f.write(output)
