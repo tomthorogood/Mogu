@@ -40,7 +40,8 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     root()->addWidget(__wrapper);
     internalPathChanged().connect(this, &Mogu::handlePathChange);
     std::string entry_path = internalPath();
-    if (entry_path != "/")
+    std::cout << "Entry: " << entry_path << std::endl;
+    if (entry_path != "/" && entry_path.length() > 0)
     {
     	handlePathChange(entry_path);
     }
