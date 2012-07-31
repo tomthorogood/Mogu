@@ -1,4 +1,4 @@
-# Mogu: Bend the Web # 
+# Mogu: Bend the Web 
 
 ## What is Mogu? ##
 Mogu is a web framework designed with the end user in mind. We developers, we're great and all,
@@ -42,8 +42,11 @@ development as I am with Windows development, but you should still help me make 
 + Install Mogu 
     - Clone this repository.
 
+
+You have two build options; one links to Wt's 'wthttp' library for development; the other to 'wtfcgi' for deployment.
+
     cd path/to/Mogu
-    make development    # For using the built-in Wt server
+    make  # For using the built-in Wt server
 
 *or*
 
@@ -64,7 +67,9 @@ If you get a blank screen, it's running. If you get an error, it's not.
 ## Hello, Web! ##
 
 To build your first Mogu web application, all you need to do is create a folder you want to work from and run
+
     mogu init
+    
 You can also set some other variables here, such as your Redis database, port, hostname, and authorization.
 These commands can always bet set from the command line, or in your mogu.conf file. Use them liberally, because
 with them you can easily copy your site to other databases, back up your site, test changes, and so on. 
