@@ -179,22 +179,23 @@ def check(key,value,test=False):
 
     return value
 
-def check_widget_values(widget_name,args):
+def check_widget_values(widget_name, args, merge=False):
     for key in args:
         args[key] = check(key,args[key])
     
-    unwrapped_type = args['type'][1:-1]
-    required_params = required_widget_parameters[unwrapped_type]
-    if required_params[0] is not None:
-        results = [False for i in range(len(required_params))]
-        i = 0
-        for param in required_params:
-            results[i] = param in args
-            i+=1
-        if not all(results):
-            missing_param = results.index(False)
-            missing_param = required_params[missing_param]
-            raise MissingParameterError(widget_name,missing_param)
+    if not merge:
+        unwrapped_type = args['type'][1:-1]
+        required_params = required_widget_parameters[unwrapped_type]
+        if required_params[0] is not None:
+            results = [False for i in range(len(required_params))]
+            i = 0
+            for param in required_params:
+                results[i] = param in args
+                i+=1
+            if not all(results):
+                missing_param = results.index(False)
+                missing_param = required_params[missing_param]
+                raise MissingParameterError(widget_name,missing_param)
     return args
 
 def check_event_values(event_name, args):

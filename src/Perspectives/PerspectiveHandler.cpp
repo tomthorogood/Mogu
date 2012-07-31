@@ -12,6 +12,9 @@
 #include <Mogu.h>
 #include <Core/Moldable.h>
 #include <Parsers/NodeValueParser.h>
+#include <Parsers/Parsers.h>
+#include <Types/NodeValue.h>
+#include <Wt/WStackedWidget>
 
 namespace Perspective{
 namespace Handler{
@@ -45,16 +48,19 @@ void mold(std::string perspective)
 		name = Redis::toString();
 		if (!app->widgetIsRegistered(name)) return;
 
-		Redis::command("hget", perspective, "action");
+		Redis::command("hget", affect_node, "action");
 		action_str = Redis::toString();
 
-		Redis::command("hget", perspective, "message");
+		Redis::command("hget", affect_node, "message");
 		message_str = Redis::toString();
 
 		widget = app->registeredWidget(name);
 
-		Parsers::NodeValueParser action_parser(action_str);
-		Parsers::NodeValueParser message_parser(message_str);
+		Parsers::NodeValueParser action_parser(action_str,
+				widget,
+				&Parsers::enum_callback <Parsers::SignalActionParser>);
+
+		Parsers::NodeValueParser message_parser(message_str, widget);
 
 		action = (Action::SignalAction)
 				action_parser.getValue()->getInt();

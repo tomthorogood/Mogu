@@ -29,11 +29,11 @@ def add_dict(node, dictionary, db, merge=False):
     for key in dictionary:
         db.hset(node,key,dictionary[key])
 
-def check_widgets(widgets):
+def check_widgets(widgets,merge=False):
     try:
         for widget in widgets:
             args = widgets[widget]
-            args = check_widget_values(widget,args)
+            args = check_widget_values(widget,args,merge)
             widgets[widget] = args
         return widgets
     except MissingParameterError as e:
@@ -98,7 +98,7 @@ def add_global_event(event_name, args, db, merge=False):
 
 def add_widget_set(db, package, test=False, flush=False, merge=False):
     widgets = package.widgets
-    widgets = check_widgets(widgets)
+    widgets = check_widgets(widgets,merge)
     if not test:
         if flush:
             db.flushdb()

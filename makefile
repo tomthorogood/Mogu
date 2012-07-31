@@ -1,5 +1,5 @@
 source_files := src
-branch_subs := Events Core Redis Parsers Types
+branch_subs := Events Core Redis Parsers Types Perspectives
 includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
 executable := mogu-server
 

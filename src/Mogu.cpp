@@ -39,6 +39,11 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     __wrapper = new Goo::Moldable(outermost_container);
     root()->addWidget(__wrapper);
     internalPathChanged().connect(this, &Mogu::handlePathChange);
+    std::string entry_path = internalPath();
+    if (entry_path != "/")
+    {
+    	handlePathChange(entry_path);
+    }
 }
 
 bool Mogu::widgetIsRegistered(std::string widget_name)
@@ -54,8 +59,21 @@ void Mogu::registerWidget(std::string name, Goo::Moldable* widget)
 	widgetRegister[name] = widget;
 }
 
+Goo::Moldable* Mogu::registeredWidget(std::string name)
+{
+	return widgetRegister[name];
+}
+
 void Mogu::handlePathChange(std::string path)
 {
 	std::string perspective = path.substr(1,path.length()-1);
-	Perspective::Handler::mold(perspective);
+	TurnLeft::Utils::Explosion explosion(perspective);
+	std::string molds[16];
+	explosion.explode('/',molds);
+	int num_molds = explosion.getNumWords();
+	for (int m = 0; m < num_molds; m++)
+	{
+		std::string mold = molds[m];
+		Perspective::Handler::mold(mold);
+	}
 }
