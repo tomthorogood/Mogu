@@ -110,44 +110,4 @@ You can then run:
 Reload localhost:9090.
 You should see "Hello World" on your screen. Yay.
 
-## Mogu Syntax ##
-
-Mogu has a couple of syntactical caveats. In the example above, we really should have written
-
-    type    :   "{text}"
-
-It will work either way in the case of the type field, but this isn't always the case. The reason is that 
-some text must be wrapped with special characters in order for the Mogu C++ bits to understand how to parse
-the information. The type field is alawys the same data type, however, so it doesn't matter, as it is auto-corrected.
-
-<table>
-<tr>
-<td> First Char </td>
- <td> Last Char </td>
-<td> Data Type </td>
-</tr>
-<tr>
-<td>{</td>
-<td>}</td>
-<td>Enumerated Values</td>
-</tr>
-<tr>
-<td>^</td>
-<td>^</td>
-<td>Integer Values</td>
-</tr>
-<tr>
-<td>&lt;</td>
-<td>&gt;</td>
-<td>Static database nodes</td>
-</tr>
-<tr>
-<td>@</td>
-<td>@</td>
-<td>Dynamic database nodes</td>
-</tr>
-</table>
-
-This becomes important when setting up more specialised containers and events. 
-
-
+The full Mogu manual is also the [Wiki](http://www.github.com/tomthorogood/mogu/wiki)
