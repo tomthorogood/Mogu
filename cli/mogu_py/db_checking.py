@@ -16,6 +16,12 @@ class MissingParameterError(Exception):
     def __str__(self):
         return self.value
 
+class BadMoldDirectiveError(Exception):
+    def __init__(self, parameter, mold):
+        self.value = "The %s parameter is missing from %s" % (parameter, repr(mold))
+    def __str__(self):
+        return self.value
+
 required_widget_parameters = {
         "container" :           (None,),
         "stacked"   :           (None,),
@@ -205,6 +211,16 @@ def check_event_values(event_name, args):
         missing_param = results.index(False)
         missing_param = required_params[missing_param]
         raise MissingParameterError(event_name,missing_param)
+    return args
+
+def check_perspective_mold(args, test=False):
+    for i in ("name","action","message"):
+        if i not in args:
+            raise BadMoldDirectiveError(i,args)
+
+    args["name"] = check("name",args["name"],test)
+    args["action"] = check("action",args["action"],test)
+    args["message"] = check("message",args["message"],test)
     return args
 
 if __name__ == "__main__":

@@ -90,6 +90,8 @@ if command == "import":
     package = importdb.evaluate_file(args.filename)
     add_widget_set(db, package, args.testing, args.flushdb)
     add_global_events(db, package.global_events)
+    add_meta_values(db, package.meta)
+    add_perspectives(db, package.perspectives)
 
 # mogo export --filename F [--resis-port --redis-host --redis-select --redis-auth]
 if command == "export":

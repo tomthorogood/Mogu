@@ -71,6 +71,19 @@ def add_event(widget_name,event_num,args,db):
     name = "widgets.%s.events.%d" % (widget_name, event_num)
     add_dict(name,args,db)
 
+def add_perspective_mold(perspective_name, mold_num, mold, db):
+    name = "perspectives.%s.%d" % (perspective_name, mold_num)
+    for entry in mold:
+        db.hset(name, entry, mold[entry])
+
+def add_perspective(perspective_name,molds, db, test=False):
+    i = 0
+    for mold in molds:
+        i+=1
+        mold = check_perspective_mold(mold)
+        if not test:
+            add_perspective_mold(perspective_name, i, mold, db)
+
 def add_global_event(event_name,args,db):
     name = "events.%s" % event_name
     add_dict(name,args,db)
@@ -101,3 +114,23 @@ def add_global_events(db,events,test=False):
         args = check_event_values(event,events[event])
         if not test:
             add_global_event(event,args,db)
+
+def add_perspectives(db, perspectives, test=False):
+    for perspective in perspectives:
+        add_perspective(perspective,perspectives[perspective],db,test)
+
+
+def add_meta_value(db, name, value, test=False):
+    node = "meta.%s" % name
+    if isinstance(value,str) and not test:
+        db.set(node,value)
+    elif isinstance(value,dict):
+        for entry in value:
+            db.hset(node,entry,value[entry])
+    elif isinstance(value,list):
+        for entry in value:
+            db.rpush(node,entry)
+
+def add_meta_values(db, values, test=False):
+    for entry in values:
+        add_meta_value(db,entry,values[entry],test)

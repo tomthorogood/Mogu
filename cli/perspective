@@ -1,0 +1,6 @@
+perspectives["test"] = [{
+    "name"      :   "affected_widget",
+    "action"    :   "{set_style}",
+    "message"   :   "my_new_style"
+}]
+
