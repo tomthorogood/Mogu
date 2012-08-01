@@ -37,11 +37,6 @@ void submitBroadcast(BroadcastMessage* broadcast)
     namespace TypeBits = Enums::SignalTypes;
     unsigned char signalType = broadcast->getSignalType();
 
-    if (broadcast->getAction() == Enums::SignalActions::set_internal_path)
-    {
-    	bool debug = true;
-    }
-
     // Verify the integrity of this broadcast.
     if (signalType < SIGNALRANGE[0] || signalType > SIGNALRANGE[1])
     {
@@ -239,6 +234,7 @@ void directListeners(BroadcastMessage* broadcast)
     	return; // Avoid side effects with non-existent Moldable listeners
     }
 
+    int num_listeners = listeners->size();
     switch(broadcast->getAction())
     {
 
@@ -248,7 +244,6 @@ void directListeners(BroadcastMessage* broadcast)
     case Action::set_style:{
         string new_style = broadcast->getMessage()->getString();
         Wt::WString wNewStyle(new_style);
-        int num_listeners = listeners->size();
 
         for (int w = 0; w < num_listeners; w++)
         {
@@ -263,7 +258,7 @@ void directListeners(BroadcastMessage* broadcast)
     /* Change the widget index of the listeners' stacked widgets. */
     case Action::set_index:{
         int new_index = broadcast->getMessage()->getInt();
-        int num_listeners = listeners->size();
+
         for (int w = 0; w < num_listeners; w++)
         {
             Moldable* widget = listeners->at(w);
@@ -275,6 +270,135 @@ void directListeners(BroadcastMessage* broadcast)
             }
         }
         break;}
+    case Action::add_class:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::add_class))
+    		{
+    			std::string current_style = widget->styleClass().toUTF8;
+    			std::string addl_style = broadcast->getMessage()->getString();
+    			current_style.append(" "+addl_style);
+    			Wt::WString wNewStyle(current_style);
+    			widget->setStyleClass(wNewStyle);
+    		}
+    	}
+        break;}
+
+    case Action::remove_class:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::remove_class))
+    		{
+    			uint8_t start = 0;
+    			uint8_t end = 1;
+    			std::string current_style = widget->styleClass().toUTF8();
+    			std::string remove_style = broadcast->getMessage()->getString();
+    			std::string new_style;
+    			int slice[2];
+    			slice[start] = current_style.find(remove_style);
+    			slice[end] = slice[start] + remove_style.length();
+
+    			new_style = current_style.substr(0,slice[start]);
+    			new_style
+    					.append(current_style
+    							.substr(
+    									slice[end],
+    									(current_style.length()-slice[end])
+    					));
+    			Wt::WString wNewStyle(new_style);
+    			widget->setStyleClass(wNewStyle);
+    		}
+    	}
+    	break;}
+
+    case Action::increment_index:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::increment_index))
+    		{
+    			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
+    					widget->widget(0);
+    			int current_index = stack->currentIndex();
+    			current_index++;
+    			stack->setCurrentIndex(current_index);
+    		}
+    	}
+    	break;}
+
+    case Action::decrement_index:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::decrement_index))
+    		{
+    			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
+    					widget->widget(0);
+    			int current_index = stack->currentIndex();
+    			current_index--;
+    			stack->setCurrentIndex(current_index);
+    		}
+    	}
+    	break;}
+
+    case Action::add_widget:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::add_widget))
+			{
+    			std::string constructorNode =
+    					broadcast->getMessage()->getString();
+    			widget->addGoo(constructorNode);
+			}
+    	}
+    	break;}
+
+    /* Note: Does not delete the widget! (?) */
+    case Action::remove_child:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::remove_child))
+    		{
+    			Moldable* child = NULL;
+    			auto msg_type = broadcast->getMessageType();
+    			if (msg_type == Nodes::string_value)
+    			{
+    				Mogu* app = Application::mogu();
+    				std::string msg = broadcast->getMessage()->getString();
+    				if (app->widgetIsRegistered(msg))
+    				{
+    					child = app->registeredWidget(msg);
+    				}
+    			}
+    			else
+    			{
+    				int msg = broadcast->getMessage()->getInt();
+    				child = widget->widget(msg);
+    			}
+    			if (child != NULL)
+    			{
+    				widget->removeChild(child);
+    			}
+    		}
+
+    	}
+    	break;}
+
+    case Action::clear:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::clear))
+    		{
+    			widget->clear();
+    		}
+    	break;}
+    }
+
     default:return; // Don't do anything unexpected!
     }
 }

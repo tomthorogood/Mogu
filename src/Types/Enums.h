@@ -151,6 +151,7 @@ enum SignalAction{
     increment_index		=0x9,
     decrement_index		=0xA,
     add_widget			=0xB,
+    set_internal_path	=0xC,
     remove_child		=0xD,
     delete_child		=0xE,
     clear				=0xF,
