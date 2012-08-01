@@ -63,6 +63,24 @@ class SignalActionParser:
 public: SignalActionParser();
 };
 
+class StorageModeParser :
+	public TurnLeft::Utils::EnumParser<Enums::SubmissionPolicies::StorageMode>
+{
+public: StorageModeParser();
+};
+
+class StorageTypeParser :
+	public TurnLeft::Utils::EnumParser<Enums::SubmissionPolicies::StorageType>
+{
+public: StorageTypeParser();
+};
+
+class StorageWrappingParser :
+	public TurnLeft::Utils::EnumParser<Enums::SubmissionPolicies::DataWrapping>
+{
+public: StorageWrappingParser();
+};
+
 class SignalTriggerParser:
     public TurnLeft::Utils::EnumParser<Enums::SignalTriggers::SignalTrigger>
 {
@@ -85,6 +103,8 @@ public:
     Enums::HashableAnswer_ErrorFlags::HashableAnswer_ErrorFlags 
         parse(unsigned char&);
 };
+
+
 
 } // <-- namespace Parsers
 

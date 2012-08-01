@@ -159,9 +159,34 @@ enum SignalAction{
     increment_plain		=0x11,
     store_enc			=0x18,
     increment_enc		=0x19,
-    delete_value		=0x1F
+    delete_value		=0x1F,
+    BLOCK				=0x80
 
 };
+}
+
+namespace SubmissionPolicies{
+enum StorageMode{
+	append,
+	replace
+};
+
+enum StorageType{
+	list,
+	string,
+	hash
+};
+
+enum DataWrapping{
+	NONE,
+	enumerated_type,
+	static_node,
+	dynamic_node,
+	integral_type,
+	floating_type,
+	file
+};
+
 }
 
 namespace SignalTriggers{

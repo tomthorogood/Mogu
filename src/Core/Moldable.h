@@ -171,6 +171,8 @@ public:
 
     bool isNamed();
 
+    void requestRemoval(Moldable* child);
+
     const uint8_t& getType() const;
 
 };

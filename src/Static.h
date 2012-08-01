@@ -14,6 +14,10 @@ namespace Application
 {
 	Mogu* mogu();
 	void defineMogu(Mogu* application);
+	std::string requestSessionID(std::string auth);
+	void setAuthToken(std::string auth);
+	void setWtSession(std::string session);
+	bool handshake(std::string wtSession);
 }
 
 

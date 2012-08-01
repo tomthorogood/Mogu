@@ -126,6 +126,36 @@ NodeValueTypeParser::NodeValueTypeParser()
     enumMap["float_value"]      = NodeValueTypes::float_value;
 }
 
+StorageModeParser::StorageModeParser()
+: EnumParser <Enums::SubmissionPolicies::StorageMode>()
+{
+	namespace Mode = Enums::SubmissionPolicies;
+	enumMap["append"] = Mode::append;
+	enumMap["replace"] = Mode::replace;
+}
+
+StorageTypeParser::StorageTypeParser()
+: EnumParser <Enums::SubmissionPolicies::StorageType>()
+{
+	namespace Type 	= Enums::SubmissionPolicies;
+	enumMap["list"] 	= Type::list;
+	enumMap["string"] 	= Type::string;
+	enumMap["hash"] 	= Type::hash;
+}
+
+StorageWrappingParser::StorageWrappingParser()
+: EnumParser <Enums::SubmissionPolicies::DataWrapping>()
+{
+	namespace Type 		= Enums::SubmissionPolicies;
+	enumMap["none"] 		= Type::NONE;
+	enumMap["enum"] 		= Type::enumerated_type;
+	enumMap["static_node"] 	= Type::static_node;
+	enumMap["dynamic_node"] = Type::dynamic_node;
+	enumMap["integer"] 		= Type::integral_type;
+	enumMap["float"]		= Type::floating_type;
+	enumMap["file"]			= Type::file;
+}
+
 HashableAnswer_ErrorFlagParser::HashableAnswer_ErrorFlagParser()
 {
     namespace Flag = Enums::HashableAnswer_ErrorFlags;

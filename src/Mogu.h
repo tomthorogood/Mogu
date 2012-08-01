@@ -26,9 +26,9 @@ class Mogu : public Wt::WApplication
 	WidgetRegister widgetRegister;
 	Goo::Moldable* __wrapper;
 
-
 public:
-    Mogu(const Wt::WEnvironment& env);
+
+	Mogu(const Wt::WEnvironment& env);
 	bool widgetIsRegistered(std::string name);
 	void registerWidget(std::string name, Goo::Moldable* widget);
 	Goo::Moldable* registeredWidget(std::string name);

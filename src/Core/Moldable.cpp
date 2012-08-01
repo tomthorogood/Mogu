@@ -185,7 +185,6 @@ Moldable::load()
 void Moldable::addGoo (const string& nodeName)
 {
     Moldable* newGoo = new Moldable(nodeName);
-    const char* __TEST__ = nodeName.c_str();
     if (typeFlags == Enums::WidgetTypes::stacked_container)
     {
         Wt::WStackedWidget* stack =
@@ -341,6 +340,11 @@ bool Moldable::isNamed()
 const uint8_t& Moldable::getType() const
 {
 	return baseVariables.type;
+}
+
+void Moldable::requestRemoval(Moldable* _child)
+{
+	removeChild(_child);
 }
 
 Redis::strvector* Moldable::getNodeList()

@@ -19,6 +19,7 @@ namespace Goo
 {
     class RedisInterface;
     class Moldable;
+    class Dynamic;
 }
 
 namespace Hash

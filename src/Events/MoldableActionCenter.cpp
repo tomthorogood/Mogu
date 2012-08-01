@@ -16,6 +16,7 @@
 #include <Core/Moldable.h>
 #include <Static.h>
 #include <Mogu.h>
+#include <Wt/WString>
 
 namespace Events
 {
@@ -109,7 +110,6 @@ void submitBroadcast(BroadcastMessage* broadcast)
         for (unsigned int listener =0; listener < num_listeners; listener++)
         {
             Moldable* _listener = listeners->at(listener);
-            const char* __TEST__ = _listener->getNodeList()->at(0).c_str();
             BroadcastMessage* newMessage =
                 generateNewBroadcast(_listener, nodeName);
             submitBroadcast(newMessage);
@@ -228,7 +228,6 @@ void directListeners(BroadcastMessage* broadcast)
     	if (broadcast->getAction() == Action::set_internal_path)
     	{
     		std::string path = broadcast->getMessage()->getString();
-    		Nodes::ReadType __TEST__ = broadcast->getMessageType();
     		Application::mogu()->setInternalPath(path);
     	}
     	return; // Avoid side effects with non-existent Moldable listeners
@@ -278,7 +277,7 @@ void directListeners(BroadcastMessage* broadcast)
     		Moldable* widget = listeners->at(w);
     		if (widget->allowsAction(Action::add_class))
     		{
-    			std::string current_style = widget->styleClass().toUTF8;
+    			std::string current_style = widget->styleClass().toUTF8();
     			std::string addl_style = broadcast->getMessage()->getString();
     			current_style.append(" "+addl_style);
     			Wt::WString wNewStyle(current_style);
@@ -371,7 +370,8 @@ void directListeners(BroadcastMessage* broadcast)
     		if (widget->allowsAction(Action::remove_child))
     		{
     			Moldable* child = NULL;
-    			auto msg_type = broadcast->getMessageType();
+    			Nodes::ReadType msg_type;
+    			msg_type = broadcast->getMessageType();
     			if (msg_type == Nodes::string_value)
     			{
     				Mogu* app = Application::mogu();
@@ -384,11 +384,11 @@ void directListeners(BroadcastMessage* broadcast)
     			else
     			{
     				int msg = broadcast->getMessage()->getInt();
-    				child = widget->widget(msg);
+    				child = (Moldable*) widget->widget(msg);
     			}
     			if (child != NULL)
     			{
-    				widget->removeChild(child);
+    				widget->requestRemoval(child);
     			}
     		}
 
