@@ -140,14 +140,26 @@ enum Properties
 namespace SignalActions{
 const byte NUM_ACTIONS = 5;
 enum SignalAction{
-    NO_ACTION           =0x0,
-    bubble              =0x2,
-    trickle             =0x4,
-    rebroadcast         =0x8,
-    set_style           =0x10,
-    set_index           =0x20,
-    set_internal_path	=0x30,
-    BLOCK               =0x40
+    NO_ACTION			=0x0,
+    rebroadcast			=0x1,
+    trickle				=0x2,
+    bubble				=0x3,
+    set_style			=0x4,
+    add_class			=0x5,
+    remove_class		=0x6,
+    set_index			=0x8,
+    increment_index		=0x9,
+    decrement_index		=0xA,
+    add_widget			=0xB,
+    remove_child		=0xD,
+    delete_child		=0xE,
+    clear				=0xF,
+    store_plain			=0x10,
+    increment_plain		=0x11,
+    store_enc			=0x18,
+    increment_enc		=0x19,
+    delete_value		=0x1F
+
 };
 }
 
