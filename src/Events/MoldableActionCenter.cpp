@@ -270,6 +270,8 @@ void directListeners(BroadcastMessage* broadcast)
             }
         }
         break;}
+
+    /* Append a new CSS class to the current widget style. */
     case Action::add_class:{
     	for (int w = 0; w < num_listeners; w++)
     	{
@@ -285,6 +287,7 @@ void directListeners(BroadcastMessage* broadcast)
     	}
         break;}
 
+    /* Remove a CSS class from the current widget style. */
     case Action::remove_class:{
     	for (int w = 0; w < num_listeners; w++)
     	{
@@ -313,6 +316,7 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
+    /* Advance the stack's widget index. */
     case Action::increment_index:{
     	for (int w = 0; w < num_listeners; w++)
     	{
@@ -328,6 +332,7 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
+    /* Rewind the stack's widget index. */
     case Action::decrement_index:{
     	for (int w = 0; w < num_listeners; w++)
     	{
@@ -343,6 +348,7 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
+    /* Adds a new widget to the tree. */
     case Action::add_widget:{
     	for (int w = 0; w < num_listeners; w++)
     	{
@@ -356,6 +362,7 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
+    /* Removes a widget from the tree. */
     /* Note: Does not delete the widget! (?) */
     case Action::remove_child:{
     	for (int w = 0; w < num_listeners; w++)
@@ -388,6 +395,7 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
+    /* Removes all children from the tree. */
     case Action::clear:{
     	for (int w = 0; w < num_listeners; w++)
     	{
