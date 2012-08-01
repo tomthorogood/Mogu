@@ -165,7 +165,7 @@ namespace NodeValueTypes{
     /*!\brief In the database, values which should be interpreted
      * as static nodes should appear <like this>.
      */
-    const char STATIC_NODE_CONTAINER[2] = {'<','>'};
+    const char STATIC_NODE_CONTAINER[2] = {'%','%'};
 
     /*!\brief In the database, values which should be interpreted
      * as dynamic nodes should appear @like this@

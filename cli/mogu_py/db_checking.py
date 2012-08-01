@@ -51,7 +51,7 @@ class Wrappers:
     PARENTHESES = ('(',')')
     ASTERISKS = ('*','*')
     AT_SYMBOLS = ('@','@')
-    ANGLE_BRACKETS = ('<','>')
+    PERCENT_SYMBOLS = ('%','%')
     CARATS = ('^','^')
     TILDES = ('~','~')
     BACKTICKS = ('`','`')
@@ -66,8 +66,7 @@ class Wrappers:
             ')' :   PARENTHESES,
             '*' :   ASTERISKS,
             '@' :   AT_SYMBOLS,
-            '<' :   ANGLE_BRACKETS,
-            '>' :   ANGLE_BRACKETS,
+            '%' :   PERCENT_SYMBOLS,
             '^' :   CARATS,
             '~' :   TILDES,
             '`' :   BACKTICKS
@@ -75,14 +74,14 @@ class Wrappers:
 
 class Type_Assertions:
     TYPE    =       (Wrappers.CURLY_BRACES,)
-    CLASS   =       (Wrappers.NONE,Wrappers.ANGLE_BRACKETS)
-    CHILDREN =      (Wrappers.ANGLE_BRACKETS, Wrappers.AT_SYMBOLS)
+    CLASS   =       (Wrappers.NONE,Wrappers.PERCENT_SYMBOLS)
+    CHILDREN =      (Wrappers.PERCENT_SYMBOLS, Wrappers.AT_SYMBOLS)
     CONTENT =       (
             Wrappers.NONE,          # Standard text content
             Wrappers.SQUARE_BRACES, # Text content a field in this hash (rare but possible)
             Wrappers.BACKTICKS,     # Content stored in external file
             Wrappers.AT_SYMBOLS,    # Content stored in dynamic node
-            Wrappers.ANGLE_BRACKETS # Content stored in static node
+            Wrappers.PERCENT_SYMBOLS # Content stored in static node
             )
     SOURCE =        CONTENT
     LOCATION =      CONTENT
@@ -95,7 +94,7 @@ class Type_Assertions:
     TRIGGER =       (Wrappers.CURLY_BRACES,)
     MESSAGE =       CONTENT
     LISTENERS =     (Wrappers.CURLY_BRACES,)
-    EVENTS =        (Wrappers.NONE,Wrappers.ANGLE_BRACKETS)
+    EVENTS =        (Wrappers.NONE,Wrappers.PERCENT_SYMBOLS)
     BLOCK  =        (Wrappers.CURLY_BRACES,)
     NAME    =       (Wrappers.NONE,)
 
