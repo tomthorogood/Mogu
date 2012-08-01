@@ -55,7 +55,21 @@ void submitBroadcast(BroadcastMessage* broadcast)
     if (iter == listenerMap.end())
     {
         Listeners* listener = new Listeners();
-        listener->add(broadcast->getBroadcaster());
+        if (signalType & TypeBits::registered_listener)
+        {
+        	std::string listener_name =
+        			broadcast->getListenerName();
+        	Mogu* app = Application::mogu();
+        	if (app->widgetIsRegistered(listener_name))
+        	{
+        		listener->add(app->registeredWidget(listener_name));
+        	}
+        }
+        else
+        {
+        	listener->add(broadcast->getBroadcaster());
+        }
+
         listener->trim();
         listenerMap[broadcast] = listener;
     }
@@ -77,7 +91,9 @@ void submitBroadcast(BroadcastMessage* broadcast)
     if (degradation == 0 )
     {
         broadcast->upgradeAction();
-        if (signalType & TypeBits::pointer)
+        if (
+        		(signalType & TypeBits::pointer) &&
+        		!(signalType & TypeBits::registered_listener))
         {
             updateListeners(broadcast);
         }
@@ -91,6 +107,7 @@ void submitBroadcast(BroadcastMessage* broadcast)
         {
             getNuclearFamily(broadcast);
         }
+
         string nodeName = broadcast->getMessage()->getString();
         Listeners* listeners = listenerMap[broadcast];
         unsigned int num_listeners = listeners->size();
@@ -300,12 +317,19 @@ BroadcastMessage* generateNewBroadcast(
         processor->set(Field::nextAction, next_action_str, broadcaster,
                 Parsers::enum_callback <Parsers::SignalActionParser>);
     }
-    if (signal_type & SignalBits::specific_listeners)
+
+    if (signal_type & SignalBits::registered_listener)
+    {
+    	string listener_str = extract.getValue(Field::listeners);
+    	processor->set(Field::listeners,listener_str);
+    }
+    else if (signal_type & SignalBits::specific_listeners)
     {
         string listeners_str = extract.getValue(Field::listeners);
         processor->set(Field::listeners, listeners_str, broadcaster,
                 Parsers::enum_callback <Parsers::FamilyMemberParser>);
     }
+
     BroadcastMessage* newMessage =
             new BroadcastMessage(broadcaster, processor);
 

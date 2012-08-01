@@ -53,6 +53,10 @@ BroadcastMessage::BroadcastMessage(
         __listener_type = (Listeners::_Family)
                 processor->getValue(Labels::listeners)->getInt();
     }
+    else if (__signal_type & TypeBit::registered_listener)
+    {
+    	__listener_name = processor->getValue(Labels::listeners)->getString();
+    }
 
     if (__signal_type & TypeBit::signal_repeats)
     {

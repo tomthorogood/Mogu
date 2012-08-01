@@ -28,6 +28,7 @@ class BroadcastMessage
     Enums::SignalActions::SignalAction __action;
     Enums::SignalActions::SignalAction __next_action;
     Enums::Family::_Family __listener_type;
+    std::string __listener_name;
 
 public:
     BroadcastMessage(
@@ -41,6 +42,7 @@ public:
     Enums::SignalActions::SignalAction getAction() const;
     Enums::SignalActions::SignalAction getNextAction() const;
     Enums::Family::_Family getListenerType() const;
+    std::string getListenerName() const;
     void upgradeAction();
     int degrade();
 

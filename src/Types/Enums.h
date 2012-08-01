@@ -119,8 +119,9 @@ enum SignalTypeBits
     transforms          =0x4,
     pointer             =0x8,
     specific_listeners  =0x10,
-    carries_payload     =0x20,
-    has_effect          =0x40
+    registered_listener =0x20,
+    carries_payload     =0x40,
+    has_effect          =0x80
 };
 
 

@@ -64,7 +64,7 @@ void NodeValueParser::set_value_type(
 			case '[':
 			case '^':
 			case '{':
-			case '<':
+			case '%':
 			case '@':
 			case '`':
 			case '~':
