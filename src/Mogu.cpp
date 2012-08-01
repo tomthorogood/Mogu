@@ -5,18 +5,22 @@
  *      Author: tom
  */
 
-#include <Mogu.h>
-#include <string>
-#include <Core/Moldable.h>
+
+#include <Static.h>
+#include <algorithm>
+
+
 #include <Wt/WApplication>
 #include <Wt/WScrollArea>
 #include <Wt/WString>
-#include <Static.h>
-#include <algorithm>
-#include <TurnLeftLib/Utils/explosion.h>
 #include <Wt/WStackedWidget>
+#include <TurnLeftLib/Utils/explosion.h>
+
+#include <Mogu.h>
+#include <Core/Moldable.h>
 #include <Parsers/StyleParser.h>
 #include <Perspectives/PerspectiveHandler.h>
+
 
 WidgetRegistration::WidgetRegistration()
 :	children()

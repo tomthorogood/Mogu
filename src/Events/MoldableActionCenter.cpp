@@ -29,7 +29,7 @@ using Goo::Moldable;
 
 namespace {
     ListenerMap listenerMap;
-    int SIGNALRANGE[2] = {102,119};
+    int SIGNALRANGE[2] = {198,233};
 }
 
 void submitBroadcast(BroadcastMessage* broadcast)
