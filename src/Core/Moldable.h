@@ -61,14 +61,16 @@ private:
      */
     TurnLeft::Utils::HungryVector <Moldable*> children;
 
-    /*!\brief Signal emitted when the style is changed. */
-    Wt::Signal <> __style_changed;
-
     /*!\brief A simple struct holding the values for the possible
      * content variables.
      * \sa GooVariables
      */
     GooVariables baseVariables;
+
+    /*!\brief Signal emitted when the style is changed. */
+    Wt::Signal <> __style_changed;
+
+
 
     Enums::WidgetTypes::WidgetTypes typeFlags;
     

@@ -68,7 +68,6 @@ bool widgetIsNamed(Moldable* broadcaster)
 	bool named = false;
 	string nodeName = broadcaster->getNodeList()->at(0);
 	Redis::command("hexists", nodeName, "name");
-	const char* __TEST__ = nodeName.c_str();
 	named = Redis::getInt();
 	return named;
 }
@@ -82,7 +81,6 @@ string getWidgetName(Moldable* broadcaster)
 
 bool widgetHasStackIndex(Moldable* broadcaster)
 {
-	bool indexed = false;
 	string nodeName = broadcaster->getNodeList()->at(0);
 	Redis::command("hexists", nodeName, "index");
 	return (bool) Redis::getInt();

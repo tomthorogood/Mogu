@@ -41,10 +41,7 @@ void NodeValueParser::set_value_type(
     {
         __first_char = value.at(0);
     }
-    if (__first_char == '/')
-    {
-    	bool dbg = true;
-    }
+
     /* The polished value will be the 'nugget' at the center of
      * all the interpretive wrappers.
      */

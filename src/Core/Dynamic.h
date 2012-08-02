@@ -8,7 +8,7 @@
 #ifndef DYNAMIC_H_
 #define DYNAMIC_H_
 
-#include <declarations.h>?
+#include <declarations.h>
 #include <Core/Moldable.h>
 
 namespace Goo

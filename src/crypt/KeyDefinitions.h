@@ -1,3 +1,5 @@
+#define BF_RANDOM_BYTES
+
 #define _BF_RANDOM_BYTES
 #define _BF_RANDOM_BYTE_0 221
 #define _BF_RANDOM_BYTE_1 106

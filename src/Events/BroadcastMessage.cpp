@@ -43,10 +43,6 @@ BroadcastMessage::BroadcastMessage(
     __action = (Action::SignalAction)
             processor->getValue(Labels::action)->getInt();
 
-    if (__action == Action::set_internal_path)
-    {
-    	bool stop = true;
-    }
 
     if (__signal_type & TypeBit::specific_listeners)
     {
@@ -113,6 +109,11 @@ Action::SignalAction BroadcastMessage::getNextAction() const
 Listeners::_Family BroadcastMessage::getListenerType() const
 {
     return __listener_type;
+}
+
+std::string BroadcastMessage::getListenerName() const
+{
+	return __listener_name;
 }
 
 void BroadcastMessage::upgradeAction()

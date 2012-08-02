@@ -49,7 +49,7 @@ inline string HashedString128::as_string()
 
 inline HashedString* hashedString(const string& str)
 {
-    int len = str.length();
+    size_t len = (size_t) str.length();
     if (len > MAX_64_HASH_LENGTH)
     {
         HashedString128* hash = new HashedString128();
@@ -66,7 +66,7 @@ inline HashedString* hashedString(const string& str)
     return hash;
 }
 
-inline string toHash(const string& str)
+string toHash(const string& str)
 {
     HashedString* hash = hashedString(str);
     string ret = hash->as_string();

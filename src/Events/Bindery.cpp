@@ -62,7 +62,6 @@ EventBindery::EventBindery(Moldable* broadcaster)
         }
         extractorMap[trigger].add(extractor);
         extractorMap[trigger].trim();
-        int __TEST__ = extractorMap[trigger].size();
     }
 
     ExtractorMap::iterator iter;
@@ -110,7 +109,6 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 
 void EventBindery::clickSlot()
 {
-	bool debug = true;
     handleVoidSignal(Triggers::click);
 }
 void EventBindery::mouseoverSlot()
