@@ -189,13 +189,8 @@ bool widgetIsDynamic(std::string nodeName)
 {
 	Redis::command("hget", nodeName, "type");
 	std::string type_str = Redis::toString();
-
-	Parsers::NodeValueParser parser(type_str, 0,
-			&Parsers::enum_callback <Parsers::BitMaskParser>);
-	Enums::WidgetTypes::WidgetTypes type_ = (Enums::WidgetTypes::WidgetTypes)
-			parser.getValue()->getInt();
-	return type_;
-
+	unsigned int index = type_str.find("dynamic");
+	return index != std::string::npos;
 }
 
 uint8_t getActionBlock(Moldable* broadcaster)

@@ -26,7 +26,7 @@ inline void done(redisReply* _reply)
     freeReplyObject(_reply);
 }
 
-const char* join (
+std::string join (
         string arg1, string arg2, string arg3, string arg4, string arg5)
 {
     stream << arg1;
@@ -47,16 +47,17 @@ const char* join (
         }
     }
     string buff_out = stream.str();
-    const char* __return = buff_out.c_str();
-    stream.str("");
-    return __return;
+    return buff_out;
 }
 
 void command (
         string arg1, string arg2, string arg3, string arg4, string arg5)
 {
-    const char* __command = join (arg1, arg2, arg3, arg4, arg5);
+    std::string buff = join (arg1, arg2, arg3, arg4, arg5);
+    const char* __command = buff.c_str();
     reply = redisCommand(redis, __command);
+    stream.str("");
+
 }
 
 string toString()

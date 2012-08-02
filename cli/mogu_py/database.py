@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from db_checking import *
+from redis_cheats import *
 import os,sys
 
 class MissingChildError(Exception):
@@ -30,20 +31,28 @@ def add_dict(node, dictionary, db, merge=False):
         db.hset(node,key,dictionary[key])
 
 def check_widgets(widgets,merge=False):
+    message = ""
     try:
         for widget in widgets:
+            message += warn("Checking: %s ... " % widget)
             args = widgets[widget]
             args = check_widget_values(widget,args,merge)
             widgets[widget] = args
+            message += ok("OK\n")
+            print(message)
         return widgets
     except MissingParameterError as e:
-        print e
+        message += fail("NOT OK: %s" % e)
         sys.exit()
     except AmbiguousDirectiveError as e:
-        print e
+        message += fail("NOT OK: %s" % e)
         sys.exit()
     except UnknownWidgetTypeError as e:
-        print e
+        message += fail("NOT OK: %s" % e)
+        sys.exit()
+    except Exception as e:
+        message += fail("NOT OK: %s" % e)
+        print(message)
         sys.exit()
 
 def check_events(events,db,test=False):
@@ -77,6 +86,11 @@ def add_tree(tree, db, merge=False):
             children.append( "widgets.%s" % child.replace("widgets.",""))
         add_list(children_node, children, db, merge)
 
+def add_policy(widget_name, args, db, merge=False):
+    if not db.exists(as_widget(widget_name)):
+        raise WidgetNotFoundError
+    add_dict(as_widget(widget_name)+".policy",args,db,merge)
+
 def add_widget(short_name,args,db, merge=False):
     name = "widgets.%s" % short_name
     add_dict(name,args,db,merge)
@@ -108,6 +122,7 @@ def add_widget_set(db, package, test=False, flush=False, merge=False):
         if flush:
             db.flushdb()
         for widget in widgets:
+            print ok("Importing %s " % widget)
             add_widget(widget, widgets[widget], db, merge)
     events = package.events
     if events:
@@ -132,6 +147,11 @@ def add_perspectives(db, perspectives, test=False, merge=False):
     for perspective in perspectives:
         add_perspective(perspective, perspectives[perspective], db, test, merge)
 
+def add_policies(db, policies, test=False):
+    for policy in policies:
+        args = check_policy_values(policy,policies[policy])
+        if not test:
+            add_policy(policy, policies[policy], db, test)
 
 def add_meta_value(db, name, value, test=False, merge=False):
     node = "meta.%s" % name

@@ -14,11 +14,13 @@
 #include <crypt/BlowfishKey.h>
 #include <crypt/PacketCenter.h>
 #include <Wt/WFormWidget>
+#include <Wt/WLineEdit>
 #include <Types/Enums.h>
 #include <Types/NodeValue.h>
 #include <Parsers/Parsers.h>
 #include <Mogu.h>
 #include <crypt/PacketCenter.h>
+#include <sstream>
 
 namespace Sessions{
 namespace SubmissionHandler{
@@ -27,6 +29,7 @@ using namespace Enums::SubmissionPolicies;
 
 void absorb(Dynamic* inputWidget)
 {
+	namespace Widget = Enums::WidgetTypes;
 	/* We will only continue if all authorization checks are passed.
 	 * First, we need to determine that the Wt Application ID is the same
 	 * that is being held within the private static namespace. If so,
@@ -53,18 +56,30 @@ void absorb(Dynamic* inputWidget)
 		 * hashed name of "firstName" is 123hu, the storage node would be:
 		 * s.235r308gg.123hu
 		 */
-		Wt::WFormWidget* formWidget = (Wt::WFormWidget*)
-				inputWidget->widget(0);
-		std::string value = formWidget->valueText().toUTF8();
+		std::string value_unenc;
+		std::string value_enc;
+
+		Widget::WidgetTypes iType = (Widget::WidgetTypes)
+				inputWidget->getType();
+
+		switch(iType & 0x3F /*Mask HO bits */){
+
+		case Widget::input_text:{
+			Wt::WLineEdit* line = (Wt::WLineEdit*) inputWidget->widget(0);
+			value_unenc = line->text().toUTF8();
+			break;}
+
+		default:break;
+		}
 
 		BlowfishKeyCreator keygen;
 		BF_KEY* enc_key = keygen.getKey();
 		bool encrypted = requiresEncryption(inputWidget);
 		if (encrypted)
 		{
-			PacketCenter encryption(value,DECRYPTED);
+			PacketCenter encryption(value_unenc,DECRYPTED);
 			encryption.giveKey(enc_key);
-			value = encryption.encrypt();
+			value_enc = encryption.encrypt();
 		}
 
 		StorageMode mode_ = getStorageMode(inputWidget);
@@ -80,22 +95,22 @@ void absorb(Dynamic* inputWidget)
 			switch(wrap_)
 			{
 			case enumerated_type:{
-				value = "{"+value+"}";
+				value_unenc = "{"+value_unenc+"}";
 				break;}
 			case static_node:{
-				value = "%"+value+"%";
+				value_unenc = "%"+value_unenc+"%";
 				break;}
 			case dynamic_node:{
-				value = "@"+value+"@";
+				value_unenc = "@"+value_unenc+"@";
 				break;}
 			case integral_type:{
-				value = "^"+value+"^";
+				value_unenc = "^"+value_unenc+"^";
 				break;}
 			case floating_type:{
-				value = "~"+value+"~";
+				value_unenc = "~"+value_unenc+"~";
 				break;}
 			case file:{
-				value = "`"+value+"`";
+				value_unenc = "`"+value_unenc+"`";
 				break;}
 			default:break;
 			}
@@ -130,16 +145,14 @@ void absorb(Dynamic* inputWidget)
 					PacketCenter decryption(current_val, ENCRYPTED);
 					decryption.giveKey(enc_key);
 					current_val = decryption.decrypt();
-					std::string unenc_val =
-							formWidget->valueText().toUTF8();
-					std::string concat_val = current_val + " " + unenc_val;
+					std::string concat_val = current_val + " " + value_unenc;
 					PacketCenter encryption(concat_val, DECRYPTED);
 					encryption.giveKey(enc_key);
-					value = encryption.encrypt();
+					value_enc = encryption.encrypt();
 				}
 				else
 				{
-					value = current_val + " " + value;
+					value_unenc = current_val + " " + value_unenc;
 				}
 			}
 			redis_command = "hset";
@@ -159,14 +172,12 @@ void absorb(Dynamic* inputWidget)
 					std::string current_val = Redis::toString();
 					PacketCenter decryption(current_val, ENCRYPTED);
 					decryption.giveKey(enc_key);
-					std::string unenc_val =
-							formWidget->valueText().toUTF8();
-					std::string concat_val = current_val + " " + unenc_val;
+					std::string concat_val = current_val + " " + value_unenc;
 					PacketCenter encryption(concat_val, DECRYPTED);
 					encryption.giveKey(enc_key);
-					value = encryption.encrypt();
+					value_enc = encryption.encrypt();
 				}
-				value = " " + value;
+				value_enc = " " + value_enc;
 			}
 			else
 			{
@@ -176,6 +187,7 @@ void absorb(Dynamic* inputWidget)
 
 		default: break;
 		}
+		std::string value = (encrypted) ? value_enc : value_unenc;
 
 		// "command" -> "command node"
 		redis_command = redis_command + " " + storageNode;
@@ -186,8 +198,7 @@ void absorb(Dynamic* inputWidget)
 		}
 		//"command node" | "command node field" ->
 		//				"command node "value"" | "command node field "value" "
-		redis_command = redis_command + " \""+ value + "\"";
-		Redis::command(redis_command);
+		Redis::command(redis_command, value);
 	}
 
 	else

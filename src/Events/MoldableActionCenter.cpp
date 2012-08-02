@@ -14,9 +14,11 @@
 #include <Parsers/Parsers.h>
 #include <Wt/WStackedWidget>
 #include <Core/Moldable.h>
+#include <Core/Dynamic.h>
 #include <Static.h>
 #include <Mogu.h>
 #include <Wt/WString>
+#include <Sessions/Submission.h>
 
 namespace Events
 {
@@ -27,6 +29,7 @@ using std::string;
 namespace Action = Enums::SignalActions;
 
 using Goo::Moldable;
+using Goo::Dynamic;
 
 namespace {
     ListenerMap listenerMap;
@@ -404,8 +407,22 @@ void directListeners(BroadcastMessage* broadcast)
     		{
     			widget->clear();
     		}
+    	}
     	break;}
-    }
+
+
+    case Action::store_value:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Dynamic* widget = (Dynamic*) listeners->at(w);
+    		std::cout << "Broadcaster: " << broadcast->getBroadcaster()->getType() << std::endl;
+    		std::cout << "Listener: " << widget->getType() << std::endl;
+    		if (widget->allowsAction(Action::store_value))
+    		{
+    			Sessions::SubmissionHandler::absorb(widget);
+    		}
+    	}
+    	break;}
 
     default:return; // Don't do anything unexpected!
     }

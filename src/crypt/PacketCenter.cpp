@@ -7,6 +7,7 @@
 
 #include <crypt/PacketCenter.h>
 #include <iostream>
+#include <sstream>
 
 PacketCenter::PacketCenter (string input, PacketType inputType)
 {
@@ -181,7 +182,8 @@ string PacketCenter::process_encryption(PacketType type)
 		write->add(new Packet(out));
 	}
 	write->trim();
-	string ret("");
+	std::stringstream strm;
+	//string ret("");
 	int num_packets = write->size();
 	for (int i = 0; i < num_packets; i++)
 	{
@@ -194,9 +196,22 @@ string PacketCenter::process_encryption(PacketType type)
 		{
 			str = write->at(i)->str();
 		}
-		ret.append(str);
+		int len = str.length();
+		for (int c =0; c < len; c++)
+		{
+			char ch = str.at(c);
+			if (ch == ' ')
+			{
+				strm << '_';
+			}
+			else
+			{
+				strm << ch;
+			}
+		}
+		//ret.append(str);
 	}
-	return ret;
+	return strm.str();
 }
 
 string PacketCenter::decrypt ()

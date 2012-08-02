@@ -28,7 +28,8 @@ required_widget_parameters = {
         "image" :               ("content","source"),
         "image_link" :          ("content","source","location"),
         "link" :                ("content","location"),
-        "text"  :               ("content",)
+        "text"  :               ("content",),
+        "input" :               (None,)
         }
 
 required_event_parameters = {
@@ -44,7 +45,6 @@ required_event_parameters = {
         "219"       :       ("action","message","listeners","degradation","trigger"),
         "225"       :       ("action","message","listeners","trigger"),
         "233"       :       ("action","message","listeners","trigger")
-        
         }
 
 
@@ -96,10 +96,15 @@ class Type_Assertions:
     SIGNAL =        (Wrappers.CARATS,Wrappers.CURLY_BRACES)
     TRIGGER =       (Wrappers.CURLY_BRACES,)
     MESSAGE =       CONTENT
-    LISTENERS =     (Wrappers.CURLY_BRACES,)
+    LISTENERS =     (Wrappers.CURLY_BRACES,Wrappers.NONE)
     EVENTS =        (Wrappers.NONE,Wrappers.PERCENT_SYMBOLS)
     BLOCK  =        (Wrappers.CURLY_BRACES,)
     NAME    =       (Wrappers.NONE,)
+    COMMENT =       (Wrappers.NONE,)
+    ENCRYPTED =     (Wrappers.CARATS,)
+    STORAGE_TYPE =  (Wrappers.CURLY_BRACES,)
+    MODE        =   (Wrappers.CURLY_BRACES,)
+    DATATYPE    =   (Wrappers.CURLY_BRACES,)
 
 key_checklist = {
         "type"  :       Type_Assertions.TYPE,
@@ -119,7 +124,12 @@ key_checklist = {
         "listeners" :   Type_Assertions.LISTENERS,
         "events"    :   Type_Assertions.EVENTS,
         "block"     :   Type_Assertions.BLOCK,
-        "name"      :   Type_Assertions.NAME
+        "name"      :   Type_Assertions.NAME,
+        "comment"   :   Type_Assertions.COMMENT,
+        "encrypted" :   Type_Assertions.ENCRYPTED,
+        "storage_type": Type_Assertions.STORAGE_TYPE,
+        "mode"      :   Type_Assertions.MODE,
+        "data_type" :   Type_Assertions.DATATYPE
         }
 
 def is_wrapped(value,start,finish):
@@ -142,7 +152,6 @@ def wrap(value,start,finish):
 def assert_wrap(value,char_set):
 
     wrap_status = is_wrapped(value,char_set[0],char_set[1])
-    
     if wrap_status is 1:
         return value
     elif wrap_status is -1:
@@ -199,6 +208,14 @@ def check_widget_values(widget_name, args, merge=False):
                 missing_param = results.index(False)
                 missing_param = required_params[missing_param]
                 raise MissingParameterError(widget_name,missing_param)
+    return args
+
+def check_policy_values(widget_name, args):
+    for i in ("encrypted","storage_type","data_type","mode"):
+        if i not in args:
+            raise BadMoldDirective(i,args)
+    for key in args:
+        args[key] = check(key,args[key])
     return args
 
 def check_event_values(event_name, args):

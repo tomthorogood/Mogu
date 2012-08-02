@@ -20,6 +20,8 @@
 #include <Core/Moldable.h>
 #include <Parsers/StyleParser.h>
 #include <Perspectives/PerspectiveHandler.h>
+#include <hash.h>
+
 
 
 WidgetRegistration::WidgetRegistration()
@@ -34,15 +36,24 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 :   Wt::WApplication(env)
 {
 	Application::defineMogu(this);
+	Application::setWtSession(sessionId());
+
+	std::string global_auth = AUTH_TOKEN;
+	std::string auth_hash = Hash::toHash(global_auth);
+	Application::setAuthToken(auth_hash);
+	Application::setSessionID(GLOBAL_SESSION);
+
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
 
     std::string outermost_container = "widgets.wrapper";
 
-    /* This will be deleted by the wrapper! */
     __wrapper = new Goo::Moldable(outermost_container);
+
     root()->addWidget(__wrapper);
+
     internalPathChanged().connect(this, &Mogu::handlePathChange);
+
     std::string entry_path = internalPath();
     if (entry_path != "/" && entry_path.length() > 0)
     {

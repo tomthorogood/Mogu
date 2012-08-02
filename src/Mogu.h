@@ -11,6 +11,14 @@
 #include <declarations.h>
 #include <Wt/WApplication>
 
+#ifndef AUTH_TOKEN
+#define AUTH_TOKEN "BendTheWeb"
+#endif
+
+#ifndef GLOBAL_SESSION
+#define GLOBAL_SESSION "global"
+#endif
+
 struct WidgetRegistration
 {
 	Goo::Moldable* pointer;

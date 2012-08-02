@@ -24,7 +24,7 @@ namespace Redis
 
 void done(redisReply* reply);
 
-const char* join (
+std::string join (
         std::string arg1,
         std::string arg2 ="",
         std::string arg3 ="",

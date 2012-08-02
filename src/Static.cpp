@@ -6,18 +6,31 @@
  */
 
 #include <Static.h>
+#include <crypt/BlowfishKey.h>
+#include <crypt/PacketCenter.h>
 
 namespace Application
 {
 	namespace {
 		Mogu* app;
-		std::string sessionID;
-		std::string auth_token;
+		std::string __sessionID;
+		std::string __auth_token;
 		std::string __wt_session;
 	}
 	Mogu* mogu()
 	{
 		return app;
+	}
+
+	std::string encrypt(std::string unencrypted)
+	{
+		BlowfishKeyCreator* keygen = new BlowfishKeyCreator();
+		BF_KEY* key = keygen->getKey();
+		PacketCenter encryption(unencrypted, DECRYPTED);
+		encryption.giveKey(key);
+		std::string encrypted = encryption.encrypt();
+		delete keygen;
+		return encrypted;
 	}
 
 	void defineMogu(Mogu* application)
@@ -32,16 +45,26 @@ namespace Application
 		 * however, whereas the auth token is lost forever. The auth token is
 		 * the only way to retrieve the working session.
 		 */
-		if (auth_token == auth_token)
+		if (auth_token == __auth_token)
 		{
-			return sessionID;
+			return __sessionID;
 		}
 		return "ERR_NOT_AUTHORIZED";
 	}
 
+	void setWtSession(std::string session)
+	{
+		__wt_session = session;
+	}
+
 	void setAuthToken(std::string token)
 	{
-		auth_token = token;
+		__auth_token = encrypt(token);
+	}
+
+	void setSessionID(std::string session)
+	{
+		__sessionID = session;
 	}
 
 	bool handshake(std::string wtSession)

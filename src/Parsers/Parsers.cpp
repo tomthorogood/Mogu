@@ -117,6 +117,7 @@ SignalActionParser::SignalActionParser()
     enumMap["set_style"]    = Action::set_style;
     enumMap["set_index"]    = Action::set_index;
     enumMap["set_path"]		= Action::set_internal_path;
+    enumMap["submit"]		= Action::store_value;
     enumMap["block"]        = Action::BLOCK;
 }
 

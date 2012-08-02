@@ -8,11 +8,13 @@
 //@TODO: Determine if nodeValues are ever deleted.
 
 #include <Core/Moldable.h>
+#include <Core/Dynamic.h>
 #include <Wt/WContainerWidget>
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
 #include <Wt/WImage>
 #include <Wt/WAnchor>
+#include <Wt/WLineEdit>
 
 #include <Redis/RedisCore.h>
 #include <Parsers/Parsers.h>
@@ -21,6 +23,7 @@
 #include <Events/Bindery.h>
 #include <Static.h>
 #include <Mogu.h>
+#include <hash.h>
 
 // REMOVE WHEN IN PRODUCTION
 #include <iostream>
@@ -59,7 +62,7 @@ Moldable::Moldable(
 
 {
     nodes.add(constructorNode);
-    bool __DEBUG__;
+    bool __DEBUG__; //this is here as a breakpoint and not needed for anything.
     std::cout << constructorNode << std::endl;
     bindery =0;
     setContentVariables();
@@ -179,7 +182,19 @@ Moldable::load()
 
 void Moldable::addGoo (const string& nodeName)
 {
-    Moldable* newGoo = new Moldable(nodeName);
+	Moldable* newGoo =0;
+	if (Parsers::StyleParser::widgetIsDynamic(nodeName))
+	{
+		std::string token = AUTH_TOKEN;
+		token = Hash::toHash(token);
+		newGoo = new Dynamic(
+				Application::encrypt(token),
+				nodeName);
+	}
+	if (newGoo ==0)
+	{
+		newGoo = new Moldable(nodeName);
+	}
     if (typeFlags == Enums::WidgetTypes::stack)
     {
         Wt::WStackedWidget* stack =
@@ -252,6 +267,10 @@ Moldable::createContent()
             setStyleClass("");
             addWidget(_stacked_container);
             break;}
+        case input_text:{
+        	Wt::WLineEdit* input_ = new Wt::WLineEdit(baseVariables.content);
+        	addWidget(input_);
+        	break;}
         }
     }
     if (baseVariables.propertyFlags & Enums::SignalTypes::has_children)

@@ -17,7 +17,9 @@ namespace Application
 	std::string requestSessionID(std::string auth);
 	void setAuthToken(std::string auth);
 	void setWtSession(std::string session);
+	void setSessionID(std::string session);
 	bool handshake(std::string wtSession);
+	std::string encrypt(std::string data);
 }
 
 

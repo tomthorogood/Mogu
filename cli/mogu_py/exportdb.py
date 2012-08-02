@@ -56,6 +56,15 @@ def export_widget_dict(db,widget):
             db.hgetall(widget)
             )
 
+def export_widget_policy(db,policy):
+    policy_name = policy.replace("widgets.","").replace(".policy","")
+    return dict_to_string(
+            "policies",
+            policy_name,
+            db.hgetall(policy)
+            )
+            
+
 def export_widget_events(db,widget):
     event_nodes = db.keys("%s.events.*" %widget)
     if (len(event_nodes) is 0):
@@ -93,7 +102,7 @@ def export_widget_children(db,widget):
         output = "%s%s" % (title,body)
     return output
 
-
+        
 
 def clean_file(filename):
     f = open(filename,'r')
@@ -111,8 +120,9 @@ def export(db, filename):
     f.write("#Mogu Import File: %s \n\n" % filename)
     widgets = [key for key in db.keys('widgets.*') \
             if db.type(key) == 'hash' and \
-            'events' not in key and \
-            'chilren' not in key
+            '.events' not in key and \
+            '.children' not in key and \
+            '.policy' not in key
             ]
 
     for widget in widgets:
@@ -121,11 +131,19 @@ def export(db, filename):
 
     for widget in widgets:
             output = export_widget_events(db,widget)
-            f.write(output)
+            if "\"" in output:
+                f.write(output)
 
     for widget in widgets:
         output = export_widget_children(db,widget)
-        f.write(output)
+        if "\"" in output:
+            f.write(output)
+
+    
+    policies = db.keys("*.policy")
+    for p in policies:
+        if "\"" in output:
+            output = export_policy(db,p)
 
     perspectives = db.keys("perspectives.*")
     perspectives_ = []
