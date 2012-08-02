@@ -155,14 +155,24 @@ enum SignalAction{
     remove_child		=0xD,
     delete_child		=0xE,
     clear				=0xF,
-    store_plain			=0x10,
-    increment_plain		=0x11,
-    store_enc			=0x18,
-    increment_enc		=0x19,
+    store_value			=0x10,
+    increment_value		=0x11,
     delete_value		=0x1F,
     BLOCK				=0x80
 
 };
+}
+
+namespace BitMasks{
+enum BitMasks{
+	widget_accepts_children		=0x1,
+	widget_has_content			=0x2,
+	widget_usually_clicked		=0x4,
+	widget_accepts_input		=0x8,
+	widget_write_permissions	=0x40,
+	widget_is_dynamic			=0x80
+};
+
 }
 
 namespace SubmissionPolicies{
@@ -192,7 +202,6 @@ enum DataWrapping{
 namespace SignalTriggers{
 enum SignalTrigger{
     click,
-    action_name,
     style_changed,
     mouseover,
     mouseout,
@@ -295,35 +304,24 @@ enum NodeValueTypes{
 };
 } //namespace NodeValueTypes
 
-namespace WidgetTypeFlags{
-enum WidgetTypeFlags {
-    is_link         =0x1, //!< is_link
-    is_image        =0x2, //!< is_image
-    is_input        =0x4, //!< is_input
-    has_options     =0x8, //!< has_options
-    is_select       =0x10,//!< is_select
-    is_multi        =0x20,//!< is_multi
-    is_freeform	    =0x40 //!< is_freeform
-};
-} //namespace WidgetTypeFlags
 
 /*!\brief The types of widgets creatable with Goo. */
 namespace WidgetTypes{
 enum WidgetTypes {
-    text                =0x0,
-    link                =0x1,
-    image               =0x2,
-    image_link          =0x3,
-    submit_button       =0x4,
-    submit_image        =0x6,
-    radio_button_menu   =0xC,
-    input_text          =0x44,
-    text_area           =0x64,
-    dropdown_menu       =0x1C,
-    checkbox_menu       =0x2C,
-    multi_select        =0x3C,
-    generic_container   =0x40,
-    stacked_container   =0x60
+    container			=0x0,
+    stack				=0x1,
+    text				=0x2,
+    image				=0x3,
+    link				=0x4,
+    image_link			=0x5,
+    button				=0x7,
+    input_text			=0x8,
+    textarea			=0x9,
+    dropdown_menu		=0xA,
+    radio_button_menu	=0xB,
+    checkbox_menu		=0xC,
+    multi_select			=0xD
+
 };
 } //namespace WidgetTypes
 

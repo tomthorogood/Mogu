@@ -29,7 +29,7 @@ namespace Goo
 {
 using std::string;
 using namespace Enums::WidgetTypes;
-using namespace Enums::WidgetTypeFlags;
+using namespace Enums::BitMasks;
 
 //REMOVE WHEN In PRODUCTION
 using std::cout;
@@ -71,11 +71,6 @@ Moldable::~Moldable()
         delete bindery;
 }
 
-string Moldable::__TEST__()
-{
-    return getNodeList()->at(0);
-}
-
 Moldable* Moldable::child (int index)
 {
     return children.at(index);
@@ -101,11 +96,12 @@ Wt::Signal<>& Moldable::styleChanged()
 
 void Moldable::setContentVariables()
 {
-    namespace TypeFlags = Enums::WidgetTypeFlags;
+    using namespace Enums::BitMasks;
     namespace Properties = Enums::SignalTypes;
     using namespace Parsers::StyleParser;
 
     typeFlags = Parsers::StyleParser::getWidgetType(this);
+    //Todo why are we storing this value twice?
     baseVariables.type = typeFlags;
 
     /*Set the various property flags of this widget. */
@@ -131,8 +127,7 @@ void Moldable::setContentVariables()
     	baseVariables.propertyFlags |= Properties::is_named;
     	do_if_is_named();
     }
-
-    if (typeFlags == Enums::WidgetTypes::stacked_container)
+    if ( (typeFlags & stack) == stack)
     {
         baseVariables.propertyFlags |= Properties::is_stacked;
     }
@@ -148,23 +143,20 @@ void Moldable::setContentVariables()
     /* All non-container widgets should have some sort of text
      * content, even though it might not necessarily be a "block of text".
      */
-    if (
-            typeFlags != generic_container &&
-            typeFlags != stacked_container
-        )
+    if (typeFlags > stack)
     {
         baseVariables.content = getWidgetText(this);
     }
 
-    if (typeFlags & TypeFlags::is_image)
+    if (
+    		(typeFlags & image) == image ||
+    		((typeFlags & image_link) == image_link))
     {
-        baseVariables.source =
-                getWidgetImgSource(this);
+        baseVariables.source = getWidgetImgSource(this);
     }
-    if (typeFlags & TypeFlags::is_link)
+    if ( (typeFlags & widget_usually_clicked) == widget_usually_clicked)
     {
-        baseVariables.location =
-                getWidgetLinkLocation(this);
+        baseVariables.location = getWidgetLinkLocation(this);
     }
 }
 
@@ -187,7 +179,7 @@ Moldable::load()
 void Moldable::addGoo (const string& nodeName)
 {
     Moldable* newGoo = new Moldable(nodeName);
-    if (typeFlags == Enums::WidgetTypes::stacked_container)
+    if (typeFlags == Enums::WidgetTypes::stack)
     {
         Wt::WStackedWidget* stack =
                 (Wt::WStackedWidget*) widget(0);
@@ -222,24 +214,24 @@ Moldable::createContent()
                 Parsers::StyleParser::getActionBlock(this);
     }
 
-    if (typeFlags & is_link)
+    if ( (typeFlags & widget_usually_clicked) == widget_usually_clicked)
     {
         do_if_is_link();
     }
-    else if (typeFlags & is_image)
+    else if ((typeFlags & image) == image)
     {
         do_if_is_image();
     }
     else
     {
-        switch(typeFlags)
+        switch(typeFlags & 0x3F /* Mask the two HO bits */)
         {
         case text:{
             Wt::WText* _text = new Wt::WText(baseVariables.content);
             addWidget(_text);
             break;}
 
-        case stacked_container:{
+        case stack:{
             Wt::WStackedWidget* _stacked_container =
                     new Wt::WStackedWidget();
 
@@ -274,7 +266,7 @@ void Moldable::do_if_is_link()
             baseVariables.location,
             baseVariables.content
     );
-    if (typeFlags & is_image)
+    if (typeFlags == image_link)
     {
         Wt::WImage* _image = new Wt::WImage (
                 baseVariables.source, baseVariables.content);

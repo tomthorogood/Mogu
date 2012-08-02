@@ -42,6 +42,7 @@ bool widgetHasAnimation(Goo::Moldable* broadcaster);
 bool widgetBlocksActions(Goo::Moldable* broadcaster);
 bool widgetIsNamed(Goo::Moldable* broadcaster);
 bool widgetHasStackIndex(Goo::Moldable* broadcaster);
+bool widgetIsDynamic(std::string);
 
 uint8_t getActionBlock(Goo::Moldable* broadcaster);
 

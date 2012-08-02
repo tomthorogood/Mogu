@@ -25,12 +25,11 @@ WidgetTypeParser::WidgetTypeParser()
     enumMap["image"]            = WidgetTypes::image;
     enumMap["image link"]       = WidgetTypes::image_link;
     enumMap["image_link"]       = WidgetTypes::image_link;
-    enumMap["submit button"]    = WidgetTypes::submit_button;
-    enumMap["submit"]           = WidgetTypes::submit_button;
-    enumMap["submit image"]     = WidgetTypes::submit_image;
+    enumMap["submit button"]    = WidgetTypes::button;
+    enumMap["submit"]           = WidgetTypes::button;
     enumMap["radio button"]     = WidgetTypes::radio_button_menu;
-    enumMap["text area"]        = WidgetTypes::text_area;
-    enumMap["textarea"]         = WidgetTypes::text_area;
+    enumMap["text area"]        = WidgetTypes::textarea;
+    enumMap["textarea"]         = WidgetTypes::textarea;
     enumMap["input"]            = WidgetTypes::input_text;
     enumMap["input text"]       = WidgetTypes::input_text;
     enumMap["dropdown menu"]    = WidgetTypes::dropdown_menu;
@@ -38,10 +37,17 @@ WidgetTypeParser::WidgetTypeParser()
     enumMap["checkbox menu"]    = WidgetTypes::checkbox_menu;
     enumMap["checkbox"]         = WidgetTypes::checkbox_menu;
     enumMap["multi select"]     = WidgetTypes::multi_select;
-    enumMap["generic container"]= WidgetTypes::generic_container;
-    enumMap["container"]        = WidgetTypes::generic_container;
-    enumMap["wrapper"]          = WidgetTypes::generic_container;
-    enumMap["stacked"]          = WidgetTypes::stacked_container;
+    enumMap["container"]        = WidgetTypes::container;
+    enumMap["stacked"]          = WidgetTypes::stack;
+    enumMap["stack"]			= WidgetTypes::stack;
+}
+
+BitMaskParser::BitMaskParser()
+: EnumParser <Enums::BitMasks::BitMasks> ()
+{
+	namespace Mask = Enums::BitMasks;
+	enumMap["dynamic"]			= Mask::widget_is_dynamic;
+	enumMap["rw"]				= Mask::widget_write_permissions;
 }
 
 StyleDirectiveParser::StyleDirectiveParser()

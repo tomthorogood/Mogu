@@ -123,8 +123,6 @@ public:
 
     virtual ~Moldable();
 
-    virtual std::string __TEST__();
-
     /*!\brief Implementation of the virtual load() method of WContainerWidget,
      * which will be used to ensure that nothing actually gets created until
      * the widget is needed. In this fashion, upon instantiation, the widgets

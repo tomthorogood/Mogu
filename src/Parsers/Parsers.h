@@ -32,6 +32,12 @@ class WidgetTypeParser :
 public: WidgetTypeParser();
 };
 
+class BitMaskParser :
+	public TurnLeft::Utils::EnumParser <Enums::BitMasks::BitMasks>
+{
+public: BitMaskParser();
+};
+
 class StyleDirectiveParser :
     public TurnLeft::Utils::EnumParser <Enums::StyleDirectives::StyleDirectives>
 {
