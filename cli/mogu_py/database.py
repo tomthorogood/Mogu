@@ -69,8 +69,13 @@ def add_tree(tree, db, merge=False):
             raise MissingChildError(widget_name)
 
     for widget_name in tree:
-        node = "widgets.%s.children" % widget_name.replace("widgets.","")
-        add_list(node, tree[widget_name], db, merge)
+        widget_name = widget_name.replace("widgets.","")
+        widget_node = "widgets.%s" % widget_name
+        children_node = "%s.children" % widget_node
+        children = []
+        for child in tree[widget_name]:
+            children.append( "widgets.%s" % child.replace("widgets.",""))
+        add_list(children_node, children, db, merge)
 
 def add_widget(short_name,args,db, merge=False):
     name = "widgets.%s" % short_name

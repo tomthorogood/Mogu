@@ -8,8 +8,6 @@ class ImportPackage(object):
         self.perspectives = perspectives
 
 def evaluate_file(filename):
-    typefn = type
-    type ="type"
     content = "content"
     action = "action"
     css = "class"

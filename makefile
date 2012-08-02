@@ -25,6 +25,10 @@ install:
 	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
 	ln -s /etc/mogu/mogu /usr/bin/mogu
 
+install-cli:
+	cp -r cli/* /etc/mogu	
+
+
 uninstall:
 	unlink /usr/bin/mogu-server
 	unlink /usr/bin/mogu

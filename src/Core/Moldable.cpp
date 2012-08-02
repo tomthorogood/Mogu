@@ -59,6 +59,8 @@ Moldable::Moldable(
 
 {
     nodes.add(constructorNode);
+    bool __DEBUG__;
+    std::cout << constructorNode << std::endl;
     bindery =0;
     setContentVariables();
 }
