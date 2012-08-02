@@ -10,6 +10,7 @@
 #include <Types/NodeValue.h>
 #include <Core/Moldable.h>
 #include <Redis/RedisCore.h>
+#include <TurnLeftLib/Utils/explosion.h>
 #include <fstream>
 
 namespace Parsers
@@ -194,7 +195,24 @@ inline void NodeValueParser::interpret_as_integer(const string& value)
 inline void NodeValueParser::interpret_as_enum(
         const string& value, int(*callback)(const string&))
 {
-    int e_val = callback(value);
+
+	std::string masks[8];
+	// Look for special properties in the widget and turn on the
+	// corresponding bits.
+	TurnLeft::Utils::Explosion explosion(value);
+	explosion.explode('|',masks);
+	int e_val = callback(masks[0]);
+
+	int num_words = explosion.getNumWords();
+	if (num_words > 1)
+	{
+		Parsers::BitMaskParser maskParser;
+		for (int w = 1; w < num_words; w++)
+		{
+			e_val |= maskParser.parse(masks[w]);
+		}
+	}
+
     parsedValue->setInt( e_val );
 }
 

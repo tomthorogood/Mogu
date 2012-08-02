@@ -187,7 +187,8 @@ def check_widget_values(widget_name, args, merge=False):
     
     if not merge:
         unwrapped_type = args['type'][1:-1]
-        required_params = required_widget_parameters[unwrapped_type]
+        widget_type = unwrapped_type.split('|')[0]
+        required_params = required_widget_parameters[widget_type]
         if required_params[0] is not None:
             results = [False for i in range(len(required_params))]
             i = 0

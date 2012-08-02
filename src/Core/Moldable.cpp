@@ -143,7 +143,7 @@ void Moldable::setContentVariables()
     /* All non-container widgets should have some sort of text
      * content, even though it might not necessarily be a "block of text".
      */
-    if (typeFlags > stack)
+    if ( (typeFlags & 0x3F /*Mask two HO bits */) > stack)
     {
         baseVariables.content = getWidgetText(this);
     }
@@ -154,7 +154,8 @@ void Moldable::setContentVariables()
     {
         baseVariables.source = getWidgetImgSource(this);
     }
-    if ( (typeFlags & widget_usually_clicked) == widget_usually_clicked)
+    if ( (typeFlags & Enums::WidgetTypes::link) == Enums::WidgetTypes::link ||
+    		(typeFlags & image_link) == image_link)
     {
         baseVariables.location = getWidgetLinkLocation(this);
     }
