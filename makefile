@@ -10,9 +10,14 @@ turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
 sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
+command := g++ -Wall
 
 all: $(objects) | $(turnleft) 
+ifeq ($(dbg),on)
+	g++ -Wall -DTERM_ENABLED -g -o $(executable) $(objects) $(devel_libs)
+else
 	g++ -Wall -o $(executable) $(objects) $(devel_libs)
+endif
 
 
 production: $(objects) | $(turnleft)
@@ -35,7 +40,11 @@ uninstall:
 	rm -rf /etc/mogu
 
 %.o:
+ifeq ($(dbg),on)
+	g++ -c -DTERM_ENABLED -g $(includes) -o $@ $(patsubst %.o, %.cpp, $@)
+else
 	g++ -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
+endif
 
 $(turnleft):
 	git clone git://www.github.com/tomthorogood/TurnLeftLib.git

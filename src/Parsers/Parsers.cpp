@@ -121,6 +121,9 @@ SignalActionParser::SignalActionParser()
     enumMap["remove_child"]	= Action::remove_child;
     enumMap["add_child"] 	= Action::add_widget;
     enumMap["block"]        = Action::BLOCK;
+#ifdef TERM_ENABLED
+    enumMap["TERMINATE"]	= Action::TERM;
+#endif
 }
 
 NodeValueTypeParser::NodeValueTypeParser()

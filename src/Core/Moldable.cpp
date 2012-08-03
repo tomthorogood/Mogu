@@ -62,8 +62,9 @@ Moldable::Moldable(
 
 {
     nodes.add(constructorNode);
-    bool __DEBUG__; //this is here as a breakpoint and not needed for anything.
+#ifdef TERM_ENABLED
     std::cout << constructorNode << std::endl;
+#endif
     bindery =0;
     setContentVariables();
 }
