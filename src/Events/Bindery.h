@@ -33,6 +33,7 @@ class EventBindery : public Wt::WObject
 
 public:
     EventBindery(Goo::Moldable* broadcaster);
+    ~EventBindery();
 };
 
 } //namespace Events

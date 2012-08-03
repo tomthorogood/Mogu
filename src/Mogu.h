@@ -40,6 +40,7 @@ public:
 	bool widgetIsRegistered(std::string name);
 	void registerWidget(std::string name, Goo::Moldable* widget);
 	Goo::Moldable* registeredWidget(std::string name);
+	void deregisterWidget(std::string name);
 };
 
 

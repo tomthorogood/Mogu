@@ -71,6 +71,12 @@ Moldable::~Moldable()
 {
     if (bindery != 0)
         delete bindery;
+    if (baseVariables.propertyFlags & Enums::SignalTypes::is_named)
+    {
+    	Application::mogu()->deregisterWidget(
+    			Parsers::StyleParser::getWidgetName(this)
+    	);
+    }
 }
 
 Moldable* Moldable::child (int index)
