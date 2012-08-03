@@ -1,14 +1,5 @@
 from redis_cheats import full_list
 
-class MoguImportException(Exception):
-    def __init__(self, filename, error_message):
-        self.value = "Unfortunately, there is something wrong with your Mogu import file %s." % filename
-        self.value += "This is most likely not your fault. Please let us know of the error at " 
-        self.value += "github.com/tomthorogood/mogu"
-        self.value += "\n The error report was: \n"
-        self.value += error_message
-    def __str__(self):
-        return self.value
 
 def dict_str(dict_entries):
     str_entries = []
@@ -142,8 +133,9 @@ def export(db, filename):
     
     policies = db.keys("*.policy")
     for p in policies:
+        output = export_widget_policy(db,p)
         if "\"" in output:
-            output = export_policy(db,p)
+            f.write(output)
 
     perspectives = db.keys("perspectives.*")
     perspectives_ = []
