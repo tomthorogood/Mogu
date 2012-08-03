@@ -49,6 +49,7 @@ upgrade:
 
 clean:
 	rm -rf $(objects)
+	rm -rf *.pyc
 
 purge: clean
 	rm -rf mogu-server
