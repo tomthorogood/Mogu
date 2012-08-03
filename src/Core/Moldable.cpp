@@ -5,8 +5,6 @@
  *      Author: tom
  */
 
-//@TODO: Determine if nodeValues are ever deleted.
-
 #include <Core/Moldable.h>
 #include <Core/Dynamic.h>
 #include <Wt/WContainerWidget>

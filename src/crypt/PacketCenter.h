@@ -43,6 +43,7 @@ private:
 
 public:
 	PacketCenter (string input, PacketType inputType);
+	~PacketCenter();
 	inline PacketCenter& giveKey (BF_KEY* key)
 	{
 		_key = key;

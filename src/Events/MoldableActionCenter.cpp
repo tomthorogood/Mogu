@@ -414,12 +414,6 @@ void directListeners(BroadcastMessage* broadcast)
 
 
     case Action::store_value:{
-#ifdef TERM_ENABLED
-		std::cout << "FORCING SEGFAULT" << std::endl;
-		Moldable* fault =0;
-		delete fault;
-		delete fault;
-#endif
     	for (int w = 0; w < num_listeners; w++)
     	{
     		Dynamic* widget = (Dynamic*) listeners->at(w);

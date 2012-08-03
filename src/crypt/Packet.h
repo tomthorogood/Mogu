@@ -17,7 +17,7 @@ public:
 	Packet(CharArray input);
 	Packet(c_str input);
 	Packet(std::string input);
-
+	~Packet();
 	inline CharArray getData() const
 	{
 		return data;

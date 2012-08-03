@@ -8,6 +8,7 @@
 #include <crypt/PacketCenter.h>
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
 
 PacketCenter::PacketCenter (string input, PacketType inputType)
 {
@@ -49,7 +50,6 @@ PacketCenter::PacketCenter (string input, PacketType inputType)
 			int start = p*Packet::SIZE;
 			string substring = input.substr(start, Packet::SIZE);
 
-			/*@TODO Determine whether this ever gets deleted. */
 			Packet* pkt = new Packet(substring);
 			packet_vector->add(pkt);
 		}
@@ -165,7 +165,6 @@ string PacketCenter::process_encryption(PacketType type)
 	{
 		/* Allocate memory for the CharArray that will hold the
 		* encrypted ciphertext.
-		* @TODO: See whether this is ever freed.
 		*/
 		CharArray out = (CharArray) calloc(Packet::SIZE+1, sizeof(char));
 
@@ -222,4 +221,20 @@ string PacketCenter::decrypt ()
 string PacketCenter::encrypt ()
 {
 	return process_encryption(DECRYPTED);
+}
+
+PacketCenter::~PacketCenter()
+{
+	for (int v = 0; v < 2; v++)
+	{
+		HungryVector <Packet*>* vec = &packets[v];
+		int sz = vec->size();
+		for (int p = 0; p < sz; p++)
+		{
+			if (vec->at(p) != 0)
+			{
+				delete vec->at(p);
+			}
+		}
+	}
 }

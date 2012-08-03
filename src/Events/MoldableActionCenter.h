@@ -12,7 +12,6 @@
 #include <Core/Moldable.h>
 #include <Events/EventNodeExtractor.h>
 #include <Events/EventNodeProcessor.h>
-//@TODO: Handle rebroadcasts
 
 namespace Events
 {

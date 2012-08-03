@@ -25,7 +25,6 @@ void EventNodeProcessor::set (
         Moldable* broadcaster,
         int (*callback)(const string&)
         )
-//@TODO: Check to see if there's a memory leak here.
 {
     NodeValueParser parser(value, broadcaster, callback);
     values[index] = parser.getValue();
@@ -34,6 +33,17 @@ void EventNodeProcessor::set (
 Nodes::NodeValue* EventNodeProcessor::getValue(Node::Labels index)
 {
     return values[index];
+}
+
+EventNodeProcessor::~EventNodeProcessor()
+{
+	for (int i = 0; i < EventNodeConfiguration::NUM_FIELDS; i++)
+	{
+		if (values[i] != 0)
+		{
+			delete values[i];
+		}
+	}
 }
 
 } // namespace Events

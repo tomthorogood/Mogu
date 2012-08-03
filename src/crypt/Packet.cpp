@@ -41,3 +41,11 @@ string Packet::int_str() const
 	return uchar_to_int_str <SIZE+1> (data);
 }
 
+Packet::~Packet()
+{
+	if (data != NULL)
+	{
+		free(data);
+	}
+}
+

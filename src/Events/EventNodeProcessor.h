@@ -28,7 +28,7 @@ private:
 
 public:
     EventNodeProcessor();
-    
+    ~EventNodeProcessor();
     void set(
             Node::Labels index,
             std::string& value,
