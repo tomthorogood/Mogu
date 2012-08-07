@@ -6,17 +6,22 @@ using std::string;
 NodeValue::NodeValue()
 {
     __value = new ValueUnion();
+    __owned_value = true;
 }
 
 NodeValue::NodeValue(ValueUnion* value, ReadType _type)
 {
     __value = value;
     __type = _type;
+    __owned_value = false;
 }
 
 NodeValue::~NodeValue()
 {
-    delete __value;
+	if (__owned_value)
+	{
+		delete __value;
+	}
 }
 
 void NodeValue::setString(string val)

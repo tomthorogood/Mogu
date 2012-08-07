@@ -60,7 +60,10 @@ void command (
 {
     std::string buff = join (arg1, arg2, arg3, arg4, arg5);
     const char* __command = buff.c_str();
-    reply = redisCommand(redis, __command);
+    if (__command != "")
+    {
+    	reply = (redisReply*) redisCommand(redis, __command);
+    }
     stream.str("");
 
 }

@@ -288,7 +288,7 @@ Nodes::NodeValue* NodeValueParser::getValue()
 
 NodeValueParser::~NodeValueParser()
 {
-    delete parsedValue;
+    // Do not delete parsedValue!
 }
 
 } // namespace Parsers

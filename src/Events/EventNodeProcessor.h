@@ -27,7 +27,7 @@ private:
     bool __recycled;
 public:
     EventNodeProcessor(bool recycled =true);
-    ~EventNodeProcessor();
+    virtual ~EventNodeProcessor();
     void set(
             Node::Labels index,
             std::string& value,

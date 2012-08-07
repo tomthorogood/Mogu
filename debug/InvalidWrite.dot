@@ -1,0 +1,31 @@
+digraph InvalidWrite {
+rankdir=LR
+"createApplication(Wt::WEnvironment const)"
+"Wt::WebSession::start()"
+"Application::setAuthToken(std::string)"
+"TurnLeft::Utils::str_to_uchar(std::string)"
+"Packet::Packet(std::string)"
+"__GI_strcpy"
+"boost::detail::function::function_invoker1)"
+"Application::encrypt(std::string)"
+"Wt::WebController::doCreateApplication(Wt::WebSess.."
+"PacketCenter::PacketCenter(std::string, PacketType.."
+"Wt::WebSession::handleRequest(Wt::WebSession::Hand.." [color=lightblue, style=filled]
+ROOT
+"calloc"
+"Mogu::Mogu(Wt::WEnvironment const)"
+"boost::detail::function::function_invoker1)" -> "Wt::WebController::doCreateApplication(Wt::WebSess.." [label=0]
+"Wt::WebController::doCreateApplication(Wt::WebSess.." -> "Wt::WebSession::start()" [label=0]
+"Mogu::Mogu(Wt::WEnvironment const)" -> "createApplication(Wt::WEnvironment const)" [label=0]
+"Packet::Packet(std::string)" -> "PacketCenter::PacketCenter(std::string, PacketType.." [label=0]
+"TurnLeft::Utils::str_to_uchar(std::string)" -> "Packet::Packet(std::string)" [label=0]
+"Wt::WebSession::start()" -> "Wt::WebSession::handleRequest(Wt::WebSession::Hand.." [label=0]
+"Application::encrypt(std::string)" -> "Application::setAuthToken(std::string)" [label=0]
+ROOT -> "__GI_strcpy" [label=0]
+"calloc" -> "TurnLeft::Utils::str_to_uchar(std::string)" [label=0]
+"createApplication(Wt::WEnvironment const)" -> "boost::detail::function::function_invoker1)" [label=0]
+"Application::setAuthToken(std::string)" -> "Mogu::Mogu(Wt::WEnvironment const)" [label=0]
+"PacketCenter::PacketCenter(std::string, PacketType.." -> "Application::encrypt(std::string)" [label=0]
+"__GI_strcpy" -> "TurnLeft::Utils::str_to_uchar(std::string)" [label=0]
+ROOT -> "calloc" [label=0]
+}

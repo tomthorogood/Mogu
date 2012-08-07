@@ -30,11 +30,12 @@ class NodeValue
 {
     ValueUnion* __value;
     ReadType __type;
+    bool __owned_value;
 
 public:
     NodeValue();
     NodeValue(ValueUnion* value, ReadType _type);
-    ~NodeValue();
+    virtual ~NodeValue();
 
     void setString(std::string val);
     void setInt(int val);

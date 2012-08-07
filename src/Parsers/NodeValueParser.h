@@ -44,7 +44,7 @@ public:
             std::string value,
             Goo::Moldable* broadcaster =0,
             int(*callback)(const std::string&) =0);
-    ~NodeValueParser();
+    virtual ~NodeValueParser();
     Nodes::NodeValue* getValue();
 };
 
