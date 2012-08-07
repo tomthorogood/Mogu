@@ -2,5 +2,6 @@
 *.o
 *.a
 *.swp
+*.dot
 mogu-server
 resources/
