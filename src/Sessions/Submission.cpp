@@ -125,6 +125,7 @@ void absorb(Dynamic* inputWidget)
 			if (mode_ == replace)
 			{
 				Redis::command("del", storageNode);
+                Redis::clear();
 			}
 			redis_command = "rpush";
 			break;}
@@ -199,6 +200,7 @@ void absorb(Dynamic* inputWidget)
 		//"command node" | "command node field" ->
 		//				"command node "value"" | "command node field "value" "
 		Redis::command(redis_command, value);
+        Redis::clear();
 	}
 
 	else

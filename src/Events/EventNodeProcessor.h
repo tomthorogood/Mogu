@@ -22,12 +22,11 @@ namespace Node = Enums::Labels;
 
 class EventNodeProcessor
 {
-
 private:
     Nodes::NodeValue* values[EventNodeConfiguration::NUM_FIELDS];
-
+    bool __recycled;
 public:
-    EventNodeProcessor();
+    EventNodeProcessor(bool recycled =true);
     ~EventNodeProcessor();
     void set(
             Node::Labels index,
@@ -37,6 +36,10 @@ public:
             );
 
     Nodes::NodeValue* getValue(Node::Labels index);
+    inline bool isRecycled()
+    {
+        return __recycled;
+    }
 };
 
 }//namespace Events

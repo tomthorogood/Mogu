@@ -158,8 +158,8 @@ enum SignalAction{
     store_value			=0x10,
     increment_value		=0x11,
     delete_value		=0x1F,
-    TERM				=0x7f,
-    BLOCK				=0x80
+    TERM				=0xFE,
+    BLOCK				=0xFF
 
 };
 }

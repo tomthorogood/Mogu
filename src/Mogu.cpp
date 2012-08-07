@@ -22,6 +22,9 @@
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
 
+#ifdef TERM_ENABLED
+#include <Wt/WText>
+#endif
 
 
 WidgetRegistration::WidgetRegistration()
@@ -100,4 +103,9 @@ void Mogu::handlePathChange(std::string path)
 		std::string mold = molds[m];
 		Perspective::Handler::mold(mold);
 	}
+}
+
+Mogu::~Mogu()
+{
+	Redis::disconnect();
 }

@@ -257,6 +257,9 @@ if command == "meta-css-classes":
 if command == "start":
     cli_command = "mogu-server --docroot %s --http-address %s --http-port %s" % (
             config.get("local_server","root"), config.get("local_server", "address"), config.get("local_server", "port"))
+    if config.get("local_server","debug") == "on":
+        cli_command += " --gdb"
+    print(cli_command)
     os.system(cli_command)
 
 if command == "newfile":

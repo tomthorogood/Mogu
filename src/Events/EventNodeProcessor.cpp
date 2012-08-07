@@ -11,8 +11,9 @@ using std::string;
 using Goo::Moldable;
 using Parsers::NodeValueParser;
 
-EventNodeProcessor::EventNodeProcessor()
+EventNodeProcessor::EventNodeProcessor(bool recycled)
 {
+    __recycled = recycled;
     for (int i =0; i < EventNodeConfiguration::NUM_FIELDS; i++)
     {
         values[i] = 0;

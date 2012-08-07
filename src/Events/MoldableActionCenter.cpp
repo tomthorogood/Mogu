@@ -35,7 +35,7 @@ using Goo::Dynamic;
 
 namespace {
     ListenerMap listenerMap;
-    int SIGNALRANGE[2] = {198,233};
+    int SIGNALRANGE[2] = {198,255};
 }
 
 void submitBroadcast(BroadcastMessage* broadcast)
@@ -487,7 +487,10 @@ BroadcastMessage* generateNewBroadcast(
 BroadcastMessage*  generateNewBroadcast(
         Moldable* broadcaster, EventNodeExtractor& extract)
 {
-    EventNodeProcessor* processor = new Events::EventNodeProcessor();
+    /* An event node processor created here will not be needed again, and can
+     * be safely deleted after the broadcast message is created.
+     */
+    EventNodeProcessor* processor = new Events::EventNodeProcessor(false);
     return generateNewBroadcast(broadcaster, extract, processor);
 }
 
@@ -500,6 +503,8 @@ BroadcastMessage* generateNewBroadcast(
 
 void cleanupBroadcast(BroadcastMessage* broadcast)
 {
+    /* First, delete all Listener objects associated with the broadcast */
+    delete listenerMap[broadcast];
     listenerMap.erase(broadcast);
     delete broadcast;
 }

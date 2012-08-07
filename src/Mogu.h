@@ -10,6 +10,8 @@
 
 #include <declarations.h>
 #include <Wt/WApplication>
+#include <signal.h>
+#include <Redis/RedisCore.h>
 
 #ifndef AUTH_TOKEN
 #define AUTH_TOKEN "BendTheWeb"
@@ -37,6 +39,7 @@ class Mogu : public Wt::WApplication
 public:
 
 	Mogu(const Wt::WEnvironment& env);
+	~Mogu();
 	bool widgetIsRegistered(std::string name);
 	void registerWidget(std::string name, Goo::Moldable* widget);
 	Goo::Moldable* registeredWidget(std::string name);

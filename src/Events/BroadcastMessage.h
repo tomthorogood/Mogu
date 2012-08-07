@@ -33,6 +33,8 @@ class BroadcastMessage
 public:
     BroadcastMessage(
             Goo::Moldable* broadcaster, EventNodeProcessor* processor);
+    ~BroadcastMessage();
+
     Goo::Moldable* getBroadcaster() const;
     unsigned char getSignalType() const;
     unsigned char getDegradation() const;

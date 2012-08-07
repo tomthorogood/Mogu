@@ -64,6 +64,10 @@ BroadcastMessage::BroadcastMessage(
                     processor->getValue(Labels::nextAction)->getInt();
         }
     }
+    if (!processor->isRecycled())
+    {
+        delete processor;
+    }
 }
 
 Moldable* BroadcastMessage::getBroadcaster() const
@@ -130,6 +134,9 @@ int BroadcastMessage::degrade()
         return --__degradation;
 }
 
+BroadcastMessage::~BroadcastMessage()
+{
+}
 
 }//namespace Events
 

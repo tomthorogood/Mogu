@@ -21,9 +21,14 @@ namespace{
     stringstream stream;
 } //unnamed namespace
 
-inline void done(redisReply* _reply)
+void done(redisReply* _reply)
 {
     freeReplyObject(_reply);
+}
+
+void clear()
+{
+    done(reply);
 }
 
 std::string join (
