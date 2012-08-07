@@ -21,7 +21,7 @@ class NodeValueParser
     std::string __value;
     char __first_char;
     Goo::Moldable* __broadcaster;
-    
+    bool __value_persists;
     std::string polish(const std::string& value);
 
     void cast_as_enum_repr(const std::string& value);
@@ -43,7 +43,8 @@ public:
     NodeValueParser(
             std::string value,
             Goo::Moldable* broadcaster =0,
-            int(*callback)(const std::string&) =0);
+            int(*callback)(const std::string&) =0,
+            bool value_persists = false);
     virtual ~NodeValueParser();
     Nodes::NodeValue* getValue();
 };

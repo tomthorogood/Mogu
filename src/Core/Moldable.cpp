@@ -60,9 +60,9 @@ Moldable::Moldable(
 
 {
     nodes.add(constructorNode);
-#ifdef TERM_ENABLED
-    std::cout << constructorNode << std::endl;
-#endif
+//#ifdef TERM_ENABLED
+//    std::cout << constructorNode << std::endl;
+//#endif
     bindery =0;
     setContentVariables();
 }

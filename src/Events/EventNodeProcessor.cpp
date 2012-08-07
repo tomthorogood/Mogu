@@ -27,7 +27,7 @@ void EventNodeProcessor::set (
         int (*callback)(const string&)
         )
 {
-    NodeValueParser parser(value, broadcaster, callback);
+    NodeValueParser parser(value, broadcaster, callback, true);
     values[index] = parser.getValue();
 }
 

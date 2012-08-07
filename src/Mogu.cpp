@@ -107,5 +107,4 @@ void Mogu::handlePathChange(std::string path)
 
 Mogu::~Mogu()
 {
-	Redis::disconnect();
 }

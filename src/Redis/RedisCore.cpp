@@ -16,19 +16,21 @@ using std::stringstream;
 using std::string;
 
 namespace{
-    redisContext* redis = redisConnect(REDIS_HOST, REDIS_PORT);
+    redisContext* redis =0;
     redisReply* reply =0;
     stringstream stream;
 } //unnamed namespace
 
-void done(redisReply* _reply)
+void done(redisReply* _reply, redisContext* _redis)
 {
     freeReplyObject(_reply);
+    redisFree(_redis);
+
 }
 
 void clear()
 {
-    done(reply);
+    done(reply, redis);
 }
 
 std::string join (
@@ -60,25 +62,26 @@ void command (
 {
     std::string buff = join (arg1, arg2, arg3, arg4, arg5);
     const char* __command = buff.c_str();
+	redis = redisConnect(REDIS_HOST, REDIS_PORT);
+
     if (__command != "")
     {
     	reply = (redisReply*) redisCommand(redis, __command);
     }
     stream.str("");
-
 }
 
 string toString()
 {
     string ret(reply->str);
-    done(reply);
+    done(reply, redis);
     return ret;
 }
 
 long long getInt()
 {
     long long ret_int = reply->integer;
-    done(reply);
+    done(reply, redis);
     return ret_int;
 }
 
@@ -86,7 +89,7 @@ float toFloat()
 {
     string ret_str(reply->str);
     const char* ret_c = ret_str.c_str();
-    done(reply);
+    done(reply, redis);
     return atof(ret_c);
 }
 
@@ -98,14 +101,14 @@ void toVector(strvector& vec)
         vec.add(str);
     }
     vec.trim();
-    done(reply);
+    done(reply, redis);
 }
 
 int toInt()
 {
     string ret_str(reply->str);
     const char* ret_c = ret_str.c_str();
-    done(reply);
+    done(reply, redis);
     return atoi(ret_c);
 }
 

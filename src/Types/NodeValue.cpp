@@ -1,5 +1,5 @@
 #include <Types/NodeValue.h>
-
+#include <string.h>
 namespace Nodes{
 using std::string;
 
@@ -26,7 +26,8 @@ NodeValue::~NodeValue()
 
 void NodeValue::setString(string val)
 {
-    __value->as_string = val.c_str();
+	const char* cval = val.c_str();
+    __value->as_string = cval;
     __type = string_value;
 }
 

@@ -21,12 +21,13 @@ using std::ifstream;
 using namespace Enums::NodeValueTypes;
 
 NodeValueParser::NodeValueParser(string nodeValue, Moldable* broadcaster,
-        int(*callback)(const string&))
+        int(*callback)(const string&), bool value_persists)
 {
     parsedValue = new Nodes::NodeValue();
     __first_char = -1;
     __broadcaster = broadcaster;
     set_value_type(nodeValue, callback);
+    __value_persists = value_persists;
 }
 
 inline string NodeValueParser::polish(const string& value)
@@ -288,7 +289,11 @@ Nodes::NodeValue* NodeValueParser::getValue()
 
 NodeValueParser::~NodeValueParser()
 {
-    // Do not delete parsedValue!
+    // Do not delete parsedValue if it's being  used elsewhere.
+	if (!__value_persists)
+	{
+		delete parsedValue;
+	}
 }
 
 } // namespace Parsers

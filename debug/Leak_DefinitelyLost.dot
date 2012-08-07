@@ -1,88 +1,41 @@
 digraph Leak_DefinitelyLost {
 rankdir=LR
-"void boost::_bi::bind_t)"
-"Parsers::StyleParser::getWidgetType(Goo::Moldable*.."
-"Sessions::SubmissionHandler::getStorageType(Goo::D.."
-"Sessions::SubmissionHandler::getDataWrapping(Goo::.."
-"boost::detail::function::function_invoker1)"
-"Goo::Moldable::Moldable(std::string const, Wt::WCo.."
-"Goo::Moldable::createContent()"
-"Events::EventBindery::handleVoidSignal(Enums::Sign.."
-"operator new(unsigned long)"
-"createApplication(Wt::WEnvironment const)"
-"Goo::Moldable::setContentVariables()"
-"Wt::WWebWidget::childAdded(Wt::WWidget*)"
-"Wt::WebSession::start()"
-"Wt::WWebWidget::doLoad(Wt::WWidget*)"
-"Parsers::StyleParser::getWidgetText(Goo::Moldable*.."
-"Parsers::StyleParser::getActionBlock(Goo::Moldable.."
-"Wt::WebSession::handleRequest(Wt::WebSession::Hand.."
-ROOT
-"Events::ActionCenter::directListeners(Events::Broa.."
-"boost::detail::function::void_function_obj_invoker.." [color=lightblue, style=filled]
-"Sessions::SubmissionHandler::getStorageMode(Goo::D.."
-"Wt::WebController::handleRequest(Wt::WebRequest*)" [color=lightblue, style=filled]
-"Mogu::Mogu(Wt::WEnvironment const)"
-"Goo::Moldable::load()"
-"Parsers::NodeValueParser::NodeValueParser(std::str.."
-"Sessions::SubmissionHandler::requiresEncryption(Go.."
 "Goo::Moldable::addGoo(std::string const)"
-"boost::_mfi::mf0::operator()(Events::EventBindery*.."
 "Goo::Moldable::do_if_has_events()"
-"Goo::Dynamic::Dynamic(std::string, std::string, Wt.."
-"Wt::WContainerWidget::addWidget(Wt::WWidget*)"
-"Wt::WWebWidget::addChild(Wt::WWidget*)"
+"Wt::WWebWidget::doLoad(Wt::WWidget*)"
+"Wt::WWebWidget::childAdded(Wt::WWidget*)"
+"Wt::EventSignalBase::EventSignalBase(char const*, .."
 "Events::EventBindery::EventBindery(Goo::Moldable*)"
-"void boost::_bi::list1, int)"
-"Events::EventBindery::clickSlot()"
-"Wt::WebController::doCreateApplication(Wt::WebSess.."
-"Sessions::SubmissionHandler::absorb(Goo::Dynamic*)"
-"Events::ActionCenter::submitBroadcast(Events::Broa.."
+"Wt::WStackedWidget::addWidget(Wt::WWidget*)"
+"boost::signals::detail::signal_base::signal_base(b.."
+"Goo::Moldable::load()"
+"Goo::Moldable::createContent()"
+"Wt::WContainerWidget::addWidget(Wt::WWidget*)"
+"Wt::WWebWidget::mouseEventSignal(char const*, bool.."
+"Wt::EventSignal::EventSignal(char const*, Wt::WObj.."
 "Goo::Moldable::do_if_has_children()"
-"Wt::WebController::doCreateApplication(Wt::WebSess.." -> "Wt::WebSession::start()" [label=32]
-"Events::EventBindery::EventBindery(Goo::Moldable*)" -> "Goo::Moldable::do_if_has_events()" [label=1664]
-"Parsers::StyleParser::getWidgetText(Goo::Moldable*.." -> "Goo::Moldable::setContentVariables()" [label=1920]
-"Events::ActionCenter::submitBroadcast(Events::Broa.." -> "Events::EventBindery::handleVoidSignal(Enums::Sign.." [label=192]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Parsers::StyleParser::getWidgetText(Goo::Moldable*.." [label=1920]
-"Wt::WebSession::start()" -> "Wt::WebSession::handleRequest(Wt::WebSession::Hand.." [label=32]
-"Wt::WWebWidget::addChild(Wt::WWidget*)" -> "Wt::WContainerWidget::addWidget(Wt::WWidget*)" [label=1856]
-"boost::_mfi::mf0::operator()(Events::EventBindery*.." -> "void boost::_bi::list1, int)" [label=128]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Sessions::SubmissionHandler::requiresEncryption(Go.." [label=32]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Sessions::SubmissionHandler::getDataWrapping(Goo::.." [label=32]
-"Goo::Dynamic::Dynamic(std::string, std::string, Wt.." -> "Goo::Moldable::addGoo(std::string const)" [label=5600]
-"Wt::WContainerWidget::addWidget(Wt::WWidget*)" -> "Goo::Moldable::addGoo(std::string const)" [label=1856]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Sessions::SubmissionHandler::getStorageType(Goo::D.." [label=32]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Sessions::SubmissionHandler::getStorageMode(Goo::D.." [label=32]
-"Parsers::StyleParser::getWidgetType(Goo::Moldable*.." -> "Goo::Moldable::setContentVariables()" [label=3712]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Parsers::StyleParser::getWidgetType(Goo::Moldable*.." [label=3712]
-"Events::EventBindery::clickSlot()" -> "boost::_mfi::mf0::operator()(Events::EventBindery*.." [label=192]
-ROOT -> "operator new(unsigned long)" [label=7616]
-"Goo::Moldable::load()" -> "Wt::WWebWidget::doLoad(Wt::WWidget*)" [label=7392]
-"Goo::Moldable::Moldable(std::string const, Wt::WCo.." -> "Goo::Dynamic::Dynamic(std::string, std::string, Wt.." [label=5600]
-"Wt::WWebWidget::childAdded(Wt::WWidget*)" -> "Wt::WWebWidget::addChild(Wt::WWidget*)" [label=1856]
-"Wt::WWebWidget::doLoad(Wt::WWidget*)" -> "Wt::WWebWidget::childAdded(Wt::WWidget*)" [label=7392]
-"Wt::WebSession::handleRequest(Wt::WebSession::Hand.." -> "Wt::WebController::handleRequest(Wt::WebRequest*)" [label=32]
-"boost::detail::function::function_invoker1)" -> "Wt::WebController::doCreateApplication(Wt::WebSess.." [label=32]
-"Sessions::SubmissionHandler::absorb(Goo::Dynamic*)" -> "Events::ActionCenter::directListeners(Events::Broa.." [label=128]
-"Events::EventBindery::handleVoidSignal(Enums::Sign.." -> "Events::EventBindery::clickSlot()" [label=192]
-"void boost::_bi::list1, int)" -> "void boost::_bi::bind_t)" [label=128]
-"Goo::Moldable::createContent()" -> "Goo::Moldable::load()" [label=5728]
-"Events::ActionCenter::directListeners(Events::Broa.." -> "Events::ActionCenter::submitBroadcast(Events::Broa.." [label=192]
-"Mogu::Mogu(Wt::WEnvironment const)" -> "createApplication(Wt::WEnvironment const)" [label=32]
-"Goo::Moldable::Moldable(std::string const, Wt::WCo.." -> "Mogu::Mogu(Wt::WEnvironment const)" [label=32]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Events::EventBindery::EventBindery(Goo::Moldable*)" [label=1664]
-"Sessions::SubmissionHandler::getStorageMode(Goo::D.." -> "Sessions::SubmissionHandler::absorb(Goo::Dynamic*)" [label=32]
-"Sessions::SubmissionHandler::requiresEncryption(Go.." -> "Sessions::SubmissionHandler::absorb(Goo::Dynamic*)" [label=32]
-"Goo::Moldable::setContentVariables()" -> "Goo::Moldable::Moldable(std::string const, Wt::WCo.." [label=5632]
-"Parsers::StyleParser::getActionBlock(Goo::Moldable.." -> "Goo::Moldable::createContent()" [label=192]
-"operator new(unsigned long)" -> "Parsers::NodeValueParser::NodeValueParser(std::str.." [label=7616]
-"Sessions::SubmissionHandler::getDataWrapping(Goo::.." -> "Sessions::SubmissionHandler::absorb(Goo::Dynamic*)" [label=32]
-"Goo::Moldable::do_if_has_children()" -> "Goo::Moldable::createContent()" [label=7392]
-"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Parsers::StyleParser::getActionBlock(Goo::Moldable.." [label=192]
-"Sessions::SubmissionHandler::getStorageType(Goo::D.." -> "Sessions::SubmissionHandler::absorb(Goo::Dynamic*)" [label=32]
-"createApplication(Wt::WEnvironment const)" -> "boost::detail::function::function_invoker1)" [label=32]
-"Goo::Moldable::do_if_has_events()" -> "Goo::Moldable::load()" [label=1664]
-"void boost::_bi::bind_t)" -> "boost::detail::function::void_function_obj_invoker.." [label=128]
-"Goo::Moldable::addGoo(std::string const)" -> "Events::ActionCenter::directListeners(Events::Broa.." [label=64]
-"Goo::Moldable::addGoo(std::string const)" -> "Goo::Moldable::do_if_has_children()" [label=7392]
+"Wt::WWebWidget::addChild(Wt::WWidget*)"
+ROOT
+"operator new(unsigned long)"
+"Wt::EventSignal::EventSignal(char const*, Wt::WObj.." -> "Wt::WWebWidget::mouseEventSignal(char const*, bool.." [label=912]
+"operator new(unsigned long)" -> "Events::EventBindery::EventBindery(Goo::Moldable*)" [label=24051]
+"Events::EventBindery::EventBindery(Goo::Moldable*)" -> "Goo::Moldable::do_if_has_events()" [label=24963]
+ROOT -> "operator new(unsigned long)" [label=31600]
+"Goo::Moldable::do_if_has_children()" -> "Goo::Moldable::createContent()" [label=30688]
+"Wt::WWebWidget::childAdded(Wt::WWidget*)" -> "Wt::WWebWidget::addChild(Wt::WWidget*)" [label=31600]
+"Wt::WWebWidget::addChild(Wt::WWidget*)" -> "Wt::WContainerWidget::addWidget(Wt::WWidget*)" [label=31600]
+"Wt::WWebWidget::doLoad(Wt::WWidget*)" -> "Wt::WWebWidget::childAdded(Wt::WWidget*)" [label=31600]
+"Goo::Moldable::createContent()" -> "Goo::Moldable::load()" [label=30688]
+"boost::signals::detail::signal_base::signal_base(b.." -> "Wt::EventSignalBase::EventSignalBase(char const*, .." [label=840]
+"Goo::Moldable::do_if_has_events()" -> "Goo::Moldable::load()" [label=24963]
+"Goo::Moldable::load()" -> "Wt::WWebWidget::doLoad(Wt::WWidget*)" [label=31600]
+"operator new(unsigned long)" -> "boost::signals::detail::signal_base::signal_base(b.." [label=912]
+"boost::signals::detail::signal_base::signal_base(b.." -> "Wt::EventSignal::EventSignal(char const*, Wt::WObj.." [label=72]
+"Wt::WContainerWidget::addWidget(Wt::WWidget*)" -> "Wt::WStackedWidget::addWidget(Wt::WWidget*)" [label=6637]
+"Wt::WContainerWidget::addWidget(Wt::WWidget*)" -> "Goo::Moldable::addGoo(std::string const)" [label=24123]
+"Goo::Moldable::addGoo(std::string const)" -> "Goo::Moldable::do_if_has_children()" [label=37325]
+"Wt::WWebWidget::mouseEventSignal(char const*, bool.." -> "Events::EventBindery::EventBindery(Goo::Moldable*)" [label=912]
+"Wt::WStackedWidget::addWidget(Wt::WWidget*)" -> "Goo::Moldable::addGoo(std::string const)" [label=6637]
+"Wt::EventSignalBase::EventSignalBase(char const*, .." -> "Wt::EventSignal::EventSignal(char const*, Wt::WObj.." [label=840]
+"operator new(unsigned long)" -> "Goo::Moldable::addGoo(std::string const)" [label=6637]
 }

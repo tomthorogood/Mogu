@@ -1,31 +1,28 @@
 digraph InvalidWrite {
 rankdir=LR
-"createApplication(Wt::WEnvironment const)"
-"Wt::WebSession::start()"
-"Application::setAuthToken(std::string)"
-"TurnLeft::Utils::str_to_uchar(std::string)"
-"Packet::Packet(std::string)"
+"Goo::Moldable::setContentVariables()"
+"Goo::Dynamic::Dynamic(std::string, std::string, Wt.."
 "__GI_strcpy"
-"boost::detail::function::function_invoker1)"
-"Application::encrypt(std::string)"
-"Wt::WebController::doCreateApplication(Wt::WebSess.."
-"PacketCenter::PacketCenter(std::string, PacketType.."
-"Wt::WebSession::handleRequest(Wt::WebSession::Hand.." [color=lightblue, style=filled]
+"Parsers::NodeValueParser::set_value_type(std::stri.."
+"Parsers::StyleParser::getWidgetText(Goo::Moldable*.."
+"Goo::Moldable::do_if_has_children()"
+"Goo::Moldable::Moldable(std::string const, Wt::WCo.."
+"Parsers::NodeValueParser::NodeValueParser(std::str.."
+"Goo::Moldable::createContent()" [color=lightblue, style=filled]
+"Nodes::NodeValue::setString(std::string)"
+"Goo::Moldable::addGoo(std::string const)"
 ROOT
-"calloc"
-"Mogu::Mogu(Wt::WEnvironment const)"
-"boost::detail::function::function_invoker1)" -> "Wt::WebController::doCreateApplication(Wt::WebSess.." [label=0]
-"Wt::WebController::doCreateApplication(Wt::WebSess.." -> "Wt::WebSession::start()" [label=0]
-"Mogu::Mogu(Wt::WEnvironment const)" -> "createApplication(Wt::WEnvironment const)" [label=0]
-"Packet::Packet(std::string)" -> "PacketCenter::PacketCenter(std::string, PacketType.." [label=0]
-"TurnLeft::Utils::str_to_uchar(std::string)" -> "Packet::Packet(std::string)" [label=0]
-"Wt::WebSession::start()" -> "Wt::WebSession::handleRequest(Wt::WebSession::Hand.." [label=0]
-"Application::encrypt(std::string)" -> "Application::setAuthToken(std::string)" [label=0]
+"Parsers::NodeValueParser::interpret(std::string co.."
+"Goo::Moldable::setContentVariables()" -> "Goo::Moldable::Moldable(std::string const, Wt::WCo.." [label=0]
+"Nodes::NodeValue::setString(std::string)" -> "Parsers::NodeValueParser::interpret(std::string co.." [label=0]
+"Parsers::StyleParser::getWidgetText(Goo::Moldable*.." -> "Goo::Moldable::setContentVariables()" [label=0]
+"Goo::Moldable::do_if_has_children()" -> "Goo::Moldable::createContent()" [label=0]
 ROOT -> "__GI_strcpy" [label=0]
-"calloc" -> "TurnLeft::Utils::str_to_uchar(std::string)" [label=0]
-"createApplication(Wt::WEnvironment const)" -> "boost::detail::function::function_invoker1)" [label=0]
-"Application::setAuthToken(std::string)" -> "Mogu::Mogu(Wt::WEnvironment const)" [label=0]
-"PacketCenter::PacketCenter(std::string, PacketType.." -> "Application::encrypt(std::string)" [label=0]
-"__GI_strcpy" -> "TurnLeft::Utils::str_to_uchar(std::string)" [label=0]
-ROOT -> "calloc" [label=0]
+"Goo::Moldable::Moldable(std::string const, Wt::WCo.." -> "Goo::Dynamic::Dynamic(std::string, std::string, Wt.." [label=0]
+"Parsers::NodeValueParser::set_value_type(std::stri.." -> "Parsers::NodeValueParser::NodeValueParser(std::str.." [label=0]
+"Parsers::NodeValueParser::interpret(std::string co.." -> "Parsers::NodeValueParser::set_value_type(std::stri.." [label=0]
+"Parsers::NodeValueParser::NodeValueParser(std::str.." -> "Parsers::StyleParser::getWidgetText(Goo::Moldable*.." [label=0]
+"Goo::Dynamic::Dynamic(std::string, std::string, Wt.." -> "Goo::Moldable::addGoo(std::string const)" [label=0]
+"__GI_strcpy" -> "Nodes::NodeValue::setString(std::string)" [label=0]
+"Goo::Moldable::addGoo(std::string const)" -> "Goo::Moldable::do_if_has_children()" [label=0]
 }

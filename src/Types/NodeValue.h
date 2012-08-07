@@ -19,7 +19,7 @@ enum ReadType
     float_value
 };
 
-union ValueUnion
+struct ValueUnion
 {
     const char* as_string;
     int as_int;

@@ -22,7 +22,7 @@
 namespace Redis
 {
 
-void done(redisReply* reply);
+void done(redisReply* reply, redisContext* redis);
 
 std::string join (
         std::string arg1,

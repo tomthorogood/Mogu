@@ -85,6 +85,7 @@ namespace Redis
 class Mogu;
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
 typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
+class redisContext;
 class redisReply;
 
 #endif /* DECLARATIONS_H_ */

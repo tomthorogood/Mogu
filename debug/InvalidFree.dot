@@ -1,0 +1,41 @@
+digraph InvalidFree {
+rankdir=LR
+"operator delete(void*)"
+"__gnu_cxx::new_allocator*, unsigned long)"
+"Mogu::deregisterWidget(std::string)"
+"Goo::Dynamic::~Dynamic()"
+"std::_Rb_tree::~_Rb_tree()"
+"std::map::~map()"
+"std::_Rb_tree)"
+"std::_Rb_tree*)"
+"Goo::Moldable::~Moldable()"
+"std::basic_string::~basic_string()"
+"std::pair::~pair()"
+"Wt::WWebWidget::~WWebWidget()" [color=lightblue, style=filled]
+"__gnu_cxx::new_allocator*)"
+"Wt::WebSession::~WebSession()" [color=lightblue, style=filled]
+"Mogu::~Mogu()"
+"std::map)"
+ROOT
+"std::_Rb_tree*)" -> "std::_Rb_tree)" [label=0]
+"Goo::Dynamic::~Dynamic()" -> "Goo::Dynamic::~Dynamic()" [label=0]
+"Mogu::~Mogu()" -> "Wt::WebSession::~WebSession()" [label=0]
+"Goo::Moldable::~Moldable()" -> "Goo::Dynamic::~Dynamic()" [label=0]
+"std::_Rb_tree)" -> "std::_Rb_tree)" [label=0]
+"__gnu_cxx::new_allocator*, unsigned long)" -> "std::_Rb_tree*)" [label=0]
+"operator delete(void*)" -> "std::basic_string::~basic_string()" [label=0]
+"operator delete(void*)" -> "__gnu_cxx::new_allocator*, unsigned long)" [label=0]
+"Goo::Dynamic::~Dynamic()" -> "Wt::WWebWidget::~WWebWidget()" [label=0]
+ROOT -> "operator delete(void*)" [label=0]
+"Mogu::deregisterWidget(std::string)" -> "Goo::Moldable::~Moldable()" [label=0]
+"std::_Rb_tree)" -> "std::map)" [label=0]
+"std::_Rb_tree::~_Rb_tree()" -> "std::map::~map()" [label=0]
+"std::pair::~pair()" -> "__gnu_cxx::new_allocator*)" [label=0]
+"__gnu_cxx::new_allocator*)" -> "std::_Rb_tree*)" [label=0]
+"Mogu::~Mogu()" -> "Mogu::~Mogu()" [label=0]
+"std::map)" -> "Mogu::deregisterWidget(std::string)" [label=0]
+"std::basic_string::~basic_string()" -> "std::pair::~pair()" [label=0]
+"std::map::~map()" -> "Mogu::~Mogu()" [label=0]
+"std::_Rb_tree*)" -> "std::_Rb_tree::~_Rb_tree()" [label=0]
+"std::_Rb_tree*)" -> "std::_Rb_tree*)" [label=0]
+}
