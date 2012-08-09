@@ -7,25 +7,18 @@
 
 #include <Core/Moldable.h>
 #include <Core/Dynamic.h>
-#include <Wt/WContainerWidget>
 #include <Wt/WStackedWidget>
-#include <Wt/WText>
-#include <Wt/WImage>
-#include <Wt/WAnchor>
-#include <Wt/WLineEdit>
+#include <Wt/WString>
 
+#include <Events/Bindery.h>
 #include <Sculptory.h>
 
-#include <Redis/RedisCore.h>
 #include <Parsers/Parsers.h>
-#include <Parsers/NodeValueParser.h>
 #include <Parsers/StyleParser.h>
-#include <Events/Bindery.h>
 #include <Static.h>
 #include <Mogu.h>
 #include <hash.h>
 
-// REMOVE WHEN IN PRODUCTION
 #include <iostream>
 
 namespace Goo
@@ -33,14 +26,12 @@ namespace Goo
 using std::string;
 using namespace Enums::WidgetTypes;
 using namespace Enums::BitMasks;
-
-//REMOVE WHEN In PRODUCTION
 using std::cout;
 using std::endl;
 
 GooVariables::GooVariables() : children()
 {
-    flags		       =0;
+    flags		        =0;
     actionBlocking      =0;
     type				=0;
 
@@ -131,12 +122,6 @@ void Moldable::setStyleClass(const Wt::WString& style)
 {
     Wt::WContainerWidget::setStyleClass(style);
     __style_changed.emit();
-}
-
-
-Redis::strvector* Moldable::getNodeList()
-{
-    return &nodes;
 }
 
 }//namespace Goo
