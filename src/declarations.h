@@ -15,6 +15,14 @@
 #include <map>
 #include <stdint.h>
 
+
+/* In a single byte, this denotes the two highest order bits:
+ *  7 6 5 4 3 2 1 0
+ *  ^ ^
+ */
+
+#define WIDGET_HO_BITS 0x3f
+
 namespace Goo
 {
     class RedisInterface;

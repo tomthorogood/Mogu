@@ -11,6 +11,7 @@
 
 #include <declarations.h>
 #include <Wt/WContainerWidget>
+#include <Events/Bindery.h>
 #include <Wt/WSignal> // Templated Type
 
 namespace Goo
@@ -24,10 +25,9 @@ namespace Goo
 struct GooVariables
 {
     Redis::strvector children;
-    uint8_t propertyFlags; //!<\sa Enums::SignalTypes::Properties
+    uint8_t flags; //!<\sa Enums::SignalTypes::Properties
     uint8_t actionBlocking;
     uint8_t type;
-    bool link_is_internal;
 
     std::string location;    //!< Used for external links only.
     std::string source;      //!< URI for image file, if applicable.
@@ -65,7 +65,7 @@ private:
      * content variables.
      * \sa GooVariables
      */
-    GooVariables baseVariables;
+    GooVariables* baseVariables;
 
     /*!\brief Signal emitted when the style is changed. */
     Wt::Signal <> __style_changed;
@@ -73,40 +73,14 @@ private:
 
 
     Enums::WidgetTypes::WidgetTypes typeFlags;
-    
-    /*!\brief Parses the stylesheet and the node, validating content
-     * templates and setting the proper flags.
-     */
-    void setContentVariables ();
-
-    /*!\brief Performs actions based on the typeFlags that are set,
-     * logically deducing how best to implement the content.
-     */
-    void createContent ();
-
-    /*!\brief Parses the variables and creates content according to
-     * the rules for creating a link.
-     */
-    void do_if_is_link();
-
-    /*!\brief Parses the variables and creates content according to
-     * the rules of creating a static image.
-     */
-    void do_if_is_image();
 
     /*!\brief Parses the values in the events node and binds
      * these events to user activity.
      */
-    void do_if_has_events();
-
-    /*!\brief Iterates through the list of children and adds them to the
-     * current widget.
-     */
-    void do_if_has_children();
-
-    /*!\brief Registers the widget as a named widget. */
-    void do_if_is_named();
-
+    inline void Moldable::do_if_has_events()
+    {
+        bindery = new Events::EventBindery(this);
+    }
 
 public:
     /*!\brief The standard (and only!) constrcutor for a ModdableGoo instance.
@@ -149,31 +123,68 @@ public:
      * @param index The widget to be retrieved.
      * @return The *MOLDABLE* widget within the index of moldable children.
      */
-    Moldable* child (int index);
+    inline Moldable* child (int index)
+    {
+    	return children.at(index);
+    }
 
     /*!\brief Returns the number of moldable children this widget contains.
      *
      * @return The number of moldable children this widget contains.
      */
-    int countMoldableChildren();
+    inline int countMoldableChildren()
+    {
+    	return children.size();
+    }
 
     /*!\brief Retrieves a node property from the database.
      * @param key The key that would have been parsed from the database.
      * @return The value attached to the key.
      */
-    std::string getMappedValue(std::string key);
+    inline std::string getMappedValue(std::string key)
+    {
+        std::string nodeName = Helpers::getTemplateNode(this);
+        Redis::command("hget", nodeName, key);
+        return Redis::toString();
+    }
 
-    Wt::Signal<>& styleChanged();
+    Wt::Signal<>& styleChanged()
+	{
+    	return __style_changed;
+    }
 
-    Redis::strvector* getNodeList();
+    inline Redis::strvector* getNodeList()
+    {
+    	return &nodes;
+    }
 
-    bool allowsAction(Enums::SignalActions::SignalAction action);
+    inline bool allowsAction(Enums::SignalActions::SignalAction action)
+    {
+    	return !(
+			(baseVariables->actionBlocking & action)
+			|| (baseVariables->actionBlocking & Enums::SignalActions::BLOCK));
+    }
 
-    bool isNamed();
+    inline bool isNamed()
+    {
+		uint8_t named = Enums::SignalTypes::is_named;
+		return baseVariables->flags & named;
+    }
 
-    void requestRemoval(Moldable* child);
+    inline void requestRemoval(Moldable* child)
+    {
+    	removeChild(child);
+    }
 
-    const uint8_t& getType() const;
+    inline GooVariables* getProperties()
+    {
+    	return baseVariables;
+    }
+
+    inline const uint8_t& getType() const
+    {
+    	return baseVariables->type;
+    }
 
 };
 
