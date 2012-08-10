@@ -110,6 +110,17 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 
 EventBindery::~EventBindery()
 {
+	ExtractorMap::iterator iter = extractorMap.begin();
+	while (iter != extractorMap.end())
+	{
+		ExtractorVector vec = iter->second;
+		unsigned int size = vec.size();
+		for (unsigned int p = 0; p < size; p++)
+		{
+			delete vec.at(p);
+		}
+		++iter;
+	}
 }
 
 void EventBindery::clickSlot()

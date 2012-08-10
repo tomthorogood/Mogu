@@ -53,7 +53,7 @@ class Moldable : public Wt::WContainerWidget
 private:
 #ifdef DEBUG
 	const char* __NODE_NAME;
-#endif;
+#endif
     Redis::strvector nodes;
     Events::EventBindery* bindery;
 

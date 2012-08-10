@@ -47,7 +47,6 @@ Moldable::Moldable(
 : Wt::WContainerWidget (parent),
     children(),
     __style_changed(this)
-
 {
     nodes.add(constructorNode);
 #ifdef DEBUG
