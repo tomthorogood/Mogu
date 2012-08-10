@@ -56,17 +56,22 @@ void submitBroadcast(BroadcastMessage* broadcast)
     if (iter == listenerMap.end())
     {
         Listeners* listener = new Listeners();
+        /* If the listener is a registered listener, we can get a pointer
+         * to the listener directly by name.
+         */
         if (signalType & TypeBits::registered_listener)
         {
         	std::string listener_name =
         			broadcast->getListenerName();
         	Mogu* app = Application::mogu();
+
         	if (app->widgetIsRegistered(listener_name))
         	{
         		listener->add(app->registeredWidget(listener_name));
         	}
         }
-        else
+
+        else // Otherwise, provide a default value of the broadcaster.
         {
         	listener->add(broadcast->getBroadcaster());
         }
@@ -144,6 +149,13 @@ void getNuclearFamily(BroadcastMessage* broadcast)
     Listeners* new_listeners = new Listeners();
 
     unsigned int num_current = current_listeners->size();
+#ifdef DEBUG
+    assert(num_current != 0);
+    for (int i = 0; i < num_current; i++)
+    {
+    	assert (current_listeners->at(i) != 0);
+    }
+#endif
     for (unsigned int c = 0; c < num_current; c++)
     {
         Moldable* listener = current_listeners->at(c);
@@ -181,6 +193,12 @@ void getNuclearFamily(BroadcastMessage* broadcast)
     }
     new_listeners->trim();
     listenerMap[broadcast] = new_listeners;
+#ifdef DEBUG // Make sure  that all listeners are actual objects
+    for (int i = 0; i < new_listeners->size(); i++)
+    {
+    	assert (new_listeners->at(i) != 0);
+    }
+#endif
     delete current_listeners;
 }
 
@@ -213,21 +231,38 @@ void updateListeners(BroadcastMessage* broadcast)
             }
             break;}
 
-        //Something is wrong.
-        default: return;// Don't do anything more if the direction is unclear.
+        default: // Something is very wrong
+#ifdef DEBUG
+        	assert(1==0); // Force assertion error on debug
+#endif
+        	return;// Don't do anything more if the direction is unclear.
         }
-        new_listeners->trim();
         listenerMap[broadcast] = new_listeners;
 
         // Free the memory the current_listener list is using.
         delete current_listeners;
     }
+    new_listeners->trim();
+#ifdef DEBUG // Make sure  that all listeners are actual objects
+    for (int i = 0; i < new_listeners->size(); i++)
+    {
+    	assert (new_listeners->at(i) != 0);
+    }
+#endif
 }
 
 void directListeners(BroadcastMessage* broadcast)
 {
     namespace Action = Enums::SignalActions;
     Listeners* listeners = listenerMap[broadcast];
+
+#ifdef DEBUG // Make sure  that all listeners are actual objects
+    for (int i = 0; i < listeners->size(); i++)
+    {
+    	assert (listeners->at(i) != 0);
+    }
+#endif
+
     if (broadcast->getListenerType() == Enums::Family::application)
     {
     	if (broadcast->getAction() == Action::set_internal_path)
@@ -247,6 +282,9 @@ void directListeners(BroadcastMessage* broadcast)
      */
     case Action::set_style:{
         string new_style = broadcast->getMessage()->getString();
+#ifdef DEBUG
+        assert("" != new_style);
+#endif
         Wt::WString wNewStyle(new_style);
 
         for (int w = 0; w < num_listeners; w++)
@@ -435,6 +473,9 @@ BroadcastMessage* generateNewBroadcast(
     namespace Signal = Enums::SignalTypes;
     namespace SignalBits = Enums::SignalTypes;
     namespace Field = Enums::Labels;
+#ifdef DEBUG
+    assert(broadcaster != 0);
+#endif
 
     string signal_type_str = extract.getValue(Field::signal);
     string action_str = extract.getValue(Field::action);
@@ -480,7 +521,7 @@ BroadcastMessage* generateNewBroadcast(
 
     BroadcastMessage* newMessage =
             new BroadcastMessage(broadcaster, processor);
-
+    delete processor;
     return newMessage;
 }
 

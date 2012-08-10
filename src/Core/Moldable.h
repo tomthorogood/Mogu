@@ -12,6 +12,7 @@
 #include <declarations.h>
 #include <Wt/WContainerWidget>
 #include <Events/Bindery.h>
+#include <Redis/RedisCore.h>
 #include <Wt/WSignal> // Templated Type
 
 namespace Goo
@@ -50,8 +51,10 @@ struct GooVariables
 class Moldable : public Wt::WContainerWidget
 {
 private:
+#ifdef DEBUG
+	const char* __NODE_NAME;
+#endif;
     Redis::strvector nodes;
-
     Events::EventBindery* bindery;
 
     /*!\brief A container with pointers to child widgets that are also of
@@ -77,7 +80,7 @@ private:
     /*!\brief Parses the values in the events node and binds
      * these events to user activity.
      */
-    inline void Moldable::do_if_has_events()
+    inline void do_if_has_events()
     {
         bindery = new Events::EventBindery(this);
     }
@@ -143,7 +146,7 @@ public:
      */
     inline std::string getMappedValue(std::string key)
     {
-        std::string nodeName = Helpers::getTemplateNode(this);
+        std::string nodeName = nodes.at(0);
         Redis::command("hget", nodeName, key);
         return Redis::toString();
     }

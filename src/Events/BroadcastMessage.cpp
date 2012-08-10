@@ -9,6 +9,7 @@
 #include <Core/Moldable.h>
 #include <Events/NodeConfiguration.h>
 #include <Events/EventNodeProcessor.h>
+#include <stdio.h>
 
 namespace Events{
 using std::string;
@@ -24,7 +25,16 @@ BroadcastMessage::BroadcastMessage(
         Moldable* broadcaster, EventNodeProcessor *processor)
 {
     __broadcaster = broadcaster;
-    __message = processor->getValue(Labels::message);
+    Nodes::NodeValue* incoming_message = processor->getValue(Labels::message);
+    size_t msg_siz = sizeof(incoming_message);
+
+    /* Because the NodeValue is deleted when the processor is destroyed, we
+     * we must gracefully get the same data into the BroadcastMessage object.
+     * We do this with memcpy to keep down on the coupling, or passing of
+     * arbitrary parameters into the NodeValue object. This copy will be
+     * deleted once the BroadcastMessage object is destroyed.
+     */
+    __message = new Nodes::NodeValue(incoming_message);
     __message_type = __message->getType();
 
 
@@ -64,7 +74,6 @@ BroadcastMessage::BroadcastMessage(
                     processor->getValue(Labels::nextAction)->getInt();
         }
     }
-    delete processor;
 }
 
 Moldable* BroadcastMessage::getBroadcaster() const
@@ -133,6 +142,7 @@ int BroadcastMessage::degrade()
 
 BroadcastMessage::~BroadcastMessage()
 {
+	delete __message;
 }
 
 }//namespace Events

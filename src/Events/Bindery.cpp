@@ -49,7 +49,8 @@ EventBindery::EventBindery(Moldable* broadcaster)
         EventNodeExtractor* extractor = new EventNodeExtractor(eventNode);
         string trigger_str = extractor->getValue(Labels::trigger);
 
-        NodeValueParser nodeParser(trigger_str,
+        Nodes::NodeValue val;
+        NodeValueParser nodeParser(trigger_str, &val,
                 broadcaster,
                 &Parsers::enum_callback<Parsers::SignalTriggerParser>
         );
@@ -109,17 +110,6 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 
 EventBindery::~EventBindery()
 {
-/*	ExtractorMap::iterator iter;
-	while (iter != extractorMap.end())
-	{
-		ExtractorVector vec = iter->second;
-		int num_elements = vec.size();
-		for (int v = 0; v < num_elements; v++)
-		{
-			delete vec.at(v);
-		}
-	}
-*/
 }
 
 void EventBindery::clickSlot()

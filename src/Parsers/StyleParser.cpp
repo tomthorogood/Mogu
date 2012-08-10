@@ -28,7 +28,8 @@ WidgetType getWidgetType(Moldable* broadcaster)
     string nodeName = broadcaster->getNodeList()->at(0);
     Redis::command("hget", nodeName, "type");
     string reply_str = Redis::toString();
-    Parsers::NodeValueParser parser(reply_str, broadcaster,
+    Nodes::NodeValue val;
+    Parsers::NodeValueParser parser(reply_str, &val, broadcaster,
             Parsers::enum_callback <Parsers::WidgetTypeParser>);
     __type = (WidgetType) parser.getValue()->getInt();
     return __type;
@@ -57,7 +58,8 @@ string getWidgetText(Moldable* broadcaster)
     string nodeName = broadcaster->getNodeList()->at(0);
     Redis::command("hget", nodeName, "content");
     string reply_str = Redis::toString();
-    Parsers::NodeValueParser parser(reply_str, broadcaster);
+    Nodes::NodeValue val;
+    Parsers::NodeValueParser parser(reply_str, &val, broadcaster);
     text_content = parser.getValue()->getString();
     return text_content;
 }
@@ -91,7 +93,8 @@ int getWidgetStackIndex(Moldable* broadcaster)
 	string nodeName = broadcaster->getNodeList()->at(0);
 	Redis::command("hget", nodeName, "index");
 	string reply_str = Redis::toString();
-	Parsers::NodeValueParser parser(reply_str,broadcaster);
+	Nodes::NodeValue val;
+	Parsers::NodeValueParser parser(reply_str, &val,broadcaster);
 	return parser.getValue()->getInt();
 }
 
@@ -142,7 +145,8 @@ Wt::WAnimation::AnimationEffect getWidgetAnimation(Moldable* broadcaster)
     string nodeName = broadcaster->getNodeList()->at(0);
     Redis::command("hget", nodeName, "animation");
     string animation_str = Redis::toString();
-    NodeValueParser value(animation_str, broadcaster,
+    Nodes::NodeValue val;
+    NodeValueParser value(animation_str, & val, broadcaster,
             &Parsers::enum_callback<Parsers::WtAnimationParser>);
     return (Wt::WAnimation::AnimationEffect) value.getValue()->getInt();
 }
@@ -207,7 +211,8 @@ uint8_t getActionBlock(Moldable* broadcaster)
     for (int b = 0; b < num_blocks; b++)
     {
         uint8_t action =0;
-        Parsers::NodeValueParser parser(block_arr[b], broadcaster,
+        Nodes::NodeValue val;
+        Parsers::NodeValueParser parser(block_arr[b], &val, broadcaster,
                 &Parsers::enum_callback <Parsers::SignalActionParser>);
         action = (uint8_t) parser.getValue()->getInt();
         block |= action;

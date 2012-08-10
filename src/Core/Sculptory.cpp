@@ -11,6 +11,12 @@
 #include <Static.h>
 #include <Wt/WString>
 #include <Wt/WAnchor>
+#include <Wt/WImage>
+#include <Wt/WText>
+#include <Wt/WStackedWidget>
+#include <Wt/WLineEdit>
+#include <Mogu.h>
+#include <Core/Sculptory.h>
 
 namespace Goo{
 
@@ -19,10 +25,9 @@ using namespace Enums::WidgetTypes;
 using namespace Enums::SignalTypes;
 using namespace Enums::BitMasks;
 
-GooVariables* conceptualize (Moldable* widget)
+void conceptualize (Moldable* widget)
 {
-	GooVariables* vars = new GooVariables();
-
+	GooVariables* vars = widget->getProperties();
 	WidgetTypes type = getWidgetType(widget);
 	vars->type = type;
 
@@ -53,7 +58,7 @@ GooVariables* conceptualize (Moldable* widget)
 		Application::mogu()->registerWidget(name, widget);
 	}
 
-	if (type & stack == stack)
+	if ( (type & stack) == stack)
 	{
 		vars->flags |= is_stacked;
 	}
@@ -65,25 +70,23 @@ GooVariables* conceptualize (Moldable* widget)
 	}
 
 	// Mask HO bits to get true widget type
-	if (type & WIDGET_HO_BITS > stack)
+	if ( (type & WIDGET_HO_BITS) > stack)
 	{
 		vars->content = getWidgetText(widget);
 	}
 
-	if ((type & image == image)
-		|| (type & image_link = image_link))
+	if (( (type & image) == image)
+		|| ( (type & image_link) == image_link))
 	{
 		vars->source = getWidgetImgSource(widget);
 	}
 
 	namespace Type = Enums::WidgetTypes;
-	if ( (type & Type::link == Type::link)
-			|| (type & image_link == image_link))
+	if ( ( (type & Type::link) == Type::link)
+			|| ( (type & image_link) == image_link))
 	{
 		vars->location = getWidgetLinkLocation(widget);
 	}
-
-	return vars;
 }
 
 void mold(Moldable* widget)
@@ -95,12 +98,12 @@ void mold(Moldable* widget)
 		vars->actionBlocking = getActionBlock(widget);
 	}
 
-	if (vars->type & widget_usually_clicked == widget_usually_clicked)
+	if ( (vars->type & widget_usually_clicked) == widget_usually_clicked)
 	{
 		Wt::WAnchor* anchor = new Wt::WAnchor(
 				vars->location,
 				vars->content);
-		if (vars->type & WIDGET_HO_BITS == image_link)
+		if ( (vars->type & WIDGET_HO_BITS) == image_link)
 		{
 			Wt::WImage* image = new Wt::WImage(
 					vars->source, vars->content);
@@ -109,7 +112,7 @@ void mold(Moldable* widget)
 		widget->addWidget(anchor);
 	}
 
-	else if (vars->type & image == image)
+	else if ( (vars->type & image) == image)
 	{
 		Wt::WImage* image = new Wt::WImage(
 				vars->source, vars->content);
@@ -122,7 +125,7 @@ void mold(Moldable* widget)
 		{
 
 		case text:{
-			Wt::WText* text = Wt::WText(vars->content);
+			Wt::WText* text = new Wt::WText(vars->content);
 			widget->addWidget(text);
 			break;}
 

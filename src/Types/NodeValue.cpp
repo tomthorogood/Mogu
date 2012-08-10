@@ -1,33 +1,75 @@
 #include <Types/NodeValue.h>
 #include <string.h>
-namespace Nodes{
-using std::string;
+#include <iostream>
+#include <assert.h>
 
+namespace Nodes{
+
+using std::string;
 NodeValue::NodeValue()
 {
-    __value = new ValueUnion();
-    __owned_value = true;
+    __value = new ValueStruct();
+    __type = NO_VALUE;
 }
 
-NodeValue::NodeValue(ValueUnion* value, ReadType _type)
+NodeValue::NodeValue(NodeValue* proto)
+{
+	__value = new ValueStruct();
+	__type = proto->getType();
+#ifdef DEBUG
+	switch( __type)
+	{
+	case int_value:
+		setInt(proto->getInt());
+		assert(__value->as_int != INT_MIN);
+		break;
+	case string_value:
+		setString(proto->getString());
+		assert(__value->as_string != "");
+		break;
+	case float_value:
+		setFloat(proto->getFloat());
+		assert(__value->as_float != FLT_MIN);
+		break;
+	default:
+		break;
+	}
+#else
+
+	switch( __type)
+	{
+	case int_value:
+		setInt(proto->getInt());
+		break;
+	case string_value:
+		setString(proto->getString());
+		break;
+	case float_value:
+		setFloat(proto->getFloat());
+		break;
+	default:
+		break;
+	}
+#endif
+}
+
+NodeValue::NodeValue(ValueStruct* value, ReadType _type)
 {
     __value = value;
     __type = _type;
-    __owned_value = false;
 }
 
 NodeValue::~NodeValue()
 {
-	if (__owned_value)
-	{
+#ifdef DEBUG
+		std::cout << "DELETING: " << this << std::endl;
+#endif
 		delete __value;
-	}
 }
 
 void NodeValue::setString(string val)
 {
-	const char* cval = val.c_str();
-    __value->as_string = cval;
+	__value->as_string = val;
     __type = string_value;
 }
 

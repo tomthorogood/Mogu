@@ -214,7 +214,8 @@ bool requiresEncryption(Dynamic* inputWidget)
 	std::string nodePolicy =
 			inputWidget->getNodeList()->at(0) + ".policy";
 	Redis::command("hget", nodePolicy, "encrypted");
-	Parsers::NodeValueParser parser(Redis::toString(),inputWidget);
+	Nodes::NodeValue val;
+	Parsers::NodeValueParser parser(Redis::toString(), &val, inputWidget);
 
 	return (bool) parser.getValue()->getInt();
 }
@@ -224,8 +225,10 @@ StorageMode getStorageMode(Dynamic* inputWidget)
 	std::string nodePolicy =
 			inputWidget->getNodeList()->at(0)+".policy";
 	Redis::command("hget", nodePolicy,"mode");
+	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
 			Redis::toString(),
+			&val,
 			inputWidget,
 			&Parsers::enum_callback <Parsers::StorageModeParser>);
 	return (StorageMode) parser.getValue()->getInt();
@@ -236,8 +239,10 @@ StorageType getStorageType(Dynamic* inputWidget)
 	std::string nodePolicy =
 			inputWidget->getNodeList()->at(0)+".policy";
 	Redis::command("hget", nodePolicy, "storage_type");
+	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
 			Redis::toString(),
+			&val,
 			inputWidget,
 			&Parsers::enum_callback <Parsers::StorageTypeParser>);
 	return (StorageType) parser.getValue()->getInt();
@@ -248,8 +253,10 @@ DataWrapping getDataWrapping(Dynamic* inputWidget)
 	std::string nodePolicy =
 			inputWidget->getNodeList()->at(0)+".policy";
 	Redis::command("hget", nodePolicy, "data_type");
+	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
 			Redis::toString(),
+			&val,
 			inputWidget,
 			&Parsers::enum_callback <Parsers::StorageTypeParser>);
 	return (DataWrapping) parser.getValue()->getInt();

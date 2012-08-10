@@ -10,31 +10,43 @@
 
 #include <string>
 
+
+#include <float.h>
+#include <limits.h>
+
 namespace Nodes
 {
 enum ReadType
 {
-    string_value,
-    int_value,
-    float_value
+	NO_VALUE		=0x0,
+    string_value	=0x1,
+    int_value		=0x2,
+    float_value		=0x3
 };
 
-struct ValueUnion
+struct ValueStruct
 {
-    const char* as_string;
+    std::string as_string;
     int as_int;
     float as_float;
+    ValueStruct() {
+    	as_string = "";
+    	as_int = INT_MIN;
+    	as_float = FLT_MIN;
+    }
 };
 
 class NodeValue
 {
-    ValueUnion* __value;
+    ValueStruct* __value;
     ReadType __type;
-    bool __owned_value;
 
 public:
     NodeValue();
-    NodeValue(ValueUnion* value, ReadType _type);
+
+    /* Copies the value of another node value into this one. */
+    NodeValue(NodeValue*);
+    NodeValue(ValueStruct* value, ReadType _type);
     virtual ~NodeValue();
 
     void setString(std::string val);

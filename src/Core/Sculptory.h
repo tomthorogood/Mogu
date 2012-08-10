@@ -12,7 +12,7 @@
 
 namespace Goo{
 
-GooVariables* conceptualize(Moldable*);
+void conceptualize(Moldable*);
 void mold(Moldable*);
 
 } //namespace Goo

@@ -23,6 +23,7 @@ class BroadcastMessage
 
     bool __is_pointer;
 
+    //TODO This gets deleted before it's ever used! Fix it!!
     NodeValue* __message;
     Nodes::ReadType __message_type;
     Enums::SignalActions::SignalAction __action;

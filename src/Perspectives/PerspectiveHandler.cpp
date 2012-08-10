@@ -56,11 +56,16 @@ void mold(std::string perspective)
 
 		widget = app->registeredWidget(name);
 
-		Parsers::NodeValueParser action_parser(action_str,
+		Nodes::NodeValue
+			action_val,
+			message_val;
+
+		Parsers::NodeValueParser action_parser(action_str, &action_val,
 				widget,
 				&Parsers::enum_callback <Parsers::SignalActionParser>);
 
-		Parsers::NodeValueParser message_parser(message_str, widget);
+		Parsers::NodeValueParser message_parser(
+				message_str, &message_val, widget);
 
 		action = (Action::SignalAction)
 				action_parser.getValue()->getInt();

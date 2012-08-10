@@ -9,6 +9,7 @@
 #define HELPERS_H_
 
 #include <declarations.h>
+#include <Core/Moldable.h>
 
 namespace Helpers{
 inline std::string getTemplateNode (Goo::Moldable* widget)

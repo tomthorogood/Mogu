@@ -20,68 +20,95 @@ using Goo::Moldable;
 using std::ifstream;
 using namespace Enums::NodeValueTypes;
 
-NodeValueParser::NodeValueParser(string nodeValue, Moldable* broadcaster,
-        int(*callback)(const string&), bool value_persists)
+
+/* Pre-Conditions:
+ * 		nodeValue isn't the Empty String
+ * 		Moldable Exists
+ *
+ * Post-Conditions:
+ * 		A value type will be set.
+ * 		The value stored in the correct type slot will not be the default value
+ */
+NodeValueParser::NodeValueParser(
+		string sval,
+		Nodes::NodeValue* nval,
+		Moldable* broadcaster,
+        int(*callback)(const string&))
 {
-    parsedValue = new Nodes::NodeValue();
+
+	parsedValue = nval;
+/* If we're debugging, make sure that the caller of this class has not
+ * given us a broken contrct from the beginning.
+ */
+
+
     __first_char = -1;
     __broadcaster = broadcaster;
-    set_value_type(nodeValue, callback);
-    __value_persists = value_persists;
+    set_value_type(sval, callback);
+
+#ifdef DEBUG
+	assert ("" != sval);
+#endif
+/* If we're in debug mode, run the extra assertions to make absolutely sure
+ * that the value listed as the type has been set to something other
+ * than the default.
+ */
+#ifdef DEBUG
+    switch(parsedValue->getType())
+    {
+    case Nodes::string_value:
+    	assert("" != parsedValue->getString());
+    	break;
+    case Nodes::int_value:
+    	assert(INT_MIN != parsedValue->getInt());
+    	break;
+    case Nodes::float_value:
+    	assert(FLT_MIN != parsedValue->getFloat());
+    default:
+    	// Force a failed assertion if the readType is something different
+    	assert(1==0);
+    }
+
+    std::cout << "CREATED: " << parsedValue << std::endl;
+#endif
+
 }
 
-inline string NodeValueParser::polish(const string& value)
-{
-    return value.substr(1, (value.length()-2));
-}
-
+/* Pre-Conditions:
+ * 	value is not the empty string
+ */
 void NodeValueParser::set_value_type(
         const string& value, int(*callback)(const string&))
 {
-    // Just in case we're dealing with an unhappy case.
-    if (__first_char == -1)
-    {
-        __first_char = value.at(0);
-    }
+
+#ifdef DEBUG
+	assert(value != "");
+#endif
+
+	// Grab the first character of the input string
+    if (__first_char == -1) __first_char = value.at(0);
 
     /* The polished value will be the 'nugget' at the center of
      * all the interpretive wrappers.
      */
-    string polished_value;
+    string polished_value = "";
 
     if (!isalnum(__first_char))
     {
-        /* Make sure we actually NEED to polish this value. First, test
-         * to see if it's a cast declaration, which only has one value
-         * at the beginning.
-         */
-        if (__first_char != ENUM_INT_CAST &&
-            __first_char != ENUM_REPR_CAST)
-        {
-        	switch(__first_char)
-			{
-			case '[':
-			case '^':
-			case '{':
-			case '%':
-			case '@':
-			case '`':
-			case '~':
-				polished_value = polish(value);
-				break;
-			default:
-				polished_value = value;
-			}
-        }
-        else
-        {
-            /* If not, then it's a wrapper declaration, which has one at
-             * the beginning, and one at the end.
-             */
-
-        		polished_value = value.substr(1,value.length()-1);
-
-        }
+		switch(__first_char)
+		{
+		case '[':
+		case '^':
+		case '{':
+		case '%':
+		case '@':
+		case '`':
+		case '~':
+			polished_value = polish(value);
+			break;
+		default:
+			polished_value = value;
+		}
     }
     /* If we already have a polished value, just copy it. */
     else
@@ -92,12 +119,6 @@ void NodeValueParser::set_value_type(
 
     switch (__first_char)
     {
-    case ENUM_REPR_CAST:
-        cast_as_enum_repr(value);
-        break;
-    case ENUM_INT_CAST:
-        cast_as_enum_int(value);
-        break;
     case '[':
         __type = field_value;
         break;
@@ -156,23 +177,6 @@ void NodeValueParser::interpret(
     }
 }
 
-void NodeValueParser::cast_as_enum_repr(const string& value)
-{
-    unsigned int delim = value.find(' ');
-    string enum_repr = value.substr(1, delim-1);
-    NodeValueTypeParser parser;
-    __type = parser.parse(enum_repr);
-}
-
-void NodeValueParser::cast_as_enum_int(const string& value)
-{
-    unsigned int delim = value.find(' ');
-    string enum_int_str = value.substr(1, delim-1);
-    const char* enum_int_c_str = enum_int_str.c_str();
-    char enum_int = (char) atoi(enum_int_c_str);
-    __type = (NodeValueTypes) enum_int;
-}
-
 void NodeValueParser::interpret_as_field(const string& field)
 {
     if (__broadcaster == 0)
@@ -187,13 +191,13 @@ void NodeValueParser::interpret_as_field(const string& field)
     parsedValue->setString(reply_str);
 }
 
-inline void NodeValueParser::interpret_as_integer(const string& value)
+void NodeValueParser::interpret_as_integer(const string& value)
 {
     const char* value_c_str = value.c_str();
     parsedValue->setInt(atoi(value_c_str));
 }
 
-inline void NodeValueParser::interpret_as_enum(
+void NodeValueParser::interpret_as_enum(
         const string& value, int(*callback)(const string&))
 {
 
@@ -289,11 +293,7 @@ Nodes::NodeValue* NodeValueParser::getValue()
 
 NodeValueParser::~NodeValueParser()
 {
-    // Do not delete parsedValue if it's being  used elsewhere.
-	if (!__value_persists)
-	{
-		delete parsedValue;
-	}
+
 }
 
 } // namespace Parsers

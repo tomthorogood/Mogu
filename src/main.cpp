@@ -1,5 +1,9 @@
 #include "Mogu.h"
 
+#ifdef DEBUG
+#include <exception>
+#endif
+
 Wt::WApplication* createApplication(const Wt::WEnvironment& env)
 {
     return new Mogu(env);

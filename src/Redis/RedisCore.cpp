@@ -9,6 +9,7 @@
 #include <sstream>
 #include <hiredis/hiredis.h>
 #include <stdlib.h>
+#include <string.h>
 
 namespace Redis{
 
@@ -64,7 +65,7 @@ void command (
     const char* __command = buff.c_str();
 	redis = redisConnect(REDIS_HOST, REDIS_PORT);
 
-    if (__command != "")
+	if ( strcmp(__command, "") != 0)
     {
     	reply = (redisReply*) redisCommand(redis, __command);
     }

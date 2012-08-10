@@ -11,7 +11,7 @@
 #include <Wt/WString>
 
 #include <Events/Bindery.h>
-#include <Sculptory.h>
+#include <Core/Sculptory.h>
 
 #include <Parsers/Parsers.h>
 #include <Parsers/StyleParser.h>
@@ -50,8 +50,12 @@ Moldable::Moldable(
 
 {
     nodes.add(constructorNode);
+#ifdef DEBUG
+    __NODE_NAME = constructorNode.c_str();
+#endif
     bindery =0;
-    baseVariables = conceptualize(this);
+    baseVariables = new GooVariables();
+    conceptualize(this);
 }
 
 Moldable::~Moldable()
@@ -97,7 +101,7 @@ void Moldable::addGoo (const string& nodeName)
 		newGoo = new Moldable(nodeName);
 	}
 
-	if (baseVariables->type & WIDGET_HO_BITS == Enums::WidgetTypes::stack)
+	if ( (baseVariables->type & WIDGET_HO_BITS) == Enums::WidgetTypes::stack)
     {
         Wt::WStackedWidget* stack =
                 (Wt::WStackedWidget*) widget(0);
@@ -115,7 +119,14 @@ void Moldable::addGoo (const string& nodeName)
      * can be interacted with just the same from external widgets requesting
      * access to their content. Isn't that special?
      */
-    children.push_back(newGoo);
+    children.add(newGoo);
+    children.trim();
+#ifdef DEBUG
+    for (int i = 0; i < children.size(); i++)
+    {
+    	assert (children.at(i) != 0);
+    }
+#endif
 }
 
 void Moldable::setStyleClass(const Wt::WString& style)
