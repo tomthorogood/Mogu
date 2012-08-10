@@ -3,5 +3,6 @@
 *.a
 *.swp
 *.dot
+*grindout.xml
 mogu-server
 resources/
