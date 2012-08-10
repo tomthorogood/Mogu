@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# Mogu Import File validator
+
+validators["email"] = {
+        "type"  :   "{regex}",
+        "test"  :   "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}",
+        "example"   :   "your@email-address.com"
+        }
+
+validators["password"] = {
+        "type"  :   "{regex}",
+        "test"  :   "[a-z|A-Z|0-9|.,@#$%^&*()-_+=!:;]{8,64}"
+        }
