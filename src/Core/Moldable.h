@@ -165,7 +165,7 @@ public:
     {
     	return !(
 			(baseVariables->actionBlocking & action)
-			|| (baseVariables->actionBlocking & Enums::SignalActions::BLOCK));
+			|| (baseVariables->actionBlocking == Enums::SignalActions::BLOCK));
     }
 
     inline bool isNamed()
