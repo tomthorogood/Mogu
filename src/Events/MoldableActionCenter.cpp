@@ -461,6 +461,124 @@ void directListeners(BroadcastMessage* broadcast)
     		}
     	}
     	break;}
+
+    case Action::change_session:{
+    	/* Changing the session is a very important operation. Doing so exposes
+    	 * new values to the user interface, so it's important to make sure
+    	 * to get it right. First, we have to see whether the unencrypted
+    	 * information is currently being stored in their corresponding slots.
+    	 */
+    	namespace App = Application;
+    	namespace S = Sessions;
+
+
+    	/* Next, grab info from the 'USERID' slot and the 'USERAUTH' slot, and
+    	 * make sure that the first four letters are not ERR_
+    	 */
+    	std::string userid = App::retrieveSlot(
+    			"USERID", App::mogu()->sessionId());
+    	if (userid.substr(0,4) == "ERR_")
+    	{
+    		//TODO THROW ERROR
+    	}
+    	std::string userauth = App::retrieveSlot(
+    			"USERAUTH", App::mogu()->sessionId());
+    	if (userid.substr(0,4) == "ERR_")
+    	{
+    		//TODO THROW ERROR
+    	}
+    	/* If all of that is okay, we are in a valid Wt session, and the
+    	 * userid/userauth was successfully retrieved (and removed) from
+    	 * their static slots. We can now attempt to authenticate the user.
+    	 */
+    	std::string meta = Hash::toHash("meta");
+
+    	/* Step one is to hash both the username and auth */
+    	std::string huserid = Hash::toHash(userid);
+    	std::string huserauth = Hash::toHash(userauth);
+
+    	/* Then, encrypt them: */
+    	PacketCenter e1(huserid, DECRYPTED);
+    	PacketCenter e2(huserauth, DECRYPTED);
+    	BlowfishKeyCreator* keygen = new BlowfishKeyCreator();
+    	BF_KEY* ekey = keygen->getKey();
+    	e1.giveKey(ekey);
+    	e2.giveKey(ekey);
+    	std::string euserid = e1.encrypt();
+    	std::string euserauth = e2.encrypt();
+    	delete keygen; // Also deletes the encryption key
+
+    	/* Next, let's determine where the user session lookup
+    	 * table is located
+    	 */
+    	std::string htable_node = Hash::toHash(SESSION_LOOKUP);
+
+    	/*Then get the session id associated with the encrypted username */
+    	Redis::command("hget s.global."+htable_node, euserid);
+    	std::string usersession = Redis::toString();
+
+    	/*Then, ensure that the auth token associated with the session
+    	 * is the same one associated with the user's password.
+    	 */
+    	std::string sessionauth = Redis::command(
+    			"hget s."+usersession+"."+meta, "auth");
+    	std::string tokenauth = Redis::command(
+    			"hget s.global."+Hash::toHash(AUTH_LOOKUP), sessionauth);
+    	if (sessionauth == tokenauth)
+    	{
+    		/* If the session is authenticated, then we need to change
+    		 * sessions. This process starts by generating a new session ID.
+    		 */
+    		std::string newsession = Sessions::Generator::generate_id(
+    				sessionauth);
+
+    		/* Then, we need to generate a new auth token. This is done by
+    		 * hashing the newsession, userid, and userauth. The auth token
+    		 * will be used next time the user logs in.
+    		 */
+    		std::string unewauth = newsession + userid + userauth;
+    		std::string hnewauth = Hash::toHash(unewauth);
+    		/* which is then encrypted */
+    		BlowfishKeyCreator* keygen = new BlowfishKeyCreator();
+    		BF_KEY* ekey = keygen->getKey();
+    		PacketCenter e(hnewauth,DECRYPTED);
+    		e.giveKey(ekey);
+    		std::string enewauth = e.encrypt();
+    		delete keygen;
+
+    		/* Now, we have everything we need. We then need to create
+    		 * the new user session table:
+    		 */
+    		std::string newmeta = "s."+newsession+"."+meta;
+    		Redis::command(
+    				"hset", newmeta, "auth", enewauth);
+    		Redis::clear();
+    		/* Then link the new session to the last session. */
+    		Redis::command(
+    				"hset", newmeta, "prev", usersession);
+    		Redis::clear();
+    		/*Then, finally, change the session and the auth token*/
+    		App::setSessionID(newsession);
+    		App::setAuthToken(hnewauth);
+    	}
+    	break;}
+
+    case Action::slot:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Dynamic* widget = (Dynamic*) listeners->at(w);
+    		if (widget->allowsAction(Action::slot))
+    		{
+    			std::string slot_ =
+    					Sessions::SubmissionHandler::getSlotName(widget);
+    			Wt::WLineEdit* inputField =
+    					(Wt::WLineEdit*)  widget->widget(0);
+    			std::string value_ = inputField->text().toUTF8();
+    			Application::slotStorage(slot_, value_);
+    		}
+    	}
+    	break;}
+
     default:return; // Don't do anything unexpected!
     }
 }

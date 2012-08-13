@@ -2,7 +2,7 @@ source_files := src
 branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions
 includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
 executable := mogu-server
-
+o:=0
 devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
 production_libs := -lwt -lwtfcgi -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
 
@@ -10,7 +10,8 @@ turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
 sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
-command := g++ -Wall
+command := g++ -Wall -O$(o) 
+
 
 all: $(objects) | $(turnleft) 
 ifeq ($(dbg),on)
@@ -21,7 +22,7 @@ endif
 
 
 production: $(objects) | $(turnleft)
-	g++ -Wall -o mogu-server $(objects) $(production_libs)
+	$(command) -o mogu-server $(objects) $(production_libs)
 
 install: 
 	mkdir -p /etc/mogu
@@ -33,7 +34,6 @@ install:
 install-cli:
 	cp -r cli/* /etc/mogu	
 
-
 uninstall:
 	unlink /usr/bin/mogu-server
 	unlink /usr/bin/mogu
@@ -41,9 +41,9 @@ uninstall:
 
 %.o:
 ifeq ($(dbg),on)
-	g++ -c -DTERM_ENABLED -g $(includes) -o $@ $(patsubst %.o, %.cpp, $@)
+	$(command) -c -DTERM_ENABLED -g $(includes) -o $@ $(patsubst %.o, %.cpp, $@)
 else
-	g++ -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
+	$(command) -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
 endif
 
 $(turnleft):

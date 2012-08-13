@@ -20,6 +20,8 @@ namespace Application
 	void setSessionID(std::string session);
 	bool handshake(std::string wtSession);
 	std::string encrypt(std::string data);
+	void slotStorage(std::string name, std::string value);
+	std::string retrieveSlot (std::string name, std::string wtSession);
 }
 
 

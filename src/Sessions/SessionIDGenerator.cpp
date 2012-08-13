@@ -32,10 +32,7 @@ std::string generate_id (std::string salt)
 	}
 	stream << time(NULL);
 	std::string to_hash(stream.str());
-
-	Hash::HashedString* hash = Hash::hashedString(to_hash);
-	std::string hashed_string = hash->as_string();
-	delete hash;
+	std::string hashed_string = Hash::toHash(to_hash);
 	return hashed_string;
 }
 

@@ -42,15 +42,22 @@ void absorb(Dynamic* inputWidget)
 			inputWidget->requestAuthorization(
 					Application::handshake(
 							Application::mogu()->sessionId())));
+
+	/* Make sure that the returned session ID is not an error message. */
 	if (
 			(session_id.length() > 3) &&
 			(session_id.substr(0,3) != "ERR"))
 	{
+		/* Determine the location of the node's template */
 		std::string storage_locker =
 				Hash::toHash(inputWidget->storageLocker());
 
+		/* The storage node will be a hashed version of the node template name,
+		 * within the current session namespace.
+		 */
 		std::string storageNode =
 				"s."+session_id+"."+storage_locker;
+
 		/* If widget info is stored at widgets.firstName,
 		 * and the user session id is 235r308gg, and the
 		 * hashed name of "firstName" is 123hu, the storage node would be:
@@ -267,6 +274,14 @@ std::string getHashField(Dynamic* inputWidget)
 	std::string nodePolicy =
 			inputWidget->getNodeList()->at(0)+".policy";
 	Redis::command("hget", nodePolicy, "field");
+	return Redis::toString();
+}
+
+std::string getSlotName(Dynamic* inputWidget)
+{
+	std::string nodePolicy =
+			inputWidget->getNodeList()->at(0)+".policy";
+	Redis::command("hget", nodePolicy, "slot");
 	return Redis::toString();
 }
 

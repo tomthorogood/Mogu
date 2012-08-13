@@ -157,10 +157,11 @@ enum SignalAction{
     clear				=0xF,
     store_value			=0x10,
     increment_value		=0x11,
+    change_session		=0x12,
+    slot				=0x13,
     delete_value		=0x1F,
     TERM				=0xFE,
     BLOCK				=0xFF
-
 };
 }
 

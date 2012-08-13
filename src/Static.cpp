@@ -16,6 +16,7 @@ namespace Application
 		std::string __sessionID;
 		std::string __auth_token;
 		std::string __wt_session;
+		std::map <std::string, std::string> __storageSlots;
 	}
 	Mogu* mogu()
 	{
@@ -70,6 +71,34 @@ namespace Application
 	bool handshake(std::string wtSession)
 	{
 		return wtSession == __wt_session;
+	}
+
+	void slotStorage(std::string name, std::string value)
+	{
+		__storageSlots[name] = value;
+	}
+
+	std::string retrieveSlot(std::string name, std::string wtsession)
+	{
+		if (handshake(wtsession))
+		{
+			std::map <std::string, std::string>::iterator iter =
+					__storageSlots.find(name);
+			if (iter != __storageSlots.end())
+			{
+				std::string ret = __storageSlots[name];
+				__storageSlots.erase(name);
+				return ret;
+			}
+			else
+			{
+				return "ERR_VALUE_NOT_FOUND";
+			}
+		}
+		else
+		{
+			return "ERR_SESSION_AUTH_FAILURE";
+		}
 	}
 }
 

@@ -34,20 +34,20 @@ HashedString128::HashedString128()
 
 HashedString128::~HashedString128(){};
 
-inline HashedString128& HashedString128::set(uint128 _value)
+HashedString128& HashedString128::set(uint128 _value)
 {
     hashedValue = _value;
     return *this;
 }
 
-inline string HashedString128::as_string()
+string HashedString128::as_string()
 {
     stringstream stream;
     stream << hashedValue.first << hashedValue.second;
     return stream.str();
 }
 
-inline HashedString* hashedString(const string& str)
+HashedString* hashedString(const string& str)
 {
     size_t len = (size_t) str.length();
     if (len > MAX_64_HASH_LENGTH)

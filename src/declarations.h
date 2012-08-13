@@ -22,6 +22,8 @@
  */
 
 #define WIDGET_HO_BITS 0x3f
+#define SESSION_LOOKUP "session_lookup"
+#define AUTH_LOOKUP "auth_lookup"
 
 namespace Goo
 {
