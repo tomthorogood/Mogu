@@ -38,7 +38,7 @@ def whatis(db, string, output_str=True):
         elif prefix == "perspectives":
             output = coloring.info(string)
             output += " is a " + coloring.info("perspective")
-            output += " with %d events " % ( len(db.keys(w.build_node("perspectives", string, "*")))-1)
+            output += " with %d events " % ( len(db.keys(w.build_node("perspectives", string, "*"))))
 
         elif prefix == "s":
             output = coloring.info(string)
