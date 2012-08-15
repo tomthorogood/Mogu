@@ -328,26 +328,8 @@ if command == "dbdiff":
     print message
 
 if command == "whatis":
-    query = args.command[1]
-    widget = as_widget(query)
-    children = widget+".children"
-    events = widget+".events.*"
-    num_events = db.llen(db.keys(events))
-    if db.exists(widget):
-        comment = db.hget(widget, "comment")
-        comment_message = info("Comment: %s " % repr(comment))
-        print(comment_message)
-        if db.exists(children):
-            kids = repr(full_list(db,children))
-            kid_message = "%s has children: %s " % (query, kids)
-            print(kid_message)
-        common_name = db.hget(widget, "name")
-        name_message = info("Registered Name: %s" % common_name)
-        print(name_message)
-        print("%s has %d events attached." % (query, num_events))
-    else:
-        print(fail("That is not a known widget. Sorry. Support for non-widget lookups has not yet been added."))
-            
+    for arg in args.command[1:]:
+        print whatis(db,arg)
 if command == "version":
     print VERSION
 

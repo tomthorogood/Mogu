@@ -5,3 +5,5 @@ from exportdb import *
 from relationships import *
 from css import *
 import importdb
+from whatis import *
+
