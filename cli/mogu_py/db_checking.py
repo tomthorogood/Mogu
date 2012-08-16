@@ -29,7 +29,8 @@ required_widget_parameters = {
         "image_link" :          ("content","source","location"),
         "link" :                ("content","location"),
         "text"  :               ("content",),
-        "input" :               (None,)
+        "input" :               (None,),
+        "password":             (None,)
         }
 
 required_event_parameters = {
@@ -105,11 +106,12 @@ class Type_Assertions:
     STORAGE_TYPE =  (Wrappers.CURLY_BRACES,)
     MODE        =   (Wrappers.CURLY_BRACES,)
     DATATYPE    =   (Wrappers.CURLY_BRACES,)
+    VALIDATOR   =   (Wrappers.NONE,)
 
 key_checklist = {
         "type"  :       Type_Assertions.TYPE,
         "class" :       Type_Assertions.CLASS,
-        "chidlren" :    Type_Assertions.CHILDREN,
+        "children" :    Type_Assertions.CHILDREN,
         "content"   :   Type_Assertions.CONTENT,
         "source"    :   Type_Assertions.SOURCE,
         "location"  :   Type_Assertions.LOCATION,
@@ -129,7 +131,8 @@ key_checklist = {
         "encrypted" :   Type_Assertions.ENCRYPTED,
         "storage_type": Type_Assertions.STORAGE_TYPE,
         "mode"      :   Type_Assertions.MODE,
-        "data_type" :   Type_Assertions.DATATYPE
+        "data_type" :   Type_Assertions.DATATYPE,
+        "validator" :   Type_Assertions.VALIDATOR
         }
 
 def is_wrapped(value,start,finish):
