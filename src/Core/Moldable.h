@@ -13,6 +13,7 @@
 #include <Wt/WContainerWidget>
 #include <Events/Bindery.h>
 #include <Redis/RedisCore.h>
+#include <Wt/WLineEdit>
 #include <Wt/WSignal> // Templated Type
 
 namespace Goo
@@ -72,6 +73,7 @@ private:
 
     /*!\brief Signal emitted when the style is changed. */
     Wt::Signal <> __style_changed;
+    Wt::Signal <> __failed_validation;
 
 
 
@@ -84,6 +86,7 @@ private:
     {
         bindery = new Events::EventBindery(this);
     }
+
 
 public:
     /*!\brief The standard (and only!) constrcutor for a ModdableGoo instance.
@@ -188,6 +191,20 @@ public:
     {
     	return baseVariables->type;
     }
+
+    inline void validate (Wt::WValidator* validator)
+    {
+    	Wt::WLineEdit* input = (Wt::WLineEdit*) widget(0);
+    	input->setValidator(validator);
+    }
+
+    inline Wt::Signal<>& fail()
+	{
+    	return __failed_validation;
+	}
+
+    void __validate();
+
 
 };
 

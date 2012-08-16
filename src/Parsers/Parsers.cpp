@@ -214,4 +214,11 @@ Parsers::SignalTriggerParser::SignalTriggerParser()
     enumMap["style_changed"]= Trigger::style_changed;
 }
 
+Parsers::ValidatorTypeParser::ValidatorTypeParser()
+:EnumParser<Enums::Validators::ValidatorTypes>()
+{
+	namespace Type = Enums::Validators;
+	enumMap["regex"]	= Type::regex;
+}
+
 }// <-namespace Parsers

@@ -14,6 +14,20 @@
 #include <exception>
 #include <map>
 #include <stdint.h>
+#define RNS_WIDGETS 	 	"widgets"
+#define RNS_SESSIONS 	 	"s"
+#define RNS_EVENTS 		 	"events"
+#define RNS_PERSPECTIVES 	"perspectives"
+#define RNS_TEMPLATES		"templates"
+#define MOGU_WIDGET(X)			RNS_WIDGETS+"."+(X)
+#define MOGU_SESSION(X)			RNS_SESSIONS+"."+(X)
+#define MOGU_PERSPECTIVE(X) 	RNS_PERSPECTIVES+"."+(X)
+#define MOGU_TEMPLATE(X)		RNS_TEMPLATES+"."(X)
+#define MOGU_GLOBAL_EVENT 		RNS_EVENTS+"."+(X)
+#define MOGU_WIDGET_EVENT(X,Y) RNS_WIDGETS+"."+(X)+"."+RNS_EVENTS+"."+(Y)
+
+
+
 
 
 /* In a single byte, this denotes the two highest order bits:
@@ -80,11 +94,13 @@ namespace Wt
     class WAnimation;
     class WContainerWidget;
     class WStackedWidget;
+    class WValidator;
     class WString;
     class WText;
     class WAnchor;
     class WLink;
     class WImage;
+    class WRegExpValidator;
 }
 
 namespace Redis

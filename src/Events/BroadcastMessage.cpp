@@ -26,7 +26,8 @@ BroadcastMessage::BroadcastMessage(
 {
     __broadcaster = broadcaster;
     Nodes::NodeValue* incoming_message = processor->getValue(Labels::message);
-    size_t msg_siz = sizeof(incoming_message);
+
+    __interrupt = 0;
 
     /* Because the NodeValue is deleted when the processor is destroyed, we
      * we must gracefully get the same data into the BroadcastMessage object.
@@ -74,6 +75,14 @@ BroadcastMessage::BroadcastMessage(
                     processor->getValue(Labels::nextAction)->getInt();
         }
     }
+
+    if (processor->valueExists(Labels::interrupt))
+	{
+    	std::string interrupt_directive = processor->getValue(
+    			Labels::interrupt)->getString();
+    	if (interrupt_directive == "set") __interrupt |= INTERRUPT_CHAIN;
+    	if (interrupt_directive == "clear") __interrupt |= CLEAR_INTERRUPT;
+	}
 }
 
 Moldable* BroadcastMessage::getBroadcaster() const

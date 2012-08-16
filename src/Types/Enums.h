@@ -133,7 +133,8 @@ enum Properties
     is_stacked          =0x4,
     has_animation       =0x8,
     blocks_actions      =0x10,
-    is_named			=0x20
+    is_named			=0x20,
+    is_validated		=0x40
 };
 } //namespace SignalTypes
 
@@ -159,7 +160,10 @@ enum SignalAction{
     increment_value		=0x11,
     change_session		=0x12,
     slot				=0x13,
+    register_user		=0x14,
+    match				=0x15,
     delete_value		=0x1F,
+    set_text			=0x20,
     TERM				=0xFE,
     BLOCK				=0xFF
 };
@@ -207,6 +211,7 @@ enum SignalTrigger{
     style_changed,
     mouseover,
     mouseout,
+    fail
 };
 } //namespace SignalTriggers
 
@@ -252,15 +257,6 @@ namespace NodeValueTypes{
      * the $ symbol with the enum name as the first part:
      * $field_value, $enum_value, etc.
      */
-    const char ENUM_REPR_CAST = '$';
-
-    /*!\brief In the database, values can instead use the actual
-     * number representation of the enumerated type instead of
-     * any of the above notations by placing the # symbol with
-     * the integral value as the first part of the value:
-     * #1, #2, #0x1, #0x2, etc.
-     */
-    const char ENUM_INT_CAST = '#';
 
 enum NodeValueTypes{
     /*!\brief When read in from the database, string values are interpreted
@@ -322,7 +318,8 @@ enum WidgetTypes {
     dropdown_menu		=0xA,
     radio_button_menu	=0xB,
     checkbox_menu		=0xC,
-    multi_select			=0xD
+    multi_select		=0xD,
+    template_group		=0x10
 
 };
 } //namespace WidgetTypes
@@ -386,10 +383,18 @@ enum Labels
     degradation,
     signal,
     animation,
-    block
+    block,
+    interrupt
 };
 
 }//namespace Labels;
+
+namespace Validators{
+enum ValidatorTypes{
+	regex,
+
+};
+}
 
 } // <-- namespace Enums
 

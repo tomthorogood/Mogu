@@ -40,6 +40,11 @@ public:
     {
         return __recycled;
     }
+
+    inline bool valueExists(Node::Labels index)
+    {
+    	return values[index] != 0;
+    }
 };
 
 }//namespace Events

@@ -13,6 +13,7 @@
 #include <Events/BroadcastMessage.h>
 #include <Parsers/Parsers.h>
 #include <Wt/WStackedWidget>
+#include <Wt/WText>
 #include <Core/Moldable.h>
 #include <Core/Dynamic.h>
 #include <Static.h>
@@ -40,6 +41,21 @@ namespace {
 
 void submitBroadcast(BroadcastMessage* broadcast)
 {
+	/* If a fail state is reached, discontinue listening to broadcasts
+	 * from the current broadcaster UNLESS the trigger is the fail state itself.
+	 */
+	if (Application::ignoreBroadcaster(broadcast->getBroadcaster())
+	&& Application::getLastTrigger() != Enums::SignalTriggers::fail)
+	{
+		cleanupBroadcast(broadcast);
+		return; //avoid side effects with recursion
+	}
+
+	/* A broadcast chain should be re-enabled if the user tries again.*/
+	if (broadcast->clearsInterrupt())
+	{
+		Application::ignoreBroadcaster(0,1);
+	}
     namespace TypeBits = Enums::SignalTypes;
     unsigned char signalType = broadcast->getSignalType();
 
@@ -151,7 +167,7 @@ void getNuclearFamily(BroadcastMessage* broadcast)
     unsigned int num_current = current_listeners->size();
 #ifdef DEBUG
     assert(num_current != 0);
-    for (int i = 0; i < num_current; i++)
+    for (unsigned int i = 0; i < num_current; i++)
     {
     	assert (current_listeners->at(i) != 0);
     }
@@ -194,7 +210,7 @@ void getNuclearFamily(BroadcastMessage* broadcast)
     new_listeners->trim();
     listenerMap[broadcast] = new_listeners;
 #ifdef DEBUG // Make sure  that all listeners are actual objects
-    for (int i = 0; i < new_listeners->size(); i++)
+    for (unsigned int i = 0; i < new_listeners->size(); i++)
     {
     	assert (new_listeners->at(i) != 0);
     }
@@ -244,7 +260,7 @@ void updateListeners(BroadcastMessage* broadcast)
     }
     new_listeners->trim();
 #ifdef DEBUG // Make sure  that all listeners are actual objects
-    for (int i = 0; i < new_listeners->size(); i++)
+    for (unsigned int i = 0; i < new_listeners->size(); i++)
     {
     	assert (new_listeners->at(i) != 0);
     }
@@ -257,7 +273,7 @@ void directListeners(BroadcastMessage* broadcast)
     Listeners* listeners = listenerMap[broadcast];
 
 #ifdef DEBUG // Make sure  that all listeners are actual objects
-    for (int i = 0; i < listeners->size(); i++)
+    for (unsigned int i = 0; i < listeners->size(); i++)
     {
     	assert (listeners->at(i) != 0);
     }
@@ -463,104 +479,7 @@ void directListeners(BroadcastMessage* broadcast)
     	break;}
 
     case Action::change_session:{
-    	/* Changing the session is a very important operation. Doing so exposes
-    	 * new values to the user interface, so it's important to make sure
-    	 * to get it right. First, we have to see whether the unencrypted
-    	 * information is currently being stored in their corresponding slots.
-    	 */
-    	namespace App = Application;
-    	namespace S = Sessions;
-
-
-    	/* Next, grab info from the 'USERID' slot and the 'USERAUTH' slot, and
-    	 * make sure that the first four letters are not ERR_
-    	 */
-    	std::string userid = App::retrieveSlot(
-    			"USERID", App::mogu()->sessionId());
-    	if (userid.substr(0,4) == "ERR_")
-    	{
-    		//TODO THROW ERROR
-    	}
-    	std::string userauth = App::retrieveSlot(
-    			"USERAUTH", App::mogu()->sessionId());
-    	if (userid.substr(0,4) == "ERR_")
-    	{
-    		//TODO THROW ERROR
-    	}
-    	/* If all of that is okay, we are in a valid Wt session, and the
-    	 * userid/userauth was successfully retrieved (and removed) from
-    	 * their static slots. We can now attempt to authenticate the user.
-    	 */
-    	std::string meta = Hash::toHash("meta");
-
-    	/* Step one is to hash both the username and auth */
-    	std::string huserid = Hash::toHash(userid);
-    	std::string huserauth = Hash::toHash(userauth);
-
-    	/* Then, encrypt them: */
-    	PacketCenter e1(huserid, DECRYPTED);
-    	PacketCenter e2(huserauth, DECRYPTED);
-    	BlowfishKeyCreator* keygen = new BlowfishKeyCreator();
-    	BF_KEY* ekey = keygen->getKey();
-    	e1.giveKey(ekey);
-    	e2.giveKey(ekey);
-    	std::string euserid = e1.encrypt();
-    	std::string euserauth = e2.encrypt();
-    	delete keygen; // Also deletes the encryption key
-
-    	/* Next, let's determine where the user session lookup
-    	 * table is located
-    	 */
-    	std::string htable_node = Hash::toHash(SESSION_LOOKUP);
-
-    	/*Then get the session id associated with the encrypted username */
-    	Redis::command("hget s.global."+htable_node, euserid);
-    	std::string usersession = Redis::toString();
-
-    	/*Then, ensure that the auth token associated with the session
-    	 * is the same one associated with the user's password.
-    	 */
-    	std::string sessionauth = Redis::command(
-    			"hget s."+usersession+"."+meta, "auth");
-    	std::string tokenauth = Redis::command(
-    			"hget s.global."+Hash::toHash(AUTH_LOOKUP), sessionauth);
-    	if (sessionauth == tokenauth)
-    	{
-    		/* If the session is authenticated, then we need to change
-    		 * sessions. This process starts by generating a new session ID.
-    		 */
-    		std::string newsession = Sessions::Generator::generate_id(
-    				sessionauth);
-
-    		/* Then, we need to generate a new auth token. This is done by
-    		 * hashing the newsession, userid, and userauth. The auth token
-    		 * will be used next time the user logs in.
-    		 */
-    		std::string unewauth = newsession + userid + userauth;
-    		std::string hnewauth = Hash::toHash(unewauth);
-    		/* which is then encrypted */
-    		BlowfishKeyCreator* keygen = new BlowfishKeyCreator();
-    		BF_KEY* ekey = keygen->getKey();
-    		PacketCenter e(hnewauth,DECRYPTED);
-    		e.giveKey(ekey);
-    		std::string enewauth = e.encrypt();
-    		delete keygen;
-
-    		/* Now, we have everything we need. We then need to create
-    		 * the new user session table:
-    		 */
-    		std::string newmeta = "s."+newsession+"."+meta;
-    		Redis::command(
-    				"hset", newmeta, "auth", enewauth);
-    		Redis::clear();
-    		/* Then link the new session to the last session. */
-    		Redis::command(
-    				"hset", newmeta, "prev", usersession);
-    		Redis::clear();
-    		/*Then, finally, change the session and the auth token*/
-    		App::setSessionID(newsession);
-    		App::setAuthToken(hnewauth);
-    	}
+    	Actions::change_session();
     	break;}
 
     case Action::slot:{
@@ -578,6 +497,47 @@ void directListeners(BroadcastMessage* broadcast)
     		}
     	}
     	break;}
+
+    case Action::match:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::match))
+    		{
+    			Wt::WLineEdit* input = (Wt::WLineEdit*) widget->widget(0);
+    			Wt::WLineEdit* test = (Wt::WLineEdit*)
+    					broadcast->getBroadcaster()->widget(0);
+    			string textToMatch = input->valueText().toUTF8();
+    			string textToTest = test->valueText().toUTF8();
+    			if (textToMatch != textToTest)
+    			{
+    				if (broadcast->interruptsChain())
+    				{
+    					Application::ignoreBroadcaster(
+    							broadcast->getBroadcaster(), 1);
+    				}
+    				broadcast->getBroadcaster()->fail().emit();
+    			}
+    		}
+    	}
+    	break;}
+
+    case Action::register_user:{
+    	Actions::register_user();
+    	break;}
+
+    case Action::set_text:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::set_text))
+			{
+    			Wt::WText* text = (Wt::WText*) widget->widget(0);
+    			Wt::WString newtext(broadcast->getMessage()->getString());
+    			text->setText(newtext);
+			}
+    	}
+    }
 
     default:return; // Don't do anything unexpected!
     }

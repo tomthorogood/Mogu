@@ -93,6 +93,12 @@ class SignalTriggerParser:
 public: SignalTriggerParser();
 };
 
+class ValidatorTypeParser:
+	public TurnLeft::Utils::EnumParser <Enums::Validators::ValidatorTypes>
+{
+public: ValidatorTypeParser();
+};
+
 class WtAnimationParser:
     public TurnLeft::Utils::EnumParser<Wt::WAnimation::AnimationEffect>
 {

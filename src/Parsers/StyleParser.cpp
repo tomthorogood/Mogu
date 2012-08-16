@@ -116,6 +116,15 @@ string getWidgetImgSource(Moldable* broadcaster)
     return img_src;
 }
 
+string getWidgetValidator(Moldable* broadcaster)
+{
+	string validator;
+	string nodeName = broadcaster->getNodeList()->at(0);
+	Redis::command("hget", nodeName, "validator");
+	validator = Redis::toString();
+	return validator;
+}
+
 string getWidgetLinkLocation(Moldable* broadcaster)
 {
     string location;
@@ -180,6 +189,13 @@ bool widgetHasAnimation(Moldable* broadcaster)
     string nodeName = broadcaster->getNodeList()->at(0);
     Redis::command("hexists", nodeName, "animation");
     return (bool) Redis::getInt();
+}
+
+bool widgetHasValidator(Moldable* broadcaster)
+{
+	string nodeName = broadcaster->getNodeList()->at(0);
+	Redis::command("hexists", nodeName, "validator");
+	return (bool) Redis::getInt();
 }
 
 bool widgetBlocksActions(Moldable* broadcaster)

@@ -91,6 +91,12 @@ void getNuclearFamily(BroadcastMessage* broadcast);
  */
 void cleanupBroadcast(BroadcastMessage* broadcast);
 
+//_______ACTION RESOLUTIONS ________//
+namespace Actions{
+void change_session ();
+void register_user ();
+} //namespace Actions
+
 } //Namspace ActionCenter
 } //Namespace Events
 

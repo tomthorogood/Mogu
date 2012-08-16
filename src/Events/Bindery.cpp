@@ -15,6 +15,7 @@
 #include <Events/EventNodeExtractor.h>
 #include <Events/EventNodeProcessor.h>
 #include <Events/MoldableActionCenter.h>
+#include <Static.h>
 
 #include <Types/NodeValue.h>
 
@@ -72,22 +73,30 @@ EventBindery::EventBindery(Moldable* broadcaster)
         switch(trigger)
         {
         case Triggers::click:
+        	Application::setLastTrigger(Triggers::click);
             broadcaster->clicked().connect(this,
                     &EventBindery::clickSlot);
             break;
 
         case Triggers::style_changed:
+        	Application::setLastTrigger(Triggers::style_changed);
             broadcaster->styleChanged().connect(this,
                     &EventBindery::styleChangedSlot);
             break;
         case Triggers::mouseover:
+        	Application::setLastTrigger(Triggers::mouseover);
             broadcaster->mouseWentOver().connect(this,
                     &EventBindery::mouseoverSlot);
             break;
         case Triggers::mouseout:
+        	Application::setLastTrigger(Triggers::mouseout);
             broadcaster->mouseWentOut().connect(this,
                     &EventBindery::mouseoutSlot);
             break;
+        case Triggers::fail:{
+        	Application::setLastTrigger(Triggers::fail);
+        	broadcaster->fail().connect(this, &EventBindery::failSlot);
+        	break;}
         default:return;
         }
     }
@@ -138,6 +147,11 @@ void EventBindery::mouseoutSlot()
 void EventBindery::styleChangedSlot()
 {
     handleVoidSignal(Triggers::style_changed);
+}
+
+void EventBindery::failSlot()
+{
+	handleVoidSignal(Triggers::fail);
 }
 
 }

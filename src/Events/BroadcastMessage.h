@@ -13,6 +13,9 @@
 
 namespace Events{
 
+#define INTERRUPT_CHAIN 0x1
+#define CLEAR_INTERRUPT 0x2
+
 typedef Nodes::NodeValue NodeValue;
 
 class BroadcastMessage
@@ -29,6 +32,8 @@ class BroadcastMessage
     Enums::SignalActions::SignalAction __action;
     Enums::SignalActions::SignalAction __next_action;
     Enums::Family::_Family __listener_type;
+
+    uint8_t __interrupt;
     std::string __listener_name;
 
 public:
@@ -49,6 +54,8 @@ public:
     void upgradeAction();
     int degrade();
 
+    inline bool interruptsChain() { return __interrupt & INTERRUPT_CHAIN;}
+    inline bool clearsInterrupt() { return __interrupt & CLEAR_INTERRUPT;}
 };
 }//namespace Events
 

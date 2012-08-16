@@ -16,7 +16,7 @@ Dynamic::Dynamic(
 		Wt::WContainerWidget* parent)
 : Moldable(constructorNode,parent), __submitted(this)
 {
-	__auth_token = auth;
+	__auth_token 	= auth;
 
 	/* Removes the ubiquitous "widgets." string from the first part of the
 	 * node name.

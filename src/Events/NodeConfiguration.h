@@ -14,7 +14,7 @@
 namespace EventNodeConfiguration
 {
 
-const int NUM_FIELDS = 8;
+const int NUM_FIELDS = 11;
 
 class NodeLabelParser
 :   public TurnLeft::Utils::EnumParser <Enums::Labels::Labels>
@@ -34,6 +34,7 @@ public:
         enumMap["signal"]       = signal;
         enumMap["animation"]    = animation;
         enumMap["block"]        = block;
+        enumMap["interrupt"]	= interrupt;
     }
 };
 

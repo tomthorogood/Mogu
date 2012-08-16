@@ -46,7 +46,7 @@ Moldable::Moldable(
 )
 : Wt::WContainerWidget (parent),
     children(),
-    __style_changed(this)
+    __style_changed(this), __failed_validation(this)
 {
     nodes.add(constructorNode);
 #ifdef DEBUG
@@ -82,6 +82,14 @@ Moldable::load()
             do_if_has_events();
         }
     }
+}
+
+void Moldable::__validate()
+{
+	Wt::WLineEdit* input = (Wt::WLineEdit*) widget(0);
+	Wt::WValidator::State result = input->validate();
+	if (result == Wt::WValidator::Valid) return;
+	__failed_validation.emit();
 }
 
 void Moldable::addGoo (const string& nodeName)
@@ -121,7 +129,7 @@ void Moldable::addGoo (const string& nodeName)
     children.add(newGoo);
     children.trim();
 #ifdef DEBUG
-    for (int i = 0; i < children.size(); i++)
+    for (unsigned int i = 0; i < children.size(); i++)
     {
     	assert (children.at(i) != 0);
     }

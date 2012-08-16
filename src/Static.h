@@ -22,6 +22,11 @@ namespace Application
 	std::string encrypt(std::string data);
 	void slotStorage(std::string name, std::string value);
 	std::string retrieveSlot (std::string name, std::string wtSession);
+
+	bool ignoreBroadcaster(Goo::Moldable* widget, uint8_t command=0);
+
+	void setLastTrigger(Enums::SignalTriggers::SignalTrigger);
+	Enums::SignalTriggers::SignalTrigger getLastTrigger();
 }
 
 

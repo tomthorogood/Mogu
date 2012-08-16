@@ -17,6 +17,7 @@
 #include <Wt/WLineEdit>
 #include <Mogu.h>
 #include <Core/Sculptory.h>
+#include <Validators/Validators.h>
 
 namespace Goo{
 
@@ -49,6 +50,11 @@ void conceptualize (Moldable* widget)
 	if (widgetHasChildren(widget))
 	{
 		vars->flags |= has_children;
+	}
+
+	if (widgetHasValidator(widget))
+	{
+		vars->flags |= is_validated;
 	}
 
 	if (widgetIsNamed(widget))
@@ -146,6 +152,14 @@ void mold(Moldable* widget)
 		case input_text:{
 			Wt::WLineEdit* input = new Wt::WLineEdit(vars->content);
 			widget->addWidget(input);
+			if (vars->flags & is_validated)
+			{
+				Wt::WValidator* validator =
+						Validators::createValidator(widget);
+				input->setValidator(validator);
+				input->keyWentUp().connect(
+						widget, &Moldable::__validate);
+			}
 			break;}
 		}
 	}

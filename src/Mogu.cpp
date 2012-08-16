@@ -40,6 +40,9 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 {
 	Application::defineMogu(this);
 	Application::setWtSession(sessionId());
+	Application::ignoreBroadcaster(0);
+	Application::setLastTrigger(Enums::SignalTriggers::fail);
+
 
 	std::string global_auth = AUTH_TOKEN;
 	std::string auth_hash = Hash::toHash(global_auth);

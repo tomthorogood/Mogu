@@ -27,6 +27,7 @@ std::string getWidgetInternalPath(Goo::Moldable*  broadcaster);
 std::string getWidgetImgSource(Goo::Moldable* broadcaster);
 std::string getWidgetLinkLocation(Goo::Moldable* broadcaster);
 std::string getWidgetName(Goo::Moldable* broadcaster);
+std::string getWidgetValidator(Goo::Moldable* broadcaster);
 int getWidgetStackIndex(Goo::Moldable* broadcaster);
 
 Wt::WAnimation::AnimationEffect getWidgetAnimation(
@@ -39,6 +40,7 @@ bool widgetHasEvents(Goo::Moldable* broadcaster);
 bool widgetHasChildren(Goo::Moldable* broadcaster);
 bool widgetHasStyling(Goo::Moldable* broadcaster);
 bool widgetHasAnimation(Goo::Moldable* broadcaster);
+bool widgetHasValidator(Goo::Moldable* broadcaster);
 bool widgetBlocksActions(Goo::Moldable* broadcaster);
 bool widgetIsNamed(Goo::Moldable* broadcaster);
 bool widgetHasStackIndex(Goo::Moldable* broadcaster);
