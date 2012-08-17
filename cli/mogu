@@ -79,13 +79,9 @@ command = args.command[0]
 
 db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
 
-# mogu import --filename F [--merge --redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
+# mogu import filename F [--merge --redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
 if command == "import":
-    if not args.filename: 
-        error = fail("You have told me that you want to import a file, but have not given me a file to import.")
-        print("%s\n You can fix this by using the --filename option. ex:  ./mogu import --filename /path/to/file")%error
-        sys.exit()
-
+    filename = args.command[1]
     if args.flushdb:
         message = warn(
                 "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
@@ -93,13 +89,69 @@ if command == "import":
         if not confirm(message,args.yes):
             print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
             sys.exit()
-    package = importdb.evaluate_file(args.filename)
+        db.flushdb()
+    
+    package = importdb.evaluate_file(filename)
+    dflags = 0
+    lflags = 0
+    sflags = 0
+    if args.testing:
+        dflags |= bytemaps.DictStorage.is_test
+        lflags |= bytemaps.ListStorage.is_test
+    if args.merge:
+        dflags |= bytemaps.DictStorage.is_merge
+        lflags |= bytemaps.ListStorage.is_merge
+    if args.yes:
+        dflags |= bytemaps.DictStorage.assume_yes
+        lflags |= bytemaps.ListStorage.assume_yes
 
-    add_widget_set(db, package, args.testing, args.flushdb, args.merge)
-    add_global_events(db, package.global_events, args.testing, args.merge)
-    add_meta_values(db, package.meta, args.testing, args.merge)
-    add_perspectives(db, package.perspectives, args.testing, args.merge)
-    add_policies(db,package.policies,args.testing)
+    for widget in package.widgets:
+        w = Widget()
+        w.build(widget)
+        w._import(db, package.widgets[widget], dflags)
+
+    for widget in package.events:
+        wevents =0
+        for event in package.events[widget]:
+            wevents += 1
+            e =  WidgetEvent()
+            e.build(widget, wevents)
+            e._import(db, event, dflags)
+
+    for event in package.global_events:
+        e = GlobalEvent()
+        e.build(event)
+        e._import(db, package.global_events[event], dflags)
+
+    for view in package.perspectives:
+        pmold = 0
+        for mold in package.perspectives[view]:
+            pmold += 1
+            p = PerspectiveMold()
+            p.build(view, pmold)
+            p._import(db, mold, dflags)
+
+    for policy in package.policies:
+        p = WidgetPolicy()
+        p.build(policy)
+        p._import(db, package.policies[policy], dflags)
+
+    for widget in package.tree:
+        w = WidgetChildren()
+        w.build(widget)
+        w._import(db, package.tree[widget], lflags)
+
+    for session in package.sessions:
+        for storage in package.sessions[session]:
+            entry = package.sessions[session][storage]
+            if isinstance(entry, dict):
+                s = SessionDict()
+                fl = dflags
+            elif isinstance(entry, list):
+                s = SessionList()
+                fl = lflags
+            s.build(session,storage)
+            s._import(db, entry, fl)
 
 # mogo export --filename F [--resis-port --redis-host --redis-select --redis-auth]
 if command == "export":

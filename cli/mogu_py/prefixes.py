@@ -7,6 +7,7 @@ MOGU_VALID_PREFIXES = (
         )
 
 
+
 def prefix_lookup (db, string):
     ret = []
     for prefix in MOGU_VALID_PREFIXES:

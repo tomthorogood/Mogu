@@ -23,6 +23,12 @@ def list_str(list_entries, quote="\""):
 def dict_entry_line(dict_name, entry_name):
     return "%s[\"%s\"] = \\\n" % (dict_name, entry_name)
 
+def dbl_dict_entry_line(dict_name, innerdict_name, entry_name):
+    return "%s[\"%s\"][\"%s\"] = \\\n" % (dict_name, innerdict_name, entry_name)
+
+def empty_dict_entry_line(dict_name, innerdict_name):
+    return "%s[\"%s\"] = {}\n" % (dict_name, innerdict_name)
+
 def test(filename):
     widgets = {}
     tree = {}
@@ -105,6 +111,29 @@ def clean_file(filename):
     f.close()
 
 
+def export_session(db,session):
+    output = empty_dict_entry_line("sessions", session)
+    _session_nodes = db.keys("s.%s.*" % session)
+    session_nodes = []
+    for n in _session_nodes:
+        session_nodes.append(n.split(".")[2])
+
+    for node in session_nodes:
+        body = ""
+        name = "s.%s.%s" % (session, node)
+        t = db.type(name)
+        title = dbl_dict_entry_line("sessions", session, node)
+        if t == "hash":
+            d = db.hgetall(name)
+            print(d)
+            body = dict_str(d)
+            print(body)
+        elif t == "list":
+            l = full_list(db, name)
+            body = list_str(l)
+        output += "%s%s" % (title,body)
+    return output
+
 def export(db, filename):
     f = open(filename, 'w')
     f.write("#!/usr/bin/env python\n")
@@ -129,7 +158,6 @@ def export(db, filename):
         output = export_widget_children(db,widget)
         if "\"" in output:
             f.write(output)
-
     
     policies = db.keys("*.policy")
     for p in policies:
@@ -167,6 +195,17 @@ def export(db, filename):
             body = dict_str(db.hgetall(key))
         output = "%s%s" % (title,body)
         f.write(output)
+
+    __sessions = db.keys("s.*")
+    sessions = []
+    for sesh in __sessions:
+        sid = sesh.split(".")[1]
+        if sid not in sessions:
+            sessions.append(sid)
+    for session in sessions:
+        output = export_session(db,session)
+        f.write(output)
+
 
     f.close()
     clean_file(filename)
