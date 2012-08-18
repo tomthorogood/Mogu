@@ -37,18 +37,29 @@ public:
 	{
 
 	    namespace Action = Enums::SignalActions;
-	    enumMap["bubble"]       = Action::bubble;
-	    enumMap["trickle"]      = Action::trickle;
-	    enumMap["rebroadcast"]  = Action::rebroadcast;
-	    enumMap["set_style"]    = Action::set_style;
-	    enumMap["set_index"]    = Action::set_index;
-	    enumMap["set_path"]		= Action::set_internal_path;
-	    enumMap["submit"]		= Action::store_value;
-	    enumMap["remove_child"]	= Action::remove_child;
-	    enumMap["add_child"] 	= Action::add_widget;
-	    enumMap["block"]        = Action::BLOCK;
+	    enumMap["bubble"]       	= Action::bubble;
+	    enumMap["trickle"]      	= Action::trickle;
+	    enumMap["rebroadcast"]  	= Action::rebroadcast;
+	    enumMap["set_style"]    	= Action::set_style;
+	    enumMap["set_index"]    	= Action::set_index;
+	    enumMap["set_path"]			= Action::set_internal_path;
+	    enumMap["submit"]			= Action::store_value;
+	    enumMap["remove_child"]		= Action::remove_child;
+	    enumMap["add_child"] 		= Action::add_widget;
+	    enumMap["block"]        	= Action::BLOCK;
+	    enumMap["add_class"]		= Action::add_class;
+	    enumMap["remove_class"] 	= Action::remove_class;
+	    enumMap["increment_index"] 	= Action::increment_index;
+	    enumMap["decrement_index"] 	= Action::decrement_index;
+	    enumMap["clear"]			= Action::clear;
+	    enumMap["change_session"] 	= Action::change_session;
+	    enumMap["register_user"] 	= Action::register_user;
+	    enumMap["slot"]				= Action::slot;
+	    enumMap["match"]			= Action::match;
+	    enumMap["delete_value"]		= Action::delete_value;
+	    enumMap["set_text"]			= Action::set_text;
 #ifdef TERM_ENABLED
-	    enumMap["TERMINATE"]	= Action::TERM;
+	    enumMap["TERMINATE"]		= Action::TERM;
 #endif
 	}
 };
@@ -64,7 +75,7 @@ public:
 	    enumMap["mouseover"]    = Trigger::mouseover;
 	    enumMap["mouseout"]     = Trigger::mouseout;
 	    enumMap["style_changed"]= Trigger::style_changed;
-	    enumMap["mail"]			= Trigger::fail;
+	    enumMap["fail"]			= Trigger::fail;
 	}
 };
 
