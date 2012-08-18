@@ -27,14 +27,6 @@
 #endif
 
 
-WidgetRegistration::WidgetRegistration()
-:	children()
-{
-	pointer	=0;
-	trunk	=false;
-}
-
-
 Mogu::Mogu(const Wt::WEnvironment& env)
 :   Wt::WApplication(env)
 {

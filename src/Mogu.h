@@ -21,15 +21,6 @@
 #define GLOBAL_SESSION "global"
 #endif
 
-struct WidgetRegistration
-{
-	Goo::Moldable* pointer;
-	bool trunk;
-	TurnLeft::Utils::HungryVector <std::string> children;
-	WidgetRegistration();
-};
-
-
 class Mogu : public Wt::WApplication
 {
 	void handlePathChange(std::string path);

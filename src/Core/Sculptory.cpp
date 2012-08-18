@@ -6,8 +6,8 @@
  */
 
 #include <declarations.h>
-#include <Helpers.h>
 #include <Parsers/StyleParser.h>
+#include <Core/Moldable.h>
 #include <Static.h>
 #include <Wt/WString>
 #include <Wt/WAnchor>
