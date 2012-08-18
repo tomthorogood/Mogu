@@ -13,31 +13,7 @@
 
 namespace EventNodeConfiguration
 {
-
 const int NUM_FIELDS = 11;
-
-class NodeLabelParser
-:   public TurnLeft::Utils::EnumParser <Enums::Labels::Labels>
-{
-public:
-    NodeLabelParser()
-    : TurnLeft::Utils::EnumParser <Enums::Labels::Labels> ()
-    {
-        using namespace Enums::Labels;
-        enumMap["message"]      = message;
-        enumMap["trigger"]      = trigger;
-        enumMap["action"]       = action;
-        enumMap["nextAction"]   = nextAction;
-        enumMap["listeners"]    = listeners;
-        enumMap["listener"]     = listeners;
-        enumMap["degradation"]  = degradation;
-        enumMap["signal"]       = signal;
-        enumMap["animation"]    = animation;
-        enumMap["block"]        = block;
-        enumMap["interrupt"]	= interrupt;
-    }
-};
-
 } //namespace EventNodeConfiguration
 
 #endif /* NODECONFIGURATION_H_ */

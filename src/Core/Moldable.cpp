@@ -60,7 +60,7 @@ Moldable::Moldable(
 Moldable::~Moldable()
 {
     if (bindery != 0) delete bindery;
-    if (baseVariables->flags & Enums::SignalTypes::is_named)
+    if (baseVariables->flags & Enums::WidgetTypes::is_named)
     {
     	Application::mogu()->deregisterWidget(
     			Parsers::StyleParser::getWidgetName(this)
@@ -77,7 +77,7 @@ Moldable::load()
     {
         Wt::WContainerWidget::load();
         mold(this);
-        if (baseVariables->flags & Enums::SignalTypes::has_events)
+        if (baseVariables->flags & Enums::WidgetTypes::has_events)
         {
             do_if_has_events();
         }

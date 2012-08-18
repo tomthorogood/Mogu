@@ -8,7 +8,7 @@
 #include <Events/EventNodeExtractor.h>
 #include <Events/NodeConfiguration.h>
 #include <Redis/RedisCore.h>
-
+#include <Parsers/Parsers.h>
 namespace Events{
 
 using std::string;
@@ -23,7 +23,7 @@ EventNodeExtractor::EventNodeExtractor(string nodeName)
     strvector keys;
     Redis::toVector(keys);
 
-    EventNodeConfiguration::NodeLabelParser keyParser;
+    Parsers::NodeLabelParser keyParser;
     int num_keys = keys.size();
     for (int k = 0; k < num_keys; k++)
     {

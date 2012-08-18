@@ -173,7 +173,7 @@ public:
 
     inline bool isNamed()
     {
-		uint8_t named = Enums::SignalTypes::is_named;
+		uint8_t named = Enums::WidgetTypes::is_named;
 		return baseVariables->flags & named;
     }
 

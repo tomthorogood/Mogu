@@ -9,6 +9,8 @@
 #define DECLARATIONS_H_
 
 #include <TurnLeftLib/TurnLeft.h>
+#include <TurnLeftLib/Utils/enumparser.h>
+
 #include <Types/Enums.h>
 #include <string>
 #include <exception>

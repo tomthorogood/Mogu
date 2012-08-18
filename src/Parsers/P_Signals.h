@@ -1,0 +1,97 @@
+/*
+ * P_Signals.h
+ *
+ *  Created on: Aug 18, 2012
+ *      Author: tom
+ */
+
+#ifndef P_SIGNALS_H_
+#define P_SIGNALS_H_
+
+namespace Parsers{
+
+class FamilyMemberParser :
+    public TurnLeft::Utils::EnumParser <Enums::Family::_Family>
+{
+public:
+    FamilyMemberParser()
+	{
+		namespace Family = Enums::Family;
+		enumMap["self"]     =   Family::self;
+		enumMap["parent"]   =   Family::parent;
+		enumMap["children"] =   Family::children;
+		enumMap["siblings"] =   Family::siblings;
+		enumMap["child"]    =   Family::child;
+		enumMap["sibling"]  =   Family::sibling;
+		enumMap["app"] 		=	Family::application;
+		enumMap["application"] =Family::application;
+	}
+};
+
+
+class SignalActionParser:
+	public TurnLeft::Utils::EnumParser<Enums::SignalActions::SignalAction>
+{
+public:
+	SignalActionParser()
+	{
+
+	    namespace Action = Enums::SignalActions;
+	    enumMap["bubble"]       = Action::bubble;
+	    enumMap["trickle"]      = Action::trickle;
+	    enumMap["rebroadcast"]  = Action::rebroadcast;
+	    enumMap["set_style"]    = Action::set_style;
+	    enumMap["set_index"]    = Action::set_index;
+	    enumMap["set_path"]		= Action::set_internal_path;
+	    enumMap["submit"]		= Action::store_value;
+	    enumMap["remove_child"]	= Action::remove_child;
+	    enumMap["add_child"] 	= Action::add_widget;
+	    enumMap["block"]        = Action::BLOCK;
+#ifdef TERM_ENABLED
+	    enumMap["TERMINATE"]	= Action::TERM;
+#endif
+	}
+};
+
+class SignalTriggerParser:
+	public TurnLeft::Utils::EnumParser<Enums::SignalTriggers::SignalTrigger>
+{
+public:
+	SignalTriggerParser()
+	{
+	    namespace Trigger = Enums::SignalTriggers;
+	    enumMap["click"]    = Trigger::click;
+	    enumMap["mouseover"]    = Trigger::mouseover;
+	    enumMap["mouseout"]     = Trigger::mouseout;
+	    enumMap["style_changed"]= Trigger::style_changed;
+	    enumMap["mail"]			= Trigger::fail;
+	}
+};
+
+class NodeLabelParser
+:   public TurnLeft::Utils::EnumParser <Enums::Labels::Labels>
+{
+public:
+	NodeLabelParser()
+	: TurnLeft::Utils::EnumParser <Enums::Labels::Labels> ()
+	{
+		using namespace Enums::Labels;
+		enumMap["message"]      = message;
+		enumMap["trigger"]      = trigger;
+		enumMap["action"]       = action;
+		enumMap["nextAction"]   = nextAction;
+		enumMap["listeners"]    = listeners;
+		enumMap["listener"]     = listeners;
+		enumMap["degradation"]  = degradation;
+		enumMap["signal"]       = Enums::Labels::signal;
+		enumMap["animation"]    = animation;
+		enumMap["block"]        = block;
+		enumMap["interrupt"]	= interrupt;
+	}
+};
+
+}//namespace Parsers
+
+
+
+#endif /* P_SIGNALS_H_ */

@@ -122,18 +122,6 @@ enum SignalTypeBits
     has_effect          =0x80
 };
 
-
-// TODO Why is this here? This should not be in this namespace!
-enum Properties
-{
-    has_children        =0x1,
-    has_events          =0x2,
-    is_stacked          =0x4,
-    has_animation       =0x8,
-    blocks_actions      =0x10,
-    is_named			=0x20,
-    is_validated		=0x40
-};
 } //namespace SignalTypes
 
 namespace SignalActions{
