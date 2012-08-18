@@ -197,6 +197,10 @@ class WidgetChildren(Node):
         self.node_construction += ".%s.children"
         self.node_type = list
 
+    def _import(self, db, data, flags):
+        new_data = ["widgets.%s" % node for node in data]
+        super(WidgetChildren, self)._import(db, new_data, flags)
+
 class Perspective(Namespace):
     def __init__(self):
         super(PerspectiveMold, self).__init__("perspectives")
