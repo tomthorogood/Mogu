@@ -1,3 +1,4 @@
+import sys
 import bytemaps
 import mimport as todb
 from snippets import confirm
@@ -47,6 +48,14 @@ class Node(object):
                 '`' :   BACKTICKS
                 }
 
+        required_wraps = {
+            "type"      :   (CURLY_BRACES,),
+            "action"    :   (CURLY_BRACES,),
+            "trigger"   :   (CURLY_BRACES,),
+            "nextAction":   (CURLY_BRACES,),
+            "degradation":  (CARATS,)
+        }
+
     def unwrap(self,val):
         if val[0] in Node.Wrappers.lookup and val[-1] in Node.Wrappers.lookup:
             if Node.Wrappers.lookup[val[0]] is Node.Wrappers.lookup[val[-1]]:
@@ -54,6 +63,27 @@ class Node(object):
                 if val[0] == wrappers[0] and val[-1] == wrappers[1]:
                     return val[1:-1]
         return val
+
+    def wrap(self, key, val):
+        rerr = False
+        if key in Node.Wrappers.required_wraps:
+            wrap_styles = Node.Wrappers.required_wraps[key]
+            for style in wrap_styles:
+                if val[0] == style[0] and val[-1] == style[1]:
+                    return val
+                elif val[0] == style[0] and not val[-1] == style[1]:
+                    print coloring.warn("Fixing %s: %s" % (self.node, val))
+                    return val+style[1]
+                elif not val[0] == style[0] and val[-1] == style[1]:
+                    return style[0]+val
+                elif len(wrap_styles) is 1:
+                    return style[0]+val+style[1]
+                else:
+                    rerr = True
+        else:
+            return val
+        if rerr:
+            raise AmbiguousDirectiveError(self.node, key, val)
     
     def __init__(self, prefix):
         self.required_parameters = {}
@@ -104,6 +134,8 @@ class Node(object):
             method = todb.import_list
         elif self.node_type is dict:
             f = bytemaps.DictStorage
+            for key in data:
+                data[key] = self.wrap(key, data[key])
             method = todb.import_dict
         else:
             raise NodeTypeError(self)
@@ -147,8 +179,15 @@ class DictNode(Node):
                     raise AttributeNotFoundError(self.node, req)
 
     def _import(self, db, data, flags):
-        self.assert_requirements(db, data)
-        super(DictNode, self)._import(db, data, flags)
+        try:
+            self.assert_requirements(db, data)
+            super(DictNode, self)._import(db, data, flags)
+        except AttributeNotFoundError as e:
+            raise e
+        except Exception as e:
+            message = "Unchecked Error in %s, [%s]" % (self.node, repr(data))
+            print(message,e)
+            sys.exit()
 
 class Namespace(Node):
     def __init__(self, prefix):

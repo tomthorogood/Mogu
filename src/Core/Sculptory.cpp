@@ -81,19 +81,26 @@ void conceptualize (Moldable* widget)
 		vars->content = getWidgetText(widget);
 	}
 
-	if (( (type & image) == image)
-		|| ( (type & image_link) == image_link))
+	if (type <= image)
 	{
-		vars->source = getWidgetImgSource(widget);
+		if (( (type & image) == image)
+			|| ( (type & image_link) == image_link))
+		{
+			vars->source = getWidgetImgSource(widget);
+		}
 	}
 
 	namespace Type = Enums::WidgetTypes;
-	if ( ( (type & Type::link) == Type::link)
-			|| ( (type & image_link) == image_link))
+	if (type <= Type::link)
 	{
-		vars->location = getWidgetLinkLocation(widget);
+		if ( ( (type & Type::link) == Type::link)
+				|| ( (type & image_link) == image_link))
+		{
+			vars->location = getWidgetLinkLocation(widget);
+		}
 	}
 }
+
 
 void mold(Moldable* widget)
 {
@@ -144,13 +151,21 @@ void mold(Moldable* widget)
 				Wt::WAnimation transition(effect);
 				stack->setTransitionAnimation(transition,true);
 			}
-			stack->setStyleClass(widget->styleClass());
-			widget->setStyleClass("");
+			if (widgetHasStyling(widget))
+			{
+				stack->setStyleClass(widget->styleClass());
+				widget->setStyleClass("");
+			}
 			widget->addWidget(stack);
 			break;}
 
-		case input_text:{
+		case input_text:
+		case password:{
 			Wt::WLineEdit* input = new Wt::WLineEdit(vars->content);
+			if ((vars->type & WIDGET_HO_BITS) == password)
+			{
+				input->setEchoMode(Wt::WLineEdit::Password);
+			}
 			widget->addWidget(input);
 			if (vars->flags & is_validated)
 			{
@@ -160,7 +175,8 @@ void mold(Moldable* widget)
 				input->keyWentUp().connect(
 						widget, &Moldable::__validate);
 			}
-			break;}
+			}
+			break;
 		}
 	}
 

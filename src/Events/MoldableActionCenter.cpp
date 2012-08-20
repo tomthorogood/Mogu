@@ -384,7 +384,10 @@ void directListeners(BroadcastMessage* broadcast)
     			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
     					widget->widget(0);
     			int current_index = stack->currentIndex();
+    			std::cout << "CHANGING INDEX OF ";
+    			std::cout << widget->getNodeList()->at(0) << "TO ";
     			current_index++;
+    			std::cout << current_index << std::endl;
     			stack->setCurrentIndex(current_index);
     		}
     	}

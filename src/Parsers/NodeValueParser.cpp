@@ -68,8 +68,6 @@ NodeValueParser::NodeValueParser(
     	// Force a failed assertion if the readType is something different
     	assert(1==0);
     }
-
-    std::cout << "CREATED: " << parsedValue << std::endl;
 #endif
 
 }

@@ -38,8 +38,8 @@ def import_list(db, node, data, flags):
         merging     = b.is_set(flags, b.ListStorage.is_merge)
         
         if merging:
-            no_repeat   = b.is_set(flags, b.ListSTorage.merge_no_repeat)
-            current_list = r.full_list(node)
+            no_repeat   = b.is_set(flags, b.ListStorage.merge_no_repeat)
+            current_list = r.full_list(db, node)
             new_list.extend(current_list)
 
             for entry in data:

@@ -61,9 +61,6 @@ NodeValue::NodeValue(ValueStruct* value, ReadType _type)
 
 NodeValue::~NodeValue()
 {
-#ifdef DEBUG
-		std::cout << "DELETING: " << this << std::endl;
-#endif
 		delete __value;
 }
 

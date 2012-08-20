@@ -15,6 +15,7 @@
 #include <Parsers/Parsers.h>
 #include <Types/NodeValue.h>
 #include <Wt/WStackedWidget>
+#include <Events/MoldableActionCenter.h>
 
 namespace Perspective{
 namespace Handler{
@@ -88,8 +89,15 @@ void mold(std::string perspective)
 				widget->setStyleClass(message->getString());
 				break;
 			}}
+		case Action::rebroadcast:{
+			std::string _message = "events."+message->getString();
+			Events::ActionCenter::submitBroadcast(
+					Events::ActionCenter::generateNewBroadcast(
+							widget, _message)
+			);
+			break;}
 		default: break;
-			}
+		}
 	}
 
 

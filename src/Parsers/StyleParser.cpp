@@ -209,7 +209,13 @@ bool widgetIsDynamic(std::string nodeName)
 {
 	Redis::command("hget", nodeName, "type");
 	std::string type_str = Redis::toString();
-	unsigned int index = type_str.find("dynamic");
+	size_t index = type_str.find("dynamic");
+#ifdef DEBUG
+	if (index != std::string::npos)
+	{
+		std::cout << nodeName << " IS DYNAMIC" << std::endl;
+	}
+#endif
 	return index != std::string::npos;
 }
 

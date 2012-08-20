@@ -8,6 +8,8 @@
 #ifndef P_WIDGETS_H_
 #define P_WIDGETS_H_
 
+#include <declarations.h>
+
 namespace Parsers{
 
 class BitMaskParser :
@@ -47,6 +49,7 @@ public:
 	    enumMap["checkbox"]         = WidgetTypes::checkbox_menu;
 	    enumMap["multi select"]     = WidgetTypes::multi_select;
 	    enumMap["container"]        = WidgetTypes::container;
+	    enumMap["password"]			= WidgetTypes::password;
 	    enumMap["stacked"]          = WidgetTypes::stack;
 	    enumMap["stack"]			= WidgetTypes::stack;
 	}
