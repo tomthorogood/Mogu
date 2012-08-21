@@ -125,9 +125,7 @@ def export_session(db,session):
         title = dbl_dict_entry_line("sessions", session, node)
         if t == "hash":
             d = db.hgetall(name)
-            print(d)
             body = dict_str(d)
-            print(body)
         elif t == "list":
             l = full_list(db, name)
             body = list_str(l)

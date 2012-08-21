@@ -153,6 +153,11 @@ if command == "import":
             s.build(session,storage)
             s._import(db, entry, fl)
 
+    for validator in package.validators:
+        v = Validator()
+        v.build(validator)
+        v._import(db, package.validators[validator], dflags)
+
 # mogo export --filename F [--resis-port --redis-host --redis-select --redis-auth]
 if command == "export":
     if not args.filename:

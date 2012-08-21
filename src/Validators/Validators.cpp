@@ -15,6 +15,7 @@
 #include <Wt/WValidator>
 #include <Wt/WRegExpValidator>
 #include <Redis/RedisCore.h>
+#include <Types/NodeValue.h>
 
 namespace Validators{
 
@@ -33,9 +34,11 @@ Wt::WValidator* createValidator(Moldable* widget)
 	string validator_node = "validators."+validatorName;
 	Redis::command("hget", validator_node, "type");
 	string vtype = Redis::toString();
-	ValidatorTypeParser parser;
-	ValidatorTypes _type = parser.parse(vtype);
-	switch (_type)
+	Nodes::NodeValue vval;
+	Parsers::NodeValueParser nparser (
+			vtype, &vval,widget,
+			Parsers::enum_callback <Parsers::ValidatorTypeParser>);
+	switch (vval.getInt())
 	{
 	case regex:{
 		validator = (Wt::WValidator*) createRegexValidator(validator_node);

@@ -290,3 +290,12 @@ class GlobalEvent(DictNode):
         self.node_construction += ".%s"
         self.keystone = "signal"
         self.keystone_reqs = required_event_parameters
+
+class Validator(DictNode):
+    def __init__(self):
+        super(Validator, self).__init__("validators")
+        self.node_construction += ".%s"
+        self.keystone = "type"
+        self.keystone_reqs = {
+                "regex" :   ("test",)
+        }
