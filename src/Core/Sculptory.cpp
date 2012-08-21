@@ -81,7 +81,7 @@ void conceptualize (Moldable* widget)
 		vars->content = getWidgetText(widget);
 	}
 
-	if (type <= image)
+	if ((type & WIDGET_HO_BITS) == image)
 	{
 		if (( (type & image) == image)
 			|| ( (type & image_link) == image_link))
@@ -111,7 +111,7 @@ void mold(Moldable* widget)
 		vars->actionBlocking = getActionBlock(widget);
 	}
 
-	if ( (vars->type & widget_usually_clicked) == widget_usually_clicked)
+	if ( (vars->type & WIDGET_HO_BITS) == widget_usually_clicked)
 	{
 		Wt::WAnchor* anchor = new Wt::WAnchor(
 				vars->location,

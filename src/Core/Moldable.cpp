@@ -80,22 +80,12 @@ Moldable::load()
 #ifdef DEBUG
     	std::cout << "Loading: " << __NODE_NAME << std::endl;
 #endif
-    	try
-    	{
-			Wt::WContainerWidget::load();
-			mold(this);
-			if (baseVariables->flags & Enums::WidgetTypes::has_events)
-			{
-				do_if_has_events();
-			}
-    	}
-    	catch (const std::exception& e)
-    	{
-    		std::string caught(e.what());
-    		const char* _caught = caught.c_str();
-    		MoldableGooLoadException err(_caught, this);
-    		throw(err);
-    	}
+		Wt::WContainerWidget::load();
+		mold(this);
+		if (baseVariables->flags & Enums::WidgetTypes::has_events)
+		{
+			do_if_has_events();
+		}
     }
 }
 
