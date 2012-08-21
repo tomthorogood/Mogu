@@ -148,6 +148,7 @@ enum SignalAction{
     slot				=0x13,
     register_user		=0x14,
     match				=0x15,
+    test_text			=0x16,
     delete_value		=0x1F,
     set_text			=0x20,
     TERM				=0xFE,

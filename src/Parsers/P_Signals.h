@@ -58,6 +58,7 @@ public:
 	    enumMap["match"]			= Action::match;
 	    enumMap["delete_value"]		= Action::delete_value;
 	    enumMap["set_text"]			= Action::set_text;
+	    enumMap["test_text"]		= Action::test_text;
 #ifdef TERM_ENABLED
 	    enumMap["TERMINATE"]		= Action::TERM;
 #endif

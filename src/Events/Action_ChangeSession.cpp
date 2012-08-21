@@ -98,7 +98,7 @@ void change_session ()
 
 	command("hget s.global."+session_lookup, e_userid);
 	last_session = toString();
-	command("hget s."+last_session+"."+meta_hash, "auth");
+	command("hget s."+last_session+"."+meta_hash, auth_field);
 	last_auth = toString();
 	command("hget s.global."+auth_lookup, e_userauth);
 		//-> Test login authenticity
@@ -110,7 +110,7 @@ void change_session ()
 	h_new_auth 	= toHash(p_new_auth);
 	PacketCenter enth (h_new_auth, DECRYPTED);
 	enth.giveKey(enc_key);
-	e_new_auth 	= enth.decrypt();
+	e_new_auth 	= enth.encrypt();
 
 		//-> Create new session in database
 	std::string new_session_node = "s."+new_session;

@@ -271,6 +271,7 @@ void directListeners(BroadcastMessage* broadcast)
 {
     namespace Action = Enums::SignalActions;
     Listeners* listeners = listenerMap[broadcast];
+    Action::SignalAction action = broadcast->getAction();
 
 #ifdef DEBUG // Make sure  that all listeners are actual objects
     for (unsigned int i = 0; i < listeners->size(); i++)
@@ -281,12 +282,22 @@ void directListeners(BroadcastMessage* broadcast)
 
     if (broadcast->getListenerType() == Enums::Family::application)
     {
-    	if (broadcast->getAction() == Action::set_internal_path)
+    	switch(action)
     	{
+    	case Action::set_internal_path:{
     		std::string path = broadcast->getMessage()->getString();
     		Application::mogu()->setInternalPath(path);
+    		break;}
+    	case Action::register_user:{
+    		Actions::register_user();
+    		break;}
+        case Action::change_session:{
+        	Actions::change_session();
+        	break;}
+    	default:
+    		return; // Don't do anything unexpected to application state.
     	}
-    	return; // Avoid side effects with non-existent Moldable listeners
+    	return; // Avoid side effects with non-existent Moldable listener.
     }
 
     int num_listeners = listeners->size();
@@ -481,18 +492,13 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
-    case Action::change_session:{
-    	Actions::change_session();
-    	break;}
-
     case Action::slot:{
     	for (int w = 0; w < num_listeners; w++)
     	{
     		Dynamic* widget = (Dynamic*) listeners->at(w);
     		if (widget->allowsAction(Action::slot))
     		{
-    			std::string slot_ =
-    					Sessions::SubmissionHandler::getSlotName(widget);
+    			std::string slot_ = broadcast->getMessage()->getString();
     			Wt::WLineEdit* inputField =
     					(Wt::WLineEdit*)  widget->widget(0);
     			std::string value_ = inputField->text().toUTF8();
@@ -524,11 +530,6 @@ void directListeners(BroadcastMessage* broadcast)
     		}
     	}
     	break;}
-
-    case Action::register_user:{
-    	Actions::register_user();
-    	break;}
-
     case Action::set_text:{
     	for (int w = 0; w < num_listeners; w++)
     	{
@@ -539,6 +540,21 @@ void directListeners(BroadcastMessage* broadcast)
     			Wt::WString newtext(broadcast->getMessage()->getString());
     			text->setText(newtext);
 			}
+    	}
+    	break;}
+    case Action::test_text:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = listeners->at(w);
+    		if (widget->allowsAction(Action::test_text))
+    		{
+    			Wt::WText* text = (Wt::WText*) widget->widget(0);
+    			std::string t = text->text().toUTF8();
+    			if (broadcast->getMessage()->getString() != t)
+    			{
+    				broadcast->getBroadcaster()->fail().emit();
+    			}
+    		}
     	}
     }
 
