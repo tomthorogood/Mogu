@@ -29,6 +29,7 @@ class EventBindery : public Wt::WObject
     void mouseoutSlot();
     void styleChangedSlot();
     void failSlot();
+    void succeedSlot();
     void handleVoidSignal(
             Enums::SignalTriggers::SignalTrigger trigger);
 

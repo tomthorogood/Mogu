@@ -97,6 +97,10 @@ EventBindery::EventBindery(Moldable* broadcaster)
         	Application::setLastTrigger(Triggers::fail);
         	broadcaster->fail().connect(this, &EventBindery::failSlot);
         	break;}
+        case Triggers::succeed:{
+        	Application::setLastTrigger(Triggers::succeed);
+        	broadcaster->succeed().connect(this, &EventBindery::succeedSlot);
+        }
         default:return;
         }
     }
@@ -152,6 +156,11 @@ void EventBindery::styleChangedSlot()
 void EventBindery::failSlot()
 {
 	handleVoidSignal(Triggers::fail);
+}
+
+void EventBindery::succeedSlot()
+{
+	handleVoidSignal(Triggers::succeed);
 }
 
 }

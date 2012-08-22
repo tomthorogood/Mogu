@@ -73,7 +73,8 @@ private:
 
     /*!\brief Signal emitted when the style is changed. */
     Wt::Signal <> __style_changed;
-    Wt::Signal <> __failed_validation;
+    Wt::Signal <> __failed_test;
+    Wt::Signal <> __succeeded_test;
 
 
 
@@ -200,7 +201,12 @@ public:
 
     inline Wt::Signal<>& fail()
 	{
-    	return __failed_validation;
+    	return __failed_test;
+	}
+
+    inline Wt::Signal<>& succeed()
+	{
+    	return __succeeded_test;
 	}
 
     void __validate();

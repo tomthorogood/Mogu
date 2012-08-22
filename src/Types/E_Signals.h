@@ -163,7 +163,8 @@ enum SignalTrigger{
     style_changed,
     mouseover,
     mouseout,
-    fail
+    fail,
+    succeed
 };
 } //namespace SignalTriggers
 

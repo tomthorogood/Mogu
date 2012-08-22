@@ -77,6 +77,7 @@ public:
 	    enumMap["mouseout"]     = Trigger::mouseout;
 	    enumMap["style_changed"]= Trigger::style_changed;
 	    enumMap["fail"]			= Trigger::fail;
+	    enumMap["succeed"]		= Trigger::succeed;
 	}
 };
 

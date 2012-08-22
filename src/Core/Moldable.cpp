@@ -48,7 +48,9 @@ Moldable::Moldable(
 )
 : Wt::WContainerWidget (parent),
     children(),
-    __style_changed(this), __failed_validation(this)
+    __style_changed(this),
+    __failed_test(this),
+    __succeeded_test(this)
 {
     nodes.add(constructorNode);
 #ifdef DEBUG
@@ -93,8 +95,12 @@ void Moldable::__validate()
 {
 	Wt::WLineEdit* input = (Wt::WLineEdit*) widget(0);
 	Wt::WValidator::State result = input->validate();
-	if (result == Wt::WValidator::Valid) return;
-	__failed_validation.emit();
+	if (result == Wt::WValidator::Valid)
+	{
+		__succeeded_test.emit();
+		return;
+	}
+	__failed_test.emit();
 }
 
 void Moldable::addGoo (const string& nodeName)
