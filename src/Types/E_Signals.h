@@ -164,7 +164,8 @@ enum SignalTrigger{
     mouseover,
     mouseout,
     fail,
-    succeed
+    succeed,
+    keyup
 };
 } //namespace SignalTriggers
 

@@ -78,6 +78,7 @@ public:
 	    enumMap["style_changed"]= Trigger::style_changed;
 	    enumMap["fail"]			= Trigger::fail;
 	    enumMap["succeed"]		= Trigger::succeed;
+	    enumMap["keyup"]		= Trigger::keyup;
 	}
 };
 

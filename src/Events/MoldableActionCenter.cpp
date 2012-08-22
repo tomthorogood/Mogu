@@ -41,21 +41,21 @@ namespace {
 
 void submitBroadcast(BroadcastMessage* broadcast)
 {
-	/* If a fail state is reached, discontinue listening to broadcasts
-	 * from the current broadcaster UNLESS the trigger is the fail state itself.
-	 */
-	if (Application::ignoreBroadcaster(broadcast->getBroadcaster())
-	&& Application::getLastTrigger() != Enums::SignalTriggers::fail)
-	{
-		cleanupBroadcast(broadcast);
-		return; //avoid side effects with recursion
-	}
-
 	/* A broadcast chain should be re-enabled if the user tries again.*/
 	if (broadcast->clearsInterrupt())
 	{
 		Application::ignoreBroadcaster(0,1);
 	}
+
+	/* If a fail state is reached, discontinue listening to broadcasts
+	 */
+	if (Application::ignoreBroadcaster(broadcast->getBroadcaster()))
+	{
+		cleanupBroadcast(broadcast);
+		return; //avoid side effects with recursion
+	}
+
+
     namespace TypeBits = Enums::SignalTypes;
     unsigned char signalType = broadcast->getSignalType();
 
@@ -289,10 +289,18 @@ void directListeners(BroadcastMessage* broadcast)
     		Application::mogu()->setInternalPath(path);
     		break;}
     	case Action::register_user:{
-    		Actions::register_user();
+    		if (!Actions::register_user())
+    		{
+    			Application::ignoreBroadcaster(broadcast->getBroadcaster(),1);
+    			broadcast->getBroadcaster()->fail().emit();
+    		}
     		break;}
         case Action::change_session:{
-        	Actions::change_session();
+        	if (!Actions::change_session())
+			{
+    			Application::ignoreBroadcaster(broadcast->getBroadcaster(),1);
+        		broadcast->getBroadcaster()->fail().emit();
+			}
         	break;}
     	default:
     		return; // Don't do anything unexpected to application state.
@@ -514,8 +522,10 @@ void directListeners(BroadcastMessage* broadcast)
     		if (widget->allowsAction(Action::match))
     		{
     			Wt::WLineEdit* input = (Wt::WLineEdit*) widget->widget(0);
+    			Goo::Moldable* _test = Application::mogu()->registeredWidget(
+    					broadcast->getMessage()->getString());
     			Wt::WLineEdit* test = (Wt::WLineEdit*)
-    					broadcast->getBroadcaster()->widget(0);
+    					_test->widget(0);
     			string textToMatch = input->valueText().toUTF8();
     			string textToTest = test->valueText().toUTF8();
     			if (textToMatch != textToTest)
@@ -526,6 +536,10 @@ void directListeners(BroadcastMessage* broadcast)
     							broadcast->getBroadcaster(), 1);
     				}
     				broadcast->getBroadcaster()->fail().emit();
+    			}
+    			else
+    			{
+    				broadcast->getBroadcaster()->succeed().emit();
     			}
     		}
     	}

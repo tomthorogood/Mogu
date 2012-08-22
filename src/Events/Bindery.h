@@ -28,6 +28,7 @@ class EventBindery : public Wt::WObject
     void mouseoverSlot();
     void mouseoutSlot();
     void styleChangedSlot();
+    void keyupSlot();
     void failSlot();
     void succeedSlot();
     void handleVoidSignal(

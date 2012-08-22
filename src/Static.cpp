@@ -8,6 +8,7 @@
 #include <Static.h>
 #include <crypt/BlowfishKey.h>
 #include <crypt/PacketCenter.h>
+#include <Exceptions/Exceptions.h>
 
 namespace Application
 {
@@ -94,12 +95,15 @@ std::string retrieveSlot(std::string name, std::string wtsession)
 		}
 		else
 		{
-			return "ERR_VALUE_NOT_FOUND";
+			throw Exceptions::Err_SlotLookupFailed(name,
+					"No information exists at that slot ID.");
 		}
 	}
 	else
 	{
-		return "ERR_SESSION_AUTH_FAILURE";
+		throw Exceptions::Err_WtAuthFailure(
+				wtsession,
+				"Wt Session ID Mismatch! This is not a good thing!");
 	}
 }
 

@@ -13,6 +13,8 @@
 #include <Sessions/Submission.h>
 #include <Sessions/SessionIDGenerator.h>
 #include <Mogu.h>
+#include <Exceptions/Exceptions.h>
+#include <Security/Security.h>
 
 namespace Events{
 namespace ActionCenter{
@@ -28,6 +30,7 @@ namespace{
 	string meta_hash;
 	string session_lookup;
 	string auth_lookup;
+	string salt_lookup;
 	bool __init__ = false;
 
 	void init ()
@@ -36,16 +39,18 @@ namespace{
 		prev_session = toHash("prev");
 		auth_field = toHash("auth");
 		meta_hash = toHash("meta");
+		salt_lookup = toHash("salt");
 		session_lookup = toHash(SESSION_LOOKUP);
 		auth_lookup = toHash(AUTH_LOOKUP);
 		__init__ = true;
 	}
 }
 
-void change_session ()
+bool change_session ()
 {
 	//___SETUP___//
 	using namespace Application;
+	using namespace Exceptions;
 	using namespace Sessions;
 	using namespace Redis;
 	using namespace Hash;
@@ -58,76 +63,93 @@ void change_session ()
 	BF_KEY* enc_key				= keygen->getKey();
 
 	string
-		p_userid		,//plaintext user data (out of scope after this method)
-		p_userauth		,
-		h_userid		,//hashed user data
-		h_userauth		,
-		e_userid		,//encrypted,hashed user data
-		e_userauth		,
-		last_session	,//name of the user's last session
-		last_auth		,//the user's last auth token
-		new_session		,//name of the user's newly generated session
-		p_new_auth		,//plaintext new auth token
-		h_new_auth		,//hashed new auth token
-		e_new_auth		;//the user's new encrypted auth token
+		p_userid		//plaintext user id (out of scope after this method)
+		,e_userid		//encrypted user id
+		,salt			//user's salt
+		,last_session	//id of the user's last session
+		,e_auth_string	//user's encrypted auth string
+		,last_auth		//auth token stored with the last session
+		,next_auth		//auth token stored with the new session
+		,access_auth	//auth token to test against `last_auth`
+		,p_userauth		//the encrypted user password
+		,next_session	//the new user session created upon successful login
+	;
 
 	//__BODY__//
+	bool
+		user_exists,
+		password_exists,
+		auth_matches;
 
-	p_userid = retrieveSlot(userid_key, mogu_session);
-	p_userauth = retrieveSlot(userauth_key, mogu_session);
-
-#ifdef DEBUG
-	assert(p_userid.substr(0,4)!="ERR_");
-	assert(p_userauth.substr(0,4)!="ERR_");
-#endif
-	if (p_userid.substr(0,4) == "ERR_" || p_userauth.substr(0,4) == "ERR_")
+	try
 	{
-		//TODO THROW ERROR!
+		p_userid = retrieveSlot(userid_key, mogu_session);
+		p_userauth = retrieveSlot(userauth_key, mogu_session);
+	}
+	catch(const Err_SlotLookupFailed& e)
+	{
+		/* If there is no data stored in the slots when we look it up,
+		 * then we must notify programmer that the slot events are not
+		 * firing before calling this method.
+		 */
+		throw Err_EventOrderException(
+				"Widget unknown.",
+				"Attempted to retrieve slot data before "
+				"setting it. Are you sure you've called the slot directives?");
 	}
 
-		//-> Prepare for authenticity tests
-	h_userid 	= toHash(p_userid);
-	h_userauth 	= toHash(p_userauth);
+	e_userid 	= Security::encrypt( Hash::toHash(p_userid) );
 
-	PacketCenter euid (h_userid, DECRYPTED);
-	PacketCenter euth (h_userauth, DECRYPTED);
-	euid.giveKey(enc_key);
-	euth.giveKey(enc_key);
-	e_userid 	= euid.encrypt();
-	e_userauth 	= euth.encrypt();
+	// Make sure the user exists
+	command("hexists s.global."+session_lookup, e_userid);
+	if (! (bool) getInt())
+	{
+		return false;
+	}
 
+	// Next, get the user's salt and session, and construct their auth string.
+	command("hget s.global."+salt_lookup, Security::encrypt(p_userid));
+	salt = toString();
 	command("hget s.global."+session_lookup, e_userid);
 	last_session = toString();
+	e_auth_string = Security::create_auth_string(p_userid, salt, p_userauth);
+
+	/* Now that we have their auth string, we can make sure that it exists
+	 * in the auth_lookup table:
+	 */
+	command("hexists s.global."+auth_lookup, e_auth_string);
+	if (! (bool) getInt())
+	{
+		return false;
+	}
+
+	/* Now, we'll retrieve the auth token to make sure that it matches
+	 * the one stored in the user's last_session.
+	 */
 	command("hget s."+last_session+"."+meta_hash, auth_field);
 	last_auth = toString();
-	command("hget s.global."+auth_lookup, e_userauth);
-		//-> Test login authenticity
-	if (toString() != last_auth) return; //TODO throw error instead
+	command("hget s.global."+auth_lookup, e_auth_string);
+	access_auth = toString();
+	if (last_auth != access_auth) return false;
 
-		//-> Generate new session data
-	new_session = Generator::generate_id(last_auth);
-	p_new_auth 	= new_session + p_userid + p_userauth;
-	h_new_auth 	= toHash(p_new_auth);
-	PacketCenter enth (h_new_auth, DECRYPTED);
-	enth.giveKey(enc_key);
-	e_new_auth 	= enth.encrypt();
+	/* Now we need to generate the new session data. */
+	//TODO PREVENT HASH COLLISION
+	next_session = Sessions::Generator::generate_id(salt);
+	next_auth = Security::create_auth_token(
+			next_session,
+			p_userid,
+			p_userauth);
 
-		//-> Create new session in database
-	std::string new_session_node = "s."+new_session;
-	command("hset", new_session_node+"."+meta_hash, auth_field, e_new_auth);
+	//TODO PREVENT HASH COLLISION
+	command("hset s.global."+auth_lookup, e_auth_string, next_auth);
 	clear();
-	command("hset", new_session_node+"."+meta_hash, prev_session, last_session);
+	command("hset s."+next_session+"."+meta_hash, prev_session,last_session);
 	clear();
-
-		//-> Change application session data
-	setSessionID(new_session);
-	setAuthToken(e_new_auth);
-
-	//___CLEANUP___//
-	delete keygen; //also deletes enc_key
+	command("hset s."+next_session+"."+meta_hash, auth_field, next_auth);
+	return true;
 }
-
-void register_user()
+//TODO YOU ARE HERE
+bool register_user()
 {
 	using namespace Application;
 	using namespace Sessions;
@@ -167,7 +189,7 @@ void register_user()
 	// Make sure the username doesn't already exist //
 	string node = "s.global."+session_lookup;
 	command("hexists", node, e_userauth);
-	if ( (bool) getInt() ) return; //TODO THROW ERROR INSTEAD
+	if ( (bool) getInt() ) return false;
 
 	// Otherwise, we're golden //
 	session_name = Generator::generate_id(e_userid);
@@ -195,6 +217,7 @@ void register_user()
 
 	//___CLEANUP___//
 	delete keygen; //also deletes enc_key
+	return true;
 }
 
 } //namespace Actions

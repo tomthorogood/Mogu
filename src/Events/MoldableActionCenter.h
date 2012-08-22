@@ -93,8 +93,8 @@ void cleanupBroadcast(BroadcastMessage* broadcast);
 
 //_______ACTION RESOLUTIONS ________//
 namespace Actions{
-void change_session ();
-void register_user ();
+bool change_session ();
+bool register_user ();
 } //namespace Actions
 
 } //Namspace ActionCenter

@@ -73,34 +73,32 @@ EventBindery::EventBindery(Moldable* broadcaster)
         switch(trigger)
         {
         case Triggers::click:
-        	Application::setLastTrigger(Triggers::click);
             broadcaster->clicked().connect(this,
                     &EventBindery::clickSlot);
             break;
 
         case Triggers::style_changed:
-        	Application::setLastTrigger(Triggers::style_changed);
             broadcaster->styleChanged().connect(this,
                     &EventBindery::styleChangedSlot);
             break;
         case Triggers::mouseover:
-        	Application::setLastTrigger(Triggers::mouseover);
             broadcaster->mouseWentOver().connect(this,
                     &EventBindery::mouseoverSlot);
             break;
         case Triggers::mouseout:
-        	Application::setLastTrigger(Triggers::mouseout);
             broadcaster->mouseWentOut().connect(this,
                     &EventBindery::mouseoutSlot);
             break;
         case Triggers::fail:{
-        	Application::setLastTrigger(Triggers::fail);
         	broadcaster->fail().connect(this, &EventBindery::failSlot);
         	break;}
         case Triggers::succeed:{
-        	Application::setLastTrigger(Triggers::succeed);
         	broadcaster->succeed().connect(this, &EventBindery::succeedSlot);
-        }
+        	break;}
+
+        case Triggers::keyup:{
+        	broadcaster->keyWentUp().connect(this, &EventBindery::keyupSlot);
+        	break;}
         default:return;
         }
     }
@@ -156,6 +154,11 @@ void EventBindery::styleChangedSlot()
 void EventBindery::failSlot()
 {
 	handleVoidSignal(Triggers::fail);
+}
+
+void EventBindery::keyupSlot()
+{
+	handleVoidSignal(Triggers::keyup);
 }
 
 void EventBindery::succeedSlot()
