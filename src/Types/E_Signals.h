@@ -127,32 +127,33 @@ enum SignalTypeBits
 namespace SignalActions{
 	const byte NUM_ACTIONS = 19;
 enum SignalAction{
-    NO_ACTION			=0x0,
-    rebroadcast			=0x1,
-    trickle				=0x2,
-    bubble				=0x3,
-    set_style			=0x4,
-    add_class			=0x5,
-    remove_class		=0x6,
-    set_index			=0x8,
-    increment_index		=0x9,
-    decrement_index		=0xA,
-    add_widget			=0xB,
-    set_internal_path	=0xC,
-    remove_child		=0xD,
-    delete_child		=0xE,
-    clear				=0xF,
-    store_value			=0x10,
-    increment_value		=0x11,
-    change_session		=0x12,
-    slot				=0x13,
-    register_user		=0x14,
-    match				=0x15,
-    test_text			=0x16,
-    delete_value		=0x1F,
-    set_text			=0x20,
-    TERM				=0xFE,
-    BLOCK				=0xFF
+    NO_ACTION			=0x0
+    ,rebroadcast		=0x1
+    ,trickle			=0x2
+    ,bubble				=0x3
+    ,set_style			=0x4
+    ,add_class			=0x5
+    ,remove_class		=0x6
+    ,set_index			=0x8
+    ,increment_index	=0x9
+    ,decrement_index	=0xA
+    ,add_widget			=0xB
+    ,set_internal_path	=0xC
+    ,remove_child		=0xD
+    ,delete_child		=0xE
+    ,clear				=0xF
+    ,store_value		=0x10
+    ,increment_value	=0x11
+    ,change_session		=0x12
+    ,slot				=0x13
+    ,register_user		=0x14
+    ,match				=0x15
+    ,test_text			=0x16
+    ,delete_value		=0x1F
+    ,set_text			=0x20
+    ,reload				=0x21
+    ,TERM				=0xFE
+    ,BLOCK				=0xFF
 };
 }//namespace SignalActions
 

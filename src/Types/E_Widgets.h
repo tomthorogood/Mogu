@@ -50,7 +50,8 @@ enum Properties
     has_animation       =0x8,
     blocks_actions      =0x10,
     is_named			=0x20,
-    is_validated		=0x40
+    is_validated		=0x40,
+    is_dynamic			=0x80
 };
 } //namespace WidgetTypes
 

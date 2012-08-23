@@ -7,6 +7,7 @@
 
 #include <Core/Dynamic.h>
 #include <Sessions/Submission.h>
+#include <Core/Sculptory.h>
 
 namespace Goo{
 
@@ -35,16 +36,9 @@ void Dynamic::submitValue()
 
 }
 
-std::string Dynamic::requestAuthorization(bool authorized)
+std::string Dynamic::requestAuthorization()
 {
-	if (authorized)
-	{
-		return __auth_token;
-	}
-	else
-	{
-		return "ERR_UNMATCHED_WT_SESSION";
-	}
+	return __auth_token;
 }
 
 std::string Dynamic::storageLocker()
@@ -52,6 +46,14 @@ std::string Dynamic::storageLocker()
 	return __storage_locker;
 }
 
+void Dynamic::load()
+{
+	if (!loaded() || reload())
+	{
+		Moldable::load();
+		Sessions::SubmissionHandler::emerge(this);
+	}
+}
 
 }//namespace Goo
 

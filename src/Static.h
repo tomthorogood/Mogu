@@ -14,11 +14,11 @@ namespace Application
 {
 	Mogu* mogu();
 	void defineMogu(Mogu* application);
-	std::string requestSessionID(std::string auth);
+	std::string requestSessionID(std::string wtsession);
+	std::string requestAuthToken(std::string sessionid);
 	void setAuthToken(std::string auth);
 	void setWtSession(std::string session);
-	void setSessionID(std::string session);
-	bool handshake(std::string wtSession);
+	void setSessionID(std::string wtsession);
 	std::string encrypt(std::string data);
 	void slotStorage(std::string name, std::string value);
 	std::string retrieveSlot (std::string name, std::string wtSession);

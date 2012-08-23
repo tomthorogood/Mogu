@@ -22,15 +22,23 @@
 namespace Goo{
 
 using namespace Parsers::StyleParser;
+using namespace Application;
 using namespace Enums::WidgetTypes;
 using namespace Enums::SignalTypes;
 using namespace Enums::BitMasks;
+using std::string;
+
 
 void conceptualize (Moldable* widget)
 {
 	GooVariables* vars = widget->getProperties();
 	WidgetTypes type = getWidgetType(widget);
 	vars->type = type;
+
+	if (widgetIsDynamic(widget->getNodeList()->at(0)))
+	{
+		vars->flags |= is_dynamic;
+	}
 
 	if (widgetHasAnimation(widget))
 	{
@@ -71,7 +79,8 @@ void conceptualize (Moldable* widget)
 
 	if (widgetHasStyling(widget))
 	{
-		Wt::WString new_style(getWidgetStyleClass(widget));
+		Wt::WString new_style;
+		new_style = getWidgetStyleClass(widget);
 		widget->setStyleClass(new_style);
 	}
 

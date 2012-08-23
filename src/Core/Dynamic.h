@@ -9,6 +9,8 @@
 #define DYNAMIC_H_
 
 #include <declarations.h>
+#include <Sessions/Submission.h>
+#include <Wt/WSignal>
 #include <Core/Moldable.h>
 
 namespace Goo
@@ -33,8 +35,10 @@ public:
 	Wt::Signal <>& submitted();
 
 	Nodes::NodeValue* requestValue ();
-	std::string requestAuthorization(bool authorized);
+	std::string requestAuthorization();
 	std::string storageLocker();
+
+	virtual void load();
 };
 
 }//namespace Goo

@@ -36,6 +36,7 @@ GooVariables::GooVariables() : children()
     flags		        =0;
     actionBlocking      =0;
     type				=0;
+    dynamic				=false;
 
     content         = "";
     location        = "";
@@ -55,6 +56,7 @@ Moldable::Moldable(
     nodes.add(constructorNode);
 #ifdef DEBUG
     __NODE_NAME = constructorNode.c_str();
+    std::cout << "CREATING " << __NODE_NAME << std::endl;
 #endif
     bindery =0;
     baseVariables = new GooVariables();
@@ -77,7 +79,7 @@ void
 Moldable::load()
 {
     /* Don't create content until the widget is loaded and visible. */
-    if (!loaded())
+    if (!loaded() || __reload)
     {
 #ifdef DEBUG
     	std::cout << "Loading: " << __NODE_NAME << std::endl;
@@ -88,6 +90,7 @@ Moldable::load()
 		{
 			do_if_has_events();
 		}
+		__reload = false;
     }
 }
 
@@ -108,7 +111,9 @@ void Moldable::addGoo (const string& nodeName)
 	Moldable* newGoo =0;
 	if (Parsers::StyleParser::widgetIsDynamic(nodeName))
 	{
-		std::string token = AUTH_TOKEN;
+		std::string token = Application::requestAuthToken(
+				Application::requestSessionID(
+				Application::mogu()->sessionId()));
 		token = Hash::toHash(token);
 		newGoo = new Dynamic(
 				Application::encrypt(token),

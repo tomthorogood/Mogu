@@ -18,6 +18,9 @@ namespace SubmissionHandler{
  */
 void absorb(Goo::Dynamic* widget);
 
+/* Retrieves information from a user session, if applicable */
+void emerge(Goo::Dynamic* widget);
+
 /* Returns whether or not this widget needs to be encrypted before storage */
 bool requiresEncryption(Goo::Dynamic* inputWidget);
 

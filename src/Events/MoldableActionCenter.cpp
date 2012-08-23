@@ -558,7 +558,15 @@ void directListeners(BroadcastMessage* broadcast)
     			}
     		}
     	}
-    }
+    	break;}
+    case Action::reload:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Dynamic* widget = (Dynamic*) listeners->at(w);
+    		widget->clear();
+    		widget->setReload().load();
+    	}
+    	break;}
 
     default:return; // Don't do anything unexpected!
     }

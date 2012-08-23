@@ -42,18 +42,24 @@ void defineMogu(Mogu* application)
 	app = application;
 }
 
-std::string requestSessionID(std::string auth_token)
+std::string requestSessionID(std::string wtsession)
 {
 	/*Both the auth token and the session ID expire when a user leaves the
 	 * application. The session ID is stored in the database indefinitely,
 	 * however, whereas the auth token is lost forever. The auth token is
 	 * the only way to retrieve the working session.
 	 */
-	if (auth_token == __auth_token)
+	if (wtsession == __wt_session)
 	{
 		return __sessionID;
 	}
-	return "ERR_NOT_AUTHORIZED";
+	return "WT_SESSION_MISMATCH";
+}
+
+std::string requestAuthToken(std::string session)
+{
+	if (session == __sessionID) return __auth_token;
+	return "USER_SESSION_MISMATCH";
 }
 
 void setWtSession(std::string session)
@@ -71,11 +77,6 @@ void setSessionID(std::string session)
 	__sessionID = session;
 }
 
-bool handshake(std::string wtSession)
-{
-	return wtSession == __wt_session;
-}
-
 void slotStorage(std::string name, std::string value)
 {
 	__storageSlots[name] = value;
@@ -83,7 +84,7 @@ void slotStorage(std::string name, std::string value)
 
 std::string retrieveSlot(std::string name, std::string wtsession)
 {
-	if (handshake(wtsession))
+	if (wtsession == __wt_session)
 	{
 		std::map <std::string, std::string>::iterator iter =
 				__storageSlots.find(name);

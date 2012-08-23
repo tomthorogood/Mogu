@@ -30,6 +30,7 @@ struct GooVariables
     uint8_t flags; //!<\sa Enums::SignalTypes::Properties
     uint8_t actionBlocking;
     uint8_t type;
+    bool dynamic;
 
     std::string location;    //!< Used for external links only.
     std::string source;      //!< URI for image file, if applicable.
@@ -57,6 +58,7 @@ private:
 #endif
     Redis::strvector nodes;
     Events::EventBindery* bindery;
+    bool __reload;
 
     /*!\brief A container with pointers to child widgets that are also of
      * the Moldable class (or descendant classes). Necessary since the native
@@ -110,7 +112,7 @@ public:
      * attributes are parsed, but not loaded until necessary, which is the best
      * balance between performance and memory.
      */
-    void load();
+    virtual void load();
 
     /*!\brief Adds a child ModdableGoo widget and, if that widget is set to
      * propogate its destrution signal upwards, listens for the melt signal.
@@ -211,6 +213,13 @@ public:
 
     void __validate();
 
+    inline Moldable& setReload()
+    {
+    	__reload = true;
+    	return *this;
+    }
+
+    inline bool reload() { return __reload; }
 
 };
 

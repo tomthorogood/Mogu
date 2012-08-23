@@ -249,7 +249,7 @@ class WidgetPolicy(Widget):
 
     def _import(self, db, data, flags):
         if "default" in data:
-            stype_str = data["type"]
+            stype_str = data["data_type"]
             stype_str = self.unwrap(stype_str)
             if stype_str == "list":
                 dyndef = DynamicDefault(list)
