@@ -107,16 +107,6 @@ std::string retrieveSlot(std::string name, std::string wtsession)
 	}
 }
 
-bool ignoreBroadcaster(Goo::Moldable* widget, uint8_t command)
-{
-	switch(command)
-	{
-	case 0: return widget == __ignored_broadcaster; break;
-	case 1: __ignored_broadcaster =widget; return true;
-	default: return false;
-	}
-}
-
 Enums::SignalTriggers::SignalTrigger getLastTrigger()
 {
 	return __last_trigger;

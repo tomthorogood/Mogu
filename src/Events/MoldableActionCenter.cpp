@@ -41,20 +41,6 @@ namespace {
 
 void submitBroadcast(BroadcastMessage* broadcast)
 {
-	/* A broadcast chain should be re-enabled if the user tries again.*/
-	if (broadcast->clearsInterrupt())
-	{
-		Application::ignoreBroadcaster(0,1);
-	}
-
-	/* If a fail state is reached, discontinue listening to broadcasts
-	 */
-	if (Application::ignoreBroadcaster(broadcast->getBroadcaster()))
-	{
-		cleanupBroadcast(broadcast);
-		return; //avoid side effects with recursion
-	}
-
 
     namespace TypeBits = Enums::SignalTypes;
     unsigned char signalType = broadcast->getSignalType();
@@ -291,16 +277,22 @@ void directListeners(BroadcastMessage* broadcast)
     	case Action::register_user:{
     		if (!Actions::register_user())
     		{
-    			Application::ignoreBroadcaster(broadcast->getBroadcaster(),1);
     			broadcast->getBroadcaster()->fail().emit();
+    		}
+    		else
+    		{
+    			broadcast->getBroadcaster()->succeed().emit();
     		}
     		break;}
         case Action::change_session:{
         	if (!Actions::change_session())
 			{
-    			Application::ignoreBroadcaster(broadcast->getBroadcaster(),1);
-        		broadcast->getBroadcaster()->fail().emit();
+    			broadcast->getBroadcaster()->fail().emit();
 			}
+        	else
+        	{
+        		broadcast->getBroadcaster()->succeed().emit();
+        	}
         	break;}
     	default:
     		return; // Don't do anything unexpected to application state.
@@ -530,11 +522,6 @@ void directListeners(BroadcastMessage* broadcast)
     			string textToTest = test->valueText().toUTF8();
     			if (textToMatch != textToTest)
     			{
-    				if (broadcast->interruptsChain())
-    				{
-    					Application::ignoreBroadcaster(
-    							broadcast->getBroadcaster(), 1);
-    				}
     				broadcast->getBroadcaster()->fail().emit();
     			}
     			else

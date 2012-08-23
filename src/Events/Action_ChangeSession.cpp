@@ -25,12 +25,16 @@ namespace{
 
 	const string userid_key = "USERID";
 	const string userauth_key = "USERAUTH";
-	string prev_session;
-	string auth_field;
-	string meta_hash;
-	string session_lookup;
-	string auth_lookup;
-	string salt_lookup;
+	string
+		prev_session
+		,auth_field
+		,meta_hash
+		,collision_hash
+		,session_lookup
+		,auth_lookup
+		,salt_lookup
+	;
+
 	bool __init__ = false;
 
 	void init ()
@@ -39,12 +43,39 @@ namespace{
 		prev_session = toHash("prev");
 		auth_field = toHash("auth");
 		meta_hash = toHash("meta");
+		collision_hash = toHash("collisions");
 		salt_lookup = toHash("salt");
 		session_lookup = toHash(SESSION_LOOKUP);
 		auth_lookup = toHash(AUTH_LOOKUP);
 		__init__ = true;
 	}
+
+	inline void add_session(
+			string next_session
+			,string last_session
+			,string auth_string
+			,string auth_token
+			,string e_userid)
+	{
+		using namespace Redis;
+
+		string next_meta = "s."+next_session+"."+meta_hash;
+		string glob_auth = "s.global."+auth_lookup;
+		string glob_user = "s.global."+session_lookup;
+
+		command("hset", next_meta, prev_session, last_session);
+		command("hset", next_meta, auth_field, auth_token);
+		command("hset", glob_auth, auth_string, auth_token);
+		command("hset", glob_user, e_userid, next_session);
+	}
+
+	inline string collision_proof (string estr)
+	{
+		return Security::encrypt ( Hash::toHash(estr) );
+	}
 }
+
+
 
 bool change_session ()
 {
@@ -58,9 +89,7 @@ bool change_session ()
 
 	if (!__init__) init();
 
-	string mogu_session			= mogu()->sessionId();
-	BlowfishKeyCreator* keygen	= new BlowfishKeyCreator();
-	BF_KEY* enc_key				= keygen->getKey();
+	const string mogu_session			= mogu()->sessionId();
 
 	string
 		p_userid		//plaintext user id (out of scope after this method)
@@ -76,11 +105,6 @@ bool change_session ()
 	;
 
 	//__BODY__//
-	bool
-		user_exists,
-		password_exists,
-		auth_matches;
-
 	try
 	{
 		p_userid = retrieveSlot(userid_key, mogu_session);
@@ -98,7 +122,7 @@ bool change_session ()
 				"setting it. Are you sure you've called the slot directives?");
 	}
 
-	e_userid 	= Security::encrypt( Hash::toHash(p_userid) );
+	e_userid 	= Security::encrypt(p_userid);
 
 	// Make sure the user exists
 	command("hexists s.global."+session_lookup, e_userid);
@@ -113,6 +137,19 @@ bool change_session ()
 	command("hget s.global."+session_lookup, e_userid);
 	last_session = toString();
 	e_auth_string = Security::create_auth_string(p_userid, salt, p_userauth);
+	/* Next, determine if this string was collision proofed upon creation,
+	 * and if so, get the number of collision proofing cycles and run them:
+	 */
+	command("hexists s.global."+auth_lookup+"."+collision_hash, e_userid);
+	if ( (bool) getInt())
+	{
+		command("hget s.global."+auth_lookup+"."+collision_hash, e_userid);
+		int num_cycles = getInt();
+		for (int i = 0; i < num_cycles; i++)
+		{
+			e_auth_string = collision_proof(e_auth_string);
+		}
+	}
 
 	/* Now that we have their auth string, we can make sure that it exists
 	 * in the auth_lookup table:
@@ -132,26 +169,26 @@ bool change_session ()
 	access_auth = toString();
 	if (last_auth != access_auth) return false;
 
-	/* Now we need to generate the new session data. */
-	//TODO PREVENT HASH COLLISION
 	next_session = Sessions::Generator::generate_id(salt);
 	next_auth = Security::create_auth_token(
 			next_session,
 			p_userid,
 			p_userauth);
 
-	//TODO PREVENT HASH COLLISION
-	command("hset s.global."+auth_lookup, e_auth_string, next_auth);
-	clear();
-	command("hset s."+next_session+"."+meta_hash, prev_session,last_session);
-	clear();
-	command("hset s."+next_session+"."+meta_hash, auth_field, next_auth);
+	add_session(
+			next_session, last_session, e_auth_string, next_auth, e_userid);
+	setSessionID(next_session);
+	setAuthToken(next_auth);
 	return true;
 }
+
+
+
 //TODO YOU ARE HERE
 bool register_user()
 {
 	using namespace Application;
+	using namespace Exceptions;
 	using namespace Sessions;
 	using namespace Redis;
 	using namespace Hash;
@@ -159,64 +196,106 @@ bool register_user()
 	if (!__init__) init();
 
 	string
-		p_userid,
-		p_userauth,
-		h_userid,
-		h_userauth,
-		e_userid,
-		e_userauth,
-		session_name,
-		p_auth_token,
-		h_auth_token,
-		e_auth_token;
+		p_userid
+		,p_userauth
+		,e_userid
+		,e_userauth
+		,e_auth_string
+		,e_auth_token
+		,session_name
+		,salt
+	;
 
 	const string mogu_session = mogu()->sessionId();
-	BlowfishKeyCreator* keygen = new BlowfishKeyCreator();
-	BF_KEY* enc_key = keygen->getKey();
 
-	p_userid 	= retrieveSlot(userid_key, mogu_session);
-	p_userauth 	= retrieveSlot(userauth_key, mogu_session);
-	h_userid 	= toHash(p_userid);
-	h_userauth 	= toHash(p_userauth);
+	// (h|e) userid : sessionid
+	string session_lookup_node = "s.global."+session_lookup;
 
-	PacketCenter euid(h_userid, DECRYPTED);
-	PacketCenter euth(h_userauth, DECRYPTED);
-	euid.giveKey(enc_key);
-	euth.giveKey(enc_key);
-	e_userid 	= euid.encrypt();
-	e_userauth 	= euth.encrypt();
+	// (e) auth string : auth token
+	string auth_table = "s.global."+auth_lookup;
+
+	// (e) userid : salt
+	string salt_table = "s.global."+salt_lookup;
+
+	// (e) userid : #collisions (if not 0)
+	string auth_collisions = auth_table + "." + collision_hash;
+
+	try
+	{
+		p_userid 	= retrieveSlot(userid_key, mogu_session);
+		p_userauth 	= retrieveSlot(userauth_key, mogu_session);
+	}
+	catch (const Err_SlotLookupFailed& e)
+	{
+		throw Err_EventOrderException(
+			"Widget unknown.",
+			"Attempted to retrieve slot data before "
+			"setting it. Are you sure you've called the slot directives?");
+	}
+
+	e_userid	= Security::encrypt(p_userid);
 
 	// Make sure the username doesn't already exist //
-	string node = "s.global."+session_lookup;
-	command("hexists", node, e_userauth);
+	command("hexists", session_lookup_node, e_userid);
+	if ( (bool) getInt() ) return false;
+	command("hexists", salt_table, e_userid); //in case of compromise
 	if ( (bool) getInt() ) return false;
 
 	// Otherwise, we're golden //
 	session_name = Generator::generate_id(e_userid);
-	p_auth_token = session_name+p_userid+p_userauth;
-	h_auth_token = toHash(p_auth_token);
-	PacketCenter enth(h_auth_token, DECRYPTED);
-	enth.giveKey(enc_key);
-	e_auth_token = enth.encrypt();
+	salt = Security::generate_salt();
 
-	// We now have all the encrypted data. Let's create the requisite nodes //
-	command("hset", node, e_userid, session_name);
+	//Give the user some salt:
+	command("hset", salt_table, e_userid, salt);
 	clear();
-	node = "s.global."+auth_lookup;
-	command("hset", node, e_userauth, e_auth_token);
-	clear();
-	node = "s."+session_name+"."+meta_hash;
-	command("hset", node, auth_field, e_auth_token);
-	clear();
-	command("hset", node, prev_session, "global");
-	clear();
+
+	e_auth_string = Security::create_auth_string(
+			p_userid, salt, p_userauth);
+
+	/* If the auth string exists in the lookup table, we must continue
+	 * hashing our encrypted string and checking it against the table.
+	 */
+	command("hexists", auth_table, e_auth_string);
+	bool auth_exists = (bool) getInt();
+	int num_cycles =0;
+	while (auth_exists)
+	{
+		/* Hash the encryption, and encrypt it again: */
+		e_auth_string = collision_proof(e_auth_string);
+		command("hexists", auth_table, e_auth_string);
+		/* Test whether the newly generated key exists */
+		auth_exists = (bool) getInt();
+
+		/* Increase the number of collision proofing cycles. */
+		++num_cycles;
+
+		/* Convert the number of cycles to a string */
+		std::stringstream st;
+		st << num_cycles;
+
+		/* Set the auth_collisions table to (e) userid : num_collisions
+		 * So when they try to login again, we'll be able to perform the
+		 * correct algorithms on their login credentials.
+		 */
+		command("hset", auth_collisions, e_userid, st.str());
+		clear();
+
+	}
+
+	/* It really doesn't matter if this happens to be the same as another
+	 * auth token, as it's only accessible through the unique auth string.
+	 */
+	e_auth_token = Security::create_auth_token(
+			session_name, p_userid, p_userauth);
+
+	add_session(
+			session_name, "global", e_auth_string, e_auth_token, e_userid);
 
 	// Finally, change the environment //
 	setSessionID(session_name);
 	setAuthToken(e_auth_token);
 
 	//___CLEANUP___//
-	delete keygen; //also deletes enc_key
 	return true;
 }
 

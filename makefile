@@ -1,5 +1,5 @@
 source_files := src
-branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Validators
+branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Validators Security
 includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
 executable := mogu-server
 o:=0
@@ -26,12 +26,14 @@ production: $(objects) | $(turnleft)
 
 install: 
 	mkdir -p /etc/mogu
+	cd cli/cli_src && $(MAKE) all
 	cp -r cli/* /etc/mogu
 	cp -r resources/ /etc/mogu/
 	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
 	ln -s /etc/mogu/mogu /usr/bin/mogu
 
 install-cli:
+	cd cli/cli_src && $(MAKE) all
 	cp -r cli/* /etc/mogu	
 
 uninstall:
@@ -57,6 +59,7 @@ upgrade:
 	$(MAKE) install
 
 clean:
+	cd cli/cli_src && $(MAKE) clean
 	rm -rf $(objects)
 	rm -rf *.pyc
 

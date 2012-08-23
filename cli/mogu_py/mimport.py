@@ -3,6 +3,21 @@ import redis_cheats as r
 from snippets import confirm
 import coloring
 
+def import_string(db, node, data, flags):
+    testing = b.is_set(flags, b.StrStorage.is_test) 
+    merge = b.is_set(flags, b.StrStorage.is_merge) #unimplemented
+    yes = b.is_set(flags, b.StrStorage.assume_yes)
+
+    entry_exists = db.exists(node)
+    if entry_exists and not merge:
+        __continue = confirm(
+                "%s already exists in the database and will be overwritten." %node,
+                (b.is_set(flags, b.DictStorage.assume_yes)))
+        if not __continue:
+            return
+    if not testing:
+        db.set(node, data)
+
 def import_dict (db, node, data, flags):
     """
     @param db the redis database connection
@@ -22,7 +37,7 @@ def import_dict (db, node, data, flags):
         entry_exists = db.hexists(node, entry)
         if entry_exists and not b.is_set(flags, b.DictStorage.is_merge):
             __continue = confirm(
-                    "This field already exists in your node and will be overwritten.",
+                    "%s:%s already exists in your node and will be overwritten." % (node, entry),
                     (b.is_set(flags, b.DictStorage.assume_yes)))
             if not __continue:
                 continue

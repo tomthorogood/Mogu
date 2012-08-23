@@ -49,7 +49,7 @@ string generate_salt()
 string encrypt(string dstr)
 {
 	BlowfishKeyCreator k;
-	PacketCenter e(dstr);
+	PacketCenter e(dstr, DECRYPTED);
 	e.giveKey(k.getKey());
 	return e.encrypt();
 }
@@ -57,7 +57,7 @@ string encrypt(string dstr)
 string decrypt(string estr)
 {
 	BlowfishKeyCreator k;
-	PacketCenter d(estr);
+	PacketCenter d(estr, ENCRYPTED);
 	d.giveKey(k.getKey());
 	return d.decrypt();
 }

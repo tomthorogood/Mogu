@@ -32,7 +32,6 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 {
 	Application::defineMogu(this);
 	Application::setWtSession(sessionId());
-	Application::ignoreBroadcaster(0);
 	Application::setLastTrigger(Enums::SignalTriggers::fail);
 
 

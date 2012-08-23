@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# Mogu Import File TESTdyn
+
+widgets["FOOTEST"] = {
+        "type"  :   "{text|dynamic}",
+        "content" : "Hi There"
+        }
+policies["FOOTEST"] = {
+        "type"  :   "string",
+        "mode"  :   "replace",
+        "default" : "GO AWAY!",
+        "encrypted" : "^0^"
+        }

@@ -9,7 +9,10 @@ class ListStorage:
     merge_no_repeat     =0x4 # If no_repeat is on, the merged list will remove pre-existing entries in the database in favor of new data
     is_test             =0x8
 
-
+class StrStorage:
+    is_merge            =0x1
+    assume_yes          =0x2
+    is_test             =0x4
 
 def is_set(byte,bit):
     return bool(byte & bit)

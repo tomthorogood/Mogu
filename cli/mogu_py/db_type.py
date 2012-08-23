@@ -1,4 +1,5 @@
 import sys
+import subprocess
 import bytemaps
 import mimport as todb
 from snippets import confirm
@@ -222,13 +223,47 @@ class WidgetEvent(Widget):
         self.keystone = "signal"
         self.keystone_reqs = required_event_parameters
 
+class DynamicDefault(Node):
+    def __init__(self, stype):
+        super(DynamicDefault, self).__init__("s.global")
+        self.node_construction += ".%s"
+        self.node_type = stype
+
+    def build(self, arg):
+        proc = subprocess.Popen(
+                ["/etc/mogu/cli_src/clihash", arg], 
+                shell=False, stdout=subprocess.PIPE)
+        val = proc.communicate()[0].replace("\n","")
+        super(DynamicDefault, self).build(val)
+
 class WidgetPolicy(Widget):
     def __init__(self):
         super(WidgetPolicy, self).__init__()
         self.node_construction += ".policy"
         self.keystone_reqs = None
         self.keystone = None
-        
+
+    def build(self, *args):
+        self.widget_name = args[0]
+        super(WidgetPolicy,self).build(args[0])
+
+    def _import(self, db, data, flags):
+        if "default" in data:
+            stype_str = data["type"]
+            stype_str = self.unwrap(stype_str)
+            if stype_str == "list":
+                dyndef = DynamicDefault(list)
+            elif stype_str == "hash":
+                dyndef = DynamicDefault(dict)
+            else:
+                dyndef = DynamicDefault(str)
+            dyndef.build(self.widget_name)
+            dyndef._import(db, data["default"], flags)
+            del data["default"]
+        super(WidgetPolicy, self)._import(db, data, flags)
+
+
+
 
 class WidgetChildren(Node):
     def __init__(self):
