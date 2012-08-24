@@ -61,7 +61,13 @@ def export_widget_policy(db,policy):
             db.hgetall(policy)
             )
             
-
+def export_validator(db, validator):
+    validator_name = validator.replace("validators.","")
+    return dict_to_string(
+            "validators",
+            validator_name,
+            db.hgetall(validator)
+            )
 def export_widget_events(db,widget):
     event_nodes = db.keys("%s.events.*" %widget)
     if (len(event_nodes) is 0):
@@ -172,6 +178,12 @@ def export(db, filename):
     for perspective in perspectives:
         output = export_perspective(db,perspective)
         f.write(output)
+
+    validators = db.keys("validators.*")
+    for validator in validators:
+        output = export_validator(db, validator)
+        if "\"" in output:
+            f.write(output)
 
     global_events = db.keys("events.*")
     for event in global_events:
