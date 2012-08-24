@@ -98,12 +98,14 @@ if command == "import":
     if args.testing:
         dflags |= bytemaps.DictStorage.is_test
         lflags |= bytemaps.ListStorage.is_test
+        sflags |= bytemaps.StrStorage.is_test
     if args.merge:
         dflags |= bytemaps.DictStorage.is_merge
         lflags |= bytemaps.ListStorage.is_merge
     if args.yes:
         dflags |= bytemaps.DictStorage.assume_yes
         lflags |= bytemaps.ListStorage.assume_yes
+        sflags |= bytemaps.StrStorage.assume_yes
 
     for widget in package.widgets:
         w = Widget()
@@ -150,6 +152,9 @@ if command == "import":
             elif isinstance(entry, list):
                 s = SessionList()
                 fl = lflags
+            else:
+                s = SessionStr()
+                fl = sflags
             s.build(session,storage)
             s._import(db, entry, fl)
 

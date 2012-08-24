@@ -144,7 +144,7 @@ class Node(object):
         assume_yes = bytemaps.is_set(flags, f.assume_yes)
         node_exists = self.exists(db)
         if not merge and node_exists:
-            c = confirm("This node already exists. It will be DELETED before writing new data.", assume_yes)
+            c = confirm("%s already exists. It will be DELETED before writing new data." % self.node, assume_yes)
             if not c:
                 return
             else:
@@ -259,7 +259,6 @@ class WidgetPolicy(Widget):
                 dyndef = DynamicDefault(str)
             dyndef.build(self.widget_name)
             dyndef._import(db, data["default"], flags)
-            del data["default"]
         super(WidgetPolicy, self)._import(db, data, flags)
 
 
@@ -304,7 +303,7 @@ class SessionList(Node):
 
 class SessionStr(Node):
     def __init__(self):
-        super(SessionList, self).__init__("s")
+        super(SessionStr, self).__init__("s")
         self.node_construction += ".%s.%s"
         self.node_type = str
 

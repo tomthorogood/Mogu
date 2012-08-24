@@ -135,6 +135,8 @@ def export_session(db,session):
         elif t == "list":
             l = full_list(db, name)
             body = list_str(l)
+        else:
+            body = " \t\"%s\"\n" % db.get(name)
         output += "%s%s" % (title,body)
     return output
 
