@@ -16,35 +16,35 @@ namespace SubmissionHandler{
 /* Uses the storage policy of the node in question to make an informed decision
  * about what to do with the data.
  */
-void absorb(Goo::Dynamic* widget);
+void absorb(std::string value, std::string node);
 
 /* Retrieves information from a user session, if applicable */
 void emerge(Goo::Dynamic* widget);
 
 /* Returns whether or not this widget needs to be encrypted before storage */
-bool requiresEncryption(Goo::Dynamic* inputWidget);
+bool requiresEncryption(const std::string& snode);
 
 /* Returns the storage mode of the widget from its policy entry */
 Enums::SubmissionPolicies::StorageMode getStorageMode(
-		Goo::Dynamic* inputWidget);
+		const std::string& snode);
 
 /* Returns the storage type of the widget data from its policy entry */
 Enums::SubmissionPolicies::StorageType getStorageType(
-		Goo::Dynamic* inputWidget);
+		const std::string& snode);
 
 /* Returns the data type of the widget data from its policy entry. */
 Enums::SubmissionPolicies::DataWrapping getDataWrapping(
-		Goo::Dynamic* inputWidget);
+		const std::string& snode);
 
 /* Retrieves the name of the hash field for input storage, if the storage
  * is to take place in another node.
  */
-std::string getHashField(Goo::Dynamic* inputWidget);
+std::string getHashField(const std::string& snode);
 
 /* When storing submission data in a static slot, as opposed to in the database,
  * it is necessary to get the slot name.
  */
-std::string getSlotName(Goo::Dynamic* inputWidget);
+std::string getSlotName(const std::string& snode);
 
 
 

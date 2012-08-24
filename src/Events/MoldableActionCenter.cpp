@@ -117,6 +117,7 @@ void submitBroadcast(BroadcastMessage* broadcast)
         }
 
         string nodeName = broadcast->getMessage()->getString();
+        nodeName = "events."+nodeName;
         Listeners* listeners = listenerMap[broadcast];
         unsigned int num_listeners = listeners->size();
         for (unsigned int listener =0; listener < num_listeners; listener++)
@@ -485,9 +486,25 @@ void directListeners(BroadcastMessage* broadcast)
     	for (int w = 0; w < num_listeners; w++)
     	{
     		Dynamic* widget = (Dynamic*) listeners->at(w);
+    		std::string val;
     		if (widget->allowsAction(Action::store_value))
     		{
-    			Sessions::SubmissionHandler::absorb(widget);
+    			switch(widget->getType() & WIDGET_HO_BITS)
+    			{
+    			case Enums::WidgetTypes::input_text:{
+    				Wt::WLineEdit* input = (Wt::WLineEdit*)
+    						widget->widget(0);
+    				val = input->valueText().toUTF8();
+    				break;}
+    			}
+    			std::string snode 	= broadcast->getMessage()->getString();
+#ifdef DEBUG
+    			std::cout << "Storing " << val << " at " << snode << std::endl;
+#endif
+    			if (widget->allowsAction(Action::store_value))
+    			{
+    				Sessions::SubmissionHandler::absorb(val, snode);
+    			}
     		}
     	}
     	break;}

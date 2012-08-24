@@ -54,6 +54,10 @@ class Node(object):
             "action"    :   (CURLY_BRACES,),
             "trigger"   :   (CURLY_BRACES,),
             "nextAction":   (CURLY_BRACES,),
+            "mode": (CURLY_BRACES,),
+            "data_type" :   (CURLY_BRACES,),
+            "storage_type" : (CURLY_BRACES,),
+            "signal"    :   (CARATS,),
             "degradation":  (CARATS,)
         }
 

@@ -50,60 +50,42 @@ inline bool session_widget_exists(std::string node)
 	return (bool) Redis::getInt();
 }
 
-void absorb(Dynamic* inputWidget)
+void absorb(std::string value_unenc, std::string snode)
 {
+
+
 	namespace Widget = Enums::WidgetTypes;
 	/* We will only continue if all authorization checks are passed.
-	 * First, we need to determine that the Wt Application ID is the same
-	 * that is being held within the private static namespace. If so,
-	 * the input widget will reveal its auth token, which will be presented
-	 * back to the Mogu private static namespace in order to obtain
-	 * the session ID.
 	 */
 	std::string session_id =
 			Application::requestSessionID(
 					Application::mogu()->sessionId());
 
 	/* Determine the location of the node's template */
-	std::string storage_locker =
-			Hash::toHash(inputWidget->storageLocker());
+	std::string storage_locker = Hash::toHash(snode);
 
 	/* The storage node will be a hashed version of the node template name,
 	 * within the current session namespace.
 	 */
-	std::string storageNode =
-			"s."+session_id+"."+storage_locker;
+	std::string storageNode = "s."+session_id+"."+storage_locker;
 
 	/* If widget info is stored at widgets.firstName,
 	 * and the user session id is 235r308gg, and the
 	 * hashed name of "firstName" is 123hu, the storage node would be:
 	 * s.235r308gg.123hu
 	 */
-	std::string value_unenc;
 	std::string value_enc;
 
-	Widget::WidgetTypes iType = (Widget::WidgetTypes)
-			inputWidget->getType();
 
-	switch(iType & 0x3F /*Mask HO bits */){
-
-	case Widget::input_text:{
-		Wt::WLineEdit* line = (Wt::WLineEdit*) inputWidget->widget(0);
-		value_unenc = line->text().toUTF8();
-		break;}
-
-	default:break;
-	}
-
-	bool encrypted = requiresEncryption(inputWidget);
+	bool encrypted = requiresEncryption(snode);
 	if (encrypted)
 	{
 		value_enc = Security::encrypt(value_unenc);
 	}
 
-	StorageMode mode_ = getStorageMode(inputWidget);
-	StorageType type_ = getStorageType(inputWidget);
-	DataWrapping wrap_ = getDataWrapping(inputWidget);
+	StorageMode mode_ = getStorageMode(snode);
+	StorageType type_ = getStorageType(snode);
+	DataWrapping wrap_ = getDataWrapping(snode);
 	std::string redis_command = "";
 
 	/* Encrypted data will always be interpreted as strings,
@@ -155,7 +137,7 @@ void absorb(Dynamic* inputWidget)
 	 * things would happen when trying to decrypt all the data.
 	 */
 	case hash:{
-		std::string field = getHashField(inputWidget);
+		std::string field = getHashField(snode);
 		if (mode_ == append)
 		{
 			Redis::command("hget", storageNode,field);
@@ -207,7 +189,7 @@ void absorb(Dynamic* inputWidget)
 	if (type_==hash)
 	{
 		//"command node" -> "command node field"
-		redis_command = redis_command + " " + getHashField(inputWidget);
+		redis_command = redis_command + " " + getHashField(snode);
 	}
 	//"command node" | "command node field" ->
 	//				"command node "value"" | "command node field "value" "
@@ -257,7 +239,7 @@ void emerge(Dynamic* widget)
 		Redis::command("get", swidget);
 		std::string _newtext = Redis::toString();
 
-		if (requiresEncryption(widget))
+		if (requiresEncryption(storage))
 		{
 			_newtext = Security::decrypt(_newtext);
 		}
@@ -271,71 +253,64 @@ void emerge(Dynamic* widget)
 
 }
 
-bool requiresEncryption(Dynamic* inputWidget)
+bool requiresEncryption(const std::string& snode)
 {
-	std::string nodePolicy =
-			inputWidget->getNodeList()->at(0) + ".policy";
+	std::string nodePolicy = "widgets."+snode+".policy";
 	Redis::command("hget", nodePolicy, "encrypted");
 	Nodes::NodeValue val;
-	Parsers::NodeValueParser parser(Redis::toString(), &val, inputWidget);
+	Parsers::NodeValueParser parser(Redis::toString(), &val);
 
 	return (bool) parser.getValue()->getInt();
 }
 
-StorageMode getStorageMode(Dynamic* inputWidget)
+StorageMode getStorageMode(const std::string& snode)
 {
-	std::string nodePolicy =
-			inputWidget->getNodeList()->at(0)+".policy";
+	std::string nodePolicy = "widgets."+snode+".policy";
 	Redis::command("hget", nodePolicy,"mode");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
-			Redis::toString(),
-			&val,
-			inputWidget,
-			&Parsers::enum_callback <Parsers::StorageModeParser>);
+			Redis::toString()
+			,&val, 0x0 //No need to pass in a widget
+			,&Parsers::enum_callback <Parsers::StorageModeParser>);
 	return (StorageMode) parser.getValue()->getInt();
 }
 
-StorageType getStorageType(Dynamic* inputWidget)
+StorageType getStorageType(const std::string& snode)
 {
-	std::string nodePolicy =
-			inputWidget->getNodeList()->at(0)+".policy";
+	std::string nodePolicy = "widgets."+snode+".policy";
 	Redis::command("hget", nodePolicy, "storage_type");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
-			Redis::toString(),
-			&val,
-			inputWidget,
-			&Parsers::enum_callback <Parsers::StorageTypeParser>);
+			Redis::toString()
+			,&val
+			,0x0 // No need to pass in a widget
+			,&Parsers::enum_callback <Parsers::StorageTypeParser>);
 	return (StorageType) parser.getValue()->getInt();
 }
 
-DataWrapping getDataWrapping(Dynamic* inputWidget)
+DataWrapping getDataWrapping(const std::string& snode)
 {
-	std::string nodePolicy =
-			inputWidget->getNodeList()->at(0)+".policy";
+	std::string nodePolicy = "widgets."+snode+".policy";
 	Redis::command("hget", nodePolicy, "data_type");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
 			Redis::toString(),
 			&val,
-			inputWidget,
-			&Parsers::enum_callback <Parsers::StorageTypeParser>);
+			0x0,
+			&Parsers::enum_callback <Parsers::StorageWrappingParser>);
 	return (DataWrapping) parser.getValue()->getInt();
 }
 
-std::string getHashField(Dynamic* inputWidget)
+std::string getHashField(const std::string& snode)
 {
-	std::string nodePolicy =
-			inputWidget->getNodeList()->at(0)+".policy";
+	std::string nodePolicy = "widgets."+snode+".policy";
 	Redis::command("hget", nodePolicy, "field");
 	return Redis::toString();
 }
 
-std::string getSlotName(Dynamic* inputWidget)
+std::string getSlotName(const std::string& snode)
 {
-	std::string nodePolicy =
-			inputWidget->getNodeList()->at(0)+".policy";
+	std::string nodePolicy = "widgets."+snode+".policy";
 	Redis::command("hget", nodePolicy, "slot");
 	return Redis::toString();
 }

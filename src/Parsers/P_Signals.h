@@ -43,7 +43,7 @@ public:
 	    enumMap["set_style"]    	= Action::set_style;
 	    enumMap["set_index"]    	= Action::set_index;
 	    enumMap["set_path"]			= Action::set_internal_path;
-	    enumMap["submit"]			= Action::store_value;
+	    enumMap["store"]			= Action::store_value;
 	    enumMap["remove_child"]		= Action::remove_child;
 	    enumMap["add_child"] 		= Action::add_widget;
 	    enumMap["block"]        	= Action::BLOCK;
