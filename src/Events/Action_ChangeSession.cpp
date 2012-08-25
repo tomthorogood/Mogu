@@ -64,9 +64,13 @@ namespace{
 		string glob_user = "s.global."+session_lookup;
 
 		command("hset", next_meta, prev_session, last_session);
+		clear();
 		command("hset", next_meta, auth_field, auth_token);
+		clear();
 		command("hset", glob_auth, auth_string, auth_token);
+		clear();
 		command("hset", glob_user, e_userid, next_session);
+		clear();
 	}
 
 	inline string collision_proof (string estr)
