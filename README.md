@@ -108,12 +108,12 @@ To create hello world, all you need is this:
         type    :   "text",  
         content :   "Hello, World!"
     }
+    tree['wrapper'] = ['hello_world']
 
 Really, that's it.
 You can then run:
 
-    mogu import --filename hello
-    mogu add-child hello_world to wrapper
+    mogu import hello
 
 Reload localhost:9090.
 You should see "Hello World" on your screen. Yay.
