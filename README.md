@@ -1,6 +1,6 @@
-# Mogu: Bend the Web 
+# Mogu: Bend the Web #
 
-## What is Mogu? ##
+## What is Mogu? #
 Mogu is a web framework designed with the end user in mind. We developers, we're great and all,
 but sadly our end users can't keep up with a lot of what we do. Mogu aims to change that. 
 
@@ -19,7 +19,7 @@ system. These two things combined may in fact break your brain.
 Mogu also comes with a toolkit of command line functions to analyze and make changes to your application
 without on the fly, including export/import functionality allowing you to test once and deploy anywhere.
 
-## Building Mogu ##
+## Building Dependencies #
 
 Currently, the worst part about using Mogu is getting everything else setup first, namely Wt. Once you're
 rolling, though, the world is a bright and shiny place. 
@@ -35,23 +35,30 @@ development as I am with Windows development, but you should still help me make 
     - After installing, check the tools folder to configure your server with ease.
 + Install [Redis-Py](http://www.github.com/andymccurdy/redis-py)
     - You can also use easy\_install redis-py if you have Python setuptools already
++ Install [OpenSSL](http://www.openssl.org)
++ Install [CityHash](http://code.google.com/p/cityhash/downloads/list)
 + Install [Wt](http://www.webtoolkit.eu)
     - Depending on your environment, building Wt can be an especially frustrating experience. 
     - I do plan on forking and making an easier-to-build setup of Wt. Until then, refer to their
       docs, which are very complete. If you're on Ubuntu, this process is actually nice and easy.
-+ Install Mogu 
-    - Clone this repository.
 
+Additionally, if you plan on contributing to Mogu, it's recommended to have [valgrind](http://www.valgrind.org) installed as well. The valgrind visualizer, `visual valgrind` is included in the debug/ folder of the source, as well as a few bash scripts for easy testing.
 
-You have two build options; one links to Wt's 'wthttp' library for development; the other to 'wtfcgi' for deployment.
+## Installing Mogu #
++ Clone this Repository 
+    - Either `git clone git://github.com/tomthorogood/Mogu` or [downloading the latest stable release](http://www.github.com/tomthorogood/Mogu/tags)
+
++ Build the source:
 
     cd path/to/Mogu
-    make  # For using the built-in Wt server
+    make
 
-*or*
++ Note: You can define the optimization and debug flags using `dbg` and `o` parameters with the make command. Do not try and optimize if you're also trying to debug!
 
-    make production     # For using fcgi
-    sudo make install
+    make o=3
+    make dbg=on
+
++ Debug mode will generate copious amounts of output to your shell when mogu is running, and also will allow you to use tools such as valgrind, etc.     
 
 + Configure Mogu to suit your needs: 
 
@@ -61,8 +68,9 @@ You have two build options; one links to Wt's 'wthttp' library for development; 
 
     mogu start
 
-+ Test by pointing your browser to http://localhost:9090 (or whatever port you set in mogu.conf)
-If you get a blank screen, it's running. If you get an error, it's not. 
+**NOTE: If you get an error about libcityhash not being found**: This is because it is looking for it in /usr/local/lib. Simply run the following command to create a link to the real libcityhash, which may be installed in /usr/lib:
+
+    ln -s /usr/lib/libcityhash.o.0 /usr/local/lib/libcityhash.o.0
 
 ## Hello, Web! ##
 
