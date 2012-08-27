@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-from db_checking import *
 from redis_cheats import *
 import os,sys
 
