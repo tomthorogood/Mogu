@@ -65,15 +65,10 @@ Moldable::Moldable(
 
 Moldable::~Moldable()
 {
-    if (bindery != 0) delete bindery;
-    if (baseVariables->flags & Enums::WidgetTypes::is_named)
-    {
-    	Application::mogu()->deregisterWidget(
-    			Parsers::StyleParser::getWidgetName(this)
-    	);
-    }
-    delete baseVariables;
+	if (bindery !=0) delete bindery;
+	delete baseVariables;
 }
+
 
 void
 Moldable::load()

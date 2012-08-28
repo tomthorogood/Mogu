@@ -77,6 +77,7 @@ private:
     Wt::Signal <> __style_changed;
     Wt::Signal <> __failed_test;
     Wt::Signal <> __succeeded_test;
+    Wt::Signal <> __deregister;
 
 
 

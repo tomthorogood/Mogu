@@ -34,7 +34,12 @@ public:
 	bool widgetIsRegistered(std::string name);
 	void registerWidget(std::string name, Goo::Moldable* widget);
 	Goo::Moldable* registeredWidget(std::string name);
-	void deregisterWidget(std::string name);
+	inline void deregisterWidget(std::string name)
+	{
+		if (!widgetIsRegistered(name)) return;
+		WidgetRegister::iterator iter = widgetRegister.find(name);
+		widgetRegister.erase(iter);
+	}
 };
 
 

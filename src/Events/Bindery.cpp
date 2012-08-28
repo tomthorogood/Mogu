@@ -46,8 +46,9 @@ EventBindery::EventBindery(Moldable* broadcaster)
 
     for (int e = 0; e < num_events; e++)
     {
-        string eventNode = eventNodes.at(e);
-        EventNodeExtractor* extractor = new EventNodeExtractor(eventNode);
+        string* eventNode = &eventNodes.at(e);
+        EventNodeExtractor* extractor = new EventNodeExtractor(*eventNode);
+
         string trigger_str = extractor->getValue(Labels::trigger);
 
         Nodes::NodeValue val;
@@ -107,11 +108,11 @@ EventBindery::EventBindery(Moldable* broadcaster)
 
 void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 {
-   ExtractorVector extractors = extractorMap[trigger];
-   int num_extractors = extractors.size();
+   ExtractorVector* extractors = &extractorMap[trigger];
+   int num_extractors = extractors->size();
    for (int e = 0; e < num_extractors; e++)
    {
-       EventNodeExtractor* extractor = extractors.at(e);
+       EventNodeExtractor* extractor = extractors->at(e);
        ActionCenter::submitBroadcast(
                ActionCenter::generateNewBroadcast(
                        __broadcaster, *extractor)
@@ -122,49 +123,19 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 EventBindery::~EventBindery()
 {
 	ExtractorMap::iterator iter = extractorMap.begin();
+#ifdef DEBUG
+	std::cout << "Bindery " << this << " being deleted!" << std::endl;
+#endif
 	while (iter != extractorMap.end())
 	{
-		ExtractorVector vec = iter->second;
-		unsigned int size = vec.size();
+		ExtractorVector* vec = &iter->second;
+		unsigned int size = vec->size();
 		for (unsigned int p = 0; p < size; p++)
 		{
-			delete vec.at(p);
+			delete vec->at(p);
 		}
 		++iter;
 	}
 }
 
-void EventBindery::clickSlot()
-{
-    handleVoidSignal(Triggers::click);
-}
-void EventBindery::mouseoverSlot()
-{
-    handleVoidSignal(Triggers::mouseover);
-}
-void EventBindery::mouseoutSlot()
-{
-    handleVoidSignal(Triggers::mouseout);
-}
-void EventBindery::styleChangedSlot()
-{
-    handleVoidSignal(Triggers::style_changed);
-}
-
-void EventBindery::failSlot()
-{
-	handleVoidSignal(Triggers::fail);
-}
-
-void EventBindery::keyupSlot()
-{
-	handleVoidSignal(Triggers::keyup);
-}
-
-void EventBindery::succeedSlot()
-{
-	handleVoidSignal(Triggers::succeed);
-}
-
-}
-
+}//namespace events

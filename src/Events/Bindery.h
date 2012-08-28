@@ -24,15 +24,44 @@ class EventBindery : public Wt::WObject
     ExtractorMap extractorMap;
     Goo::Moldable* __broadcaster;
 
-    void clickSlot();
-    void mouseoverSlot();
-    void mouseoutSlot();
-    void styleChangedSlot();
-    void keyupSlot();
-    void failSlot();
-    void succeedSlot();
     void handleVoidSignal(
             Enums::SignalTriggers::SignalTrigger trigger);
+
+
+    inline void clickSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::click);
+    }
+
+    inline void mouseoverSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::mouseover);
+    }
+
+    inline void mouseoutSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::mouseout);
+    }
+
+    inline void styleChangedSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::style_changed);
+    }
+
+    inline void keyupSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::keyup);
+    }
+
+    inline void failSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::fail);
+    }
+
+    inline void succeedSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::succeed);
+    }
 
 public:
     EventBindery(Goo::Moldable* broadcaster);

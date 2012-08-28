@@ -71,15 +71,6 @@ void Mogu::registerWidget(std::string name, Goo::Moldable* widget)
 	widgetRegister[name] = widget;
 }
 
-void Mogu::deregisterWidget(std::string name)
-{
-	if (widgetIsRegistered(name))
-	{
-		WidgetRegister::iterator iter = widgetRegister.find(name);
-		widgetRegister.erase(iter);
-	}
-}
-
 Goo::Moldable* Mogu::registeredWidget(std::string name)
 {
 	return widgetRegister[name];
