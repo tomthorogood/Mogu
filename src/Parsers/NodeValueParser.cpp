@@ -126,7 +126,7 @@ void NodeValueParser::set_value_type(
     case '{':
         __type = enum_value;
         break;
-    case '<':
+    case '#':
         __type = static_node_value;
         break;
     case '@':
@@ -137,6 +137,7 @@ void NodeValueParser::set_value_type(
         break;
     case '`':
         __type = file_value;
+        break;
     default:
         __type = string_value;
     }
