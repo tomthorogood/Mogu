@@ -160,29 +160,29 @@ enum SignalAction{
 
 namespace SignalTriggers{
 enum SignalTrigger{
-    click,
-    style_changed,
-    mouseover,
-    mouseout,
-    fail,
-    succeed,
-    keyup
+    click			=0
+    ,style_changed	=1
+    ,mouseover		=2
+    ,mouseout		=3
+    ,fail			=4
+    ,succeed		=5
+    ,keyup			=6
 };
 } //namespace SignalTriggers
 
 namespace Labels{
 enum Labels
 {
-    message,
-    trigger,
-    action,
-    nextAction,
-    listeners,
-    degradation,
-    signal,
-    animation,
-    block,
-    interrupt
+    message			=0
+    ,trigger		=1
+    ,action			=2
+    ,nextAction 	=3
+    ,listeners		=4
+    ,degradation 	=5
+    ,signal			=6
+    ,animation		=7
+    ,block			=8
+    ,interrupt		=9
 };
 }//namespace Labels
 

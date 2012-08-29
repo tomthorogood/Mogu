@@ -393,14 +393,25 @@ void directListeners(BroadcastMessage* broadcast)
     		Moldable* widget = listeners->at(w);
     		if (widget->allowsAction(Action::increment_index))
     		{
+#ifdef DEBUG
+    		std::cout << "Setting index of " << widget->getNodeList()->at(0) << std::endl;
+#endif
     			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
     					widget->widget(0);
     			int current_index = stack->currentIndex();
-    			std::cout << "CHANGING INDEX OF ";
-    			std::cout << widget->getNodeList()->at(0) << "TO ";
-    			current_index++;
-    			std::cout << current_index << std::endl;
-    			stack->setCurrentIndex(current_index);
+#ifdef DEBUG
+    			std::cout << "Current Index: " << current_index << std::endl;
+    			std::cout << "Next Index: " << current_index-1 << std::endl;
+    			std::cout << "Max Index: " << stack->count() << std::endl;
+#endif
+    			if (++current_index < stack->count())
+    			{
+#ifdef DEBUG
+    				std::cout << "Changing index to  ";
+    				std::cout << current_index << std::endl;
+#endif
+    				stack->setCurrentIndex(current_index);
+    			}
     		}
     	}
     	break;}
@@ -415,8 +426,15 @@ void directListeners(BroadcastMessage* broadcast)
     			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
     					widget->widget(0);
     			int current_index = stack->currentIndex();
-    			current_index--;
-    			stack->setCurrentIndex(current_index);
+    			if (--current_index >=0)
+    			{
+#ifdef DEBUG
+    				std::cout << "CHANGING INDEX OF";
+    				std::cout << widget->getNodeList()->at(0) << " TO ";
+    				std::cout << current_index << std::endl;
+#endif
+    				stack->setCurrentIndex(current_index);
+    			}
     		}
     	}
     	break;}

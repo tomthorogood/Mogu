@@ -222,6 +222,7 @@ public:
 
     inline bool reload() { return __reload; }
 
+    inline bool numChildren() { return children.size();}
 };
 
 } //namespace Goo

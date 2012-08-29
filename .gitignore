@@ -6,5 +6,6 @@
 *.out
 *.out.*
 *grindout.xml
+cli/cli_src/clihash
 mogu-server
 resources/

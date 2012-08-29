@@ -15,7 +15,7 @@ command := g++ -Wall -O$(o)
 
 all: $(objects) | $(turnleft) 
 ifeq ($(dbg),on)
-	g++ -Wall -DTERM_ENABLED -g -o $(executable) $(objects) $(devel_libs)
+	g++ -Wall -DDEBUG -DTERM_ENABLED -g -o $(executable) $(objects) $(devel_libs)
 else
 	g++ -Wall -o $(executable) $(objects) $(devel_libs)
 endif
@@ -43,7 +43,7 @@ uninstall:
 
 %.o:
 ifeq ($(dbg),on)
-	$(command) -c -DTERM_ENABLED -g $(includes) -o $@ $(patsubst %.o, %.cpp, $@)
+	$(command) -c -DDEBUG -DTERM_ENABLED -g $(includes) -o $@ $(patsubst %.o, %.cpp, $@)
 else
 	$(command) -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
 endif
