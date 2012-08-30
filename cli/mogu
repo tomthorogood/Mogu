@@ -367,6 +367,10 @@ if command == "export-widget":
     clean_file(filename)
 #END export-widget
 
+if command == "merge-sessions":
+    merge_all(db)
+
+
 if command == "init":
     # First, check to make sure there isn't a Mogu application
     # already configured in the database

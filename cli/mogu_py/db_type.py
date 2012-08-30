@@ -4,7 +4,7 @@ import bytemaps
 import mimport as todb
 from snippets import confirm
 from db_type_exceptions import *
-
+import cityhash
 required_event_parameters = {
         "198"       :       ("action","message","nextAction","degradation"),
         "199"       :       ("action","message","nextAction","degradation","trigger"),
@@ -234,10 +234,7 @@ class DynamicDefault(Node):
         self.node_type = stype
 
     def build(self, arg):
-        proc = subprocess.Popen(
-                ["/etc/mogu/cli_src/clihash", arg], 
-                shell=False, stdout=subprocess.PIPE)
-        val = proc.communicate()[0].replace("\n","")
+        val = cityhash.to_city_hash(arg)
         super(DynamicDefault, self).build(val)
 
 class WidgetPolicy(Widget):

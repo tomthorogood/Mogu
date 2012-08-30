@@ -1,0 +1,5398 @@
+#!/usr/bin/env python
+#Mogu Import File: backup 
+
+widgets["module_6_title_text"] = \
+{
+	"content"	:	"Credit Score",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["register:register:form:submit"] = \
+{
+	"content"	:	"Register!",
+	"type"	:	"{text}",
+	"class"	:	"button linkified firsts_coloring L50PERCENT",
+	"events"	:	"on"
+}
+
+
+
+widgets["ch:1:stack:0:5:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["ch:1:stack:0:1:link"] = \
+{
+	"content"	:	"Banks vs. Credit Unions",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["firsts_module_6_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["ch:1:infobar:current"] = \
+{
+	"content"	:	" ",
+	"type"	:	"{text}",
+	"class"	:	"future_coloring TENPT INLINE ",
+	"name"	:	"ch:1:infobar:current"
+}
+
+
+
+widgets["register:register:descriptors:welcome"] = \
+{
+	"content"	:	"Let's get started!",
+	"type"	:	"{text}",
+	"class"	:	"profile_coloring title_accent"
+}
+
+
+
+widgets["ch:1:stack:1:vid0"] = \
+{
+	"content"	:	"VIDEO: How Did this All Get Started?",
+	"type"	:	"{link}",
+	"location"	:	"http://videos.repaydebt.org/video/look-history-banking"
+}
+
+
+
+widgets["firsts_module_8_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["footer_container"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"footer_container",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["global_register"] = \
+{
+	"content"	:	"Login/Register",
+	"events"	:	"on",
+	"type"	:	"{text}",
+	"class"	:	"linkified button profile_coloring RELATIVE INLINE top_tab",
+	"name"	:	"toptab:register"
+}
+
+
+
+widgets["firsts_module_3_description"] = \
+{
+	"content"	:	" Before you get your first paycheck, you'll need to know where to get it <i>from</i>. Along with making good career decisions, knowing when to work and when to volunteer, and understanding the steps to progress, there's the added challenge of keeping in mind how much of your paycheck is spent before you get it. This module will give students the knowledge not only to use their paycheck wisely and know what their pay stub means, but how to enter into the big bad world of gainful employment in a way that will benefit them not only now, but ten years from now.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_1_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["firsts_title_1"] = \
+{
+	"content"	:	"There's a first time for ",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring section_title"
+}
+
+
+
+widgets["firsts_title_2"] = \
+{
+	"content"	:	"everything",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["register:register:descriptors"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"INLINE_BLOCK W250PX RELATIVE"
+}
+
+
+
+widgets["ch:1"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["module_6_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["welcome_title_1"] = \
+{
+	"content"	:	"Welcome to ",
+	"type"	:	"{text}",
+	"class"	:	"inline welcome_coloring section_title"
+}
+
+
+
+widgets["welcome_title_2"] = \
+{
+	"content"	:	"Financial Firsts",
+	"type"	:	"{text}",
+	"class"	:	"inline welcome_coloring title_accent"
+}
+
+
+
+widgets["ch:1:stack:7:img0"] = \
+{
+	"content"	:	"Bank Fees",
+	"source"	:	"/resources/mogu/images/ch/1/img8.jpg",
+	"type"	:	"{image}",
+	"class"	:	"FLOATL W275PX PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:6:txt0"] = \
+{
+	"content"	:	"Making a <b>deposit</b> means putting cash or checks into your account. In short, adding money! Using a deposit slip ensures that the correct amount is credited to your account when depositing with an ATM or directly at the counter with your bank.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:6:txt1"] = \
+{
+	"content"	:	"There is a place on the front to write the date of the deposit, and to sign (which is usually only required if your receiving cash back from the deposit). There is also a section on the right side of the slip to record the cash and checks that you deposit. If you and cash and/or up to three checks, you're done! If you have more than three checks, you'll need to use the back of the deposit slip.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:6:txt2"] = \
+{
+	"content"	:	"When your birthday rolls around and 10 of your favorite family members send you sweet, sweet money, list each of the checks on the back of the slip and total them up. Neext, write the total on the front of the slip in the appropriate box. Add any cash you're including in the deposit.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:6:txt3"] = \
+{
+	"content"	:	"The final step is to decide whether you'll be getting cash back from the deposit (known as <b>cashing a check</b>). If so, you'll need to subtract this amount in order to have the grand total of the deposit.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["firsts_module_3_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["smenu"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"sidemenu oProfile",
+	"block"	:	"{set_index}",
+	"name"	:	"side menu"
+}
+
+
+
+widgets["ch:1:stack:0:8:link"] = \
+{
+	"content"	:	"Balancing Your Checkbook",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["profileedit:name"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["toptabs"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"ABSOLUTE TOP0 L250PX PAD_TOP_10",
+	"name"	:	"toptabs"
+}
+
+
+
+widgets["module_1_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["ch:1:stack:1:img0"] = \
+{
+	"content"	:	"Banks vs. Credit Unions",
+	"source"	:	"/resources/mogu/images/ch/1/img1.jpg",
+	"type"	:	"{image}",
+	"class"	:	"FLOATL W275PX PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["friends_title_1"] = \
+{
+	"content"	:	"It's better with ",
+	"type"	:	"{text}",
+	"class"	:	"inline friends_coloring section_title"
+}
+
+
+
+widgets["friends_title_2"] = \
+{
+	"content"	:	"friends",
+	"type"	:	"{text}",
+	"class"	:	"inline friends_coloring title_accent"
+}
+
+
+
+widgets["thanks_subscribing"] = \
+{
+	"content"	:	"Thanks! We'll be sure to keep you up to date! Don't forget to follow us on Twitter and Facebook also!",
+	"type"	:	"{text}",
+	"class"	:	"friends_coloring"
+}
+
+
+
+widgets["ch:1:stack:0:6:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["ch:1:stack:0:2:link"] = \
+{
+	"content"	:	"Why Do I Need a Savings Account?",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["register:login:form:userid"] = \
+{
+	"content"	:	"email@address.com",
+	"type"	:	"{input}",
+	"class"	:	"input_field",
+	"name"	:	"login:userid"
+}
+
+
+
+widgets["firsts_module_6_description"] = \
+{
+	"content"	:	" Once credit is established, keeping an eye on it is just as important as making sure to pay it off. Checking your report for errors, understanding what it means and how it influences everything from getting more credit to getting a better job are details that are often overlooked. Not anymore.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["firsts_module_7_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["ch:1:nav:next"] = \
+{
+	"type"	:	"{container}",
+	"events"	:	"on",
+	"class"	:	"linkified FORCERIGHT icon BLOCK FORWARD_ICON RELATIVE MARGIN_TOP_N30"
+}
+
+
+
+widgets["register:close"] = \
+{
+	"content"	:	"close window",
+	"type"	:	"{text}",
+	"class"	:	"linkified future_coloring PAD_TOP_20",
+	"block"	:	"{set_index}",
+	"events"	:	"on"
+}
+
+
+
+widgets["profileedit:name:help"] = \
+{
+	"content"	:	"Name: ",
+	"type"	:	"{text}",
+	"class"	:	"profile_coloring INLINE",
+	"block"	:	"{set_text}"
+}
+
+
+
+widgets["profileedit:name:error"] = \
+{
+	"content"	:	" ",
+	"type"	:	"{text}",
+	"class"	:	"TENPT friends_coloring"
+}
+
+
+
+widgets["profile_description_text"] = \
+{
+	"content"	:	"Students will have at-a-glance access to their progress through the course, including assessment scores, in-game currency, connections with other students, and so on. As an educator, you will have access to the students' assessment information as well, and will be able to monitory your students' progress through the course. Additionally, you'll be able to download offline material for use in the classroom, or get assistance from our counselors if you're having trouble imparting certain information.",
+	"type"	:	"{text|dynamic}"
+}
+
+
+
+widgets["module_1_title_text"] = \
+{
+	"content"	:	"Bank Account",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["subscribe_copy"] = \
+{
+	"comment"	:	"This is where we tell people why they should subscribe for updates.",
+	"content"	:	" Be the first to the firsts! By subscribing to the Financial Firsts watch list, you'll be the first to know of new features and additional content. You'll also be the first to know when the site is ready for your students. By subscribing you agree to <a href=\"http://www.ClearPointCCS.org/privacy-policy\"> Privacy Policy</a>, but can rest assured that your email address is secure and will be kept private.",
+	"type"	:	"{text}",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["ch:1:stack:8:img0"] = \
+{
+	"content"	:	"Single Entry Check Register",
+	"source"	:	"/resources/mogu/images/ch/1/img9.jpg",
+	"type"	:	"{image}"
+}
+
+
+
+widgets["side_future"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFuture",
+	"events"	:	"on"
+}
+
+
+
+widgets["ch:1:stack:8:img1"] = \
+{
+	"content"	:	"Double Entry Check Register",
+	"source"	:	"/resources/mogu/images/ch/1/img10.jpg",
+	"type"	:	"{image}"
+}
+
+
+
+widgets["ch:1:stack:7:txt0"] = \
+{
+	"content"	:	"Banks and credit unions charge fees for various services. Some will charge you a monthly fee just to have an account with them, but others offer free checking accounts. Often they will offer free checking when you participate in what is called a <b>direct depsit plan</b>. This means that when you get paid, your employer automatically deposits your pay into your account. On payday, you'll just receive a <b>statement of earnings</b>, or pay stub. Aside from avoiding fees, you also get paid on payday, <i>every</i> payday! No more going to pick up the check and having to make a trip to the bank!",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:7:txt1"] = \
+{
+	"content"	:	"Other fees depend on you. If you write a check but don't have enough money in the account to cover it, you'll incur an insufficient funds fee, sometimes abbreviated as <b>NSF</b>. This is also referred to as <b>bouncing a check</b>, and you want to be very careful not to do it. When you write a bad check, your bank may or may not still honor the amount, but will still charge you a fee, typically around $35. The company you wrote the check to may also charge you a fee. Even if you're not using checks, the bank will also assess fees for using your debit card without having enough money in your account.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["firsts_module_2_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["ch:1:stack:7:txt2"] = \
+{
+	"content"	:	"Consistent mishandling of your account could result in your account being closed. Since bouncing checks is also illegal, you could be reported to the police and have legal action taken against you. <b>Never write a check if you don't have enough money to cover it!</b>",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:0:9:link"] = \
+{
+	"content"	:	"Reading Your Monthly Statement",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["firsts_module_1"] = \
+{
+	"type"	:	"{container}",
+	"name"	:	"first-bank-account"
+}
+
+
+
+widgets["firsts_module_2"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_3"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_4"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_5"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_6"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_7"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_8"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_7_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["module_4_title_text"] = \
+{
+	"content"	:	"Car",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["register:register:form:pwmatch"] = \
+{
+	"content"	:	" ",
+	"type"	:	"{password}",
+	"class"	:	"input_field",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_module_4_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_module_1_description"] = \
+{
+	"content"	:	" In this unit, students will learn the banking basics. Credit unions, banks, savings, checking -- they may seem second nature to you, but without a solid financial education, young adults may not be able to make the most of their money. The in-class material will include example checks and worksheets for your students to use to practice, and the online supplements will reinforce this material by having students set up a bank account for their avatar. Additionally, they will have the opportunity to try their hand at balancing a checkbook, receiving a special badge for an exemplary balancing act.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["ch:1:stack:2:img0"] = \
+{
+	"content"	:	"Why Do I Need a Savings Account?",
+	"source"	:	"/resources/mogu/images/ch/1/img2.jpg",
+	"type"	:	"{image}",
+	"class"	:	"FLOATL W275PX PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:1:txt0"] = \
+{
+	"content"	:	"Now that you are making your own money, it's time to decide where to put it. Banks and credit unions offer similar services, but you need to know the difference before you can make an informed decision.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:1:txt1"] = \
+{
+	"content"	:	" <b>Banks</b> are \"for-profit organizations,\" which means they are in business for their stockholders. Stockholders own a share of the business by purchasing stocks. Banks serve customers from the general public. Each person's deposit in a bank is federally insured up to $250,000 by the <b>Federal Deposit Insurance Corporation</b> (FDIC), a government agency. ",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:1:txt2"] = \
+{
+	"content"	:	"Credit unions are \"not-for-profit organizations,\" which means they exist solely to serve their members. For some types of credit unions, a person must be within the credit union's \"field of membership,\" or target group, in order to join. Credit unions may exist to serve a specific professional sector such as teachers, auto workers, or law enforcement. Some credit unions that initially started to serve teachers, for example, have extended their membership base to include anyone related to education: students, parents or relatives of students or teachers, school administrators, and any staff person of an educational facility. Now, many credit unions now have what is known as a \"community charter,\" which means they are open to anyone who wishes to join.  Deposits in a credit union are also federally insured up to $250,000 by the <b>National Credit Union Administration</b> (NCUA). To find a credit union near you, go to: <a href=\"http://www.ncua.gov\" target=\"_blank\">www.ncua.gov</a>. ",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["module_7_title_text"] = \
+{
+	"content"	:	"Home Away from Home",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["profile_title_1"] = \
+{
+	"content"	:	"A friendly dashboard ",
+	"type"	:	"{text|dynamic}",
+	"class"	:	"inline profile_coloring section_title",
+	"name"	:	"profile:welcome"
+}
+
+
+
+widgets["profile_title_2"] = \
+{
+	"content"	:	"for everyone",
+	"type"	:	"{text|dynamic}",
+	"class"	:	"inline profile_coloring title_accent",
+	"name"	:	"profile:welcome2"
+}
+
+
+
+widgets["ch:1:stack:0:7:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["ch:1:stack:0:3:link"] = \
+{
+	"content"	:	"Opening Your First Checking Account",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["register:register:error"] = \
+{
+	"content"	:	" ",
+	"type"	:	"{text}",
+	"class"	:	"friends_coloring TENPT",
+	"name"	:	"register:error"
+}
+
+
+
+widgets["module_2_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["register:login:descriptors:body"] = \
+{
+	"content"	:	"Already registered? Login here to view Financial Firsts content, or: ",
+	"type"	:	"{text}",
+	"class"	:	"LJUSTIFY INLINE"
+}
+
+
+
+widgets["side_profile"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionProfile",
+	"events"	:	"on"
+}
+
+
+
+widgets["future_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"future"
+}
+
+
+
+widgets["ch:1:stack:0:1:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["firsts_module_8_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["side_finances"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFinances",
+	"events"	:	"on"
+}
+
+
+
+widgets["friends_description_text"] = \
+{
+	"content"	:	"Financial Firsts understands the need for interaction when learning new material. Students progressing through the course will be able to easily connect to others in their class, or nationwide that are in the same place they are. As they progress through the course, they'll be given digital currency to be spent on updating their avatar's look, and practicing the skills learned in the module they've just completed. Students who pay close attention will be rewarded with all the best in-game lifestyle, and those who have trouble will be given the opportunity to re-take a module to keep up with the Jonses.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["register:register:form"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"INLINE_BLOCK W250PX RELATIVE VALIGNTOP CENTER"
+}
+
+
+
+widgets["subscribe_button"] = \
+{
+	"content"	:	"Subscribe Now!",
+	"comment"	:	"Calls submit action on subscribe_field.",
+	"type"	:	"{text}",
+	"class"	:	"friends_coloring button linkified",
+	"events"	:	"on"
+}
+
+
+
+widgets["ch:1:stack:8:txt0"] = \
+{
+	"content"	:	"A checking account can be a very useful tool to make your life easier, but it does come with a price: it takes time to keep it up-to-date. The best way to handle your checking account is to make it a practice to record every deposit, credit, or withdrwal to your account as they happen.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:8:txt1"] = \
+{
+	"content"	:	"How do you balance a checkbook? It's really pretty easy. Start with your beginning balance (the amount you had in your account at the beginning of the month), and record every transaction you've had since then. This means every time you make a purchase using your debit card, or take money from an ATM, you need to log this debit. Likewise, anytime someone gives you money that you add to the account, you need to log that too. Checkbooks come with a register, a small booklet that accompanies the checks. There are usually two sets of lines in the register: one white, the other gray.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:8:txt2"] = \
+{
+	"content"	:	"In the example above, we use what is called <b>single entry</b>. This means that every transaction takes just one single line and the current account balance after the transaction is seen at the end of the row.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:8:txt3"] = \
+{
+	"content"	:	"In the second example, we use a <b>double entry</b> format, taking up two lines for every transaction. The white line has been used to record the transaction just as in the first example, but the gray line has been used to make a note about the transaction. It's up to you how detailed you want your records to be, but there's no such thing as too much information!",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["register:login:form:error"] = \
+{
+	"content"	:	" ",
+	"type"	:	"{text}",
+	"class"	:	"friends_coloring TENPT",
+	"name"	:	"login:error"
+}
+
+
+
+widgets["firsts_module_4_description"] = \
+{
+	"content"	:	" There are as many car models to choose from as there are inspirational foreign words in the dictionary. They sound cool, they look cool, they suit each and every personality type. Which one to buy? Or maybe lease? New? Used? Don't forget insurance! It's not a decision to take lightly, and an auto loan has dire consequences when entered into naively. You'll have all the tools you need to walk your students through their first car-buying experience, and their avatars here at FinancialFirsts.org will get to do the same. Your students will also learn what rules to establish in their vehicles to keep their friends (and their investment) safe.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["profileedit:name:input"] = \
+{
+	"content"	:	"What should we call you?",
+	"validator"	:	"name",
+	"type"	:	"{input|dynamic}",
+	"class"	:	"input_field",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_module_3_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["ch:1:stack"] = \
+{
+	"type"	:	"{stacked}",
+	"name"	:	"bank account stack"
+}
+
+
+
+widgets["ch:1:stack:3:img0"] = \
+{
+	"content"	:	"Opening Your First Checking Account",
+	"source"	:	"/resources/mogu/images/ch/1/img3.jpg",
+	"type"	:	"{image}",
+	"class"	:	"FLOATL W275PX PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:2:txt0"] = \
+{
+	"content"	:	"A checking account lets you keep your money in a safe place that you can easily access, but your money works for you in a savings account by earning <b>interest</b> over time. Interest is money the bank pays you for letting it use your money. It is calculated as a percentage of your balance. When you have a savings account your bank or credit union pays you what is called <b>compound interest</b>, meaning you are paid based on the amount you have deposited (called the <b>principal</b>) as well as the interest they have already paid you. The longer you leave your money in a savings account untouched, the faster it will grow! When choosing a savings account, you want to find which one has the highest <b>Annual Percentage Rate</b> (APY). You also need to look for the opening deposit. Some will give you a higher APY in exchange for a higher opening deposit, which is a good thing providing you have the amount for an opening deposit handy.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["module_8_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["ch:1:stack:0:8:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["firsts_module_5_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["ch:1:stack:0:4:link"] = \
+{
+	"content"	:	"What's In a Card?",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["register:outer"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"hidden",
+	"name"	:	"register overlay"
+}
+
+
+
+widgets["ch:1:infobar"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["subscribe_for_updates"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section"
+}
+
+
+
+widgets["side_firsts"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFirsts",
+	"events"	:	"on"
+}
+
+
+
+widgets["register:login:form:submit"] = \
+{
+	"content"	:	"Log In!",
+	"type"	:	"{text}",
+	"class"	:	"friends_coloring button linkified L50PERCENT",
+	"events"	:	"on"
+}
+
+
+
+widgets["module_3_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["ch:1:stack:0:2:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["register:register:descriptors:login"] = \
+{
+	"content"	:	"Already registered? Log in!",
+	"type"	:	"{text}",
+	"class"	:	"linkified profile_coloring",
+	"events"	:	"on"
+}
+
+
+
+widgets["register:login:form"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"INLINE_BLOCK W250PX RELATIVE"
+}
+
+
+
+widgets["register:login:descriptors:welcome"] = \
+{
+	"content"	:	"Welcome Back!",
+	"type"	:	"{text}",
+	"class"	:	"profile_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_7_description"] = \
+{
+	"content"	:	" Whether an apartment, frat house, condo, or house boat, there's nothing like your first home away from home. There's also nothing ready to tempt you into financial ruin like having your own space to fill with stuff. Knowing what kind of home you can afford, what to look for in a lease, and how to keep those landlords smiling are all important steps to an easier time later on. Users' avatars will have their own opportunity to get a home here and, of course, fill it with stuff. In the classroom, they'll get to see an example lease and a move-in checklist, and you'll have everything you need to help them understand it.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["future_description_text"] = \
+{
+	"content"	:	"Students may elect to get long-term assistance from <a class=\"future_coloring\" href=\"http://www.clearpoint.com\" target=\"_blank\">ClearPoint</a>, so that we can help them with their big decisions, or get in touch if it seems like they're having trouble. Students can use our educational tools to start planning for the future no matter how far along they are, all for free. We believe in consumer health through financial education.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["ch:1:stack:9:txt0"] = \
+{
+	"content"	:	"The purpose of your monthly statement is to enable you to compare what you have recorded in your checkbook register to the bank record. This process is called \"reconciling,\" or balancing your checkbook. When you <b>reconcile</b> the bank's statement with your register, confirm what the correct balance in your account should be. This can help you avoid costly mistakes, and also alert you if your account has been in any way compromised.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:9:txt1"] = \
+{
+	"content"	:	"You will want to reconcile your monthly statement with your credit card register. It is good practice to make a check mark next to each transaction that is on your statement and to add anything that you do not have in your register. You may do this throughout the month by checking yout transactions online, but you should also check your monthly statements.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:9:txt2"] = \
+{
+	"content"	:	"Do banks make mistakes? YES! If you see something on your monthly statement or your online summary that you did not authorize, contact the bank <i>immediately</i>. This is another reason that good record keeping is so important. ",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:infobar:reset"] = \
+{
+	"content"	:	"Table of Contents : ",
+	"type"	:	"{text}",
+	"class"	:	"linkified friends_coloring TENPT INLINE",
+	"events"	:	"on"
+}
+
+
+
+widgets["descriptions"] = \
+{
+	"type"	:	"{stacked}",
+	"class"	:	"container_left",
+	"name"	:	"descriptions"
+}
+
+
+
+widgets["module_2_title_text"] = \
+{
+	"content"	:	"Budget",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["register:login:descriptors"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"INLINE_BLOCK W250PX RELATIVE"
+}
+
+
+
+widgets["firsts_module_1_description:register"] = \
+{
+	"content"	:	"This chapter is live and read to view! Click here to review this content!",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified finances_coloring PAD_ALL_10 TENPT"
+}
+
+
+
+widgets["register:login:form:password"] = \
+{
+	"content"	:	" ",
+	"type"	:	"{password}",
+	"class"	:	"input_field",
+	"name"	:	"login:password"
+}
+
+
+
+widgets["welcome_description_text"] = \
+{
+	"content"	:	"Financial Firsts is a program developed by <a class=\"profile_coloring\" href=\"http://www.clearpointccs.org\" target=\"_blank\">ClearPoint Credit Counseling Solutions</a>. With a grant from <a class=\"profile_coloring\" href=\"http://www.chase.com\" target=\"_blank\">Chase Bank</a>, we have been able to dedicate resources to create a fully interactive online version of this content. This portal will offer not only educational resources for teachers and parents, but also online assessments and supplemental material for students. Additionally, students will have the opportunity to participate in a game as the progress through the material, ensuring real-life application of the lessons learned. Explore the categories to your left to learn more about Financial Firsts!",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["profile_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"profile"
+}
+
+
+
+widgets["register:stack"] = \
+{
+	"type"	:	"{stacked}",
+	"name"	:	"login/register"
+}
+
+
+
+widgets["ch:1:stack:4:img0"] = \
+{
+	"content"	:	"What's in a Card?",
+	"source"	:	"/resources/mogu/images/ch/1/img4.jpg",
+	"type"	:	"{image}",
+	"class"	:	"FLOATL W275PX PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:3:txt0"] = \
+{
+	"content"	:	"Checking accounts are perfect for people who want to be able to take money out of their account on a fairly frequent basis. People use a checking account nearly every day: to pay for groceries, rent, clothing, gas, and almost anything else. Money can be taken out, or <b>withdrawn</b>, from the account in a variety of ways: by writing a check, using a debit card, or an ATM card.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["firsts_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"firsts"
+}
+
+
+
+widgets["ch:1:stack:3:txt1"] = \
+{
+	"content"	:	"When you write a check, you are promising to pay that amount. Checks can now be processed electronically, so the money can leave your account that business day. Is is <i>critical</i> that you have the money available when you write a check and not plan on depositing money later to cover a check you have already issued.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:3:txt2"] = \
+{
+	"content"	:	"When you go to open your checking account you will need at least two of the following: <ul><li>Driver's License</li><li>Social Security Card</li><li>Certified Copy of your Birth Certificate</li></ul>",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["module_5_title_text"] = \
+{
+	"content"	:	"Credit Card",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["firsts_module_4_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["ch:1:stack:0:9:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["ch:1:stack:0:5:link"] = \
+{
+	"content"	:	"Writing a Check",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["ch:1:nav:prev"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"linkified FORCELEFT icon INLINE_BLOCK  BACK_ICON",
+	"events"	:	"on"
+}
+
+
+
+widgets["register:register:form:userid"] = \
+{
+	"name"	:	"register:userid",
+	"class"	:	"input_field",
+	"content"	:	"email@address.com",
+	"validator"	:	"email",
+	"type"	:	"{input}",
+	"events"	:	"on"
+}
+
+
+
+widgets["footer_links_1"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"footer_column inline",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["footer_links_2"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"footer_column inline",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["module_8_title_text"] = \
+{
+	"content"	:	"College Degree",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["firsts_menu_bar"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"horizontal_menu_bar GRAY_VERTICAL_GRADIENT"
+}
+
+
+
+widgets["shadow"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"hidden shadow",
+	"name"	:	"shadow"
+}
+
+
+
+widgets["firsts_module_6_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_module_2_description"] = \
+{
+	"content"	:	" Budgeting is a necessary skill. It's no fun (okay, well maybe it is for some of us), but it is vital. Much like flossing and getting your oil changed, it's just something that has to be done. The in-class materials for this unit will provide worksheets for your students so that they can fill in their own budgets, as well as an opportunity for them to talk to their family about household costs. After all, being aware of the cost is half the battle of keeping it down. The online portion will have students create a budget for their avatars, which will directly impact the rest of their avatar's progres, and unlock special abilities for their avatar depending on how their budget it set.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["ch:1:nav"] = \
+{
+	"type"	:	"{container}",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["%s_text"] = \
+{
+	"content"	:	"College Degree",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["footer_logo"] = \
+{
+	"class"	:	"linkified inline",
+	"content"	:	"ClearPoint's Financial Firsts",
+	"source"	:	"/resources/mogu/images/ff_logo.png",
+	"type"	:	"{image}",
+	"events"	:	"on",
+	"block"	:	"{block}"
+}
+
+
+
+widgets["ch:1:stack:0:3:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["register:login:descriptors:register"] = \
+{
+	"content"	:	"register now!",
+	"type"	:	"{text}",
+	"class"	:	"linkified finances_coloring INLINE",
+	"events"	:	"on"
+}
+
+
+
+widgets["friends_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"friends"
+}
+
+
+
+widgets["side_friends"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"menuoption optionFriends",
+	"events"	:	"on"
+}
+
+
+
+widgets["finances_title_1"] = \
+{
+	"content"	:	"A place to call ",
+	"type"	:	"{text}",
+	"class"	:	"inline finances_coloring section_title"
+}
+
+
+
+widgets["register:register:descriptors:body"] = \
+{
+	"content"	:	"We are currently allowing educators to register for Financial Firsts to approve content and give us feedback. If you teach and are interested in the Financial Firsts program, we encourage you to do so. All registration and content is free. The content is geared for children grades 8-12, and new content is added every Friday.",
+	"type"	:	"{text}",
+	"class"	:	"LJUSTIFY"
+}
+
+
+
+widgets["finances_title_2"] = \
+{
+	"content"	:	"home",
+	"type"	:	"{text}",
+	"class"	:	"inline finances_coloring title_accent"
+}
+
+
+
+widgets["module_4_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_title"] = \
+{
+	"type"	:	"{stacked}",
+	"class"	:	"module_title",
+	"name"	:	"module title"
+}
+
+
+
+widgets["firsts_module_1_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["smenu_inner"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"optionbackground"
+}
+
+
+
+widgets["firsts_mod_name_1"] = \
+{
+	"content"	:	"Bank Account",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_2"] = \
+{
+	"content"	:	"Budget",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_3"] = \
+{
+	"content"	:	"Job",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_4"] = \
+{
+	"content"	:	"Car",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_5"] = \
+{
+	"content"	:	"Credit Card",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_6"] = \
+{
+	"content"	:	"Credit Score",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_7"] = \
+{
+	"content"	:	"Home Away from Home",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["firsts_mod_name_8"] = \
+{
+	"content"	:	"College Degree",
+	"type"	:	"{text}",
+	"class"	:	"linkified module_option firsts_coloring inline ",
+	"events"	:	"on"
+}
+
+
+
+widgets["finances_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"finances"
+}
+
+
+
+widgets["welcome_description"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"section",
+	"name"	:	"welcome"
+}
+
+
+
+widgets["footer_links_1_1"] = \
+{
+	"content"	:	"About",
+	"type"	:	"{text}",
+	"class"	:	"footer_link linkified",
+	"events"	:	"on"
+}
+
+
+
+widgets["content_bottom"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"content_bottom"
+}
+
+
+
+widgets["footer_links_1_2"] = \
+{
+	"content"	:	"ClearPoint Credit Counseling Solutions",
+	"type"	:	"{link}",
+	"location"	:	"http://www.clearpointccs.org",
+	"class"	:	"footer_link"
+}
+
+
+
+widgets["footer_links_1_3"] = \
+{
+	"content"	:	"Facebook",
+	"type"	:	"{link}",
+	"location"	:	"http://www.facebook.com/knowyourmoney",
+	"class"	:	"footer_link"
+}
+
+
+
+widgets["global_subscribe"] = \
+{
+	"content"	:	"Stay Updated!",
+	"events"	:	"on",
+	"type"	:	"{text}",
+	"class"	:	"linkified button future_coloring top_tab INLINE RELATIVE",
+	"name"	:	"toptab:subscribe"
+}
+
+
+
+widgets["footer_links_1_4"] = \
+{
+	"content"	:	"Twitter",
+	"type"	:	"{link}",
+	"location"	:	"http://www.twitter.com/KnowYourMoneyUS",
+	"class"	:	"footer_link"
+}
+
+
+
+widgets["ch:1:stack:0:1"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:5:img0"] = \
+{
+	"content"	:	"Writing a Check",
+	"source"	:	"/resources/mogu/images/ch/1/img5.jpg",
+	"type"	:	"{image}",
+	"class"	:	"FLOATL W275PX PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:0:2"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:5:img1"] = \
+{
+	"content"	:	"Routing Number Line",
+	"source"	:	"/resources/mogu/images/ch/1/img6.jpg",
+	"type"	:	"{image}",
+	"class"	:	"CENTER"
+}
+
+
+
+widgets["ch:1:stack:0:3"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:4:txt0"] = \
+{
+	"content"	:	"An ATM card allows you to access your accouont through an Automated Teller Machine. With an ATM card you can view your balance, withdraw, or deposit money into your account.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:0:4"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:0:5"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:4:txt1"] = \
+{
+	"content"	:	"More popular now are debit cards, which are branded by a major credit card company such as MasterCard or Visa and allow you to use your ATM card like a credit card, except the money comes directly out of your checking account. You can also use your debit card to access your account at an ATM using your <b>Personal Identification Number</b>, or PIN. Be careful when you choose your PIN! Don't make it an easy number to guess such as your birthday and never give your PIN to anyone else!",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:0:6"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:0:7"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:0:8"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:0:9"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"H30PX PAD_ALL_10"
+}
+
+
+
+widgets["ch:1:stack:0:6:link"] = \
+{
+	"content"	:	"Writing a Deposit Ticket",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+widgets["ch:1:stack:0"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:1"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:2"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:3"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:4"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:5"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:6"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:7"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["firsts_module_5_description"] = \
+{
+	"content"	:	" There comes a time in everyone's life where they need something they just can't afford. Whether it's their first root canal or a sudden cross-country move, establishing and maintaining good credit is perhaps the most vital skill of financial literacy. The first credit card is the most important. Where to get help, what to look for, and protecting yourself from identity theft are all included in order to make sure the first credit card is the road to financial freedom, not entrapment. The students' avatars will also have their first credit accounts here, with temptations to overuse them to boot.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["ch:1:stack:8"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["ch:1:stack:9"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"OVERFLOW_AUTO H450PX"
+}
+
+
+
+widgets["firsts_description_text"] = \
+{
+	"content"	:	"The Financial Firsts program focuses on real-life applications of financial responsibility. We'll walk students through what to do with their first paycheck to how to buy their first house. This twelve-part course is designed to be used by high-school and college-aged individuals, with additional content forthcoming for children between five and 12. It is our intent to deliver a responsive, interactive course at no cost that will prepare today's youth for a bright adulthood.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["suscribe_field"] = \
+{
+	"content"	:	"email@address.com",
+	"comment"	:	"Takes in email address.",
+	"type"	:	"{input|dynamic}",
+	"class"	:	"input_field"
+}
+
+
+
+widgets["register:register"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_5_units"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_left"
+}
+
+
+
+widgets["future_title_1"] = \
+{
+	"content"	:	"We're here for you,  ",
+	"type"	:	"{text}",
+	"class"	:	"inline future_coloring section_title"
+}
+
+
+
+widgets["future_title_2"] = \
+{
+	"content"	:	"always",
+	"type"	:	"{text}",
+	"class"	:	"inline future_coloring title_accent"
+}
+
+
+
+widgets["finances_description_text"] = \
+{
+	"content"	:	"This course will also provide a checklist for the older students that are ready to start (or already are) making their way in the big bad world. Here, they'll be able to keep track of their finances and bills and, at any time, may receive financial advice at no cost from one of <a class=\"finances_coloring\" href=\"http://www.clearpointccs.org\" target=\"_blank\">ClearPoint's</a> certified counselors. Financial Firsts is more than just a course -- it's meant to have a positive influence on students for the rest of their lives.",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["footer_links_2_1"] = \
+{
+	"content"	:	"Stay Updated!",
+	"type"	:	"{text}",
+	"class"	:	"footer_link linkified",
+	"events"	:	"on"
+}
+
+
+
+widgets["footer_links_2_2"] = \
+{
+	"content"	:	"Development Blog (Coming Soon!)",
+	"type"	:	"{text}",
+	"class"	:	"footer_link linkified grayed_out"
+}
+
+
+
+widgets["footer_links_2_3"] = \
+{
+	"content"	:	"Find a Bug? (Coming Soon!)",
+	"type"	:	"{text}",
+	"class"	:	"footer_link linkified grayed_out"
+}
+
+
+
+widgets["register:login"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["register:register:form:password"] = \
+{
+	"name"	:	"register:password",
+	"class"	:	"input_field",
+	"content"	:	" ",
+	"validator"	:	"password",
+	"type"	:	"{password}",
+	"events"	:	"on"
+}
+
+
+
+widgets["ch:1:stack:0:4:icon"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"PROGRESS_ICON icon INLINE_BLOCK"
+}
+
+
+
+widgets["firsts_module_7_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_modules_stack"] = \
+{
+	"type"	:	"{stacked}",
+	"name"	:	"modules"
+}
+
+
+
+widgets["my_first"] = \
+{
+	"content"	:	"My first ",
+	"type"	:	"{text}",
+	"class"	:	"firsts_coloring section_title inline"
+}
+
+
+
+widgets["content_top"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"content_top",
+	"name"	:	"top"
+}
+
+
+
+widgets["profileedit"] = \
+{
+	"type"	:	"{container}",
+	"name"	:	"profileedit"
+}
+
+
+
+widgets["ch:1:stack:9:lnk0"] = \
+{
+	"content"	:	"Further Reading: \"Technology can Lead to Financial Laziness\" (coming soon!)",
+	"type"	:	"{text}",
+	"class"	:	"linkified finances_coloring"
+}
+
+
+
+widgets["module_5_title"] = \
+{
+	"type"	:	"{container}"
+}
+
+
+
+widgets["firsts_module_2_tests"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"module_right"
+}
+
+
+
+widgets["firsts_module_8_description"] = \
+{
+	"content"	:	" Getting a college degree is becoming more and more important, and rising college freshmen need to know what lies ahead. Student loans, scholarships, room and board, even a choice in major could have huge implications for decades down the line. Much like with choosing a car, there's a college for everyone, but they need to know what they're looking for in order to get the degree they'll use. And what about life after that coveted pomp and circumstance? \"What a long, strange, trip it's been...\".",
+	"type"	:	"{text}"
+}
+
+
+
+widgets["module_3_title_text"] = \
+{
+	"content"	:	"Job",
+	"type"	:	"{text}",
+	"class"	:	"inline firsts_coloring title_accent"
+}
+
+
+
+widgets["ch:1:stack:6:img0"] = \
+{
+	"content"	:	"Filling Out a Deposit Slip",
+	"source"	:	"/resources/mogu/images/ch/1/img7.jpg",
+	"type"	:	"{image}",
+	"class"	:	"FLOATL W275PX PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:5:txt0"] = \
+{
+	"content"	:	"Let's look at the different parts of a check and how to fill it out.",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10 INLINE"
+}
+
+
+
+widgets["ch:1:stack:5:txt1"] = \
+{
+	"content"	:	"<ul>
+        <li>The check number, in the upper right corner, is pre-printed on the checks.</li>
+        <li>You will fill in the date each time you write a check.</li>
+        <li><b>Pay to the Order of</b> is where you will write the name of the person or company to whom you are writing the check.</li>
+        <li>In the <b>$</b> box you will write the check amount in numerical format.</li>
+        <li>On the <b>Dollars</b> line you will right the same amount in word form</li>
+        <li>The <b>Memo</b> line is optional, and is a note to yourself about exactly what the check was for, such as \"rent\", or \"February Car Payment\". Some payments require you to add information on this line in order to match the check up to the right account.</li>
+        <li>In the bottom right corner is where you will sign your check. If you do not sign your check, the other party will not be able to use it!</li>
+        <li>At the bottom of your check, you will find the account number, nine-digit routing number, and the check number.</li>
+        </ul>",
+	"type"	:	"{text}",
+	"class"	:	"TENPT PAD_ALL_10"
+}
+
+
+
+widgets["wrapper"] = \
+{
+	"type"	:	"{container}",
+	"class"	:	"wrapper"
+}
+
+
+
+widgets["subscribe_field"] = \
+{
+	"content"	:	"email@address.com",
+	"comment"	:	"Takes in email address.",
+	"type"	:	"{input|dynamic}",
+	"class"	:	"input_field"
+}
+
+
+
+widgets["ch:1:stack:0:7:link"] = \
+{
+	"content"	:	"Understanding Bank Fees",
+	"type"	:	"{text}",
+	"events"	:	"on",
+	"class"	:	"linkified firsts_coloring BLOCK RELATIVE H30PX MARGIN_LEFT_40 MARGIN_TOP_N35"
+}
+
+
+
+events["register:register:form:submit"] = \
+[
+	{
+	"action"	:	"{test_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	" ",
+	"listeners"	:	"register:error"
+}
+
+,
+	{
+	"action"	:	"{slot}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"USERID",
+	"listeners"	:	"register:userid"
+}
+
+,
+	{
+	"action"	:	"{slot}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"USERAUTH",
+	"listeners"	:	"register:password"
+}
+
+,
+	{
+	"action"	:	"{register_user}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"listeners"	:	"{app}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"/profile",
+	"listeners"	:	"{app}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"hidden",
+	"listeners"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{clear}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"listeners"	:	"toptabs"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"listeners"	:	"descriptions",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"signal"	:	"^225^"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"hidden shadow",
+	"listeners"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{rebroadcast}",
+	"signal"	:	"^233^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"reload_children",
+	"listeners"	:	"profile"
+}
+
+,
+	{
+	"action"	:	"{add_child}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"widgets.profileedit",
+	"listeners"	:	"profile"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{fail}",
+	"message"	:	"There was a problem with your registration. Please try again.",
+	"listeners"	:	"register:error"
+}
+
+,
+	{
+	"action"	:	"{reload}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"listeners"	:	"profile:welcome"
+}
+
+,
+	{
+	"action"	:	"{clear}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"listeners"	:	"first-bank-account"
+}
+
+,
+	{
+	"action"	:	"{add_child}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"widgets.ch:1",
+	"listeners"	:	"first-bank-account"
+}
+
+
+]
+
+events["ch:1:stack:0:1:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Banks vs. Credit Unions :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["global_register"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"trigger"	:	"{click}",
+	"signal"	:	"^225^",
+	"listeners"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"trigger"	:	"{click}",
+	"signal"	:	"^225^",
+	"listeners"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"trigger"	:	"{click}",
+	"signal"	:	"^225^",
+	"listeners"	:	"login/register"
+}
+
+
+]
+
+events["ch:1:stack:0:8:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^8^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Balancing Your Checkbook :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["ch:1:stack:0:2:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^2^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Why Do I Need a Savings Account? :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["ch:1:nav:next"] = \
+[
+	{
+	"action"	:	"{increment_index}",
+	"listeners"	:	"bank account stack",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"signal"	:	"^225^"
+}
+
+
+]
+
+events["register:close"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"hidden",
+	"listeners"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"hidden",
+	"listeners"	:	"shadow"
+}
+
+
+]
+
+events["side_future"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFuture",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^5^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/future",
+	"listeners"	:	"{app}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFuture_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFuture",
+	"listeners"	:	"{self}"
+}
+
+
+]
+
+events["ch:1:stack:0:9:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^9^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Reading Your Monthly Statement :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["register:register:form:pwmatch"] = \
+[
+	{
+	"action"	:	"{match}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{keyup}",
+	"message"	:	"register:password",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{fail}",
+	"message"	:	"Your passwords don't match!",
+	"listeners"	:	"register:error"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	" ",
+	"listeners"	:	"register:error"
+}
+
+
+]
+
+events["ch:1:stack:0:3:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^3^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Opening Your First Checking Account :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["side_profile"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oProfile",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^1^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionProfile_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionProfile",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/profile",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["side_finances"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFinances",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFinances",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^4^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFinances_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/finances",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["subscribe_button"] = \
+[
+	{
+	"action"	:	"{store}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"subscribe_field",
+	"listeners"	:	"{siblings}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"listeners"	:	"{self}",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"button linkified PROFILE_TEAL_BG WHITE",
+	"signal"	:	"^209^"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"listeners"	:	"{self}",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"friends_coloring button linkified",
+	"signal"	:	"^209^"
+}
+
+,
+	{
+	"action"	:	"{add_child}",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"message"	:	"widgets.thanks_subscribing",
+	"signal"	:	"^209^"
+}
+
+,
+	{
+	"action"	:	"{remove_child}",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"signal"	:	"^209^"
+}
+
+,
+	{
+	"action"	:	"{remove_child}",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"signal"	:	"^209^"
+}
+
+
+]
+
+events["profileedit:name:input"] = \
+[
+	{
+	"action"	:	"{store}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"profileedit:name:input",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{store}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"profile_title_2",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{fail}",
+	"message"	:	"Please only use letters and punctuation in your name.",
+	"listeners"	:	"{siblings}"
+}
+
+,
+	{
+	"action"	:	"{reload}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"listeners"	:	"profile:welcome2"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{succeed}",
+	"message"	:	" ",
+	"listeners"	:	"{siblings}"
+}
+
+
+]
+
+events["ch:1:stack:0:4:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^4^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"What's In a Card? :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["side_firsts"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFirsts_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFirsts",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFirsts",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^2^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["register:login:form:submit"] = \
+[
+	{
+	"action"	:	"{add_child}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"widgets.profileedit",
+	"listeners"	:	"profile"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"sidemenu oProfile",
+	"listeners"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"listeners"	:	"descriptions"
+}
+
+,
+	{
+	"action"	:	"{clear}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"listeners"	:	"toptabs"
+}
+
+,
+	{
+	"action"	:	"{clear}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"^1^",
+	"listeners"	:	"first-bank-account"
+}
+
+,
+	{
+	"action"	:	"{add_child}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"widgets.ch:1",
+	"listeners"	:	"first-bank-account"
+}
+
+,
+	{
+	"action"	:	"{slot}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"USERID",
+	"listeners"	:	"login:userid"
+}
+
+,
+	{
+	"action"	:	"{slot}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"USERAUTH",
+	"listeners"	:	"login:password"
+}
+
+,
+	{
+	"action"	:	"{change_session}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"listeners"	:	"{app}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"button linkified PROFILE_TEAL_BG WHITE L50PERCENT",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"friends_coloring button linkified L50PERCENT",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{fail}",
+	"message"	:	"The information you entered is incorrect.",
+	"listeners"	:	"login:error"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"hidden overlay",
+	"listeners"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"hidden shadow",
+	"listeners"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{rebroadcast}",
+	"signal"	:	"^233^",
+	"trigger"	:	"{succeed}",
+	"message"	:	"reload_children",
+	"listeners"	:	"profile"
+}
+
+
+]
+
+events["register:register:descriptors:login"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^0^",
+	"listeners"	:	"login/register"
+}
+
+
+]
+
+events["ch:1:infobar:reset"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"trigger"	:	"{click}",
+	"signal"	:	"^225^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"message"	:	" ",
+	"trigger"	:	"{click}",
+	"signal"	:	"^225^",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["firsts_module_1_description:register"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"listeners"	:	"shadow",
+	"trigger"	:	"{click}",
+	"message"	:	"display shadow",
+	"signal"	:	"^225^"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"trigger"	:	"{click}",
+	"signal"	:	"^225^",
+	"listeners"	:	"register overlay"
+}
+
+
+]
+
+events["ch:1:stack:0:5:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^5^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Writing a Check :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["ch:1:nav:prev"] = \
+[
+	{
+	"action"	:	"{decrement_index}",
+	"listeners"	:	"bank account stack",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"signal"	:	"^225^"
+}
+
+
+]
+
+events["register:register:form:userid"] = \
+[
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{fail}",
+	"message"	:	"Please enter a valid email address.",
+	"listeners"	:	"register:error"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	" ",
+	"listeners"	:	"register:error"
+}
+
+
+]
+
+events["footer_logo"] = \
+[
+	{
+	"signal"	:	"^219^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"events.reset_descriptions"
+}
+
+
+]
+
+events["register:login:descriptors:register"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^1^",
+	"listeners"	:	"login/register"
+}
+
+
+]
+
+events["side_friends"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^3^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^3^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseover}",
+	"message"	:	"menuoption optionFriends_on",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{mouseout}",
+	"message"	:	"menuoption optionFriends",
+	"listeners"	:	"{self}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{parent}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"sidemenu oFriends",
+	"nextAction"	:	"{set_style}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/friends",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["firsts_mod_name_1"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^0^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-bank-account",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["firsts_mod_name_2"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^1^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-budget",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["firsts_mod_name_3"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^2^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-job",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["firsts_mod_name_4"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^3^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-car",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["firsts_mod_name_5"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^4^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-credit-card",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["firsts_mod_name_6"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^5^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-credit-score",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["firsts_mod_name_7"] = \
+[
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-home",
+	"listeners"	:	"{app}"
+}
+
+,
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^6^",
+	"nextAction"	:	"{set_index}"
+}
+
+
+]
+
+events["firsts_mod_name_8"] = \
+[
+	{
+	"signal"	:	"^215^",
+	"degradation"	:	"^2^",
+	"listeners"	:	"{siblings}",
+	"trigger"	:	"{click}",
+	"action"	:	"{bubble}",
+	"message"	:	"^7^",
+	"nextAction"	:	"{set_index}"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/firsts/first-college-degree",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["footer_links_1_1"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^0^",
+	"listeners"	:	"descriptions"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/about",
+	"listeners"	:	"{application}"
+}
+
+
+]
+
+events["global_subscribe"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^6^",
+	"listeners"	:	"descriptions"
+}
+
+,
+	{
+	"action"	:	"{set_path}",
+	"signal"	:	"^209^",
+	"trigger"	:	"{click}",
+	"message"	:	"/subscribe",
+	"listeners"	:	"{app}"
+}
+
+
+]
+
+events["ch:1:stack:0:6:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^6^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Writing a Deposit Ticket :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+events["footer_links_2_1"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^6^",
+	"listeners"	:	"descriptions"
+}
+
+
+]
+
+events["footer_links_2_2"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^6^",
+	"listeners"	:	"descriptions"
+}
+
+
+]
+
+events["register:register:form:password"] = \
+[
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{fail}",
+	"message"	:	"Your password must be at least 8 characters.",
+	"listeners"	:	"register:error"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{succeed}",
+	"message"	:	" ",
+	"listeners"	:	"register:error"
+}
+
+
+]
+
+events["ch:1:stack:0:7:link"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"^7^",
+	"listeners"	:	"bank account stack"
+}
+
+,
+	{
+	"action"	:	"{set_text}",
+	"signal"	:	"^225^",
+	"trigger"	:	"{click}",
+	"message"	:	"Understanding Bank Fees :",
+	"listeners"	:	"ch:1:infobar:current"
+}
+
+
+]
+
+tree["firsts_module_6_units"] = \
+[
+	"firsts_module_6_description"
+]
+
+tree["footer_container"] = \
+[
+	"footer_logo",
+	"footer_links_1",
+	"footer_links_2"
+]
+
+tree["firsts_module_1_units"] = \
+[
+	"firsts_module_1_description",
+	"firsts_module_1_description:register"
+]
+
+tree["register:register:descriptors"] = \
+[
+	"register:register:descriptors:body",
+	"register:register:descriptors:login"
+]
+
+tree["ch:1"] = \
+[
+	"ch:1:infobar",
+	"ch:1:stack",
+	"ch:1:nav"
+]
+
+tree["module_6_title"] = \
+[
+	"my_first",
+	"module_6_title_text"
+]
+
+tree["smenu"] = \
+[
+	"smenu_inner"
+]
+
+tree["profileedit:name"] = \
+[
+	"profileedit:name:help",
+	"profileedit:name:input",
+	"profileedit:name:error"
+]
+
+tree["toptabs"] = \
+[
+	"global_subscribe",
+	"global_register"
+]
+
+tree["module_1_title"] = \
+[
+	"my_first",
+	"module_1_title_text"
+]
+
+tree["firsts_module_7_units"] = \
+[
+	"firsts_module_7_description"
+]
+
+tree["firsts_module_2_units"] = \
+[
+	"firsts_module_2_description"
+]
+
+tree["firsts_module_1"] = \
+[
+	"firsts_module_1_units",
+	"firsts_module_1_tests"
+]
+
+tree["firsts_module_2"] = \
+[
+	"firsts_module_2_units",
+	"firsts_module_2_tests"
+]
+
+tree["firsts_module_3"] = \
+[
+	"firsts_module_3_units",
+	"firsts_module_3_tests"
+]
+
+tree["firsts_module_4"] = \
+[
+	"firsts_module_4_units",
+	"firsts_module_4_tests"
+]
+
+tree["firsts_module_5"] = \
+[
+	"firsts_module_5_units",
+	"firsts_module_5_tests"
+]
+
+tree["firsts_module_6"] = \
+[
+	"firsts_module_6_units",
+	"firsts_module_6_tests"
+]
+
+tree["firsts_module_7"] = \
+[
+	"firsts_module_7_units",
+	"firsts_module_7_tests"
+]
+
+tree["firsts_module_8"] = \
+[
+	"firsts_module_8_units",
+	"firsts_module_8_tests"
+]
+
+tree["module_7_title"] = \
+[
+	"my_first",
+	"module_7_title_text"
+]
+
+tree["module_2_title"] = \
+[
+	"my_first",
+	"module_2_title_text"
+]
+
+tree["future_description"] = \
+[
+	"future_title_1",
+	"future_title_2",
+	"future_description_text"
+]
+
+tree["firsts_module_8_units"] = \
+[
+	"firsts_module_8_description"
+]
+
+tree["register:register:form"] = \
+[
+	"register:register:form:userid",
+	"register:register:form:password",
+	"register:register:form:pwmatch",
+	"register:register:error",
+	"register:register:form:submit"
+]
+
+tree["firsts_module_3_units"] = \
+[
+	"firsts_module_3_description"
+]
+
+tree["ch:1:stack"] = \
+[
+	"ch:1:stack:0",
+	"ch:1:stack:1",
+	"ch:1:stack:2",
+	"ch:1:stack:3",
+	"ch:1:stack:4",
+	"ch:1:stack:5",
+	"ch:1:stack:6",
+	"ch:1:stack:7",
+	"ch:1:stack:8",
+	"ch:1:stack:9"
+]
+
+tree["module_8_title"] = \
+[
+	"my_first",
+	"module_8_title_text"
+]
+
+tree["register:outer"] = \
+[
+	"register:stack",
+	"register:close"
+]
+
+tree["ch:1:infobar"] = \
+[
+	"ch:1:infobar:reset",
+	"ch:1:infobar:current"
+]
+
+tree["subscribe_for_updates"] = \
+[
+	"subscribe_copy",
+	"subscribe_field",
+	"subscribe_button"
+]
+
+tree["module_3_title"] = \
+[
+	"my_first",
+	"module_3_title_text"
+]
+
+tree["register:login:form"] = \
+[
+	"register:login:form:userid",
+	"register:login:form:password",
+	"register:login:form:error",
+	"register:login:form:submit"
+]
+
+tree["descriptions"] = \
+[
+	"welcome_description",
+	"profile_description",
+	"firsts_description",
+	"friends_description",
+	"finances_description",
+	"future_description",
+	"subscribe_for_updates"
+]
+
+tree["register:login:descriptors"] = \
+[
+	"register:login:descriptors:welcome",
+	"register:login:descriptors:body",
+	"register:login:descriptors:register"
+]
+
+tree["profile_description"] = \
+[
+	"profile_title_1",
+	"profile_title_2",
+	"profile_description_text"
+]
+
+tree["register:stack"] = \
+[
+	"register:login",
+	"register:register"
+]
+
+tree["firsts_description"] = \
+[
+	"firsts_module_title",
+	"firsts_menu_bar",
+	"firsts_modules_stack"
+]
+
+tree["firsts_module_4_units"] = \
+[
+	"firsts_module_4_description"
+]
+
+tree["footer_links_1"] = \
+[
+	"footer_links_1_1",
+	"footer_links_1_2",
+	"footer_links_1_3",
+	"footer_links_1_4"
+]
+
+tree["footer_links_2"] = \
+[
+	"footer_links_2_1",
+	"footer_links_2_2",
+	"footer_links_2_3"
+]
+
+tree["firsts_menu_bar"] = \
+[
+	"firsts_mod_name_1",
+	"firsts_mod_name_2",
+	"firsts_mod_name_3",
+	"firsts_mod_name_4",
+	"firsts_mod_name_5",
+	"firsts_mod_name_6",
+	"firsts_mod_name_7",
+	"firsts_mod_name_8"
+]
+
+tree["ch:1:nav"] = \
+[
+	"ch:1:nav:prev",
+	"ch:1:nav:next"
+]
+
+tree["friends_description"] = \
+[
+	"friends_title_1",
+	"friends_title_2",
+	"friends_description_text"
+]
+
+tree["module_4_title"] = \
+[
+	"my_first",
+	"module_4_title_text"
+]
+
+tree["firsts_module_title"] = \
+[
+	"module_1_title",
+	"module_2_title",
+	"module_3_title",
+	"module_4_title",
+	"module_5_title",
+	"module_6_title",
+	"module_7_title",
+	"module_8_title"
+]
+
+tree["smenu_inner"] = \
+[
+	"side_profile",
+	"side_firsts",
+	"side_friends",
+	"side_finances",
+	"side_future"
+]
+
+tree["finances_description"] = \
+[
+	"finances_title_1",
+	"finances_title_2",
+	"finances_description_text"
+]
+
+tree["welcome_description"] = \
+[
+	"welcome_title_1",
+	"welcome_title_2",
+	"welcome_description_text"
+]
+
+tree["content_bottom"] = \
+[
+	"footer_container"
+]
+
+tree["ch:1:stack:0:1"] = \
+[
+	"ch:1:stack:0:1:icon",
+	"ch:1:stack:0:1:link"
+]
+
+tree["ch:1:stack:0:2"] = \
+[
+	"ch:1:stack:0:2:icon",
+	"ch:1:stack:0:2:link"
+]
+
+tree["ch:1:stack:0:3"] = \
+[
+	"ch:1:stack:0:3:icon",
+	"ch:1:stack:0:3:link"
+]
+
+tree["ch:1:stack:0:4"] = \
+[
+	"ch:1:stack:0:4:icon",
+	"ch:1:stack:0:4:link"
+]
+
+tree["ch:1:stack:0:5"] = \
+[
+	"ch:1:stack:0:5:icon",
+	"ch:1:stack:0:5:link"
+]
+
+tree["ch:1:stack:0:6"] = \
+[
+	"ch:1:stack:0:6:icon",
+	"ch:1:stack:0:6:link"
+]
+
+tree["ch:1:stack:0:7"] = \
+[
+	"ch:1:stack:0:7:icon",
+	"ch:1:stack:0:7:link"
+]
+
+tree["ch:1:stack:0:8"] = \
+[
+	"ch:1:stack:0:8:icon",
+	"ch:1:stack:0:8:link"
+]
+
+tree["ch:1:stack:0:9"] = \
+[
+	"ch:1:stack:0:9:icon",
+	"ch:1:stack:0:9:link"
+]
+
+tree["ch:1:stack:0"] = \
+[
+	"ch:1:stack:0:1",
+	"ch:1:stack:0:2",
+	"ch:1:stack:0:3",
+	"ch:1:stack:0:4",
+	"ch:1:stack:0:5",
+	"ch:1:stack:0:6",
+	"ch:1:stack:0:7",
+	"ch:1:stack:0:8",
+	"ch:1:stack:0:9"
+]
+
+tree["ch:1:stack:1"] = \
+[
+	"ch:1:stack:1:img0",
+	"ch:1:stack:1:txt0",
+	"ch:1:stack:1:txt1",
+	"ch:1:stack:1:txt2",
+	"ch:1:stack:1:vid0"
+]
+
+tree["ch:1:stack:2"] = \
+[
+	"ch:1:stack:2:img0",
+	"ch:1:stack:2:txt0"
+]
+
+tree["ch:1:stack:3"] = \
+[
+	"ch:1:stack:3:img0",
+	"ch:1:stack:3:txt0",
+	"ch:1:stack:3:txt1",
+	"ch:1:stack:3:txt2"
+]
+
+tree["ch:1:stack:4"] = \
+[
+	"ch:1:stack:4:img0",
+	"ch:1:stack:4:txt0",
+	"ch:1:stack:4:txt1"
+]
+
+tree["ch:1:stack:5"] = \
+[
+	"ch:1:stack:5:img0",
+	"ch:1:stack:5:txt0",
+	"ch:1:stack:5:txt1",
+	"ch:1:stack:5:img1"
+]
+
+tree["ch:1:stack:6"] = \
+[
+	"ch:1:stack:6:img0",
+	"ch:1:stack:6:txt0",
+	"ch:1:stack:6:txt1",
+	"ch:1:stack:6:txt2",
+	"ch:1:stack:6:txt3"
+]
+
+tree["ch:1:stack:7"] = \
+[
+	"ch:1:stack:7:img0",
+	"ch:1:stack:7:txt0",
+	"ch:1:stack:7:txt1",
+	"ch:1:stack:7:txt2"
+]
+
+tree["ch:1:stack:8"] = \
+[
+	"ch:1:stack:8:txt0",
+	"ch:1:stack:8:txt1",
+	"ch:1:stack:8:img0",
+	"ch:1:stack:8:txt2",
+	"ch:1:stack:8:img1",
+	"ch:1:stack:8:txt3"
+]
+
+tree["ch:1:stack:9"] = \
+[
+	"ch:1:stack:9:txt0",
+	"ch:1:stack:9:txt1",
+	"ch:1:stack:9:txt2",
+	"ch:1:stack:9:lnk0"
+]
+
+tree["register:register"] = \
+[
+	"register:register:descriptors:welcome",
+	"register:register:descriptors",
+	"register:register:form"
+]
+
+tree["firsts_module_5_units"] = \
+[
+	"firsts_module_5_description"
+]
+
+tree["register:login"] = \
+[
+	"register:login:descriptors",
+	"register:login:form"
+]
+
+tree["firsts_modules_stack"] = \
+[
+	"firsts_module_1",
+	"firsts_module_2",
+	"firsts_module_3",
+	"firsts_module_4",
+	"firsts_module_5",
+	"firsts_module_6",
+	"firsts_module_7",
+	"firsts_module_8"
+]
+
+tree["content_top"] = \
+[
+	"smenu",
+	"descriptions"
+]
+
+tree["profileedit"] = \
+[
+	"profileedit:name"
+]
+
+tree["module_5_title"] = \
+[
+	"my_first",
+	"module_5_title_text"
+]
+
+tree["wrapper"] = \
+[
+	"register:outer",
+	"shadow",
+	"content_top",
+	"content_bottom",
+	"toptabs"
+]
+
+policies["profile_description_text"] = \
+{
+	"default"	:	" We're thrilled that you've taken an interest in Financial Firsts, and in your students' financial fitness! To begin exploring content, we recommend clicking on \"Firsts\", which will show you the current course material that we have available. We've only just begun, so expect more content on a weekly basis.  ",
+	"encrypted"	:	"^0^",
+	"storage_type"	:	"{string}",
+	"mode"	:	"{replace}",
+	"data_type"	:	"{string}"
+}
+
+
+
+policies["profileedit:name:input"] = \
+{
+	"encrypted"	:	"^1^",
+	"storage_type"	:	"{string}",
+	"mode"	:	"{replace}",
+	"data_type"	:	"{string}"
+}
+
+
+
+policies["profile_title_1"] = \
+{
+	"default"	:	"Welcome back, ",
+	"encrypted"	:	"^0^",
+	"storage_type"	:	"{string}",
+	"mode"	:	"{replace}",
+	"data_type"	:	"{string}"
+}
+
+
+
+policies["profile_title_2"] = \
+{
+	"default"	:	"Friend!",
+	"encrypted"	:	"^0^",
+	"storage_type"	:	"{string}",
+	"mode"	:	"{replace}",
+	"data_type"	:	"{string}"
+}
+
+
+
+policies["subscribe_field"] = \
+{
+	"encrypted"	:	"^1^",
+	"storage_type"	:	"{list}",
+	"mode"	:	"{append}",
+	"data_type"	:	"{string}"
+}
+
+
+
+perspectives["first-credit-card"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^4^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^4^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-credit-card"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^4^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^4^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["shadow"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"name"	:	"shadow"
+}
+
+
+]
+
+perspectives["exit"] = \
+[
+	{
+	"action"	:	"{TERMINATE}",
+	"message"	:	"^1^",
+	"name"	:	"{app}"
+}
+
+
+]
+
+perspectives["register"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"name"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX W525PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"name"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"login/register"
+}
+
+
+]
+
+perspectives["register"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"name"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX W525PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"name"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"login/register"
+}
+
+
+]
+
+perspectives["register"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"name"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX W525PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"name"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"login/register"
+}
+
+
+]
+
+perspectives["firsts"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFirsts",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["about"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["firsts"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFirsts",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["first-college-degree"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^7^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^7^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-college-degree"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^7^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^7^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-budget"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-budget"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-car"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^3^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^3^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-car"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^3^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^3^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-home"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^6^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^6^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-home"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^6^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^6^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["subscribe"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^6^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["friends"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFriends",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^3^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["friends"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFriends",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^3^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["first-job"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-job"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^2^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["profile"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oProfile",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["profile"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oProfile",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^1^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["first-bank-account"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-bank-account"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-credit-score"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^5^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^5^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["first-credit-score"] = \
+[
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^5^",
+	"name"	:	"module title"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^5^",
+	"name"	:	"modules"
+}
+
+
+]
+
+perspectives["login"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"name"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX W525PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"name"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"login/register"
+}
+
+
+]
+
+perspectives["login"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"name"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX W525PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"name"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"login/register"
+}
+
+
+]
+
+perspectives["login"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display shadow",
+	"name"	:	"shadow"
+}
+
+,
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"display overlay PAGE_BACKGROUND L50PERCENT LNEG250PX W525PX T200PX ABSOLUTE PAD_ALL_10 CENTER RAD_8_BORDER",
+	"name"	:	"register overlay"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^0^",
+	"name"	:	"login/register"
+}
+
+
+]
+
+perspectives["future"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFuture",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^5^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["future"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFuture",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^5^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["finances"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFinances",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^4^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+perspectives["finances"] = \
+[
+	{
+	"action"	:	"{set_style}",
+	"message"	:	"sidemenu oFinances",
+	"name"	:	"side menu"
+}
+
+,
+	{
+	"action"	:	"{set_index}",
+	"message"	:	"^4^",
+	"name"	:	"descriptions"
+}
+
+
+]
+
+validators["email"] = \
+{
+	"test"	:	"^[a-zA-Z]+((['\,\.\- ][a-zA-Z ])?[a-zA-Z]*)*\s+&lt;(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})&gt;$|^(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})$",
+	"type"	:	"{regex}"
+}
+
+
+
+validators["password"] = \
+{
+	"test"	:	"^((.){8,64})$",
+	"type"	:	"{regex}"
+}
+
+
+
+validators["name"] = \
+{
+	"test"	:	"^[a-zA-Z\.\-'\ ]{1,32}$",
+	"type"	:	"{regex}"
+}
+
+
+
+global_events["incr_child_indexes"] = \
+{
+	"action"	:	"{increment_index}",
+	"listeners"	:	"children",
+	"message"	:	"^1^",
+	"signal"	:	"^208^"
+}
+
+
+
+global_events["reload_children"] = \
+{
+	"action"	:	"{reload}",
+	"listeners"	:	"{children}",
+	"message"	:	"^1^",
+	"signal"	:	"^208^"
+}
+
+
+
+global_events["decr_child_indexes"] = \
+{
+	"action"	:	"{decrement_index}",
+	"listeners"	:	"children",
+	"message"	:	"^1^",
+	"signal"	:	"^208^"
+}
+
+
+
+global_events["reset_descriptions"] = \
+{
+	"action"	:	"{set_index}",
+	"signal"	:	"^208^",
+	"message"	:	"^0^",
+	"listeners"	:	"{children}"
+}
+
+
+
+sessions["16094983246901893954"] = {}
+sessions["16094983246901893954"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"239_213_152_8_20_83_23_116_0_216_64_135_245_234_176_62_49_0_190_65_43_157_111_197_188_21_0_",
+	"653035263252793737"	:	"7761352199863821627"
+}
+
+sessions["13560119342377911570"] = {}
+sessions["13560119342377911570"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"149_14_249_105_228_55_29_197_0_89_250_40_53_75_31_182_50_0_236_5_27_211_221_162_232_129_0_",
+	"653035263252793737"	:	"16272679105953690799"
+}
+
+sessions["2904431197779585633"] = {}
+sessions["2904431197779585633"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"240_193_190_234_64_61_247_231_0_84_234_101_101_71_113_47_77_0_63_137_149_62_188_189_120_73_0_",
+	"653035263252793737"	:	"5251188631112417328"
+}
+
+sessions["292128996633531724"] = {}
+sessions["292128996633531724"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"37_234_42_49_212_162_9_123_0_13_139_95_67_111_178_240_31_0_133_193_114_26_33_245_234_145_0_",
+	"653035263252793737"	:	"3114379927098046279"
+}
+
+sessions["15861147826021490819"] = {}
+sessions["15861147826021490819"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"84_235_26_82_245_94_220_206_0_30_216_216_189_199_118_239_120_0_175_11_231_36_135_119_132_157_0_",
+	"653035263252793737"	:	"3328783675449837740"
+}
+
+sessions["15653341395592833755"] = {}
+sessions["15653341395592833755"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"156_240_167_159_55_220_217_75_0_137_243_164_89_215_189_245_146_0_202_29_94_153_141_176_252_245_0_",
+	"653035263252793737"	:	"5624612494017368903"
+}
+
+sessions["11483642495693295507"] = {}
+sessions["11483642495693295507"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"84_44_216_100_63_62_37_167_0_224_214_146_190_91_165_139_2_0_170_30_162_3_40_113_76_1_0_",
+	"653035263252793737"	:	"12449882238995379517"
+}
+
+sessions["6603863238943816750"] = {}
+sessions["6603863238943816750"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"153_205_51_250_148_22_221_188_0_176_239_70_122_112_65_247_251_0_143_41_110_130_144_180_236_174_0_",
+	"653035263252793737"	:	"15559875453882948307"
+}
+
+sessions["11737379385107158231"] = {}
+sessions["11737379385107158231"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"234_125_237_56_87_212_253_11_0_198_177_167_152_49_104_13_52_0_9_170_232_36_97_185_182_224_0_",
+	"653035263252793737"	:	"12230448482679949361"
+}
+
+sessions["9503129336522582119"] = {}
+sessions["9503129336522582119"]["5204226381102662063"] = \
+ 	"Billie-Jean"
+sessions["9503129336522582119"]["828010500364272469"] = \
+ 	"55_104_55_154_238_205_129_29_0_182_39_55_107_75_229_132_127_0_"
+sessions["9503129336522582119"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"164_78_173_114_53_127_51_69_0_155_207_161_188_139_66_199_172_0_249_251_86_86_2_199_221_76_0_",
+	"653035263252793737"	:	"10580401906040982463"
+}
+
+sessions["12174056358786959262"] = {}
+sessions["12174056358786959262"]["5204226381102662063"] = \
+ 	"Tom"
+sessions["12174056358786959262"]["828010500364272469"] = \
+ 	"145_99_205_120_242_44_212_137_0_"
+sessions["12174056358786959262"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"132_224_120_160_3_207_20_71_0_81_155_83_83_147_32_106_173_0_165_198_72_49_96_84_164_84_0_",
+	"653035263252793737"	:	"16150537121274697242"
+}
+
+sessions["15888617053485241686"] = {}
+sessions["15888617053485241686"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"61_0_170_255_83_33_114_185_0_26_105_58_181_207_233_147_240_0_136_92_36_97_213_211_7_53_0_",
+	"653035263252793737"	:	"8250274443567152563"
+}
+
+sessions["5411621073362209230"] = {}
+sessions["5411621073362209230"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"3_65_209_37_79_52_152_200_0_23_238_46_147_84_146_218_30_0_54_97_141_72_193_41_228_51_0_",
+	"653035263252793737"	:	"9602847409616796252"
+}
+
+sessions["1408736970230621249"] = {}
+sessions["1408736970230621249"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"28_13_109_114_110_178_92_173_0_16_48_146_27_137_37_207_60_0_86_153_39_180_66_228_157_44_0_",
+	"653035263252793737"	:	"16301090519192865396"
+}
+
+sessions["2699379885478722722"] = {}
+sessions["2699379885478722722"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"168_219_191_108_83_140_23_124_0_116_231_19_35_217_20_66_87_0_26_52_42_195_162_228_97_123_0_",
+	"653035263252793737"	:	"8628180911032390023"
+}
+
+sessions["10482326014332167747"] = {}
+sessions["10482326014332167747"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"40_47_100_199_234_120_109_254_0_189_162_212_134_223_213_16_195_0_",
+	"653035263252793737"	:	"1801398747492920849"
+}
+
+sessions["8920387753579833810"] = {}
+sessions["8920387753579833810"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"135_144_29_75_114_4_142_79_0_191_22_176_207_16_154_24_15_0_193_16_37_69_118_176_133_180_0_",
+	"653035263252793737"	:	"10068998433463139290"
+}
+
+sessions["15543164328136391258"] = {}
+sessions["15543164328136391258"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"185_228_101_200_142_186_211_140_0_205_12_37_208_28_186_134_237_0_199_103_132_54_90_235_20_172_0_",
+	"653035263252793737"	:	"17841439199540576146"
+}
+
+sessions["6848938266044788308"] = {}
+sessions["6848938266044788308"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"2_35_147_18_158_136_160_181_0_29_156_134_151_115_198_150_191_0_239_5_145_141_1_149_139_31_0_",
+	"653035263252793737"	:	"16094983246901893954"
+}
+
+sessions["10068998433463139290"] = {}
+sessions["10068998433463139290"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"99_129_44_167_53_72_199_173_0_193_108_59_59_110_165_123_7_0_17_19_85_204_192_185_112_33_0_",
+	"653035263252793737"	:	"15333922699418610021"
+}
+
+sessions["4014077177840653453"] = {}
+sessions["4014077177840653453"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"164_169_253_23_232_189_207_176_0_220_232_99_248_71_22_58_226_0_131_87_143_165_74_149_93_107_0_",
+	"653035263252793737"	:	"5515032538660657921"
+}
+
+sessions["5515032538660657921"] = {}
+sessions["5515032538660657921"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"7_178_107_145_187_91_142_102_0_19_14_103_175_248_211_246_105_0_167_124_209_69_22_255_84_236_0_",
+	"653035263252793737"	:	"2699379885478722722"
+}
+
+sessions["10423914047478565426"] = {}
+sessions["10423914047478565426"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"249_213_115_187_255_34_179_104_0_133_128_254_154_211_233_98_173_0_144_190_234_170_222_66_12_199_0_",
+	"653035263252793737"	:	"3289895191422444674"
+}
+
+sessions["10580401906040982463"] = {}
+sessions["10580401906040982463"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"103_233_192_212_17_178_173_108_0_171_252_227_146_233_127_77_152_0_86_209_25_234_33_171_54_39_0_",
+	"653035263252793737"	:	"15874406363166715015"
+}
+
+sessions["global"] = {}
+sessions["global"]["5204226381102662063"] = \
+ 	"Friend!"
+sessions["global"]["4889342676755297139"] = \
+{
+	"135_5_97_64_185_91_42_231_0_168_34_10_27_167_251_192_216_0_172_17_179_123_195_59_93_221_0_"	:	"82_22_119_86_125_196_91_117_0_224_85_63_159_68_196_98_1_0_127_154_90_244_245_127_23_46_0_",
+	"239_250_82_10_194_81_43_100_0_149_120_226_142_212_129_146_228_0_171_127_94_247_92_186_86_120_0_"	:	"66_53_227_72_10_70_111_254_0_180_41_205_91_147_195_54_184_0_139_204_192_222_200_24_1_158_0_"
+}
+
+sessions["global"]["369922078287079276"] = \
+ 	"Welcome back, "
+sessions["global"]["432302536154660963"] = \
+{
+	"28_59_39_125_70_7_199_5_0_40_138_13_102_25_27_48_223_0_"	:	"D4vN0rC5i",
+	"125_201_121_94_99_52_177_13_0_141_148_92_62_42_55_154_21_0_209_83_92_214_17_216_57_196_0_"	:	"S5nY3gJ8d"
+}
+
+sessions["global"]["6250022396821446324"] = \
+{
+	"28_59_39_125_70_7_199_5_0_40_138_13_102_25_27_48_223_0_"	:	"9093777565864738913",
+	"125_201_121_94_99_52_177_13_0_141_148_92_62_42_55_154_21_0_209_83_92_214_17_216_57_196_0_"	:	"13822657731028557973"
+}
+
+sessions["global"]["7942447307100067928"] = \
+ 	" We're thrilled that you've taken an interest in Financial Firsts, and in your students' financial fitness! To begin exploring content, we recommend clicking on "Firsts", which will show you the current course material that we have available. We've only just begun, so expect more content on a weekly basis.  "
+sessions["9093777565864738913"] = {}
+sessions["9093777565864738913"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"82_22_119_86_125_196_91_117_0_224_85_63_159_68_196_98_1_0_127_154_90_244_245_127_23_46_0_",
+	"653035263252793737"	:	"global"
+}
+
+sessions["9093777565864738913"]["5204226381102662063"] = \
+ 	"Russell"
+sessions["9093777565864738913"]["828010500364272469"] = \
+ 	"171_155_27_251_145_110_130_39_0_"
+sessions["100178802125815570"] = {}
+sessions["100178802125815570"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"76_85_109_63_158_54_129_79_0_54_237_132_83_147_137_81_54_0_48_139_206_101_217_50_159_132_0_",
+	"653035263252793737"	:	"12947970589121092383"
+}
+
+sessions["13562106483717338104"] = {}
+sessions["13562106483717338104"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"151_72_249_96_213_210_249_89_0_158_173_49_135_51_250_207_100_0_50_195_215_221_218_159_178_118_0_",
+	"653035263252793737"	:	"15653341395592833755"
+}
+
+sessions["11573868855963122143"] = {}
+sessions["11573868855963122143"]["828010500364272469"] = \
+ 	"145_99_205_120_242_44_212_137_0_"
+sessions["11573868855963122143"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"218_6_242_230_65_86_74_36_0_47_201_253_160_34_65_19_118_0_192_255_178_57_157_185_211_176_0_",
+	"653035263252793737"	:	"global"
+}
+
+sessions["11573868855963122143"]["5204226381102662063"] = \
+ 	"Tom"
+sessions["10168128856127440403"] = {}
+sessions["10168128856127440403"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"28_123_158_108_205_153_248_187_0_81_147_199_75_190_114_55_253_0_67_167_5_132_39_82_195_125_0_",
+	"653035263252793737"	:	"7698014495927587646"
+}
+
+sessions["17043629156629405702"] = {}
+sessions["17043629156629405702"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"229_78_244_195_182_127_77_5_0_143_94_26_206_230_15_103_149_0_122_111_184_210_118_64_43_145_0_",
+	"653035263252793737"	:	"11261795755869461977"
+}
+
+sessions["12014896226197734723"] = {}
+sessions["12014896226197734723"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"36_99_92_163_51_224_226_209_0_231_251_87_241_184_63_31_125_0_199_153_48_198_121_192_199_238_0_",
+	"653035263252793737"	:	"14249496125463319008"
+}
+
+sessions["355978339437437381"] = {}
+sessions["355978339437437381"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"145_156_213_159_44_180_77_192_0_40_32_216_207_252_208_22_3_0_164_175_182_154_163_213_74_210_0_",
+	"653035263252793737"	:	"10750693437026980439"
+}
+
+sessions["16150537121274697242"] = {}
+sessions["16150537121274697242"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"240_91_53_1_18_148_35_44_0_190_123_228_192_59_5_204_104_0_184_78_53_221_181_9_51_37_0_",
+	"653035263252793737"	:	"17483254201242168750"
+}
+
+sessions["6504620119266151250"] = {}
+sessions["6504620119266151250"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"43_132_131_105_151_139_111_54_0_180_52_102_165_221_186_12_20_0_58_134_193_173_21_181_81_109_0_",
+	"653035263252793737"	:	"10841367730509287816"
+}
+
+sessions["17925851471973316523"] = {}
+sessions["17925851471973316523"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"229_72_90_47_99_2_168_250_0_17_150_186_161_132_126_49_230_0_228_43_101_138_15_213_36_72_0_",
+	"653035263252793737"	:	"12542460200141832370"
+}
+
+sessions["16697609432057981679"] = {}
+sessions["16697609432057981679"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"0_40_69_147_106_196_53_18_0_148_188_135_206_14_96_136_235_0_141_95_163_41_107_206_231_74_0_",
+	"653035263252793737"	:	"10168128856127440403"
+}
+
+sessions["5251188631112417328"] = {}
+sessions["5251188631112417328"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"1_114_205_129_239_189_253_127_0_166_8_15_71_109_36_136_95_0_99_18_100_64_57_235_126_111_0_",
+	"653035263252793737"	:	"2795161691350209407"
+}
+
+sessions["10275137911221820136"] = {}
+sessions["10275137911221820136"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"33_137_42_45_67_139_166_77_0_199_82_95_38_232_197_119_115_0_107_43_48_185_174_226_172_71_0_",
+	"653035263252793737"	:	"7107345678612285419"
+}
+
+sessions["9718322342989587707"] = {}
+sessions["9718322342989587707"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"220_238_177_198_142_10_160_116_0_125_201_243_9_93_166_37_212_0_28_239_129_19_148_206_91_7_0_",
+	"653035263252793737"	:	"15888617053485241686"
+}
+
+sessions["2795161691350209407"] = {}
+sessions["2795161691350209407"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"89_4_129_55_147_105_232_3_0_55_243_131_59_21_199_209_43_0_200_196_221_199_177_246_111_21_0_",
+	"653035263252793737"	:	"1408736970230621249"
+}
+
+sessions["8250274443567152563"] = {}
+sessions["8250274443567152563"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"209_206_34_98_138_190_246_135_0_139_29_172_237_223_114_26_115_0_116_225_190_218_94_202_6_70_0_",
+	"653035263252793737"	:	"10275137911221820136"
+}
+
+sessions["15559875453882948307"] = {}
+sessions["15559875453882948307"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"201_200_153_60_151_73_28_129_0_40_28_2_42_139_226_4_254_0_83_73_154_214_31_40_94_1_0_",
+	"653035263252793737"	:	"2006413614019069951"
+}
+
+sessions["13822657731028557973"] = {}
+sessions["13822657731028557973"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"66_53_227_72_10_70_111_254_0_180_41_205_91_147_195_54_184_0_139_204_192_222_200_24_1_158_0_",
+	"653035263252793737"	:	"13544184201898513171"
+}
+
+sessions["17553172508210713124"] = {}
+sessions["17553172508210713124"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"148_140_140_185_120_231_83_160_0_141_130_240_113_122_136_99_101_0_184_196_231_90_157_200_26_134_0_",
+	"653035263252793737"	:	"9503129336522582119"
+}
+
+sessions["17553172508210713124"]["5204226381102662063"] = \
+ 	"Tom"
+sessions["17553172508210713124"]["828010500364272469"] = \
+ 	"145_99_205_120_242_44_212_137_0_"
+sessions["13397348935928182791"] = {}
+sessions["13397348935928182791"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"149_156_13_176_191_191_193_131_0_234_57_58_166_45_25_111_38_0_115_231_198_75_89_162_154_143_0_",
+	"653035263252793737"	:	"11573868855963122143"
+}
+
+sessions["12542460200141832370"] = {}
+sessions["12542460200141832370"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"74_48_64_57_196_160_39_148_0_219_92_215_158_50_201_82_240_0_132_67_121_234_247_7_195_112_0_",
+	"653035263252793737"	:	"7776161211881360835"
+}
+
+sessions["3328783675449837740"] = {}
+sessions["3328783675449837740"]["828010500364272469"] = \
+ 	"145_99_205_120_242_44_212_137_0_"
+sessions["3328783675449837740"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"122_137_186_203_138_76_128_38_0_37_68_131_112_234_69_250_251_0_17_182_89_21_38_71_15_49_0_",
+	"653035263252793737"	:	"5411621073362209230"
+}
+
+sessions["3328783675449837740"]["5204226381102662063"] = \
+ 	"Tom"
+sessions["14249496125463319008"] = {}
+sessions["14249496125463319008"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"75_202_140_29_204_67_115_113_0_4_28_234_159_243_171_130_45_0_166_150_37_60_195_155_112_194_0_",
+	"653035263252793737"	:	"2904431197779585633"
+}
+
+sessions["306507658775570092"] = {}
+sessions["306507658775570092"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"223_12_180_23_103_19_59_175_0_225_35_86_44_85_186_22_253_0_23_246_45_202_209_90_18_239_0_",
+	"653035263252793737"	:	"4014077177840653453"
+}
+
+sessions["3114379927098046279"] = {}
+sessions["3114379927098046279"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"176_193_128_94_215_120_35_249_0_154_51_69_52_90_45_64_236_0_155_246_8_215_181_124_102_83_0_",
+	"653035263252793737"	:	"355978339437437381"
+}
+
+sessions["16272679105953690799"] = {}
+sessions["16272679105953690799"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"24_163_33_138_53_214_133_44_0_130_131_162_33_95_222_190_165_0_50_3_54_98_24_109_45_208_0_",
+	"653035263252793737"	:	"12573510962389939768"
+}
+
+sessions["10655719290122236408"] = {}
+sessions["10655719290122236408"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"209_109_249_86_242_130_63_102_0_9_189_54_57_205_176_111_22_0_58_196_22_19_126_137_106_239_0_",
+	"653035263252793737"	:	"12174056358786959262"
+}
+
+sessions["14005228623914041193"] = {}
+sessions["14005228623914041193"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"186_184_151_94_95_0_218_26_0_151_83_228_152_114_22_167_156_0_196_58_147_180_0_189_40_114_0_",
+	"653035263252793737"	:	"13562106483717338104"
+}
+
+sessions["5633032102662227071"] = {}
+sessions["5633032102662227071"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"111_219_14_179_168_86_55_122_0_193_5_5_105_18_62_121_154_0_195_24_193_129_159_91_71_21_0_",
+	"653035263252793737"	:	"13560119342377911570"
+}
+
+sessions["11261795755869461977"] = {}
+sessions["11261795755869461977"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"95_76_84_175_168_223_226_125_0_97_142_236_175_38_66_167_135_0_5_141_109_79_40_146_87_221_0_",
+	"653035263252793737"	:	"11293187825071828607"
+}
+
+sessions["18241273998628899927"] = {}
+sessions["18241273998628899927"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"240_163_52_40_21_239_110_184_0_66_188_27_253_136_255_201_212_0_52_248_129_190_11_122_37_118_0_",
+	"653035263252793737"	:	"17043629156629405702"
+}
+
+sessions["16059466652700495257"] = {}
+sessions["16059466652700495257"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"141_229_79_246_229_49_244_201_0_156_83_147_17_191_21_14_212_0_249_15_125_95_200_6_73_21_0_",
+	"653035263252793737"	:	"11737379385107158231"
+}
+
+sessions["12947970589121092383"] = {}
+sessions["12947970589121092383"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"161_25_168_178_250_253_214_132_0_104_158_25_122_173_223_65_11_0_149_201_210_46_217_192_138_89_0_",
+	"653035263252793737"	:	"15076849585242366986"
+}
+
+sessions["11041616293160294391"] = {}
+sessions["11041616293160294391"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"208_120_129_196_73_194_35_218_0_255_13_155_153_163_101_218_71_0_134_125_78_24_43_33_73_152_0_",
+	"653035263252793737"	:	"6504620119266151250"
+}
+
+sessions["15076849585242366986"] = {}
+sessions["15076849585242366986"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"100_253_108_71_232_133_228_49_0_214_244_23_191_185_120_169_157_0_30_121_129_213_211_78_161_227_0_",
+	"653035263252793737"	:	"8370355125729344035"
+}
+
+sessions["4898439160321196927"] = {}
+sessions["4898439160321196927"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"140_30_152_13_182_31_8_6_0_237_246_64_236_185_71_29_55_0_18_225_69_238_91_0_183_65_0_",
+	"653035263252793737"	:	"914404637058843031"
+}
+
+sessions["17120998842459634011"] = {}
+sessions["17120998842459634011"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"248_30_57_97_235_37_109_121_0_143_64_136_97_94_193_99_8_0_86_126_35_2_64_45_17_138_0_",
+	"653035263252793737"	:	"6454064083698244984"
+}
+
+sessions["10841367730509287816"] = {}
+sessions["10841367730509287816"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"2_146_51_250_93_188_135_55_0_236_236_15_26_129_77_194_210_0_180_152_20_78_242_59_65_88_0_",
+	"653035263252793737"	:	"18241273998628899927"
+}
+
+sessions["12573510962389939768"] = {}
+sessions["12573510962389939768"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"114_103_10_19_206_239_72_241_0_0_240_131_104_84_37_210_43_0_137_238_10_167_208_148_118_82_0_",
+	"653035263252793737"	:	"10423914047478565426"
+}
+
+sessions["4162685466986124048"] = {}
+sessions["4162685466986124048"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"133_5_108_156_33_184_251_197_0_36_165_103_223_0_223_183_218_0_149_29_197_43_35_76_223_230_0_",
+	"653035263252793737"	:	"6848938266044788308"
+}
+
+sessions["7698014495927587646"] = {}
+sessions["7698014495927587646"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"166_220_188_219_3_181_192_252_0_253_6_142_83_81_169_160_177_0_165_170_106_2_117_235_37_187_0_",
+	"653035263252793737"	:	"6603863238943816750"
+}
+
+sessions["8628180911032390023"] = {}
+sessions["8628180911032390023"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"253_32_157_252_244_214_253_211_0_14_135_72_68_253_104_56_212_0_156_243_121_223_147_60_55_47_0_",
+	"653035263252793737"	:	"14005228623914041193"
+}
+
+sessions["11877271656271424435"] = {}
+sessions["11877271656271424435"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"118_224_116_200_28_169_188_79_0_107_116_7_99_66_45_249_117_0_242_135_87_130_40_184_59_132_0_",
+	"653035263252793737"	:	"4898439160321196927"
+}
+
+sessions["16301090519192865396"] = {}
+sessions["16301090519192865396"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"108_75_121_23_141_200_49_83_0_120_191_133_195_247_23_80_4_0_126_238_61_82_21_5_7_70_0_",
+	"653035263252793737"	:	"5633032102662227071"
+}
+
+sessions["11293187825071828607"] = {}
+sessions["11293187825071828607"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"71_118_208_178_19_140_99_14_0_174_207_118_87_221_211_205_225_0_245_121_139_164_40_2_88_195_0_",
+	"653035263252793737"	:	"10897400483988555625"
+}
+
+sessions["15417081126342152339"] = {}
+sessions["15417081126342152339"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"10_138_216_134_97_23_72_81_0_200_213_35_67_100_61_236_139_0_23_140_239_150_157_9_144_41_0_",
+	"653035263252793737"	:	"17553172508210713124"
+}
+
+sessions["2006413614019069951"] = {}
+sessions["2006413614019069951"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"33_250_243_94_29_75_0_34_0_115_2_164_10_216_160_128_8_0_25_44_213_113_70_6_32_89_0_",
+	"653035263252793737"	:	"14474831670343540662"
+}
+
+sessions["12449882238995379517"] = {}
+sessions["12449882238995379517"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"204_104_104_93_48_44_246_241_0_2_157_151_119_212_143_34_215_0_235_210_115_207_176_26_205_42_0_",
+	"653035263252793737"	:	"16697609432057981679"
+}
+
+sessions["13544184201898513171"] = {}
+sessions["13544184201898513171"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"181_210_8_47_253_199_5_247_0_52_235_193_54_89_1_67_17_0_234_133_232_103_92_175_246_29_0_",
+	"653035263252793737"	:	"4162685466986124048"
+}
+
+sessions["3289895191422444674"] = {}
+sessions["3289895191422444674"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"49_16_158_3_168_216_47_86_0_158_151_251_91_194_205_92_160_0_80_113_253_190_94_31_202_247_0_",
+	"653035263252793737"	:	"9718322342989587707"
+}
+
+sessions["7776161211881360835"] = {}
+sessions["7776161211881360835"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"33_41_60_7_126_173_96_16_0_192_89_104_244_122_41_6_116_0_19_145_161_57_22_56_210_4_0_",
+	"653035263252793737"	:	"10482326014332167747"
+}
+
+sessions["914404637058843031"] = {}
+sessions["914404637058843031"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"98_62_181_77_81_176_125_76_0_236_37_165_218_75_5_251_209_0_58_41_7_114_169_81_175_154_0_",
+	"653035263252793737"	:	"584282358700712225"
+}
+
+sessions["17483254201242168750"] = {}
+sessions["17483254201242168750"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"214_95_78_234_180_44_93_146_0_60_43_31_98_7_121_72_150_0_3_55_66_164_153_249_179_29_0_",
+	"653035263252793737"	:	"8920387753579833810"
+}
+
+sessions["9602847409616796252"] = {}
+sessions["9602847409616796252"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"211_204_45_81_149_106_197_57_0_59_152_52_48_46_170_129_130_0_83_73_154_214_31_40_94_1_0_",
+	"653035263252793737"	:	"15543164328136391258"
+}
+
+sessions["6454064083698244984"] = {}
+sessions["6454064083698244984"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"201_118_223_197_219_43_173_250_0_210_235_120_156_16_226_46_203_0_242_52_70_203_151_7_49_68_0_",
+	"653035263252793737"	:	"306507658775570092"
+}
+
+sessions["1801398747492920849"] = {}
+sessions["1801398747492920849"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"171_214_37_151_139_181_156_202_0_72_251_206_197_114_84_199_167_0_88_172_200_102_188_14_188_115_0_",
+	"653035263252793737"	:	"16059466652700495257"
+}
+
+sessions["12230448482679949361"] = {}
+sessions["12230448482679949361"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"150_143_125_165_87_215_69_46_0_105_37_81_190_240_230_175_116_0_17_16_240_65_65_37_5_31_0_",
+	"653035263252793737"	:	"11455645246945461420"
+}
+
+sessions["14474831670343540662"] = {}
+sessions["14474831670343540662"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"20_47_160_74_90_23_187_213_0_72_90_93_218_39_106_6_150_0_126_110_196_49_140_94_178_167_0_",
+	"653035263252793737"	:	"10655719290122236408"
+}
+
+sessions["11455645246945461420"] = {}
+sessions["11455645246945461420"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"202_135_91_4_168_197_13_183_0_30_124_166_142_167_64_167_103_0_17_93_28_132_111_6_254_239_0_",
+	"653035263252793737"	:	"100178802125815570"
+}
+
+sessions["7761352199863821627"] = {}
+sessions["7761352199863821627"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"233_12_201_154_141_251_127_165_0_216_249_123_219_202_181_217_63_0_205_124_164_15_246_166_56_174_0_",
+	"653035263252793737"	:	"11877271656271424435"
+}
+
+sessions["7107345678612285419"] = {}
+sessions["7107345678612285419"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"119_233_139_66_91_157_138_25_0_218_114_88_6_132_0_18_30_0_131_87_143_165_74_149_93_107_0_",
+	"653035263252793737"	:	"11483642495693295507"
+}
+
+sessions["15333922699418610021"] = {}
+sessions["15333922699418610021"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"146_85_125_125_112_153_125_205_0_121_93_15_52_132_220_209_104_0_40_222_232_228_219_116_101_101_0_",
+	"653035263252793737"	:	"global"
+}
+
+sessions["8370355125729344035"] = {}
+sessions["8370355125729344035"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"4_162_42_255_67_24_46_195_0_91_58_252_53_186_252_135_88_0_147_61_232_135_48_82_185_10_0_",
+	"653035263252793737"	:	"11041616293160294391"
+}
+
+sessions["10897400483988555625"] = {}
+sessions["10897400483988555625"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"234_169_165_89_6_14_73_95_0_93_1_147_203_112_13_22_112_0_192_82_47_132_93_236_189_107_0_",
+	"653035263252793737"	:	"292128996633531724"
+}
+
+sessions["584282358700712225"] = {}
+sessions["584282358700712225"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"172_175_218_215_158_24_63_59_0_65_243_68_62_224_110_250_51_0_204_205_158_160_232_146_61_205_0_",
+	"653035263252793737"	:	"15417081126342152339"
+}
+
+sessions["15874406363166715015"] = {}
+sessions["15874406363166715015"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"0_252_233_201_160_82_169_255_0_188_33_107_114_163_77_132_164_0_42_152_72_33_230_104_152_91_0_",
+	"653035263252793737"	:	"12014896226197734723"
+}
+
+sessions["10750693437026980439"] = {}
+sessions["10750693437026980439"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"121_104_199_233_116_48_50_44_0_146_192_18_28_70_236_151_231_0_218_187_214_32_210_202_126_5_0_",
+	"653035263252793737"	:	"13397348935928182791"
+}
+
+sessions["17841439199540576146"] = {}
+sessions["17841439199540576146"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"10_228_226_39_221_14_98_31_0_117_5_28_92_73_67_117_51_0_155_166_184_251_218_104_141_60_0_",
+	"653035263252793737"	:	"17925851471973316523"
+}
+
+sessions["5624612494017368903"] = {}
+sessions["5624612494017368903"]["9532958398116805642"] = \
+{
+	"8163637335359820509"	:	"52_190_145_121_192_97_116_6_0_164_184_4_105_218_104_224_138_0_45_105_224_47_186_91_49_158_0_",
+	"653035263252793737"	:	"15861147826021490819"
+}
+
