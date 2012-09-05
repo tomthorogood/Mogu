@@ -9,6 +9,9 @@
 #define STYLEPARSER_H_
 
 #include <declarations.h>
+#include <Core/Moldable.h>
+#include <Redis/RedisCore.h>
+
 #include <Wt/WAnimation> //For AnimationEffect enum.
 
 namespace Parsers
@@ -21,14 +24,8 @@ namespace StyleParser
 
 
 WidgetType getWidgetType(Goo::Moldable* broadcaster);
-std::string getWidgetStyleClass(Goo::Moldable* broadcaster);
 std::string getWidgetText(Goo::Moldable* broadcaster);
-std::string getWidgetInternalPath(Goo::Moldable*  broadcaster);
 std::string getWidgetImgSource(Goo::Moldable* broadcaster);
-std::string getWidgetLinkLocation(Goo::Moldable* broadcaster);
-std::string getWidgetName(Goo::Moldable* broadcaster);
-std::string getWidgetValidator(Goo::Moldable* broadcaster);
-int getWidgetStackIndex(Goo::Moldable* broadcaster);
 
 Wt::WAnimation::AnimationEffect getWidgetAnimation(
         Goo::Moldable* broadcaster);
@@ -36,14 +33,22 @@ Wt::WAnimation::AnimationEffect getWidgetAnimation(
 void getWidgetChildren(
         Goo::Moldable* broadcaster, Redis::strvector& empty_vector);
 
-bool widgetHasEvents(Goo::Moldable* broadcaster);
+
+inline std::string getWidgetProperty(
+		std::string nodeName, const char* property)
+{
+	Redis::command("hget", nodeName, property);
+	return Redis::toString();
+}
+
+inline bool widgetHasProperty(std::string nodeName, std::string property)
+{
+	Redis::command("hexists", nodeName, property);
+	return (bool) Redis::getInt();
+}
+
 bool widgetHasChildren(Goo::Moldable* broadcaster);
-bool widgetHasStyling(Goo::Moldable* broadcaster);
-bool widgetHasAnimation(Goo::Moldable* broadcaster);
-bool widgetHasValidator(Goo::Moldable* broadcaster);
 bool widgetBlocksActions(Goo::Moldable* broadcaster);
-bool widgetIsNamed(Goo::Moldable* broadcaster);
-bool widgetHasStackIndex(Goo::Moldable* broadcaster);
 bool widgetIsDynamic(std::string);
 
 uint8_t getActionBlock(Goo::Moldable* broadcaster);

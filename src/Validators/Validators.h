@@ -11,7 +11,7 @@
 #include <declarations.h>
 namespace Validators{
 
-Wt::WValidator* createValidator(Goo::Moldable* widget);
+Wt::WValidator* createValidator(std::string validator);
 Wt::WRegExpValidator* createRegexValidator(const std::string& node);
 
 }//namespace Validators

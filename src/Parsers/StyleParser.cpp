@@ -9,8 +9,6 @@
 #include <Parsers/Parsers.h>
 #include <Parsers/NodeValueParser.h>
 #include <Types/NodeValue.h>
-#include <Core/Moldable.h>
-#include <Redis/RedisCore.h>
 #include <sstream>
 #include <Wt/WAnimation>
 #include <TurnLeftLib/Utils/explosion.h>
@@ -25,113 +23,28 @@ using Goo::Moldable;
 WidgetType getWidgetType(Moldable* broadcaster)
 {
    WidgetType __type;
-    string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hget", nodeName, "type");
-    string reply_str = Redis::toString();
-    Nodes::NodeValue val;
-    Parsers::NodeValueParser parser(reply_str, &val, broadcaster,
+   Nodes::NodeValue val;
+
+   std::string reply_str = getWidgetProperty(
+    		broadcaster->getNodeList()->at(0), "type");
+
+   Parsers::NodeValueParser parser(reply_str, &val, broadcaster,
             Parsers::enum_callback <Parsers::WidgetTypeParser>);
-    __type = (WidgetType) parser.getValue()->getInt();
+
+   __type = (WidgetType) parser.getValue()->getInt();
     return __type;
-}
-
-string getWidgetStyleClass(Moldable* broadcaster)
-{
-    string styleClass;
-    string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hget", nodeName, "class");
-    styleClass = Redis::toString();
-    return styleClass;
-}
-
-bool widgetHasStyling(Moldable* broadcaster)
-{
-    string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hexists", nodeName, "class");
-    return (bool) Redis::getInt();
 }
 
 string getWidgetText(Moldable* broadcaster)
 {
     string text_content;
-
     string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hget", nodeName, "content");
-    string reply_str = Redis::toString();
+
+    string reply_str = getWidgetProperty(nodeName, "content");
     Nodes::NodeValue val;
     Parsers::NodeValueParser parser(reply_str, &val, broadcaster);
     text_content = parser.getValue()->getString();
     return text_content;
-}
-
-
-bool widgetIsNamed(Moldable* broadcaster)
-{
-	bool named = false;
-	string nodeName = broadcaster->getNodeList()->at(0);
-	Redis::command("hexists", nodeName, "name");
-	named = Redis::getInt();
-	return named;
-}
-
-string getWidgetName(Moldable* broadcaster)
-{
-	string nodeName = broadcaster->getNodeList()->at(0);
-	Redis::command("hget", nodeName, "name");
-	return Redis::toString();
-}
-
-bool widgetHasStackIndex(Moldable* broadcaster)
-{
-	string nodeName = broadcaster->getNodeList()->at(0);
-	Redis::command("hexists", nodeName, "index");
-	return (bool) Redis::getInt();
-}
-
-int getWidgetStackIndex(Moldable* broadcaster)
-{
-	string nodeName = broadcaster->getNodeList()->at(0);
-	Redis::command("hget", nodeName, "index");
-	string reply_str = Redis::toString();
-	Nodes::NodeValue val;
-	Parsers::NodeValueParser parser(reply_str, &val,broadcaster);
-	return parser.getValue()->getInt();
-}
-
-string getWidgetInternalPath(Moldable* broadcaster)
-{
-    string internal_path;
-    string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hget", nodeName, "internal_path");
-    internal_path = Redis::toString();
-    return internal_path;
-}
-
-string getWidgetImgSource(Moldable* broadcaster)
-{
-    string img_src;
-    string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hget", nodeName, "source");
-    img_src = Redis::toString();
-    return img_src;
-}
-
-string getWidgetValidator(Moldable* broadcaster)
-{
-	string validator;
-	string nodeName = broadcaster->getNodeList()->at(0);
-	Redis::command("hget", nodeName, "validator");
-	validator = Redis::toString();
-	return validator;
-}
-
-string getWidgetLinkLocation(Moldable* broadcaster)
-{
-    string location;
-    string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hget", nodeName, "location");
-    location = Redis::toString();
-    return location;
 }
 
 void getWidgetChildren(Moldable* broadcaster, Redis::strvector& children)
@@ -160,22 +73,6 @@ Wt::WAnimation::AnimationEffect getWidgetAnimation(Moldable* broadcaster)
     return (Wt::WAnimation::AnimationEffect) value.getValue()->getInt();
 }
 
-bool widgetHasEvents(Moldable* broadcaster)
-{
-    bool has_events = false;
-    string nodeName = broadcaster->getNodeList()->at(0);
-
-    Redis::command("hexists", nodeName, "events");
-    bool key_exists = (bool) Redis::getInt();
-    if (key_exists)
-    {
-        Redis::command("hget", nodeName, "events");
-        string reply = Redis::toString();
-        has_events = reply == "on";
-    }
-    return has_events;
-}
-
 bool widgetHasChildren(Moldable* broadcaster)
 {
     string nodeName = broadcaster->getNodeList()->at(0);
@@ -184,19 +81,7 @@ bool widgetHasChildren(Moldable* broadcaster)
     return Redis::getInt() == 1;
 }
 
-bool widgetHasAnimation(Moldable* broadcaster)
-{
-    string nodeName = broadcaster->getNodeList()->at(0);
-    Redis::command("hexists", nodeName, "animation");
-    return (bool) Redis::getInt();
-}
 
-bool widgetHasValidator(Moldable* broadcaster)
-{
-	string nodeName = broadcaster->getNodeList()->at(0);
-	Redis::command("hexists", nodeName, "validator");
-	return (bool) Redis::getInt();
-}
 
 bool widgetBlocksActions(Moldable* broadcaster)
 {

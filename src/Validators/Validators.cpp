@@ -26,17 +26,15 @@ using Parsers::ValidatorTypeParser;
 using std::string;
 using Goo::Moldable;
 
-Wt::WValidator* createValidator(Moldable* widget)
+Wt::WValidator* createValidator(std::string validatorName)
 {
 	Wt::WValidator* validator =0;
-	string validatorName = getWidgetValidator(widget);
-
 	string validator_node = "validators."+validatorName;
 	Redis::command("hget", validator_node, "type");
 	string vtype = Redis::toString();
 	Nodes::NodeValue vval;
 	Parsers::NodeValueParser nparser (
-			vtype, &vval,widget,
+			vtype, &vval,NULL,
 			Parsers::enum_callback <Parsers::ValidatorTypeParser>);
 	switch (vval.getInt())
 	{

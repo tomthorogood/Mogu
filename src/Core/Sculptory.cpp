@@ -34,18 +34,20 @@ void conceptualize (Moldable* widget)
 	GooVariables* vars = widget->getProperties();
 	WidgetTypes type = getWidgetType(widget);
 	vars->type = type;
+	std::string widgetNode = widget->getNodeList()->at(0);
+
 
 	if (widgetIsDynamic(widget->getNodeList()->at(0)))
 	{
 		vars->flags |= is_dynamic;
 	}
 
-	if (widgetHasAnimation(widget))
+	if (widgetHasProperty(widgetNode, "animation"))
 	{
 		vars->flags |= has_animation;
 	}
 
-	if (widgetHasEvents(widget))
+	if (widgetHasProperty(widgetNode, "events"))
 	{
 		vars->flags |= has_events;
 	}
@@ -60,15 +62,15 @@ void conceptualize (Moldable* widget)
 		vars->flags |= has_children;
 	}
 
-	if (widgetHasValidator(widget))
+	if (widgetHasProperty(widgetNode, "validator"))
 	{
 		vars->flags |= is_validated;
 	}
 
-	if (widgetIsNamed(widget))
+	if (widgetHasProperty(widgetNode, "name"))
 	{
 		vars->flags |= is_named;
-		std::string name = getWidgetName(widget);
+		std::string name = getWidgetProperty(widgetNode, "name");
 		Application::mogu()->registerWidget(name, widget);
 	}
 
@@ -77,10 +79,10 @@ void conceptualize (Moldable* widget)
 		vars->flags |= is_stacked;
 	}
 
-	if (widgetHasStyling(widget))
+	if (widgetHasProperty(widgetNode, "class"))
 	{
 		Wt::WString new_style;
-		new_style = getWidgetStyleClass(widget);
+		new_style = getWidgetProperty(widgetNode, "class");
 		widget->setStyleClass(new_style);
 	}
 
@@ -95,7 +97,7 @@ void conceptualize (Moldable* widget)
 		if (( (type & image) == image)
 			|| ( (type & image_link) == image_link))
 		{
-			vars->source = getWidgetImgSource(widget);
+			vars->source = getWidgetProperty(widgetNode, "source");
 		}
 	}
 
@@ -105,7 +107,7 @@ void conceptualize (Moldable* widget)
 		if ( ( (type & Type::link) == Type::link)
 				|| ( (type & image_link) == image_link))
 		{
-			vars->location = getWidgetLinkLocation(widget);
+			vars->location = getWidgetProperty(widgetNode, "location");
 		}
 	}
 }
@@ -114,6 +116,7 @@ void conceptualize (Moldable* widget)
 void mold(Moldable* widget)
 {
 	GooVariables* vars = widget->getProperties();
+
 
 	if (vars->flags & blocks_actions)
 	{
@@ -160,7 +163,9 @@ void mold(Moldable* widget)
 				Wt::WAnimation transition(effect);
 				stack->setTransitionAnimation(transition,true);
 			}
-			if (widgetHasStyling(widget))
+			if (widgetHasProperty(
+				widget->getNodeList()->at(0),
+				"class"))
 			{
 				stack->setStyleClass(widget->styleClass());
 				widget->setStyleClass("");
@@ -178,8 +183,10 @@ void mold(Moldable* widget)
 			widget->addWidget(input);
 			if (vars->flags & is_validated)
 			{
+				std::string val_name = getWidgetProperty(
+						widget->getNodeList()->at(0), "validator");
 				Wt::WValidator* validator =
-						Validators::createValidator(widget);
+						Validators::createValidator(val_name);
 				input->setValidator(validator);
 				input->keyWentUp().connect(
 						widget, &Moldable::__validate);
