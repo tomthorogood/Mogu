@@ -326,21 +326,7 @@ void directListeners(BroadcastMessage* broadcast)
         break;}
 
     /* Change the widget index of the listeners' stacked widgets. */
-    case Action::set_index:{
-        int new_index = broadcast->getMessage()->getInt();
-
-        for (int w = 0; w < num_listeners; w++)
-        {
-            Moldable* widget = listeners->at(w);
-            if (widget->allowsAction(Action::set_index))
-            {
-                Wt::WStackedWidget* stack =
-                        (Wt::WStackedWidget*) widget->widget(0);
-                stack->setCurrentIndex(new_index);
-            }
-        }
-        break;}
-
+    case Action::set_index: Actions::set_index(listeners, broadcast); break;
     /* Append a new CSS class to the current widget style. */
     case Action::add_class:{
     	for (int w = 0; w < num_listeners; w++)
@@ -387,57 +373,10 @@ void directListeners(BroadcastMessage* broadcast)
     	break;}
 
     /* Advance the stack's widget index. */
-    case Action::increment_index:{
-    	for (int w = 0; w < num_listeners; w++)
-    	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::increment_index))
-    		{
-#ifdef DEBUG
-    		std::cout << "Setting index of " << widget->getNodeList()->at(0) << std::endl;
-#endif
-    			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
-    					widget->widget(0);
-    			int current_index = stack->currentIndex();
-#ifdef DEBUG
-    			std::cout << "Current Index: " << current_index << std::endl;
-    			std::cout << "Next Index: " << current_index-1 << std::endl;
-    			std::cout << "Max Index: " << stack->count() << std::endl;
-#endif
-    			if (++current_index < stack->count())
-    			{
-#ifdef DEBUG
-    				std::cout << "Changing index to  ";
-    				std::cout << current_index << std::endl;
-#endif
-    				stack->setCurrentIndex(current_index);
-    			}
-    		}
-    	}
-    	break;}
+    case Action::increment_index: Actions::increment_index(listeners); break;
 
     /* Rewind the stack's widget index. */
-    case Action::decrement_index:{
-    	for (int w = 0; w < num_listeners; w++)
-    	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::decrement_index))
-    		{
-    			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
-    					widget->widget(0);
-    			int current_index = stack->currentIndex();
-    			if (--current_index >=0)
-    			{
-#ifdef DEBUG
-    				std::cout << "CHANGING INDEX OF";
-    				std::cout << widget->getNodeList()->at(0) << " TO ";
-    				std::cout << current_index << std::endl;
-#endif
-    				stack->setCurrentIndex(current_index);
-    			}
-    		}
-    	}
-    	break;}
+    case Action::decrement_index: Actions::decrement_index(listeners); break;
 
     /* Adds a new widget to the tree. */
     case Action::add_widget:{

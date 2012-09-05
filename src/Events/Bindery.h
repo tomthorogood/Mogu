@@ -68,6 +68,11 @@ class EventBindery : public Wt::WObject
     	handleVoidSignal(Enums::SignalTriggers::enter_pressed);
     }
 
+    inline void indexChangedSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::index_changed);
+    }
+
 public:
     EventBindery(Goo::Moldable* broadcaster);
     ~EventBindery();

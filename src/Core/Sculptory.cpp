@@ -116,11 +116,19 @@ void conceptualize (Moldable* widget)
 void mold(Moldable* widget)
 {
 	GooVariables* vars = widget->getProperties();
+	std::string node = widget->getNodeList()->at(0);
 
 
 	if (vars->flags & blocks_actions)
 	{
 		vars->actionBlocking = getActionBlock(widget);
+	}
+
+	if (widgetHasProperty(node, "tooltip"))
+	{
+		Wt::WString tooltip = getWidgetProperty(node, "tooltip");
+		Wt::TextFormat format = Wt::XHTMLText;
+		widget->setToolTip(tooltip,format);
 	}
 
 	if ( (vars->type & WIDGET_HO_BITS) == widget_usually_clicked)

@@ -75,6 +75,7 @@ private:
 
     /*!\brief Signal emitted when the style is changed. */
     Wt::Signal <> __style_changed;
+    Wt::Signal <> __index_changed;
     Wt::Signal <> __failed_test;
     Wt::Signal <> __succeeded_test;
     Wt::Signal <> __deregister;
@@ -205,6 +206,11 @@ public:
     inline Wt::Signal<>& fail()
 	{
     	return __failed_test;
+	}
+
+    inline Wt::Signal<>& stackIndexChanged()
+	{
+    	return __index_changed;
 	}
 
     inline Wt::Signal<>& succeed()

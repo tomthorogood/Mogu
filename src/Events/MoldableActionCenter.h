@@ -95,6 +95,10 @@ void cleanupBroadcast(BroadcastMessage* broadcast);
 namespace Actions{
 bool change_session ();
 bool register_user ();
+
+void set_index(Listeners* listeners, BroadcastMessage* broadcast);
+void increment_index(Listeners* listeners);
+void decrement_index(Listeners* listeners);
 } //namespace Actions
 
 } //Namspace ActionCenter

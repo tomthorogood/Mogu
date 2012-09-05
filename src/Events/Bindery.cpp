@@ -160,6 +160,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
         case Triggers::fail:{
         	broadcaster->fail().connect(this, &EventBindery::failSlot);
         	break;}
+
         case Triggers::succeed:{
         	broadcaster->succeed().connect(this, &EventBindery::succeedSlot);
         	break;}
@@ -167,10 +168,16 @@ EventBindery::EventBindery(Moldable* broadcaster)
         case Triggers::keyup:{
         	broadcaster->keyWentUp().connect(this, &EventBindery::keyupSlot);
         	break;}
+
         case Triggers::enter_pressed:{
         	broadcaster->enterPressed().connect(
         			this, &EventBindery::enterSlot);
         	break;}
+
+        case Triggers::index_changed:{
+        	broadcaster->stackIndexChanged().connect(
+        			this, &EventBindery::indexChangedSlot);
+        }
         default:return;
         }
     }

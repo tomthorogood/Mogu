@@ -73,14 +73,15 @@ public:
 	SignalTriggerParser()
 	{
 	    namespace Trigger = Enums::SignalTriggers;
-	    enumMap["click"]    = Trigger::click;
+	    enumMap["click"]    	= Trigger::click;
 	    enumMap["mouseover"]    = Trigger::mouseover;
 	    enumMap["mouseout"]     = Trigger::mouseout;
 	    enumMap["style_changed"]= Trigger::style_changed;
 	    enumMap["fail"]			= Trigger::fail;
 	    enumMap["succeed"]		= Trigger::succeed;
 	    enumMap["keyup"]		= Trigger::keyup;
-	    enumMap["enter"] = Trigger::enter_pressed;
+	    enumMap["enter"] 		= Trigger::enter_pressed;
+	    enumMap["enter"]		= Trigger::index_changed;
 	}
 };
 

@@ -297,7 +297,8 @@ widgets["friends_title_2"] = \
 {
 	"content"	:	"friends",
 	"type"	:	"{text}",
-	"class"	:	"inline friends_coloring title_accent"
+	"class"	:	"inline friends_coloring title_accent",
+    "tooltip"   :   "<div class=\"tooltip\">TESTING!</div>"
 }
 
 
@@ -1983,16 +1984,7 @@ widgets["ch:1:stack:5:txt0"] = \
 
 widgets["ch:1:stack:5:txt1"] = \
 {
-	"content"	:	"<ul>
-        <li>The check number, in the upper right corner, is pre-printed on the checks.</li>
-        <li>You will fill in the date each time you write a check.</li>
-        <li><b>Pay to the Order of</b> is where you will write the name of the person or company to whom you are writing the check.</li>
-        <li>In the <b>$</b> box you will write the check amount in numerical format.</li>
-        <li>On the <b>Dollars</b> line you will right the same amount in word form</li>
-        <li>The <b>Memo</b> line is optional, and is a note to yourself about exactly what the check was for, such as \"rent\", or \"February Car Payment\". Some payments require you to add information on this line in order to match the check up to the right account.</li>
-        <li>In the bottom right corner is where you will sign your check. If you do not sign your check, the other party will not be able to use it!</li>
-        <li>At the bottom of your check, you will find the account number, nine-digit routing number, and the check number.</li>
-        </ul>",
+	"content"	:	"<ul><li>The check number, in the upper right corner, is pre-printed on the checks.</li> <li>You will fill in the date each time you write a check.</li> <li><b>Pay to the Order of</b> is where you will write the name of the person or company to whom you are writing the check.</li> <li>In the <b>$</b> box you will write the check amount in numerical format.</li> <li>On the <b>Dollars</b> line you will right the same amount in word form</li> <li>The <b>Memo</b> line is optional, and is a note to yourself about exactly what the check was for, such as \"rent\", or \"February Car Payment\". Some payments require you to add information on this line in order to match the check up to the right account.</li> <li>In the bottom right corner is where you will sign your check. If you do not sign your check, the other party will not be able to use it!</li> <li>At the bottom of your check, you will find the account number, nine-digit routing number, and the check number.</li> </ul>",
 	"type"	:	"{text}",
 	"class"	:	"TENPT PAD_ALL_10"
 }
@@ -4889,7 +4881,7 @@ sessions["global"]["6250022396821446324"] = \
 }
 
 sessions["global"]["7942447307100067928"] = \
- 	" We're thrilled that you've taken an interest in Financial Firsts, and in your students' financial fitness! To begin exploring content, we recommend clicking on "Firsts", which will show you the current course material that we have available. We've only just begun, so expect more content on a weekly basis.  "
+ 	" We're thrilled that you've taken an interest in Financial Firsts, and in your students' financial fitness! To begin exploring content, we recommend clicking on \"Firsts\", which will show you the current course material that we have available. We've only just begun, so expect more content on a weekly basis.  "
 sessions["9093777565864738913"] = {}
 sessions["9093777565864738913"]["9532958398116805642"] = \
 {

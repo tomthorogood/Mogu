@@ -168,6 +168,7 @@ enum SignalTrigger{
     ,succeed		=5
     ,keyup			=6
     ,enter_pressed	=7
+    ,index_changed	=8
 };
 } //namespace SignalTriggers
 
