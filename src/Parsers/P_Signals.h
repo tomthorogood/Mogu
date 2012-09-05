@@ -80,6 +80,7 @@ public:
 	    enumMap["fail"]			= Trigger::fail;
 	    enumMap["succeed"]		= Trigger::succeed;
 	    enumMap["keyup"]		= Trigger::keyup;
+	    enumMap["enter"] = Trigger::enter_pressed;
 	}
 };
 

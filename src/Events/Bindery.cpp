@@ -167,6 +167,10 @@ EventBindery::EventBindery(Moldable* broadcaster)
         case Triggers::keyup:{
         	broadcaster->keyWentUp().connect(this, &EventBindery::keyupSlot);
         	break;}
+        case Triggers::enter_pressed:{
+        	broadcaster->enterPressed().connect(
+        			this, &EventBindery::enterSlot);
+        	break;}
         default:return;
         }
     }

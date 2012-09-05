@@ -167,6 +167,7 @@ enum SignalTrigger{
     ,fail			=4
     ,succeed		=5
     ,keyup			=6
+    ,enter_pressed	=7
 };
 } //namespace SignalTriggers
 

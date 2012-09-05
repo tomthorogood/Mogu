@@ -63,6 +63,11 @@ class EventBindery : public Wt::WObject
     	handleVoidSignal(Enums::SignalTriggers::succeed);
     }
 
+    inline void enterSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::enter_pressed);
+    }
+
 public:
     EventBindery(Goo::Moldable* broadcaster);
     ~EventBindery();
