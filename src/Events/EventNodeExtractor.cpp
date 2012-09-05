@@ -24,7 +24,7 @@ EventNodeExtractor::EventNodeExtractor(string nodeName)
     Redis::toVector(keys);
 #ifdef DEBUG
     std::cout << "List of keys at " << nodeName << ": ";
-    for (int i = 0; i < keys.size(); i++)
+    for (unsigned int i = 0; i < keys.size(); i++)
     {
     	std::cout << keys.at(i) <<", ";
     }

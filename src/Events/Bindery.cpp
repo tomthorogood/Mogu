@@ -123,12 +123,12 @@ EventBindery::EventBindery(Moldable* broadcaster)
     	ExtractorVector* extv = &iter->second;
     	std::cout << "Checking vector " << extv << std::endl;
     	assert(extv != 0);
-    	for (int i = 0; i < extv->size(); i++)
+    	for (unsigned int i = 0; i < extv->size(); i++)
     	{
     		std::cout <<"\t" << i << " : Extractor=" << extv->at(i);
     	}
     	std::cout << std::endl << "Binding trigger " << trigger << " to broadcasts: " << std::endl;
-    	for (int i = 0; i < extv->size(); i++)
+    	for (unsigned int i = 0; i < extv->size(); i++)
     	{
     		EventNodeExtractor* ext = extv->at(i);
     		std::cout << "Getting message from extractor " << ext << std::endl;

@@ -18,7 +18,6 @@ namespace {
 	std::string __auth_token;
 	std::string __wt_session;
 	std::map <std::string, std::string> __storageSlots;
-	Goo::Moldable* __ignored_broadcaster;
 	Enums::SignalTriggers::SignalTrigger __last_trigger;
 }
 Mogu* mogu()
