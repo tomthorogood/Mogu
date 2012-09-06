@@ -18,7 +18,6 @@ namespace {
 	std::string __auth_token;
 	std::string __wt_session;
 	std::map <std::string, std::string> __storageSlots;
-	Enums::SignalTriggers::SignalTrigger __last_trigger;
 }
 Mogu* mogu()
 {
@@ -106,17 +105,5 @@ std::string retrieveSlot(std::string name, std::string wtsession)
 				"Wt Session ID Mismatch! This is not a good thing!");
 	}
 }
-
-Enums::SignalTriggers::SignalTrigger getLastTrigger()
-{
-	return __last_trigger;
-}
-
-void setLastTrigger(Enums::SignalTriggers::SignalTrigger trigger)
-{
-	__last_trigger = trigger;
-}
-
-}
-
+}//namespace Application
 
