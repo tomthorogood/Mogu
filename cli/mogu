@@ -57,6 +57,10 @@ parser.add_argument("--assume-yes",
         dest="yes", action="store_true", default=False, 
         help="Will assume yes to all questions. EXTRA CAREFUL!")
 
+parser.add_argument("-v", "--verbose",
+        dest="verbose", action="store_true", default=False,
+        help="Will make the import command more verbose when assuming yes")
+
 parser.add_argument("--test-only", 
         dest="testing", action="store_true", default=False, 
         help="Displays various information depending on the command, making no changes to your database.")
@@ -106,7 +110,11 @@ if command == "import":
             dflags |= bytemaps.DictStorage.assume_yes
             lflags |= bytemaps.ListStorage.assume_yes
             sflags |= bytemaps.StrStorage.assume_yes
-
+        if args.verbose:
+            dflags |= bytemaps.DictStorage.verbose
+            lflags |= bytemaps.ListStorage.verbose
+            sflags |= bytemaps.StrStorage.verbose
+        
         for widget in package.widgets:
             w = Widget()
             w.build(widget)
