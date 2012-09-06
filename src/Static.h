@@ -11,7 +11,7 @@
 #include <declarations.h>
 
 /*!\brief The Application namespace houses a library of functions that are
- * persistent within the user session, but the data held here is unique
+ * persistent within the user session. The data held here is unique
  * to each user. This can make data available globally to the application
  * instance without exposing it anywhere else.
  */
