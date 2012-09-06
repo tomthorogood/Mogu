@@ -16,7 +16,6 @@ namespace Enums{
 #include <Types/E_Widgets.h>
 #include <Types/E_WidgetStyling.h>
 #include <Types/E_Validators.h>
-#include <Types/E_Errors.h>
 
 
 } // <-- namespace Enums
