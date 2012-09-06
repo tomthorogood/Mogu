@@ -23,17 +23,47 @@
 
 class Mogu : public Wt::WApplication
 {
+	/*!\brief Changes the state of the application based on the URL */
 	void handlePathChange(std::string path);
+
+	/*!\brief A map of named widgets. */
 	WidgetRegister widgetRegister;
+
+	/*!\brief The widget that started it all... */
 	Goo::Moldable* __wrapper;
 
 public:
 
 	Mogu(const Wt::WEnvironment& env);
 	virtual ~Mogu();
-	bool widgetIsRegistered(std::string name);
-	void registerWidget(std::string name, Goo::Moldable* widget);
-	Goo::Moldable* registeredWidget(std::string name);
+
+	/*!\brief Returns whether or not a name represents a registered widget
+	 * within the application instance.
+	 * @param name The name of the widget being sought.
+	 */
+	inline bool widgetIsRegistered(std::string name)
+	{
+		WidgetRegister::iterator iter = widgetRegister.find(name);
+		return iter != widgetRegister.end();
+	}
+
+	/*!\brief Adds a widget into the widget registry.
+	 *
+	 * @param name The name used for looking up the widget
+	 * @param widget The pointer to the widget itself.
+	 */
+	inline void registerWidget(std::string name, Goo::Moldable* widget)
+	{
+		widgetRegister[name] = widget;
+	}
+
+	/*!\brief Returns a widget from the registry based on its name. */
+	inline Goo::Moldable* registeredWidget(std::string name)
+	{
+		return widgetRegister[name];
+	}
+
+	/*!\brief Removes a widget from the registry. */
 	inline void deregisterWidget(std::string name)
 	{
 		if (!widgetIsRegistered(name)) return;

@@ -58,24 +58,6 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     }
 }
 
-bool Mogu::widgetIsRegistered(std::string widget_name)
-{
-	WidgetRegister::iterator iter;
-	iter = widgetRegister.find(widget_name);
-
-	return (iter != widgetRegister.end());
-}
-
-void Mogu::registerWidget(std::string name, Goo::Moldable* widget)
-{
-	widgetRegister[name] = widget;
-}
-
-Goo::Moldable* Mogu::registeredWidget(std::string name)
-{
-	return widgetRegister[name];
-}
-
 void Mogu::handlePathChange(std::string path)
 {
 	std::string perspective = path.substr(1,path.length()-1);
