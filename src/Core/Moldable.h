@@ -6,6 +6,18 @@
  *
  */
 
+/*!\file MoldableGoo.h
+ * \brief The base class for Mogucentric widgets.
+ *
+ * Goo::Moldable is the base widget for Mogu. Moldable widgets are inherently
+ * lazy, and will do very little on their own, instead subjecting themselves
+ * to other forces that , well, mold them. As such, almost everything in a
+ * Moldable widget is public and variable.
+ *
+ * This also contains the declaration for the GooVariables struct, which holds
+ * a Moldable widget's properties and can be passed around separately.
+ */
+
 #ifndef MODDABLEGOO_H_
 #define MODDABLEGOO_H_
 
@@ -16,6 +28,7 @@
 #include <Wt/WLineEdit>
 #include <Wt/WSignal> // Templated Type
 
+//!\brief The namespace in which the Mogu Core is located.
 namespace Goo
 {
 
@@ -27,13 +40,30 @@ namespace Goo
 struct GooVariables
 {
     Redis::strvector children;
-    uint8_t flags; //!<\sa Enums::SignalTypes::Properties
-    uint8_t actionBlocking;
-    uint8_t type;
-    bool dynamic;
+
+    /*!\brief Corresponds to a core set of eight widget properties.
+     *TODO: Make this more scalable and flexible
+     */
+    masked flags; //!<\sa Enums::SignalTypes::Properties
+
+    /*!\brief Determines which actions are blocked by the widget in qusetion. */
+    masked actionBlocking;
+
+    /*!\brief The integral type of the widget in question. See the ByteMaps
+     * spreadsheet in dev_resources for more information.
+     */
+    mapped type;
+
+    bool dynamic; //TODO This needs to be worked into 'flags'.
 
     std::string location;    //!< Used for external links only.
     std::string source;      //!< URI for image file, if applicable.
+
+    /*!\brief This field can contain any number of things. For text widgets,
+     * this represents the text (or html/text combo) that will be displayed
+     * on the user's screen. For images, this represents the 'alt' tag. For
+     * links, this is the anchor text.
+     */
     std::string content;
 
     GooVariables();
@@ -54,11 +84,13 @@ class Moldable : public Wt::WContainerWidget
 {
 private:
 #ifdef DEBUG
-	const char* __NODE_NAME;
+	const char* __NODE_NAME; //easier to see in the Eclipse debug screen.
 #endif
-    Redis::strvector nodes;
-    Events::EventBindery* bindery;
-    bool __reload;
+
+	std::string __node; //!< This widget's location in the database
+    Redis::strvector nodes; //!\deprecated Holds a number of related nodes
+    Events::EventBindery* bindery; //!< The widget's personal event bindery
+    bool __reload; //!< Allows the widget to be reloaded
 
     /*!\brief A container with pointers to child widgets that are also of
      * the Moldable class (or descendant classes). Necessary since the native
@@ -75,14 +107,18 @@ private:
 
     /*!\brief Signal emitted when the style is changed. */
     Wt::Signal <> __style_changed;
+
+    /*!\brief Signal emitted if the widget contains a WStackedWidget and the
+     * stack index is manipulated by Mogu.
+     */
     Wt::Signal <> __index_changed;
+
+    /*!\brief Signal emitted if the widget is given a test which it fails. */
     Wt::Signal <> __failed_test;
+
+    /*!\brief Signal emitted if the widget is given a test which it passes. */
     Wt::Signal <> __succeeded_test;
-    Wt::Signal <> __deregister;
 
-
-
-    Enums::WidgetTypes::WidgetTypes typeFlags;
 
     /*!\brief Parses the values in the events node and binds
      * these events to user activity.
@@ -127,7 +163,11 @@ public:
      * emits the new style as part of the styleChanged signal.
      * @param style
      */
-    virtual void setStyleClass(const Wt::WString& styleClass);
+    inline virtual void setStyleClass(const Wt::WString& style)
+    {
+        Wt::WContainerWidget::setStyleClass(style);
+        __style_changed.emit();
+    }
 
     /*!\brief Retrieves a Moldable widget from this widget.
      *
@@ -149,26 +189,37 @@ public:
     }
 
     /*!\brief Retrieves a node property from the database.
-     * @param key The key that would have been parsed from the database.
+     * @param key The key that would be from the database.
      * @return The value attached to the key.
      */
-    inline std::string getMappedValue(std::string key)
-    {
-        std::string nodeName = nodes.at(0);
-        Redis::command("hget", nodeName, key);
-        return Redis::toString();
-    }
+    std::string getMappedValue(std::string key);
 
+    /*!\brief Provides an accessor for the styleChanged signal. */
     Wt::Signal<>& styleChanged()
 	{
     	return __style_changed;
     }
 
+    /*!\deprecated returns the nodeList vector, which is going away.*/
     inline Redis::strvector* getNodeList()
     {
     	return &nodes;
     }
 
+    /*!\brief Use instead of getNodeList to retrieve this widget's location
+     * in the database.
+     * @return
+     */
+    inline std::string getNode()
+    {
+    	return __node;
+    }
+
+    /*!\brief Alerts the caller to whether or not this widget allows a
+     * certain action.
+     * @param action The action requested
+     * @return Whether or not it is a valid action for this widget
+     */
     inline bool allowsAction(Enums::SignalActions::SignalAction action)
     {
     	return !(
@@ -176,58 +227,83 @@ public:
 			|| (baseVariables->actionBlocking == Enums::SignalActions::BLOCK));
     }
 
+    /*!\brief Returns whether or not this widget is named.*/
     inline bool isNamed()
     {
-		uint8_t named = Enums::WidgetTypes::is_named;
+		mapped named = Enums::WidgetTypes::is_named;
 		return baseVariables->flags & named;
     }
 
+    /*!\brief Allows another widget to remove a specific child from this
+     * widget's family tree. The other widget must already have the child's
+     * pointer handy
+     * @param child The pointer to the Moldable* widget that is to be
+     * deleted.
+     */
     inline void requestRemoval(Moldable* child)
     {
     	removeChild(child);
     }
 
+    /*!\brief Provides an accessor to the widget's properties */
     inline GooVariables* getProperties()
     {
     	return baseVariables;
     }
 
-    inline const uint8_t& getType() const
+    /*\brief Returns this widget's type. */
+    inline const mapped& getType() const
     {
     	return baseVariables->type;
     }
 
+    /*!\brief If this widget is provided a validator, its first child is
+     * assigned said validator.
+     * @param validator
+     */
     inline void validate (Wt::WValidator* validator)
     {
     	Wt::WLineEdit* input = (Wt::WLineEdit*) widget(0);
     	input->setValidator(validator);
     }
 
+    /*!\brief Provides an accessor to the fail signal. */
     inline Wt::Signal<>& fail()
 	{
     	return __failed_test;
 	}
 
+    /*!\brief Provides an accessor to the index changed signal. */
     inline Wt::Signal<>& stackIndexChanged()
 	{
     	return __index_changed;
 	}
 
+    /*!\brief Provides an accessor for the success signal. */
     inline Wt::Signal<>& succeed()
 	{
     	return __succeeded_test;
 	}
 
+    /*!\brief Validates this widget's first child, which will emit either the
+     * fail() or succeed() signals.
+     */
     void __validate();
 
+    /*!\brief Allows this widget to be reloaded, returning a reference to itself
+     * for easy method chanining
+     * @return
+     */
     inline Moldable& setReload()
     {
     	__reload = true;
     	return *this;
     }
 
+    /*!\brief Returns whether or not this widget may be reloaded */
     inline bool reload() { return __reload; }
 
+    //!\deprecated Use countMoldableChildren
     inline bool numChildren() { return children.size();}
 };
 

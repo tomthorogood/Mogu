@@ -105,6 +105,16 @@ namespace Redis
 class Mogu;
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
 typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
+
+/*!\brief masked data is data whose bits are individually manipulated to
+ * pack data efficiently
+ */
+typedef uint8_t masked;
+
+/*!\brief mapped data is similar to masked data, however the bits themselves
+ * are not masked and manipulated after initialization.
+ */
+typedef uint8_t mapped;
 class redisContext;
 class redisReply;
 

@@ -12,9 +12,8 @@
 
 #include <Events/Bindery.h>
 #include <Core/Sculptory.h>
-
-#include <Parsers/Parsers.h>
 #include <Parsers/StyleParser.h>
+#include <Parsers/Parsers.h>
 #include <Static.h>
 #include <Mogu.h>
 #include <hash.h>
@@ -47,19 +46,28 @@ Moldable::Moldable(
         const string& constructorNode,
         Wt::WContainerWidget* parent
 )
-: Wt::WContainerWidget (parent),
-    children(),
-    __style_changed(this),
-    __failed_test(this),
-    __succeeded_test(this)
+: Wt::WContainerWidget (parent)
+    ,children()
+    ,__style_changed(this)
+    ,__index_changed(this)
+    ,__failed_test(this)
+    ,__succeeded_test(this)
 {
-    nodes.add(constructorNode);
+	__node = constructorNode;
+    nodes.add(constructorNode); //TODO remove all references to 'nodes'
+
 #ifdef DEBUG
     __NODE_NAME = constructorNode.c_str();
     std::cout << "CREATING " << __NODE_NAME << std::endl;
 #endif
+
+    // Not all widgets will have a bindery. This may remain null.
     bindery =0;
     baseVariables = new GooVariables();
+
+    /* Allow the sculptory to determine how this widget should look once it is
+     * loaded.
+     */
     conceptualize(this);
 }
 
@@ -76,17 +84,27 @@ Moldable::load()
     /* Don't create content until the widget is loaded and visible. */
     if (!loaded() || __reload)
     {
+
 #ifdef DEBUG
     	std::cout << "Loading: " << __NODE_NAME << std::endl;
 #endif
+
 		Wt::WContainerWidget::load();
+
+		//Use the properties to draw the widget on the user's screen.
 		mold(this);
+
 		if (baseVariables->flags & Enums::WidgetTypes::has_events)
 		{
 			do_if_has_events();
 		}
-		__reload = false;
+		__reload = false; //Don't allow this to be reloaded accidentally.
     }
+}
+
+std::string Moldable::getMappedValue(std::string key)
+{
+	return Parsers::StyleParser::getWidgetProperty(__node, key.c_str());
 }
 
 void Moldable::__validate()
@@ -99,13 +117,21 @@ void Moldable::__validate()
 		return;
 	}
 	__failed_test.emit();
-}
+} // validate
 
 void Moldable::addGoo (const string& nodeName)
 {
 	Moldable* newGoo =0;
+
+	/* If the new widget is dynamic, we must ensure the
+	 * integrity of the user session
+	 */
 	if (Parsers::StyleParser::widgetIsDynamic(nodeName))
 	{
+		/* We retrieve the auth token for the session to store it with the widget
+		 * ensuring that the widget can only be written or displayed as long as
+		 * the auth token remains valid.
+		 */
 		std::string token = Application::requestAuthToken(
 				Application::requestSessionID(
 				Application::mogu()->sessionId()));
@@ -114,11 +140,15 @@ void Moldable::addGoo (const string& nodeName)
 				Application::encrypt(token),
 				nodeName);
 	}
+	// If we haven't set newGoo yet, it must be a standard Moldable widget.
 	if (newGoo ==0)
 	{
 		newGoo = new Moldable(nodeName);
 	}
 
+	/* If we have a stacked widget, we must add the new child to the stack,
+	 * not to the base widget.
+	 */
 	if ( (baseVariables->type & WIDGET_HO_BITS) == Enums::WidgetTypes::stack)
     {
         Wt::WStackedWidget* stack =
@@ -126,6 +156,7 @@ void Moldable::addGoo (const string& nodeName)
         stack->addWidget(newGoo);
     }
 
+	// Otherwise, add the widget as normal.
     else
     {
         addWidget(newGoo);
@@ -139,18 +170,13 @@ void Moldable::addGoo (const string& nodeName)
      */
     children.add(newGoo);
     children.trim();
+
 #ifdef DEBUG
     for (unsigned int i = 0; i < children.size(); i++)
     {
     	assert (children.at(i) != 0);
     }
 #endif
-}
+} // addGoo()
 
-void Moldable::setStyleClass(const Wt::WString& style)
-{
-    Wt::WContainerWidget::setStyleClass(style);
-    __style_changed.emit();
-}
-
-}//namespace Goo
+}// namespace Goo
