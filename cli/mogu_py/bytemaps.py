@@ -9,7 +9,7 @@ class ListStorage:
     assume_yes          =0x2
     merge_no_repeat     =0x4 # If no_repeat is on, the merged list will remove pre-existing entries in the database in favor of new data
     is_test             =0x8
-    verbose             =0x16
+    verbose             =0x10
 
 class StrStorage:
     is_merge            =0x1
