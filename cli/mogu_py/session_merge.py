@@ -44,6 +44,8 @@ class Hash:
     meta = cityhash.to_city_hash("meta")
     prev = cityhash.to_city_hash("prev")
     session_lookup = cityhash.to_city_hash("session_lookup")
+    auth_lookup = cityhash.to_city_hash("auth_lookup")
+    salt_lookup = cityhash.to_city_hash("salt")
 
 
 def merge_all(db):
