@@ -88,7 +88,6 @@ private:
 #endif
 
 	std::string __node; //!< This widget's location in the database
-    Redis::strvector nodes; //!\deprecated Holds a number of related nodes
     Events::EventBindery* bindery; //!< The widget's personal event bindery
     bool __reload; //!< Allows the widget to be reloaded
 
@@ -198,12 +197,6 @@ public:
     Wt::Signal<>& styleChanged()
 	{
     	return __style_changed;
-    }
-
-    /*!\deprecated returns the nodeList vector, which is going away.*/
-    inline Redis::strvector* getNodeList()
-    {
-    	return &nodes;
     }
 
     /*!\brief Use instead of getNodeList to retrieve this widget's location

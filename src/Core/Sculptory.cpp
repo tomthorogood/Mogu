@@ -34,10 +34,10 @@ void conceptualize (Moldable* widget)
 	GooVariables* vars = widget->getProperties();
 	WidgetTypes type = getWidgetType(widget);
 	vars->type = type;
-	std::string widgetNode = widget->getNodeList()->at(0);
+	std::string widgetNode = widget->getNode();
 
 
-	if (widgetIsDynamic(widget->getNodeList()->at(0)))
+	if (widgetIsDynamic(widgetNode))
 	{
 		vars->flags |= is_dynamic;
 	}
@@ -116,7 +116,7 @@ void conceptualize (Moldable* widget)
 void mold(Moldable* widget)
 {
 	GooVariables* vars = widget->getProperties();
-	std::string node = widget->getNodeList()->at(0);
+	std::string node = widget->getNode();
 
 
 	if (vars->flags & blocks_actions)
@@ -171,9 +171,7 @@ void mold(Moldable* widget)
 				Wt::WAnimation transition(effect);
 				stack->setTransitionAnimation(transition,true);
 			}
-			if (widgetHasProperty(
-				widget->getNodeList()->at(0),
-				"class"))
+			if (widgetHasProperty(node, "class"))
 			{
 				stack->setStyleClass(widget->styleClass());
 				widget->setStyleClass("");
@@ -191,8 +189,7 @@ void mold(Moldable* widget)
 			widget->addWidget(input);
 			if (vars->flags & is_validated)
 			{
-				std::string val_name = getWidgetProperty(
-						widget->getNodeList()->at(0), "validator");
+				std::string val_name = getWidgetProperty(node, "validator");
 				Wt::WValidator* validator =
 						Validators::createValidator(val_name);
 				input->setValidator(validator);

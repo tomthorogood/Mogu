@@ -54,7 +54,6 @@ Moldable::Moldable(
     ,__succeeded_test(this)
 {
 	__node = constructorNode;
-    nodes.add(constructorNode); //TODO remove all references to 'nodes'
 
 #ifdef DEBUG
     __NODE_NAME = constructorNode.c_str();

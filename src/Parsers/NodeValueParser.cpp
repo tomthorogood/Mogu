@@ -182,7 +182,7 @@ void NodeValueParser::interpret_as_field(const string& field)
     {
         //@TODO Throw an error!
     }
-    string nodeName = __broadcaster->getNodeList()->at(0);
+    string nodeName = __broadcaster->getNode();
     string command = "hget ";
     command.append(nodeName).append(" ").append(field);
     Redis::command(command);

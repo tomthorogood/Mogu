@@ -36,11 +36,11 @@ EventBindery::EventBindery(Moldable* broadcaster)
 : extractorMap()
 {
 #ifdef DEBUG
-	std::cout << "************** BINDERY FOR " << broadcaster->getNodeList()->at(0);
+	std::cout << "************** BINDERY FOR " << broadcaster->getNode();
 	std::cout << "**************" << std::endl;
 #endif
     __broadcaster = broadcaster;
-    string eventNamespace = broadcaster->getNodeList()->at(0);
+    string eventNamespace = broadcaster->getNode();
     eventNamespace.append(".events.*");
     strvector eventNodes;
     Redis::command("keys", eventNamespace);
@@ -135,7 +135,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
     		std::string message = ext->getValue(Enums::Labels::message);
     		std::cout << message << std::endl;
     	}
-    	std::cout << " to " << broadcaster->getNodeList()->at(0) << std::endl;
+    	std::cout << " to " << broadcaster->getNode() << std::endl;
 #endif
 
         switch(trigger)

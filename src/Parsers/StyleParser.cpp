@@ -26,7 +26,7 @@ WidgetType getWidgetType(Moldable* broadcaster)
    Nodes::NodeValue val;
 
    std::string reply_str = getWidgetProperty(
-    		broadcaster->getNodeList()->at(0), "type");
+    		broadcaster->getNode(), "type");
 
    Parsers::NodeValueParser parser(reply_str, &val, broadcaster,
             Parsers::enum_callback <Parsers::WidgetTypeParser>);
@@ -38,7 +38,7 @@ WidgetType getWidgetType(Moldable* broadcaster)
 string getWidgetText(Moldable* broadcaster)
 {
     string text_content;
-    string nodeName = broadcaster->getNodeList()->at(0);
+    string nodeName = broadcaster->getNode();
 
     string reply_str = getWidgetProperty(nodeName, "content");
     Nodes::NodeValue val;
@@ -49,7 +49,7 @@ string getWidgetText(Moldable* broadcaster)
 
 void getWidgetChildren(Moldable* broadcaster, Redis::strvector& children)
 {
-    string nodeName = broadcaster->getNodeList()->at(0);
+    string nodeName = broadcaster->getNode();
     nodeName.append(".children");
     int num_children =0;
 
@@ -64,7 +64,7 @@ void getWidgetChildren(Moldable* broadcaster, Redis::strvector& children)
 
 Wt::WAnimation::AnimationEffect getWidgetAnimation(Moldable* broadcaster)
 {
-    string nodeName = broadcaster->getNodeList()->at(0);
+    string nodeName = broadcaster->getNode();
     Redis::command("hget", nodeName, "animation");
     string animation_str = Redis::toString();
     Nodes::NodeValue val;
@@ -75,7 +75,7 @@ Wt::WAnimation::AnimationEffect getWidgetAnimation(Moldable* broadcaster)
 
 bool widgetHasChildren(Moldable* broadcaster)
 {
-    string nodeName = broadcaster->getNodeList()->at(0);
+    string nodeName = broadcaster->getNode();
     nodeName.append(".children");
     Redis::command("exists", nodeName);
     return Redis::getInt() == 1;
@@ -85,7 +85,7 @@ bool widgetHasChildren(Moldable* broadcaster)
 
 bool widgetBlocksActions(Moldable* broadcaster)
 {
-    string nodeName = broadcaster->getNodeList()->at(0);
+    string nodeName = broadcaster->getNode();
     Redis::command("hexists", nodeName, "block");
     return (bool) Redis::getInt();
 }
@@ -107,7 +107,7 @@ bool widgetIsDynamic(std::string nodeName)
 uint8_t getActionBlock(Moldable* broadcaster)
 {
     uint8_t block   =0;
-    string nodeName = broadcaster->getNodeList()->at(0);
+    string nodeName = broadcaster->getNode();
     Redis::command("hget", nodeName, "block");
     string block_str = Redis::toString();
     string block_arr[Enums::SignalActions::NUM_ACTIONS];
