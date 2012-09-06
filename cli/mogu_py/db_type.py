@@ -147,8 +147,12 @@ class Node(object):
         merge = bytemaps.is_set(flags, f.is_merge)
         assume_yes = bytemaps.is_set(flags, f.assume_yes)
         node_exists = self.exists(db)
+        verbose = bytemaps.is_set(flags, f.verbose)
         if not merge and node_exists:
-            c = confirm("%s already exists. It will be DELETED before writing new data." % self.node, assume_yes)
+            if assume_yes and not verbose:
+                c = True
+            else:
+                c = confirm("%s already exists. It will be DELETED before writing new data." % self.node, assume_yes)
             if not c:
                 return
             else:
