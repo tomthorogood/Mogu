@@ -1,10 +1,12 @@
 from redis_cheats import full_list
 
+def clean_str(string):
+    return string.replace("\"","\\\"")
 
 def dict_str(dict_entries):
     str_entries = []
     for entry in dict_entries:
-        value = dict_entries[entry].replace("\"","\\\"")
+        value = clean_str(dict_entries[entry])
         as_string = "\t\"%s\"\t:\t\"%s\"" % (entry, value)
         str_entries.append(as_string)
     entries_body = ",\n".join(str_entries)
@@ -136,7 +138,7 @@ def export_session(db,session):
             l = full_list(db, name)
             body = list_str(l)
         else:
-            body = " \t\"%s\"\n" % db.get(name)
+            body = " \t\"%s\"\n" % clean_str(db.get(name))
         output += "%s%s" % (title,body)
     return output
 
