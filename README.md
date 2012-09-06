@@ -19,6 +19,8 @@ system. These two things combined may in fact break your brain.
 Mogu also comes with a toolkit of command line functions to analyze and make changes to your application
 without on the fly, including export/import functionality allowing you to test once and deploy anywhere.
 
+**Full documentation can be found at [gomogu.org](http://www.gomogu.org)**
+
 ## Building Dependencies #
 
 Currently, the worst part about using Mogu is getting everything else setup first, namely Wt. Once you're
