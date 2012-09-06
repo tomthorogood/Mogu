@@ -168,14 +168,14 @@ if command == "import":
             v.build(validator)
             v._import(db, package.validators[validator], dflags)
 
-# mogo export --filename F [--resis-port --redis-host --redis-select --redis-auth]
+# mogo export filename [--resis-port --redis-host --redis-select --redis-auth]
 if command == "export":
-    if not args.filename:
+    if len(args.command) is 1:
         error = fail("You have told me that you want to export the database, but have not given me a filename to write to.")
         print("%s\n You can fix this by using the --filename option. ex: ./mogu export --filename /path/to/file")%error
         sys.exit()
     
-    export(db,args.filename)
+    export(db,args.command[1])
 
 # mogu remove-child child-name [parent ...]
 if command == "remove-child":
