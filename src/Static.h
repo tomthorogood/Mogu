@@ -92,6 +92,8 @@ namespace Application
 	 */
 	std::string retrieveSlot (std::string name, std::string wtSession);
 
+	bool metaKeyConfigured(std::string key);
+	std::string getMetaValue(std::string key);
 }
 
 

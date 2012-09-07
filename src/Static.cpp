@@ -9,6 +9,7 @@
 #include <crypt/BlowfishKey.h>
 #include <crypt/PacketCenter.h>
 #include <Exceptions/Exceptions.h>
+#include <Redis/RedisCore.h>
 
 namespace Application
 {
@@ -104,6 +105,18 @@ std::string retrieveSlot(std::string name, std::string wtsession)
 				wtsession,
 				"Wt Session ID Mismatch! This is not a good thing!");
 	}
+}
+
+bool metaKeyConfigured(std::string key)
+{
+	Redis::command("exists meta."+key);
+	return (bool) Redis::getInt();
+}
+
+std::string getMetaValue(std::string key)
+{
+	Redis::command("get meta."+key);
+	return Redis::toString();
 }
 }//namespace Application
 

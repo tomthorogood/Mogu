@@ -33,7 +33,6 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 	Application::defineMogu(this);
 	Application::setWtSession(sessionId());
 
-
 	std::string global_auth = AUTH_TOKEN;
 	std::string auth_hash = Hash::toHash(global_auth);
 	Application::setAuthToken(auth_hash);
@@ -54,6 +53,11 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     if (entry_path != "/" && entry_path.length() > 0)
     {
     	handlePathChange(entry_path);
+    }
+
+    if (Application::metaKeyConfigured("analytics"))
+    {
+    	loadAnalytics(Application::getMetaValue("analytics"));
     }
 }
 

@@ -46,7 +46,7 @@ void increment_index(Listeners* listeners)
 		if (widget->allowsAction(Action::increment_index))
 		{
 #ifdef DEBUG
-			std::cout << "Setting index of " << widget->getNodeList()->at(0) << std::endl;
+			std::cout << "Setting index of " << widget->getNode() << std::endl;
 #endif
 			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
 				widget->widget(0);
@@ -83,7 +83,7 @@ void decrement_index(Listeners* listeners)
 			{
 	#ifdef DEBUG
 				std::cout << "CHANGING INDEX OF";
-				std::cout << widget->getNodeList()->at(0) << " TO ";
+				std::cout << widget->getNode() << " TO ";
 				std::cout << current_index << std::endl;
 	#endif
 				stack->setCurrentIndex(current_index);

@@ -33,6 +33,7 @@ install:
 	ln -s /etc/mogu/mogu /usr/bin/mogu
 
 install-cli:
+	cp /etc/mogu/mogu.conf cli/mogu.conf
 	cd cli/cli_src && $(MAKE) all
 	cp -r cli/* /etc/mogu	
 
