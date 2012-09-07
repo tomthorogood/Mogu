@@ -338,12 +338,13 @@ if command == "start":
     os.system(cli_command)
 
 if command == "newfile":
-    filename = args.filename
-    f = open(filename,"w")
-    f.write("#!/usr/bin/env python\n")
-    f.write("# Mogu Import File %s" % filename)
-    f.write("\n\n")
-    f.close()
+    filenames = args.command[1:] 
+    for filename in filenames:
+        f = open(filename,"w")
+        f.write("#!/usr/bin/env python\n")
+        f.write("# Mogu Import File %s" % filename)
+        f.write("\n\n")
+        f.close()
 
 if command == "export-widget":
     try:
