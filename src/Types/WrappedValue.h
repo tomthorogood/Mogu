@@ -49,7 +49,7 @@ public:
 		__value = value;
 	}
 
-	virtual ~WrappedValue();
+	virtual ~WrappedValue(){};
 };
 
 

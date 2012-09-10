@@ -5,7 +5,7 @@
  *      Author: tom
  */
 
-#include <Wrapped_StaticNode.h>
+#include <Types/Wrapped_StaticNode.h>
 #include <Redis/RedisCore.h>
 
 Wrapped_StaticNode::Wrapped_StaticNode (std::string value)

@@ -17,6 +17,8 @@
 #include <map>
 #include <stdint.h>
 
+#include <inline_utils.h>
+
 /* In a single byte, this denotes the two highest order bits:
  * 	(as long as we're on a machine with the correct endianness)
  *  7 6 5 4 3 2 1 0
