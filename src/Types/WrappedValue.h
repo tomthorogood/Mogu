@@ -23,6 +23,11 @@ protected:
 	 * retrieve the set value; */
 	inline std::string getValue() { return __value; }
 
+	inline std::string unwrap()
+	{
+		return __value.substr(1, __value.length()-2);
+	}
+
 public:
 
 	/*!\brief The main logic of the value is to determine what the actual
@@ -30,7 +35,7 @@ public:
 	 * that, and must be implemented in all derived classes.
 	 * @return The interpreted value of type T declared in the template.
 	 */
-	virtual T interpret() =0;
+	virtual T interpret(uint8_t nargs, ...) =0;
 
 	/*!\brief All WrappedValues require some arbitrary wrappings -- this
 	 * is required in all derived classes, and the method needs to set

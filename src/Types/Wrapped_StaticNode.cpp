@@ -14,9 +14,9 @@ Wrapped_StaticNode::Wrapped_StaticNode (std::string value)
 	interpreted = false;
 }
 
-Maps::Strings Wrapped_StaticNode::interpret()
+Maps::Strings Wrapped_StaticNode::interpret(uint8_t nargs, ...)
 {
-	std::string node = getValue();
+	std::string node = unwrap();
 	std::string node_type;
 	Maps::Strings nodeMap;
 

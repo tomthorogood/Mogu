@@ -24,17 +24,18 @@ private:
 	Maps::Strings __node_map;
 	bool interpreted;
 public:
-		Wrapped_StaticNode (std::string value);
-		Maps::Strings interpret();
 
-		inline std::string operator[](std::string key)
+	Wrapped_StaticNode (std::string value);
+	Maps::Strings interpret(uint8_t nargs=0, ...);
+
+	inline std::string operator[](std::string key)
+	{
+		if (!interpreted)
 		{
-			if (!interpreted)
-			{
-				__node_map = interpret();
-			}
-			return __node_map[key];
+			__node_map = interpret();
 		}
+		return __node_map[key];
+	}
 };
 
 #endif /* WRAPPED_STATICNODE_H_ */
