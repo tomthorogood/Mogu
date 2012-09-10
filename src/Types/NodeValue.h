@@ -24,6 +24,13 @@ enum ReadType
     float_value		=0x3
 };
 
+union NumericUnion
+{
+	int		as_int;
+	float 	as_float;
+};
+
+
 struct ValueStruct
 {
     std::string as_string;
@@ -38,8 +45,9 @@ struct ValueStruct
 
 class NodeValue
 {
-    ValueStruct* __value;
     ReadType __type;
+    std::string as_string;
+    NumericUnion* __numerics;
 
 public:
     NodeValue();

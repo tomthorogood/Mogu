@@ -8,33 +8,14 @@ namespace Nodes{
 using std::string;
 NodeValue::NodeValue()
 {
-    __value = new ValueStruct();
+    __numerics = new NumericUnion();
     __type = NO_VALUE;
 }
 
 NodeValue::NodeValue(NodeValue* proto)
 {
-	__value = new ValueStruct();
+	__numerics = new NumericUnion();
 	__type = proto->getType();
-#ifdef DEBUG
-	switch( __type)
-	{
-	case int_value:
-		setInt(proto->getInt());
-		assert(__value->as_int != INT_MIN);
-		break;
-	case string_value:
-		setString(proto->getString());
-		assert(__value->as_string != "");
-		break;
-	case float_value:
-		setFloat(proto->getFloat());
-		assert(__value->as_float != FLT_MIN);
-		break;
-	default:
-		break;
-	}
-#else
 
 	switch( __type)
 	{
@@ -50,35 +31,28 @@ NodeValue::NodeValue(NodeValue* proto)
 	default:
 		break;
 	}
-#endif
-}
-
-NodeValue::NodeValue(ValueStruct* value, ReadType _type)
-{
-    __value = value;
-    __type = _type;
 }
 
 NodeValue::~NodeValue()
 {
-		delete __value;
+		delete __numerics;
 }
 
 void NodeValue::setString(string val)
 {
-	__value->as_string = val;
+	as_string = val;
     __type = string_value;
 }
 
 void NodeValue::setInt(int val)
 {
-    __value->as_int = val;
+    __numerics->as_int = val;
     __type = int_value;
 }
 
 void NodeValue::setFloat(float val)
 {
-    __value->as_float = val;
+    __numerics->as_float = val;
     __type = float_value;
 }
 
@@ -89,18 +63,17 @@ ReadType NodeValue::getType()
 
 string NodeValue::getString()
 {
-    string as_string(__value->as_string);
     return as_string;
 }
 
 int NodeValue::getInt()
 {
-    return __value->as_int;
+    return __numerics->as_int;
 }
 
 float NodeValue::getFloat()
 {
-    return __value->as_float;
+    return __numerics->as_float;
 }
 
 }//namespace Nodes
