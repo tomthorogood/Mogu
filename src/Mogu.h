@@ -87,10 +87,18 @@ public:
 				,"'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';"
 				,"var s = document.getElementsByTagName('script')[0];"
 				,"s.parentNode.insertBefore(ga, s);"
+#ifdef TEST_JAVASCRIPT
+				,"alert('Analytics Fired!');"
+#endif
 				,"})();"
 		};
+#ifdef TEST_JAVASCRIPT
+		int array_len = 15;
+#else
+		int array_len = 14;
+#endif
 		std::string final = "";
-		for (int i = 0; i < 14; i++)
+		for (int i = 0; i < array_len; i++)
 		{
 			final += script[i];
 		}
