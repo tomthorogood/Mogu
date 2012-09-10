@@ -9,48 +9,6 @@
 #define E_NODEVALUES_H_
 
 namespace NodeValueTypes{
-    /*!\brief In the database, values which should be interpreted
-     * as hash fields should be appear [like this]
-     */
-    const char FIELD_CONTAINER[2] = {'[',']'};
-
-    /*!\brief In the database, values which should be interpreted
-     * as integers should appear ^like this^
-     */
-    const char INTEGER_CONTAINER[2] = {'^','^'};
-
-    /*!\brief In the database, values which should be interpreted
-     * as enumerated types should appear {like this}
-     */
-    const char ENUM_CONTAINER[2] = {'{','}'};
-
-    /*!\brief In the database, values which should be interpreted
-     * as static nodes should appear <like this>.
-     */
-    const char STATIC_NODE_CONTAINER[2] = {'%','%'};
-
-    /*!\brief In the database, values which should be interpreted
-     * as dynamic nodes should appear @like this@
-     */
-    const char DYNAMIC_NODE_CONTAINER[2] = {'@','@'};
-
-    /*!\brief In the database, values which should be interpreted
-     * as floating point values should appear ~like this~
-     */
-    const char FLOAT_CONTAINER[2] = {'~','~'};
-
-    /*!\brief In the database, values which should be interpreted as
-     * pointers to a file in the fileststem should appear
-     * `like/this/`
-     */
-    const char FILE_CONTAINER[2] = {'`','`'};
-
-    /*!\brief In the database, values can instead use the enumerated
-     * type name instead of any of the above notations by placing
-     * the $ symbol with the enum name as the first part:
-     * $field_value, $enum_value, etc.
-     */
-
 enum NodeValueTypes{
     /*!\brief When read in from the database, string values are interpreted
      * exactly as they are read.
