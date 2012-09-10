@@ -30,19 +30,6 @@ union NumericUnion
 	float 	as_float;
 };
 
-
-struct ValueStruct
-{
-    std::string as_string;
-    int as_int;
-    float as_float;
-    ValueStruct() {
-    	as_string = "";
-    	as_int = INT_MIN;
-    	as_float = FLT_MIN;
-    }
-};
-
 class NodeValue
 {
     ReadType __type;
@@ -54,7 +41,6 @@ public:
 
     /* Copies the value of another node value into this one. */
     NodeValue(NodeValue*);
-    NodeValue(ValueStruct* value, ReadType _type);
     virtual ~NodeValue();
 
     void setString(std::string val);
