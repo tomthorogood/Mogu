@@ -1,7 +1,7 @@
 /*
  * NodeValueParser.h
  *
- *  Created on: Jul 11, 2012
+ *  Created on: Sep 10, 2012
  *      Author: tom
  */
 
@@ -10,50 +10,24 @@
 
 #include <declarations.h>
 
-namespace Parsers
-{
-
+namespace Parsers{
 
 class NodeValueParser
 {
-    Nodes::NodeValue* parsedValue;
-    Enums::NodeValueTypes::NodeValueTypes __type;
-    std::string __value;
-    char __first_char;
-    Goo::Moldable* __broadcaster;
-    bool __value_persists;
-
-    inline std::string polish(const std::string& value)
-    {
-		return value.substr(1, (value.length()-2));
-    }
-
-    void cast_as_enum_repr(const std::string& value);
-    void cast_as_enum_int(const std::string& value);
-    void interpret_as_field(const std::string& value);
-    void interpret_as_integer(const std::string& value);
-    void interpret_as_enum(
-            const std::string& value, int(*callback)(const std::string&));
-    void interpret_as_static_node(const std::string& value);
-    void interpret_as_dynamic_node(const std::string& value);
-    void interpret_as_float (const std::string& value);
-    void interpret_from_file (const std::string& value);
-    void set_value_type(
-            const std::string& value, int(*callback)(const std::string&) =0);
-    void interpret(
-            const std::string& value, int(*callback)(const std::string&) =0);
+private:
+	std::vector <WrappedValue*> wrappedValues;
+	Nodes::NodeValue* parsedValue;
+	char __first_char;
 
 public:
-    NodeValueParser(
-            std::string value,
-            Nodes::NodeValue* node_value,
-            Goo::Moldable* broadcaster =0,
-            int(*callback)(const std::string&) =0
-            );
-    virtual ~NodeValueParser();
-    Nodes::NodeValue* getValue();
+	NodeValueParser(
+			std::string full_value,
+			Nodes::NodeValue* node_value,
+			Goo::Moldable* broadcaster =0);
+	Nodes::NodeValue* getValue();
 };
 
-} // Namespace parsers
+}//namespace Parsers
+
 
 #endif /* NODEVALUEPARSER_H_ */

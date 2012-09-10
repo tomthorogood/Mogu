@@ -202,7 +202,7 @@ def export(db, filename):
         key_type = db.type(key)
         title = dict_entry_line("meta", key_id)
         if key_type == "string":
-            body = "\"%s\"" % (db.hget(key))
+            body = "\"%s\"" % (db.get(key))
         elif key_type == "list":
             body = list_str(db,full_list(key))
         else:

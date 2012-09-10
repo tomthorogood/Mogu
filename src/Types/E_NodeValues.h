@@ -9,6 +9,7 @@
 #define E_NODEVALUES_H_
 
 namespace NodeValueTypes{
+
 enum NodeValueTypes{
     /*!\brief When read in from the database, string values are interpreted
      * exactly as they are read.

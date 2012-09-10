@@ -10,8 +10,23 @@
 
 #include <declarations.h>
 
+class WValue
+{
+private:
+	std::string __value;
+	char __start;
+	char __end;
+protected:
+	inline std::string getValue() { return __value; }
+	inline std::string unwrap()
+	{
+		int end_index = __value.find(__end);
+		cd .
+	}
+};
+
 template <typename T>
-class WrappedValue
+class WrappedValue : public WValue
 {
 private:
 	char __start;
@@ -49,7 +64,8 @@ public:
 		__end = end;
 	}
 
-	WrappedValue(char start, char end, std::string value) {
+	WrappedValue(char start, char end, std::string value)
+	{
 		set_wrapping(start,end);
 		__value = value;
 	}
