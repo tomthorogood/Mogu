@@ -102,6 +102,11 @@ namespace Redis
     typedef TurnLeft::Utils::HungryVector <std::string> strvector;
 }
 
+namespace Maps
+{
+	typedef std::map <std::string,std::string> Strings;
+}
+
 class Mogu;
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
 typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
