@@ -8,6 +8,8 @@
 #ifndef DECLARATIONS_H_
 #define DECLARATIONS_H_
 
+#define EMPTY ""
+
 #include <TurnLeftLib/TurnLeft.h>
 #include <TurnLeftLib/Utils/enumparser.h>
 
@@ -77,6 +79,7 @@ namespace Parsers
     class SignalActionParser;
     class SignalTriggerParser;
     class TokenGenerator;
+    class MoguScript_Tokenizer;
 }
 
 namespace EventNodeConfiguration
@@ -111,9 +114,18 @@ namespace Maps
 }
 
 class Mogu;
+class Parseable;
+
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
 typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
-typedef std::vector <std::pair <char,char>> CharCouplets;
+
+typedef std::vector
+		<std::pair <char,char> >
+CharCouplets;
+
+typedef std::vector
+		<std::pair <std::string, Enums::NodeValueTypes::NodeValueTypes> >
+MoguDeclaration;
 
 /*!\brief masked data is data whose bits are individually manipulated to
  * pack data efficiently

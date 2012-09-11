@@ -52,6 +52,12 @@ class TokenGenerator
 	 */
 	CharCouplets __chars;
 
+protected:
+
+	CharCouplets* getWrappers() { return &__chars;}
+	std::string getOriginal() { return __orig;}
+	void setCurrentPosition(size_t i) { __cpos = i;}
+
 public:
 
 	/*!\brief Registers a new pair of chars to be used when finding tokens.
@@ -109,7 +115,7 @@ public:
 	 * string.
 	 * @param orig
 	 */
-	TokenGenerator (std::string orig = "");
+	TokenGenerator (std::string orig = EMPTY);
 
 	/*!\brief Finds the next token. If no wrapped delineators can be found, it
 	 * will instead use only the char delineator given as a parameter (defaults
@@ -120,7 +126,7 @@ public:
 	 * @param delineator (optional) Delineator separating tokens
 	 * @return The next token in the string
 	 */
-	std::string next(char delineator = ' ');
+	virtual std::string next(char delineator = ' ');
 
 	virtual ~TokenGenerator(){}
 };

@@ -23,7 +23,7 @@ string TokenGenerator::next(char delim)
 	 */
 	if (__cpos >= __orig.length()-1)
 	{
-		return "";
+		return EMPTY;
 	}
 
 	char chcurr = __orig.at(__cpos);

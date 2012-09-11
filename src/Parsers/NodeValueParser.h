@@ -15,9 +15,15 @@ namespace Parsers{
 class NodeValueParser
 {
 private:
-	std::vector <WrappedValue*> wrappedValues;
+
+	MoguDeclaration declaration;
 	Nodes::NodeValue* parsedValue;
-	char __first_char;
+
+
+	inline std::string unwrap(std::string str)
+	{
+		return str.substr(1,str.length()-2);
+	}
 
 public:
 	NodeValueParser(

@@ -5,7 +5,6 @@
 #include <declarations.h>
 #include <Wt/WContainerWidget>
 
-#include <Parsers/P_NodeValues.h>
 #include <Parsers/P_Signals.h>
 #include <Parsers/P_Submissions.h>
 #include <Parsers/P_Validators.h>
