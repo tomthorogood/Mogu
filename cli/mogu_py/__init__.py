@@ -1,6 +1,5 @@
 from coloring import *
 from snippets import *
-from database import *
 from exportdb import *
 from relationships import *
 from session_merge import *

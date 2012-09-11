@@ -1,4 +1,0 @@
-widgets["foo"] = {
-    "type": "image",
-    "content" :"hello!"
-}
