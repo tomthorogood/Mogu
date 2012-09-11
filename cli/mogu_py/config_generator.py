@@ -188,4 +188,4 @@ def write_config_file(config, filename=None):
 
 if __name__ == "__main__":
     config = ConfigImporter()
-    write_config_file(, getcwd()+"/mogu.conf")
+    write_config_file(config, getcwd()+"/mogu.conf")

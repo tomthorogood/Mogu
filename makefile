@@ -71,4 +71,4 @@ purge: clean
 	rm -rf mogu-server
 
 mogu.conf:
-	python $(gen_config)
+	sudo python $(gen_config)
