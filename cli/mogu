@@ -275,37 +275,6 @@ if command == "get-child-index":
         output = info(widget) + " :\t%s" % ok(str(index))
         print output
 
-#mogu meta-add key value
-# meta values do not influence the behaviour of your application, but only serve
-# to aid you in building it 
-if command == "meta-add":
-    key = args.command[1]
-    value = args.command[2]
-    db.lpush("meta.%s"%key,value)
-
-#mogu meta-check key value
-if command == "meta-check":
-    var = args.command[1]
-    key = "meta.%s" % var
-    keytype = db.type(key)
-    if keytype == "string":
-        message = info(var)
-        message += ": "
-        mesage += ok(db.get(key))
-    elif keytype == "list":
-        message = info(var)
-        message += ": "
-        message += ok(full_list(db,key))
-    else:
-        message = ""
-        dct = db.hgetall(key)
-        for entry in dct:
-            message += info(entry)
-            message += "\t:\t"
-            message += ok(dct[entry])
-            message += "\n"
-    print(message)
-
 #mogu delete key
 if command == "delete":
     key = args.command[1]
@@ -318,14 +287,6 @@ if command == "delete":
     else:
         print(fail("%s does not exist in this database." % key))
         print("For your safety, we have disabled auto key-complete when deleting. You must use the full key name.")
-
-#mogu meta-css-classes
-if command == "meta-css-classes":
-    css_classes = parse_css(db)
-    print css_classes
-    css_classes.sort()
-    for _class in css_classes:
-        print ok(_class)
 
 if command == "start":
     meta_keys = ("analytics",)
