@@ -70,10 +70,17 @@ public:
     /*!\brief If the type is `string_value`, returns a string. */
     std::string getString();
 
+<<<<<<< HEAD
     /*!\brief If the type is `int_value`, returns the int.*/
     int getInt();
 
+    /*!\brief If the type is `float_value`, returns the float.*/
+=======
+    /*!\brief If the type is `int_value`, returns the int. */
+    int getInt();
+
     /*!\brief If the type is `float_value`, returns the float. */
+>>>>>>> 39a830781c796c69f8f44cdee5e0c5ca9c89780b
     float getFloat();
 
     /*!\brief Returns the type so the correct data can be extracted. */
