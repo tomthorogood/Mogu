@@ -5,6 +5,7 @@ executable := mogu-server
 o:=0
 devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
 production_libs := -lwt -lwtfcgi -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
+gen_config := cli/mogu_py/config_generator.py
 
 turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
 sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
@@ -24,22 +25,24 @@ endif
 production: $(objects) | $(turnleft)
 	$(command) -o mogu-server $(objects) $(production_libs)
 
-install: 
+install: mogu.conf
+	$(MAKE) uninstall
 	mkdir -p /etc/mogu
+	cp $< /etc/mogu
 	cd cli/cli_src && $(MAKE) all
 	cp -r cli/* /etc/mogu
-	cp -r resources/ /etc/mogu/
+	cp -r resources/ /etc/mogu
 	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
 	ln -s /etc/mogu/mogu /usr/bin/mogu
 
-install-cli:
-	cp /etc/mogu/mogu.conf cli/mogu.conf
+install-cli: mogu.conf
 	cd cli/cli_src && $(MAKE) all
-	cp -r cli/* /etc/mogu	
+	cp -r cli/* /etc/mogu
+	cp $< /etc/mogu
 
 uninstall:
-	unlink /usr/bin/mogu-server
-	unlink /usr/bin/mogu
+	rm -f /usr/bin/mogu-server
+	rm -f /usr/bin/mogu
 	rm -rf /etc/mogu
 
 %.o:
@@ -51,10 +54,10 @@ endif
 
 $(turnleft):
 	git clone git://www.github.com/tomthorogood/TurnLeftLib.git
-	cd TurnLeftLib && $(MAKE) && sudo $(MAKE) install && $(MAKE) clean
+	cd TurnLeftLib && $(MAKE) && sudo $(MAKE) install
+	rm -rf TurnLeftLib
 
 upgrade:
-	cp /etc/mogu/mogu.conf cli/mogu.conf
 	$(MAKE) uninstall
 	$(MAKE)
 	$(MAKE) install
@@ -66,3 +69,6 @@ clean:
 
 purge: clean
 	rm -rf mogu-server
+
+mogu.conf:
+	python $(gen_config)

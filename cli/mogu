@@ -10,8 +10,6 @@ from ConfigParser import NoOptionError
 #import mogu.io
 import sys
 
-VERSION="0.8.03 alpha"
-
 config = SafeConfigParser()
 config.read(CONFIG_FILE)
 
@@ -333,9 +331,10 @@ if command == "start":
     meta_keys = ("analytics",)
     print(info("Importing meta values..."))
     for key in meta_keys:
-        val = config.get("meta_keys", key)
-        print(info("meta.%s -> %s" % (key,val)))
-        db.set("meta.%s" % key, val)
+        if config.has_option("meta_keys",key):
+            val = config.get("meta_keys", key)
+            print(info("meta.%s -> %s" % (key,val)))
+            db.set("meta.%s" % key, val)
 
     cli_command = "mogu-server --docroot \"%s;/resources\" --http-address %s --http-port %s" % (
             config.get("local_server","root"), config.get("local_server", "address"), config.get("local_server", "port"))

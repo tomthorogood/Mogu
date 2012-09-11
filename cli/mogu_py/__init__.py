@@ -9,3 +9,4 @@ import importdb
 from whatis import *
 import bytemaps
 from db_type import *
+import config_generator
