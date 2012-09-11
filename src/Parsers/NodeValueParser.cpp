@@ -16,12 +16,7 @@ NodeValueParser::NodeValueParser(
 		Moldable* broadcaster)
 {
 	parsedValue = nval;
-	__first_char = full_value.at(0);
-	bool has_more_values = true;
-	while (has_more_values)
-	{
 
-	}
 }
 
 

@@ -14,6 +14,7 @@
 #include <Types/Enums.h>
 #include <string>
 #include <exception>
+#include <utility>
 #include <map>
 #include <stdint.h>
 
@@ -75,7 +76,7 @@ namespace Parsers
     class NodeValueTypeParser;
     class SignalActionParser;
     class SignalTriggerParser;
-    class HashableAnswer_ErrorFlagParser;
+    class TokenGenerator;
 }
 
 namespace EventNodeConfiguration
@@ -112,6 +113,7 @@ namespace Maps
 class Mogu;
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
 typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
+typedef std::vector <std::pair <char,char>> CharCouplets;
 
 /*!\brief masked data is data whose bits are individually manipulated to
  * pack data efficiently
