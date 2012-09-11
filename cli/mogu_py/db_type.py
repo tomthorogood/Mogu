@@ -3,7 +3,7 @@ import subprocess
 import bytemaps
 import mimport as todb
 from snippets import confirm
-from db_type_exceptions import *
+from exceptions import *
 import cityhash
 required_event_parameters = {
         "198"       :       ("action","message","nextAction","degradation"),
