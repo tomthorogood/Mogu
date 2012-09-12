@@ -20,16 +20,8 @@ public:
 	void connect (Node* node, EdgeDirection direction)
 	{
 		Edge* edge;
-		switch(direction)
-		{
-		case undirected:
-		case inbound:{ //cascades on purpose!
-			edge = new Edge(this, node, direction);
-			break;}
-		case outbound:{
-			edge = new Edge(node, this, direction);
-			break;}
-		}
+		if (direction == outbound) edge = new Edge(node, this, direction);
+		else edge = new Edge(this, node, direction);
 		__connections.push_back(edge);
 		node->connect(edge);
 	}
@@ -46,6 +38,11 @@ public:
 	inline void writeValue(Nodes::NodeValue* value)
 	{
 		__value = value;
+		int edges = __connections.size();
+		for (int e = 0; e < edges; e++)
+		{
+			__connections[e]->traverse();
+		}
 	}
 };
 

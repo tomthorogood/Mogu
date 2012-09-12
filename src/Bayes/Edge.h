@@ -15,16 +15,22 @@ class Edge
 private:
 	std::pair <Node*,Node*> __nodes;
 	EdgeDirection __direction;
+	Manipulation* __traversal;
 
 public:
 	Edge(Node* source, Node* destination, EdgeDirection direction);
-	void traverse (Manipulation* manipulation =0)
+	void traverse ()
 	{
-		if (manipulation != 0)
+		if (__traversal != 0)
 		{
-			manipulation->stage(__nodes);
-			manipulation->exec();
+			__traversal->stage(__nodes);
+			__traversal->exec();
 		}
+	}
+
+	void onTraverse(Manipulation* traversal)
+	{
+		__traversal = traversal;
 	}
 };
 
