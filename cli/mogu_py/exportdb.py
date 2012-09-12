@@ -7,10 +7,10 @@ def dict_str(dict_entries):
     str_entries = []
     for entry in dict_entries:
         value = clean_str(dict_entries[entry])
-        as_string = "\t\"%s\"\t:\t\"%s\"" % (entry, value)
+        as_string = "\t%-15s:\t%s" % ('"'+entry+'"', '"'+value+'"')
         str_entries.append(as_string)
-    entries_body = ",\n".join(str_entries)
-    output = "{\n%s\n}\n\n" % entries_body
+    entries_body = (",\n".join(str_entries))+","
+    output = "{\n%s\n}\n" % entries_body
     return output
 
 def list_str(list_entries, quote="\""):
@@ -18,8 +18,8 @@ def list_str(list_entries, quote="\""):
     for entry in list_entries:
         as_string = "\t%s%s%s" % (quote,entry,quote)
         str_entries.append(as_string)
-    body = ",\n".join(str_entries)
-    output = "[\n%s\n]\n\n" % body
+    body = (",\n".join(str_entries))+","
+    output = "[\n%s\n]\n" % body
     return output
 
 def dict_entry_line(dict_name, entry_name):
@@ -112,8 +112,10 @@ def export_widget_children(db,widget):
 def clean_file(filename):
     f = open(filename,'r')
     output = f.read()
-    output = output.replace("\n\"","\"\n")
     f.close()
+
+    output = output.replace("\n\"","\"\n")
+
     f = open(filename,'w')
     f.write(output)
     f.close()
@@ -143,9 +145,6 @@ def export_session(db,session):
     return output
 
 def export(db, filename):
-    f = open(filename, 'w')
-    f.write("#!/usr/bin/env python\n")
-    f.write("#Mogu Import File: %s \n\n" % filename)
     widgets = [key for key in db.keys('widgets.*') \
             if db.type(key) == 'hash' and \
             '.events' not in key and \
@@ -153,25 +152,26 @@ def export(db, filename):
             '.policy' not in key
             ]
 
-    for widget in widgets:
-        output = export_widget_dict(db,widget)
-        f.write(output)
+    output = "#!/usr/bin/env python\n#Mogu Import File: %s \n\n" % filename
 
     for widget in widgets:
-            output = export_widget_events(db,widget)
-            if "\"" in output:
-                f.write(output)
+        output += export_widget_dict(db,widget)
 
     for widget in widgets:
-        output = export_widget_children(db,widget)
+        temp = export_widget_events(db,widget)
         if "\"" in output:
-            f.write(output)
+            output += temp
+
+    for widget in widgets:
+        temp = export_widget_children(db,widget)
+        if "\"" in output:
+            output += temp
     
     policies = db.keys("*.policy")
     for p in policies:
-        output = export_widget_policy(db,p)
+        temp = export_widget_policy(db,p)
         if "\"" in output:
-            f.write(output)
+            output += temp
 
     perspectives = db.keys("perspectives.*")
     perspectives_ = []
@@ -180,21 +180,19 @@ def export(db, filename):
         perspectives_.append(ex[1])
     perspectives = perspectives_
     for perspective in perspectives:
-        output = export_perspective(db,perspective)
-        f.write(output)
+        output += export_perspective(db,perspective)
 
     validators = db.keys("validators.*")
     for validator in validators:
-        output = export_validator(db, validator)
+        temp = export_validator(db, validator)
         if "\"" in output:
-            f.write(output)
+            output += temp
 
     global_events = db.keys("events.*")
     for event in global_events:
         title = dict_entry_line("global_events", event.replace("events.",""))
         body = dict_str(db.hgetall(event))
-        output = "%s%s\n\n" % (title,body)
-        f.write(output)
+        output += "%s%s\n\n" % (title,body)
 
     meta_values = db.keys("meta.*")
     for key in meta_values:
@@ -207,8 +205,7 @@ def export(db, filename):
             body = list_str(db,full_list(key))
         else:
             body = dict_str(db.hgetall(key))
-        output = "%s%s" % (title,body)
-        f.write(output)
+        output += "%s%s" % (title,body)
 
     __sessions = db.keys("s.*")
     sessions = []
@@ -217,9 +214,10 @@ def export(db, filename):
         if sid not in sessions:
             sessions.append(sid)
     for session in sessions:
-        output = export_session(db,session)
-        f.write(output)
+        output += export_session(db,session)
 
-
+    f = open(filename, 'w')
+    f.write(output)
     f.close()
+
     clean_file(filename)
