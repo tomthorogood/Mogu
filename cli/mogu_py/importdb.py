@@ -14,7 +14,8 @@ class ImportPackage(object):
         self.sessions = sessions
         self.validators = validators
 
-def evaluate_file(filenames):
+#Creates a 
+def evaluate_files(filenames):
     packages = []
     files = []
 
@@ -41,6 +42,13 @@ def evaluate_file(filenames):
 
     return packages
 
+"""
+imports a list of files into the redis database.
+@db - The connection to the redis database
+@args - the argumentParser object used for processing command line arguments
+@pyFiles - a list of python files to be evaluated
+@moguFiles - a list of mogu scripts to be imported
+"""
 def import_files(db, args, moguFiles, pyFiles):
     if args.flushdb:
         message = warn(
@@ -53,7 +61,7 @@ def import_files(db, args, moguFiles, pyFiles):
             print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
             sys.exit()
 
-    packages = evaluate_file(pyFiles+moguFiles)
+    packages = evaluate_files(pyFiles+moguFiles)
     
     for package in packages:
         dflags = 0
