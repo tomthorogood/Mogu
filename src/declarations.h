@@ -108,6 +108,14 @@ namespace Redis
     typedef TurnLeft::Utils::HungryVector <std::string> strvector;
 }
 
+namespace Bayes{
+	class Network;
+	class Node;
+	class Edge;
+	class Manipulation;
+	typedef void (*NodeManipulator)(Node*,Node*);
+}
+
 namespace Maps
 {
 	typedef std::map <std::string,std::string> Strings;
