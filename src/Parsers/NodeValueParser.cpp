@@ -81,9 +81,19 @@ NodeValueParser::NodeValueParser(
 		return;
 
 	case widget_state:
-		parsedValue = broadcaster->getState(/*State*/);
+		Enums::WidgetTypes::States state = callback(t1);
+		parsedValue = broadcaster->getState(state);
+		break;
+	default:break;
 	}
 
+	NodeValueTypes t2_type = declaration[1].second;
+	std::string t2 = declaration[1].first;
+
+	switch(t2_type)
+	{
+
+	}
 
 }
 

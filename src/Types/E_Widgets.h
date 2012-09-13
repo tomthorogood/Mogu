@@ -53,6 +53,13 @@ enum Properties
     is_validated		=0x40,
     is_dynamic			=0x80
 };
+
+enum States {
+	num_children		=0x1
+	,registered_name	=0x2
+	,current_index		=0x3
+	,is_hidden			=0x4
+};
 } //namespace WidgetTypes
 
 

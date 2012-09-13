@@ -88,6 +88,9 @@ private:
 #endif
 
 	std::string __node; //!< This widget's location in the database
+
+	/*!\brief A cache of this widget's state inquiries. */
+	std::map <Enums::WidgetTypes::States, Nodes::NodeValue*> __state_cache;
     Events::EventBindery* bindery; //!< The widget's personal event bindery
     bool __reload; //!< Allows the widget to be reloaded
 
@@ -296,10 +299,7 @@ public:
     /*!\brief Returns whether or not this widget may be reloaded */
     inline bool reload() { return __reload; }
 
-    //!\deprecated Use countMoldableChildren
-    inline bool numChildren() { return children.size();}
-
-    Nodes::NodeValue* getState(/*Enums::WidgetProperties::State*/);
+    Nodes::NodeValue* getState(Enums::WidgetTypes::States state);
 };
 
 } //namespace Goo

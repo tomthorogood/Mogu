@@ -56,6 +56,19 @@ public:
 
 };
 
+class WidgetStateParser:
+	public TurnLeft::Utils::EnumParser<Enums::WidgetTypes::States>
+{
+public:
+	WidgetStateParser()
+	{
+		using namespace Enums::WidgetTypes;
+		enumMap["current_index"]  	= current_index;
+		enumMap["num_children"] 	= num_children;
+		enumMap["name"] 			= registered_name;
+		enumMap["hidden"] 			= is_hidden;
+	}
+};
 }//namespace Parsers
 
 #endif /* P_WIDGETS_H_ */

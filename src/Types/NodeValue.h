@@ -59,25 +59,46 @@ public:
     virtual ~NodeValue();
 
     /*!\brief Sets the string as well as __type */
-    void setString(std::string val);
+    inline void  setString(std::string val)
+    {
+    	as_string = val;
+    	__type = string_value;
+    }
 
     /*!\brief Sets an int as well as __type */
-    void setInt(int val);
+    inline void setInt(int val)
+    {
+    	__numerics->as_int = val;
+    	__type = int_value;
+    }
 
     /*!\brief Sets a float as well as __type */
-    void setFloat(float val);
+    inline void setFloat(float val)
+    {
+    	__numerics->as_float = val;
+    	__type = float_value;
+    }
 
     /*!\brief If the type is `string_value`, returns a string. */
-    std::string getString();
+    inline std::string getString()
+    {
+    	return as_string;
+    }
 
     /*!\brief If the type is `int_value`, returns the int.*/
-    int getInt();
+    inline int getInt()
+    {
+    	return __numerics->as_int;
+    }
 
     /*!\brief If the type is `float_value`, returns the float. */
-    float getFloat();
+    inline float getFloat()
+    {
+    	return __numerics->as_float;
+    }
 
     /*!\brief Returns the type so the correct data can be extracted. */
-    ReadType getType();
+    inline ReadType getType() { return __type;}
 
     void copy(NodeValue*);
 }; // end NodeValue

@@ -67,6 +67,8 @@ public:
 	}
 };
 
+
+
 }//namespace Parsers
 
 #endif /* P_WIDGETSTYLING_H_ */

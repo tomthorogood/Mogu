@@ -14,6 +14,7 @@
 #include <Core/Sculptory.h>
 #include <Parsers/StyleParser.h>
 #include <Parsers/Parsers.h>
+#include <Types/NodeValue.h>
 #include <Static.h>
 #include <Mogu.h>
 #include <hash.h>
@@ -27,6 +28,7 @@ namespace Goo
 using std::string;
 using namespace Enums::WidgetTypes;
 using namespace Enums::BitMasks;
+using Nodes::NodeValue;
 using std::cout;
 using std::endl;
 
@@ -74,6 +76,12 @@ Moldable::~Moldable()
 {
 	if (bindery !=0) delete bindery;
 	delete baseVariables;
+	std::map<States,NodeValue*>::iterator cache_iter = __state_cache.begin();
+	while (cache_iter != __state_cache.end())
+	{
+		delete cache_iter->second;
+		++cache_iter;
+	}
 }
 
 
@@ -177,5 +185,33 @@ void Moldable::addGoo (const string& nodeName)
     }
 #endif
 } // addGoo()
+
+NodeValue* Moldable::getState(States state)
+{
+	NodeValue* value = new NodeValue();
+	switch(state)
+	{
+	case num_children:{
+		value->setInt(countMoldableChildren());
+		break;}
+	case registered_name:{
+		if (Parsers::StyleParser::widgetHasProperty(getNode(), "name"))
+		{
+			std::string name = Parsers::StyleParser::getWidgetProperty
+				(getNode(), "name");
+			value->setString(name);
+		}
+		break;}
+	case current_index:{
+		Wt::WStackedWidget* stack = (Wt::WStackedWidget) widget(0);
+		value->setInt(stack->currentIndex());
+		break;}
+	case is_hidden:{
+		value->setInt( (int) isHidden());
+		break;
+	}
+	return value;
+	}
+}
 
 }// namespace Goo

@@ -1,10 +1,18 @@
 source_files := src
 branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Validators Security
+
+api_subs  := Crypt Redis
+api_srcs := $(foreach d, $(api_subs), $(source_files)/$d)
+api_objs := hash.o $(foreach source, $(api_srcs), $(wildcard $(source)/*.o))
+api_hdrs := $(patsubst %.o, %.h, $(api_objs))
+api_inst := $(patsubst $(source_files), $(api_dest), $(api_hdrs))
+api_dest := /usr/local/include/Mogu
+api_incl := $(foreach d, $(api_subs), $(api_dest)/$(d))
+
 includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
 executable := mogu-server
 o:=0
 devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
-production_libs := -lwt -lwtfcgi -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
 gen_config := cli/mogu_py/config_generator.py
 
 turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
@@ -12,6 +20,7 @@ sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
 command := g++ -Wall -O$(o) 
+
 
 
 all: $(objects) | $(turnleft) 
@@ -72,3 +81,14 @@ purge: clean
 
 mogu.conf:
 	sudo python $(gen_config)
+
+stage_api:
+	for f in $(api_subs) ; do \
+		mkdir -p $(api_dest)/$$f ; \
+	done
+etest:
+	@echo $(api_srcs)
+	@echo $(api_inst)
+
+api: all stage_api
+

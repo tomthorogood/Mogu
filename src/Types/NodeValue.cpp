@@ -43,42 +43,4 @@ NodeValue::~NodeValue()
 		delete __numerics;
 }
 
-void NodeValue::setString(string val)
-{
-	as_string = val;
-    __type = string_value;
-}
-
-void NodeValue::setInt(int val)
-{
-    __numerics->as_int = val;
-    __type = int_value;
-}
-
-void NodeValue::setFloat(float val)
-{
-    __numerics->as_float = val;
-    __type = float_value;
-}
-
-ReadType NodeValue::getType()
-{
-    return __type;
-}
-
-string NodeValue::getString()
-{
-    return as_string;
-}
-
-int NodeValue::getInt()
-{
-    return __numerics->as_int;
-}
-
-float NodeValue::getFloat()
-{
-    return __numerics->as_float;
-}
-
 }//namespace Nodes

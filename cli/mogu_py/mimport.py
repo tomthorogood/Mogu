@@ -3,7 +3,11 @@ import redis_cheats as r
 from snippets import confirm
 import coloring
 
+def clean_string(string):
+    return string.replace("\n"," ")
+
 def import_string(db, node, data, flags):
+    data = clean_string(data)
     testing = b.is_set(flags, b.StrStorage.is_test) 
     merge = b.is_set(flags, b.StrStorage.is_merge) #unimplemented
     yes = b.is_set(flags, b.StrStorage.assume_yes)
@@ -41,6 +45,7 @@ def import_dict (db, node, data, flags):
                     (b.is_set(flags, b.DictStorage.assume_yes)))
             if not __continue:
                 continue
+            data[entry] = clean_string(data[entry])
         if not testing:
             db.hset(node, entry, data[entry])
 
