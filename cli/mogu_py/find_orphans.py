@@ -63,7 +63,8 @@ def find_orphans(db):
     orphans = orphans.difference(fetuses)
 
     for orphan in orphans:
-        print orphan
+        if "wrapper" not in orphan:
+            print orphan
 
 if __name__ == "__main__":
     import redis
