@@ -6,7 +6,8 @@
 *.out
 *.out.*
 *grindout.xml
+*.patch
 docs/html
 cli/cli_src/clihash
 mogu-server
-resources/
+resources/mogu/*
