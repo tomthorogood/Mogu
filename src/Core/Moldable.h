@@ -298,6 +298,8 @@ public:
 
     //!\deprecated Use countMoldableChildren
     inline bool numChildren() { return children.size();}
+
+    Nodes::NodeValue* getState(/*Enums::WidgetProperties::State*/);
 };
 
 } //namespace Goo

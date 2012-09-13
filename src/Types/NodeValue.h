@@ -78,6 +78,8 @@ public:
 
     /*!\brief Returns the type so the correct data can be extracted. */
     ReadType getType();
+
+    void copy(NodeValue*);
 }; // end NodeValue
 
 } // namespace nodes

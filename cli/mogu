@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from redis import Redis
 from ConfigParser import SafeConfigParser
 from ConfigParser import NoOptionError
-
+from os import system
 #import mogu.io
 import sys
 
@@ -302,7 +302,7 @@ if command == "start":
     if config.get("local_server","debug") == "on":
         cli_command += " --gdb"
     print(cli_command)
-    os.system(cli_command)
+    system(cli_command)
 
 if command == "newfile":
     filenames = args.command[1:] 

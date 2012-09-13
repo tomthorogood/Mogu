@@ -16,8 +16,11 @@ using Goo::Moldable;
 NodeValueParser::NodeValueParser(
 		std::string full_value,
 		NodeValue* nval,
-		Moldable* broadcaster)
+		Moldable* broadcaster,
+		int(*callback)(const std::string&))
 {
+	using namespace Enums::NodeValueTypes;
+
 	parsedValue = nval;
 	MoguScript_Tokenizer tokenizer(full_value);
 	std::string token = EMPTY;
@@ -29,7 +32,6 @@ NodeValueParser::NodeValueParser(
 	 */
 	do
 	{
-		using namespace Enums::NodeValueTypes;
 		token = tokenizer.next();
 		char char0 = token.at(0);
 		char fchar = token.at(token.length()-1);
@@ -53,6 +55,36 @@ NodeValueParser::NodeValueParser(
 		declaration.push_back( std::make_pair(unwrap(token),ntype) );
 
 	} while (token != EMPTY);
+
+	NodeValueTypes t1_type = declaration[0].second;
+	std::string t1 = declaration[0].first;
+
+	switch(t1_type)
+	{
+	case string_value:
+		nval->setString(t1);
+		return;
+
+	case integer_value:
+		const char* c_str = t1.c_str();
+		nval->setInt( atoi(c_str) );
+		return;
+
+	case float_value:
+		const char* c_str =t1.c_str();
+		nval->setFloat( atof(c_str) );
+		return;
+
+	case enum_value:
+		int val = callback(t1);
+		nval->setInt(val);
+		return;
+
+	case widget_state:
+		parsedValue = broadcaster->getState(/*State*/);
+	}
+
+
 }
 
 

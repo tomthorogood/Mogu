@@ -29,7 +29,8 @@ public:
 	NodeValueParser(
 			std::string full_value,
 			Nodes::NodeValue* node_value,
-			Goo::Moldable* broadcaster =0);
+			Goo::Moldable* broadcaster =0,
+			int(*callback)(const std::string&) =0);
 	Nodes::NodeValue* getValue();
 };
 

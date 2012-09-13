@@ -15,6 +15,11 @@ NodeValue::NodeValue()
 NodeValue::NodeValue(NodeValue* proto)
 {
 	__numerics = new NumericUnion();
+	copy(proto);
+}
+
+void NodeValue::copy(NodeValue* proto)
+{
 	__type = proto->getType();
 
 	switch( __type)
