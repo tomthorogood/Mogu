@@ -14,7 +14,9 @@ PacketCenter::PacketCenter (string input, PacketType inputType)
 {
 	/* By default the encryption key is set to null, for obvious reasons. */
 	_key = 0;
-
+#ifdef DEBUG
+	std::cout << input << std::endl;
+#endif
 	/* Initialize the vectors. */
 	packets[ENCRYPTED].resize(1);
 	packets[DECRYPTED].resize(1);
@@ -29,6 +31,9 @@ PacketCenter::PacketCenter (string input, PacketType inputType)
 		/* Alias the packet vector we're currently work with */
 		packet_vector = &packets[DECRYPTED];
 		unsigned int input_len = input.length();
+#ifdef DEBUG
+		std::cout << "length: " << input_len << std::endl;
+#endif
 
 		/* Pad the input to have a length evenly divisible by eight. */
 		while (input_len % Packet::SIZE != 0)
@@ -36,11 +41,16 @@ PacketCenter::PacketCenter (string input, PacketType inputType)
 			input.append(" ");
 			input_len++;
 		}
-
+#ifdef DEBUG
+		std::cout << "padded length: " << input.length() << std::endl;
+#endif
 		/* Determine the number of paackets that will be generated
 		 * from the input.
 		 */
 		unsigned int num_packets = input_len/Packet::SIZE;
+#ifdef DEBUG
+		std::cout <<"Packets: " << num_packets << std::endl;
+#endif
 
 		/*Split the input into chunks and place them into packets,
 		 * all of which go into the DECRYPTED packets vector.

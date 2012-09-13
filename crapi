@@ -1,0 +1,1 @@
+ar cr libmoguapi.a src/crypt/BlowfishKey.o src/crypt/Packet.o src/crypt/PacketCenter.o src/hash.o src/Redis/RedisCore.o
