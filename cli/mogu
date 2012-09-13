@@ -318,6 +318,9 @@ if command == "init":
     db.hset("widgets.wrapper","type","{container}")
     print(ok("Mogu project has been initialized! Go Mogu!"))
 
+if command == "find-orphans":
+    commands.find_orphans(db)
+
 #dbdiff backup_db_num [redis-options]
 if command == "dbdiff":
     backupdb = Redis(args.redis_host, args.redis_port, args.command[1], args.redis_auth)
