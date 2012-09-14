@@ -112,6 +112,7 @@ bool change_session ()
 	try
 	{
 		p_userid = retrieveSlot(userid_key, mogu_session);
+		TurnLeft::Utils::stolower(p_userid);
 		p_userauth = retrieveSlot(userauth_key, mogu_session);
 	}
 	catch(const Err_SlotLookupFailed& e)
@@ -227,6 +228,7 @@ bool register_user()
 	try
 	{
 		p_userid 	= retrieveSlot(userid_key, mogu_session);
+		TurnLeft::Utils::stolower(p_userid);
 		p_userauth 	= retrieveSlot(userauth_key, mogu_session);
 	}
 	catch (const Err_SlotLookupFailed& e)
