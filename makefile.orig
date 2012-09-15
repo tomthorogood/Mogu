@@ -1,6 +1,17 @@
 source_files := src
 branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Validators Security
 
+<<<<<<< HEAD
+api_subs  := Crypt Redis
+api_srcs := $(foreach d, $(api_subs), $(source_files)/$d)
+api_objs := hash.o $(foreach source, $(api_srcs), $(wildcard $(source)/*.o))
+api_hdrs := $(patsubst %.o, %.h, $(api_objs))
+api_inst := $(patsubst $(source_files), $(api_dest), $(api_hdrs))
+api_dest := /usr/local/include/Mogu
+api_incl := $(foreach d, $(api_subs), $(api_dest)/$(d))
+
+=======
+>>>>>>> master
 includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
 executable := mogu-server
 o:=0
@@ -74,3 +85,16 @@ purge: clean
 mogu.conf:
 	sudo python $(gen_config)
 
+stage_api:
+	for f in $(api_subs) ; do \
+		mkdir -p $(api_dest)/$$f ; \
+	done
+<<<<<<< HEAD
+etest:
+	@echo $(api_srcs)
+	@echo $(api_inst)
+
+api: all stage_api
+
+=======
+>>>>>>> master

@@ -7,3 +7,11 @@ def to_city_hash(string):
             ["/etc/mogu/cli_src/clihash", string],
             shell=False, stdout=subprocess.PIPE)
     return proc.communicate()[0].replace("\n","")
+
+class Hash:
+    meta = to_city_hash("meta")
+    prev = to_city_hash("prev")
+    auth = to_city_hash("auth")
+    session_lookup = to_city_hash("session_lookup")
+    auth_lookup = to_city_hash("auth_lookup")
+    salt_lookup = to_city_hash("salt")
