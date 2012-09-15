@@ -1,0 +1,6 @@
+widgets["foo"] = {
+    type        :   text,
+    styles      :   "practically perfect",
+    do.events   :   on,
+    content     :   "Hello, World!"
+    }
