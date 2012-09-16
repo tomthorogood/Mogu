@@ -42,7 +42,7 @@ syn match pyStr /\".*\"/ contained
 syn match pyStr "'.*'" contained
 syn match numFn 'Number(\d\+)' contained contains=digits
 
-syn match pyFlow '\s.*\.' contained nextgroup=subWord
+syn match pyFlow '[\ \t]\+\s\+\.' contained nextgroup=subWord
 syn region pyDict transparent start="{" end="}" contains=dictEntries,subWords,wrappedValues,pyStr,pyFlow,numFn
 syn region pyList transparent start="\[" end="]" contains=pyStr,pyDict
 
