@@ -7,9 +7,8 @@ if exists("b:current_syntax")
     finish
 endif
 
-let b:current_syntax="mogu"
 
-syn keyword dictEntries type name styles signal on off message contained 
+syn keyword dictEntries type name styles signal message contained 
 syn keyword dictEntries trigger listener listeners action block contained 
 syn keyword dictEntries location source tooltip content degradation contained
 syn keyword dictEntries strength animation auto contained
@@ -32,24 +31,31 @@ syn keyword wrappedValues match TERMINATE click mouseover mouseout
 syn keyword wrappedValues newlook fail succeed keyup append replace
 syn keyword wrappedValues regex text image submit radio textarea field
 syn keyword wrappedValues dropdown checkbox multi container password stack
+syn keyword wrappedvalues on off
 
 syn keyword dictNames events widgets perspectives global_events policies tree
 syn keyword dictNames meta sessions validators
 
-syn region pyDict start="{" end="}" fold transparent contains=dictEntries
-syn region pyList start="[" end="]" fold transparent contains=pyDict
-syn region pyStr start='"' end='"'
-syn region pyStr start="'" end="'"
+syn match digits '\d\+' contained
 
-syn region sentence start="." end="\t" contains=subWords
-syn region sentence start="." end=" " contains=subWords
-syn region sentence start="." end="," contains=subWords
-syn region sentence start="." end="\n" contains=subWords
+syn match pyStr /\".*\"/ contained
+syn match pyStr "'.*'" contained
+syn match numFn 'Number(\d\+)' contained contains=digits
+
+syn match pyFlow '\s.*\.' contained nextgroup=subWord
+syn region pyDict transparent start="{" end="}" contains=dictEntries,subWords,wrappedValues,pyStr,pyFlow,numFn
+syn region pyList transparent start="\[" end="]" contains=pyStr,pyDict
 
 hi def link dictEntries Statement
-hi def link synWords Statement
+hi def link synWords Special
 hi def link subWords Statement
-hi def link wrappedValues Statement
+hi def link wrappedValues Constant
 hi def link dictNames Type
 hi def link pyStr Constant
-hi def link sentence Statement
+hi def link pyDict Keyword
+hi def link pyList Function
+hi def link pyFlow Function
+hi def link numFn Function
+hi def link digits Constant
+
+let b:current_syntax="mogu"
