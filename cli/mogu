@@ -112,7 +112,7 @@ if command == "import-directory":
         importdb.import_files(db, args, moguFiles, pyFiles)
 
 
-# mogo export filename [--resis-port --redis-host --redis-select --redis-auth]
+# mogo export filename [--resis-port --redis-host --redis-select --redis-auth --assume-yes]
 if command == "export":
     if len(args.command) is 1:
         error = fail("You have told me that you want to export the database, but have not given me a filename to write to.")
