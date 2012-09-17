@@ -117,8 +117,12 @@ if command == "export":
     if len(args.command) is 1:
         error = fail("You have told me that you want to export the database, but have not given me a filename to write to.")
         print("%s\n You can fix this by using the --filename option. ex: ./mogu export --filename /path/to/file")%error
-        sys.exit()
-    
+        sys.exit() 
+        
+    if os.path.exists(args.command[1]) and not args.yes:
+        if not confirm(warn("File %s already exists, are you sure you want to overwrite it?"%args.command[1])):  
+            sys.exit()
+            
     export(db,args.command[1])
 
 # mogu remove-child child-name [parent ...]
