@@ -9,6 +9,7 @@ from ConfigParser import NoOptionError
 
 #import mogu.io
 import sys
+import os
 
 config = SafeConfigParser()
 config.read(CONFIG_FILE)
@@ -83,96 +84,33 @@ db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
 
 # mogu import filename F [--merge --redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
 if command == "import":
+    pyFiles = []
+    moguFiles = []
+
     for filename in args.command[1:]:
-        if args.flushdb:
-            message = warn(
-                    "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
-                        args.redis_db, args.redis_host, args.redis_port))
-            if not confirm(message,args.yes):
-                print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
-                sys.exit()
-            db.flushdb()
-        
-        package = importdb.evaluate_file(filename)
-        dflags = 0
-        lflags = 0
-        sflags = 0
-        if args.testing:
-            dflags |= bytemaps.DictStorage.is_test
-            lflags |= bytemaps.ListStorage.is_test
-            sflags |= bytemaps.StrStorage.is_test
-        if args.merge:
-            dflags |= bytemaps.DictStorage.is_merge
-            lflags |= bytemaps.ListStorage.is_merge
-        if args.yes:
-            dflags |= bytemaps.DictStorage.assume_yes
-            lflags |= bytemaps.ListStorage.assume_yes
-            sflags |= bytemaps.StrStorage.assume_yes
-        if args.verbose:
-            dflags |= bytemaps.DictStorage.verbose
-            lflags |= bytemaps.ListStorage.verbose
-            sflags |= bytemaps.StrStorage.verbose
-        
-        for widget in package.widgets:
-            w = Widget()
-            w.build(widget)
-            w._import(db, package.widgets[widget], dflags)
+        if filename.endswith(".py"):
+            pyFiles.append(filename)
+        else:#Doesn't enforce the .mogu extension
+            moguFiles.append(filename)
+    importdb.import_files(db, args, moguFiles, pyFiles)
 
-        for widget in package.events:
-            wevents =0
-            if not args.merge:
-                # Get rid of all current event nodes to avoid duplications
-                current_events = db.keys("*%s.events*" % widget)
-                for e in current_events:
-                    db.delete(e)
-            for event in package.events[widget]:
-                wevents += 1
-                e =  WidgetEvent()
-                e.build(widget, wevents)
-                e._import(db, event, dflags)
+# mogu import-directory directory D [--merge --redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
+if command == "import-directory":
+    for directory in args.command[1:]:
+        dir_path = directory +"/"
+        filenames = os.listdir(directory)
 
-        for event in package.global_events:
-            e = GlobalEvent()
-            e.build(event)
-            e._import(db, package.global_events[event], dflags)
+        pyFiles = []
+        moguFiles = []
 
-        for view in package.perspectives:
-            pmold = 0
-            for mold in package.perspectives[view]:
-                pmold += 1
-                p = PerspectiveMold()
-                p.build(view, pmold)
-                p._import(db, mold, dflags)
+        for filename in filenames:
+            if filename.endswith(".py"):
+                pyFiles.append(dir_path+filename)
+            elif filename.endswith(".mogu"):
+                moguFiles.append(dir_path+filename)
 
-        for policy in package.policies:
-            p = WidgetPolicy()
-            p.build(policy)
-            p._import(db, package.policies[policy], dflags)
+        importdb.import_files(db, args, moguFiles, pyFiles)
 
-        for widget in package.tree:
-            w = WidgetChildren()
-            w.build(widget)
-            w._import(db, package.tree[widget], lflags)
-
-        for session in package.sessions:
-            for storage in package.sessions[session]:
-                entry = package.sessions[session][storage]
-                if isinstance(entry, dict):
-                    s = SessionDict()
-                    fl = dflags
-                elif isinstance(entry, list):
-                    s = SessionList()
-                    fl = lflags
-                else:
-                    s = SessionStr()
-                    fl = sflags
-                s.build(session,storage)
-                s._import(db, entry, fl)
-
-        for validator in package.validators:
-            v = Validator()
-            v.build(validator)
-            v._import(db, package.validators[validator], dflags)
 
 # mogo export filename [--resis-port --redis-host --redis-select --redis-auth]
 if command == "export":
@@ -277,16 +215,22 @@ if command == "get-child-index":
 
 #mogu delete key
 if command == "delete":
-    key = args.command[1]
-    if (db.exists(key)):
-        warning = warn("%s will be permanently deleted. THERE IS NO UNDO!")
-        if confirm(warning, args.yes):
-            db.delete(key)
+    keys = args.command[1:]
+
+    if args.filename:
+        f = open(args.filename,"r")
+        keys = f.readlines()
+        
+    for key in keys:
+        if (db.exists(key)):
+            warning = warn("%s will be permanently deleted. THERE IS NO UNDO!" % key)
+            if confirm(warning, args.yes):
+                db.delete(key)
+            else:
+                print(ok("No changes were made."))
         else:
-            print(ok("No changes were made."))
-    else:
-        print(fail("%s does not exist in this database." % key))
-        print("For your safety, we have disabled auto key-complete when deleting. You must use the full key name.")
+            print(fail("%s does not exist in this database." % key))
+            print("For your safety, we have disabled auto key-complete when deleting. You must use the full key name.")
 
 if command == "start":
     meta_keys = ("analytics",)
@@ -379,6 +323,9 @@ if command == "init":
             sys.exit()
     db.hset("widgets.wrapper","type","{container}")
     print(ok("Mogu project has been initialized! Go Mogu!"))
+
+if command == "find-orphans":
+    commands.find_orphans(db)
 
 #dbdiff backup_db_num [redis-options]
 if command == "dbdiff":

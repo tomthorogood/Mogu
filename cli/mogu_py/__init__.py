@@ -1,3 +1,4 @@
+import commands
 from coloring import *
 from snippets import *
 from exportdb import *

@@ -8,6 +8,7 @@
 #include <crypt/BlowfishKey.h>
 #include <crypt/PacketCenter.h>
 #include <TurnLeftLib/Utils/randomcharset.h>
+#include <TurnLeftLib/Utils/inlines.h>
 #include <Security/Security.h>
 #include <hash.h>
 
@@ -56,6 +57,7 @@ string encrypt(string dstr)
 
 string decrypt(string estr)
 {
+	TurnLeft::Utils::sreplace(estr, '_', ' ');
 	BlowfishKeyCreator k;
 	PacketCenter d(estr, ENCRYPTED);
 	d.giveKey(k.getKey());
