@@ -159,18 +159,18 @@ def export(db, filename):
 
     for widget in widgets:
         temp = export_widget_events(db,widget)
-        if "\"" in output:
+        if "\"" in temp:
             output += temp
 
     for widget in widgets:
         temp = export_widget_children(db,widget)
-        if "\"" in output:
+        if "\"" in temp:
             output += temp
     
     policies = db.keys("*.policy")
     for p in policies:
         temp = export_widget_policy(db,p)
-        if "\"" in output:
+        if "\"" in temp:
             output += temp
 
     perspectives = db.keys("perspectives.*")
@@ -185,7 +185,7 @@ def export(db, filename):
     validators = db.keys("validators.*")
     for validator in validators:
         temp = export_validator(db, validator)
-        if "\"" in output:
+        if "\"" in temp:
             output += temp
 
     global_events = db.keys("events.*")
