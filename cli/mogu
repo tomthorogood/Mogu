@@ -120,6 +120,9 @@ if command == "export":
         sys.exit()
     
     export(db,args.command[1])
+    
+if command == "export-to-directory":
+    pass#ADD MORE HERE
 
 # mogu remove-child child-name [parent ...]
 if command == "remove-child":
