@@ -59,6 +59,9 @@ public:
 	    enumMap["delete_value"]		= Action::delete_value;
 	    enumMap["set_text"]			= Action::set_text;
 	    enumMap["test_text"]		= Action::test_text;
+	    enumMap["javascript"]		= Action::javascript;
+	    enumMap["email_user"]		= Action::email_user;
+	    enumMap["read_state"]		= Action::read_state;
 	    enumMap["reload"]			= Action::reload;
 #ifdef TERM_ENABLED
 	    enumMap["TERMINATE"]		= Action::TERM;

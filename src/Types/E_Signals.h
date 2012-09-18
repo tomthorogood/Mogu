@@ -152,6 +152,10 @@ enum SignalAction{
     ,delete_value		=0x1F
     ,set_text			=0x20
     ,reload				=0x21
+    ,read_state			=0x22
+    ,javascript			=0x40
+    ,email_user			=0x41
+    ,reset_password		=0x42
     ,TERM				=0xFE
     ,BLOCK				=0xFF
 };
