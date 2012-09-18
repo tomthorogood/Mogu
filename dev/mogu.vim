@@ -14,7 +14,7 @@ syn keyword dictEntries location source tooltip content degradation contained
 syn keyword dictEntries strength animation auto contained
 
 syn keyword synWords remove change test key next storage of
-syn keyword synWords animate link do
+syn keyword synWords animate link do add
 
 syn keyword subWords style child value contained 
 syn keyword subWords index session text contained 
