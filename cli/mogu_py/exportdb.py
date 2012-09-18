@@ -154,7 +154,7 @@ def export(db, outInfo, toPackage):
             ]
     
     if not toPackage:
-        output = "#!/usr/bin/env python\n#Mogu Import File: %s \n\n" % outInfo
+        output = ""
     
     for widget in widgets:
         if toPackage:
@@ -264,7 +264,7 @@ def write_content(filename, content, writeMode='a'):
     if not filename.endswith(".mogu"):
         filename+=".mogu"
     
-    preface = "" if os.path.exists(filename) else "#!/usr/bin/env python\n#Mogu Import File: %s \n\n"%filename
+    preface = "" if os.path.exists(filename) else "#Mogu Import File: %s \n\n"%filename
 
     f = open(filename, writeMode)
     f.write(preface+content.replace("\n\"","\"\n"))
