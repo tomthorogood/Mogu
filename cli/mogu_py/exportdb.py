@@ -1,4 +1,5 @@
 from redis_cheats import full_list
+import os
 
 def clean_str(string):
     return string.replace("\"","\\\"")
@@ -108,19 +109,6 @@ def export_widget_children(db,widget):
     return output
 
         
-
-def clean_file(filename):
-    f = open(filename,'r')
-    output = f.read()
-    f.close()
-
-    output = output.replace("\n\"","\"\n")
-
-    f = open(filename,'w')
-    f.write(output)
-    f.close()
-
-
 def export_session(db,session):
     output = empty_dict_entry_line("sessions", session)
     _session_nodes = db.keys("s.%s.*" % session)
@@ -144,35 +132,53 @@ def export_session(db,session):
         output += "%s%s" % (title,body)
     return output
 
-def export(db, filename):
+def export(db, outInfo, toPackage):
     widgets = [key for key in db.keys('widgets.*') \
             if db.type(key) == 'hash' and \
             '.events' not in key and \
             '.children' not in key and \
             '.policy' not in key
             ]
-
-    output = "#!/usr/bin/env python\n#Mogu Import File: %s \n\n" % filename
-
+    
+    if not toPackage:
+        output = ""
+    
     for widget in widgets:
-        output += export_widget_dict(db,widget)
+        if toPackage:
+            filename = ("".join(widget.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, export_widget_dict(db,widget))
+        else:
+            output += export_widget_dict(db,widget)
+            
 
     for widget in widgets:
         temp = export_widget_events(db,widget)
         if "\"" in temp:
-            output += temp
+            if toPackage:
+                filename = ("".join(widget.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
 
     for widget in widgets:
         temp = export_widget_children(db,widget)
         if "\"" in temp:
-            output += temp
+            if toPackage:
+                filename = ("".join(widget.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
     
     policies = db.keys("*.policy")
     for p in policies:
         temp = export_widget_policy(db,p)
         if "\"" in temp:
-            output += temp
-
+            if toPackage:
+                filename = ("".join(p.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
+            
     perspectives = db.keys("perspectives.*")
     perspectives_ = []
     for p in perspectives:
@@ -180,19 +186,31 @@ def export(db, filename):
         perspectives_.append(ex[1])
     perspectives = perspectives_
     for perspective in perspectives:
-        output += export_perspective(db,perspective)
+        if toPackage:
+            filename = ("".join(perspective.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, export_perspective(db,perspective))
+        else:
+            output += export_perspective(db,perspective)
 
     validators = db.keys("validators.*")
     for validator in validators:
         temp = export_validator(db, validator)
         if "\"" in temp:
-            output += temp
-
+            if toPackage:
+                filename = ("".join(validator.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
+        
     global_events = db.keys("events.*")
     for event in global_events:
         title = dict_entry_line("global_events", event.replace("events.",""))
         body = dict_str(db.hgetall(event))
-        output += "%s%s\n\n" % (title,body)
+        if toPackage:
+            filename = ("".join(event.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, "%s%s\n\n" % (title,body))
+        else:    
+            output += "%s%s\n\n" % (title,body)
 
     meta_values = db.keys("meta.*")
     for key in meta_values:
@@ -205,7 +223,12 @@ def export(db, filename):
             body = list_str(db,full_list(key))
         else:
             body = dict_str(db.hgetall(key))
-        output += "%s%s" % (title,body)
+        
+        if toPackage:            
+            filename = ("".join(key.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, "%s%s" % (title,body))
+        else:
+            output += "%s%s" % (title,body) 
 
     __sessions = db.keys("s.*")
     sessions = []
@@ -214,10 +237,22 @@ def export(db, filename):
         if sid not in sessions:
             sessions.append(sid)
     for session in sessions:
-        output += export_session(db,session)
+        if toPackage:
+            write_content(outInfo+"/sessions.mogu", export_session(db,session))
+        else:        
+            output += export_session(db,session)
+        
+    if not toPackage:
+        write_content(outInfo, output, 'w')
+        
+    
+def write_content(filename, content, writeMode='a'):
 
-    f = open(filename, 'w')
-    f.write(output)
+    if not filename.endswith(".mogu"):
+        filename+=".mogu"
+    
+    preface = "" if os.path.exists(filename) else "#Mogu Import File: %s \n\n"%filename
+
+    f = open(filename, writeMode)
+    f.write(preface+content.replace("\n\"","\"\n"))
     f.close()
-
-    clean_file(filename)
