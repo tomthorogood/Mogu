@@ -18,17 +18,17 @@ class ImportPackage(object):
 def evaluate_files(filenames):
     packages = []
     files = []
+    widgets={}
+    tree = {}
+    events = {}
+    global_events = {}
+    meta = {}
+    perspectives = {}
+    policies = {}
+    sessions = {}
+    validators = {}
 
     for filename in filenames:
-        widgets={}
-        tree = {}
-        events = {}
-        global_events = {}
-        meta = {}
-        perspectives = {}
-        policies = {}
-        sessions = {}
-        validators = {}
         
         f = open(filename,'r')
         execfile(filename)
