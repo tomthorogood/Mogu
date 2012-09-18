@@ -56,6 +56,10 @@ parser.add_argument("--assume-yes",
         dest="yes", action="store_true", default=False, 
         help="Will assume yes to all questions. EXTRA CAREFUL!")
 
+parser.add_argument("--single-file", 
+        dest="single", action="store_true", default=False, 
+        help="Will export the entire database to a single file rather than a package.")
+
 parser.add_argument("-v", "--verbose",
         dest="verbose", action="store_true", default=False,
         help="Will make the import command more verbose when assuming yes")
@@ -112,19 +116,29 @@ if command == "import-directory":
         importdb.import_files(db, args, moguFiles, pyFiles)
 
 
-# mogo export filename [--resis-port --redis-host --redis-select --redis-auth --assume-yes]
+# mogo export filename [--resis-port --redis-host --redis-select --redis-auth --single-file]
 if command == "export":
-    if len(args.command) is 1:
-        error = fail("You have told me that you want to export the database, but have not given me a filename to write to.")
-        print("%s\n You can fix this by using the --filename option. ex: ./mogu export --filename /path/to/file")%error
-        sys.exit() 
+    if args.single:
+        if len(args.command) is 1:
+            error = fail("You have told me that you want to export the database, but have not given me a filename to write to.")
+            sys.exit() 
         
-    if os.path.exists(args.command[1]) and not args.yes:
-        if not confirm(warn("File %s already exists, are you sure you want to overwrite it?"%args.command[1])):  
+        #check to see if the file exists (adds .mogu extension to the filename if it's not present)
+        if os.path.exists(args.command[1] +".mogu" if not args.command[1].endswith(".mogu") else args.command[1]) and not args.yes:
+            if not confirm(warn("File %s already exists, are you sure you want to overwrite it?"%args.command[1])):  
+                sys.exit()
+        
+    else:
+        if len(args.command) is 1:
+            error = fail("You have told me that you want to export the database to a directory, but have not given me a directory to write to.")
             sys.exit()
             
-    export(db,args.command[1])
-
+        #Check if directory exists
+        if not os.path.isdir(args.command[1]):
+            os.makedirs(args.command[1]) #if not, create it/them
+        
+    export(db,args.command[1], not args.single)
+    
 # mogu remove-child child-name [parent ...]
 if command == "remove-child":
     child = args.command[1].replace("widgets.","")
