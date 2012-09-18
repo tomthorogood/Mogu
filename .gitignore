@@ -12,3 +12,5 @@ docs/html
 cli/cli_src/clihash
 mogu-server
 resources/mogu/*
+Debug/*
+Testing/*
