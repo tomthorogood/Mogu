@@ -75,7 +75,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
                 &Parsers::enum_callback<Parsers::SignalTriggerParser>
         );
         Triggers::SignalTrigger trigger = (Triggers::SignalTrigger)
-                nodeParser.getValue()->getInt();
+                val.getInt();
 
         /* Add an entry to the extractorMap which binds the enumerated
          * trigger to a vector of extractors.

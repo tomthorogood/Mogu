@@ -55,8 +55,9 @@ class TokenGenerator
 protected:
 
 	CharCouplets* getWrappers() { return &__chars;}
-	std::string getOriginal() { return __orig;}
 	void setCurrentPosition(size_t i) { __cpos = i;}
+
+
 
 public:
 
@@ -111,6 +112,7 @@ public:
         return __cpos;
     }
 
+
 	/*!\brief Constructor takes an optional string. Defaults  to the empty
 	 * string.
 	 * @param orig
@@ -127,6 +129,40 @@ public:
 	 * @return The next token in the string
 	 */
 	virtual std::string next(char delineator = ' ');
+
+	virtual inline bool isWrapped(const std::string& token) const
+	{
+		char char0 = token.at(0);
+		char fchar = token.at(token.length()-1);
+		if (starts_pair(char0) == fchar) return true;
+		return false;
+
+	}
+
+	virtual inline char starts_pair(const char& ch) const
+	{
+		size_t sz = __chars.size();
+		for (size_t c = 0; c < sz; c++)
+		{
+			const std::pair<char,char>* pr = &__chars[c];
+			if (ch == pr->first) return pr->second;
+		}
+		return 0;
+	}
+
+	virtual inline char ends_pair(const char& ch) const
+	{
+		size_t sz = __chars.size();
+		for (size_t c = 0; c < sz; c++)
+		{
+			const std::pair <char,char>* pr = &__chars[c];
+			if (ch == pr->second) return pr->first;
+		}
+		return 0;
+	}
+
+	inline std::string getOriginal() { return __orig;}
+
 
 	virtual ~TokenGenerator(){}
 };

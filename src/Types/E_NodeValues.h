@@ -43,6 +43,27 @@ enum NodeValueTypes{
     /*!\brief Reads a node from the database */
     ,node_value			=0x9
 };
+
+enum TokenTestResult{
+	BEG			=0x0
+	,ERR		=0x1
+	,REQ_STR	=0x2
+	,ICPL_CMD	=0x3
+	,NXT_NODE	=0x4
+	,CPL		=0x8
+};
+
+enum InterpretationMode{
+	VAL
+	,ARG
+};
+
+namespace RedisTypes{
+	const std::string REDIS_STR = "string";
+	const std::string REDIS_LST = "list";
+	const std::string REDIS_HSH = "hash";
+}
+
 } //namespace NodeValueTypes
 
 #endif /* E_NODEVALUES_H_ */

@@ -19,6 +19,8 @@
 #include <utility>
 #include <map>
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <inline_utils.h>
 
@@ -30,6 +32,7 @@
 #define WIDGET_HO_BITS 0x3f
 #define SESSION_LOOKUP "session_lookup"
 #define AUTH_LOOKUP "auth_lookup"
+#define MAX_TOKENS 3
 
 namespace Goo
 {
@@ -80,6 +83,7 @@ namespace Parsers
     class SignalTriggerParser;
     class TokenGenerator;
     class MoguScript_Tokenizer;
+    struct TokenTestPackage;
 }
 
 namespace EventNodeConfiguration
@@ -127,13 +131,15 @@ class Parseable;
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
 typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
 
-typedef std::vector
-		<std::pair <char,char> >
-CharCouplets;
+typedef std::vector <std::pair <char,char> > CharCouplets;
 
-typedef std::vector
-		<std::pair <std::string, Enums::NodeValueTypes::NodeValueTypes> >
-MoguDeclaration;
+typedef std::pair <std::string, Enums::NodeValueTypes::NodeValueTypes> decl_pair;
+typedef std::vector <decl_pair> MoguDeclaration;
+
+typedef Enums::NodeValueTypes::TokenTestResult (*__m_token_test)
+	(Parsers::TokenTestPackage*);
+
+typedef int (*__m_enm_parse)(const std::string&);
 
 /*!\brief masked data is data whose bits are individually manipulated to
  * pack data efficiently

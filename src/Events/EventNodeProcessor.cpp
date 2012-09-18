@@ -29,11 +29,6 @@ void EventNodeProcessor::set (
 {
 	values[index] = new Nodes::NodeValue();
     NodeValueParser parser(value, values[index], broadcaster, callback);
-
-#ifdef DEBUG
-    assert(values[index] == parser.getValue());
-#endif
-
 }
 
 Nodes::NodeValue* EventNodeProcessor::getValue(Node::Labels index)

@@ -9,6 +9,7 @@
 #define P_WIDGETS_H_
 
 #include <declarations.h>
+#include <Parsers/TokenGenerator.h>
 
 namespace Parsers{
 
@@ -52,6 +53,15 @@ public:
 	    enumMap["password"]			= WidgetTypes::password;
 	    enumMap["stacked"]          = WidgetTypes::stack;
 	    enumMap["stack"]			= WidgetTypes::stack;
+	}
+
+	virtual Enums::WidgetTypes::WidgetTypes parse(const std::string& val)
+	{
+		std::string val_cpy = val;
+		TokenGenerator tgen(val_cpy);
+		return TurnLeft::Utils::EnumParser
+				<Enums::WidgetTypes::WidgetTypes>::parse(tgen.next('|'));
+
 	}
 
 };

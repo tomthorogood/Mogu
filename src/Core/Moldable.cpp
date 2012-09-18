@@ -203,15 +203,14 @@ NodeValue* Moldable::getState(States state)
 		}
 		break;}
 	case current_index:{
-		Wt::WStackedWidget* stack = (Wt::WStackedWidget) widget(0);
+		Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
 		value->setInt(stack->currentIndex());
 		break;}
 	case is_hidden:{
 		value->setInt( (int) isHidden());
-		break;
+		break;}
 	}
 	return value;
-	}
 }
 
 }// namespace Goo

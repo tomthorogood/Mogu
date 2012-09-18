@@ -42,7 +42,6 @@ void mold(std::string perspective)
 		std::string action_str;
 		std::string message_str;
 		Action::SignalAction action;
-		Nodes::NodeValue* message;
 		Goo::Moldable* widget;
 
 		Redis::command("hget",affect_node,"name");
@@ -69,9 +68,7 @@ void mold(std::string perspective)
 				message_str, &message_val, widget);
 
 		action = (Action::SignalAction)
-				action_parser.getValue()->getInt();
-
-		message = message_parser.getValue();
+				action_val.getInt();
 
 		switch(action)
 		{
@@ -80,17 +77,17 @@ void mold(std::string perspective)
 			{
 				Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
 						widget->widget(0);
-				stack->setCurrentIndex(message->getInt());
+				stack->setCurrentIndex(message_val.getInt());
 				break;
 			}}
 		case Action::set_style:{
 			if (widget->allowsAction(Action::set_style))
 			{
-				widget->setStyleClass(message->getString());
+				widget->setStyleClass(message_val.getString());
 				break;
 			}}
 		case Action::rebroadcast:{
-			std::string _message = "events."+message->getString();
+			std::string _message = "events."+message_val.getString();
 			Events::ActionCenter::submitBroadcast(
 					Events::ActionCenter::generateNewBroadcast(
 							widget, _message)
@@ -99,8 +96,6 @@ void mold(std::string perspective)
 		default: break;
 		}
 	}
-
-
 }
 
 } //namespace Perspective

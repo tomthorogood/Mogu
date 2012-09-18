@@ -18,11 +18,6 @@ private:
 	char __end;
 protected:
 	inline std::string getValue() { return __value; }
-	inline std::string unwrap()
-	{
-		int end_index = __value.find(__end);
-		cd .
-	}
 };
 
 template <typename T>

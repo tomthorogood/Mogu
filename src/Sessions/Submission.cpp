@@ -260,7 +260,7 @@ bool requiresEncryption(const std::string& snode)
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(Redis::toString(), &val);
 
-	return (bool) parser.getValue()->getInt();
+	return (bool) val.getInt();
 }
 
 StorageMode getStorageMode(const std::string& snode)
@@ -272,7 +272,7 @@ StorageMode getStorageMode(const std::string& snode)
 			Redis::toString()
 			,&val, 0x0 //No need to pass in a widget
 			,&Parsers::enum_callback <Parsers::StorageModeParser>);
-	return (StorageMode) parser.getValue()->getInt();
+	return (StorageMode) val.getInt();
 }
 
 StorageType getStorageType(const std::string& snode)
@@ -285,7 +285,7 @@ StorageType getStorageType(const std::string& snode)
 			,&val
 			,0x0 // No need to pass in a widget
 			,&Parsers::enum_callback <Parsers::StorageTypeParser>);
-	return (StorageType) parser.getValue()->getInt();
+	return (StorageType) val.getInt();
 }
 
 DataWrapping getDataWrapping(const std::string& snode)
@@ -298,7 +298,7 @@ DataWrapping getDataWrapping(const std::string& snode)
 			&val,
 			0x0,
 			&Parsers::enum_callback <Parsers::StorageWrappingParser>);
-	return (DataWrapping) parser.getValue()->getInt();
+	return (DataWrapping) val.getInt();
 }
 
 std::string getHashField(const std::string& snode)

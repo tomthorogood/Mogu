@@ -31,7 +31,7 @@ WidgetType getWidgetType(Moldable* broadcaster)
    Parsers::NodeValueParser parser(reply_str, &val, broadcaster,
             Parsers::enum_callback <Parsers::WidgetTypeParser>);
 
-   __type = (WidgetType) parser.getValue()->getInt();
+   __type = (WidgetType) val.getInt();
     return __type;
 }
 
@@ -43,7 +43,7 @@ string getWidgetText(Moldable* broadcaster)
     string reply_str = getWidgetProperty(nodeName, "content");
     Nodes::NodeValue val;
     Parsers::NodeValueParser parser(reply_str, &val, broadcaster);
-    text_content = parser.getValue()->getString();
+    text_content = val.getString();
     return text_content;
 }
 
@@ -68,9 +68,9 @@ Wt::WAnimation::AnimationEffect getWidgetAnimation(Moldable* broadcaster)
     Redis::command("hget", nodeName, "animation");
     string animation_str = Redis::toString();
     Nodes::NodeValue val;
-    NodeValueParser value(animation_str, & val, broadcaster,
+    NodeValueParser value(animation_str, &val, broadcaster,
             &Parsers::enum_callback<Parsers::WtAnimationParser>);
-    return (Wt::WAnimation::AnimationEffect) value.getValue()->getInt();
+    return (Wt::WAnimation::AnimationEffect) val.getInt();
 }
 
 bool widgetHasChildren(Moldable* broadcaster)
@@ -121,7 +121,7 @@ uint8_t getActionBlock(Moldable* broadcaster)
         Nodes::NodeValue val;
         Parsers::NodeValueParser parser(block_arr[b], &val, broadcaster,
                 &Parsers::enum_callback <Parsers::SignalActionParser>);
-        action = (uint8_t) parser.getValue()->getInt();
+        action = (uint8_t) val.getInt();
         block |= action;
     }
     return block;

@@ -37,6 +37,7 @@ public:
 	 * a string.
 	 */
 	virtual std::string next (char delimiter = ' ');
+
 };
 
 }//namespace Parsers
