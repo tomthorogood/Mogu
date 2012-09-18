@@ -1,7 +1,7 @@
 from snippets import confirm
 from db_type import *
 from coloring import warn
-
+from syntax import *
 class ImportPackage(object):
     def __init__(self, widgets, tree, events, perspectives, global_events, meta, policies, sessions, validators):
         self.widgets = widgets

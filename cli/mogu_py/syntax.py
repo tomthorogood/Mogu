@@ -4,7 +4,7 @@ Defines better syntax for mogu
 def enum(keyword):
     return "{%s}" % keyword
 
-def number(num):
+def Number(num):
     if isinstance(num, int):
         return "^%d^" % num
     elif isinstance(num, float):
@@ -92,6 +92,7 @@ degradation = "degradation"
 strength    = degradation
 animation   = "animation"
 auto        = "auto"
+clear       = enum("clear")
 
 this        = enum("self")
 children    = enum("children")
