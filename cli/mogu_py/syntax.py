@@ -35,6 +35,9 @@ class key(object):
 class next(object):
     action  = "nextAction"
 
+class add(object):
+    child   = enum("add_child")
+
 class storage(object):
     list    = enum("list")
     string  = enum("string")
