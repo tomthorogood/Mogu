@@ -275,6 +275,7 @@ void directListeners(BroadcastMessage* broadcast)
     		std::string path = broadcast->getMessage()->getString();
     		Application::mogu()->setInternalPath(path);
     		break;}
+
     	case Action::register_user:{
     		if (!Actions::register_user())
     		{
@@ -285,6 +286,7 @@ void directListeners(BroadcastMessage* broadcast)
     			broadcast->getBroadcaster()->succeed().emit();
     		}
     		break;}
+
         case Action::change_session:{
         	if (!Actions::change_session())
 			{
@@ -295,6 +297,16 @@ void directListeners(BroadcastMessage* broadcast)
         		broadcast->getBroadcaster()->succeed().emit();
         	}
         	break;}
+
+        case Action::javascript:{
+        	std::string script = broadcast->getMessage()->getString();
+        	Application::mogu()->doJavaScript(script);
+        	break;}
+
+        case Action::email_user:{
+        	Actions::email_current_user();
+        	break;}
+
     	default:
     		return; // Don't do anything unexpected to application state.
     	}

@@ -197,6 +197,14 @@ void absorb(std::string value_unenc, std::string snode)
 	Redis::clear();
 }
 
+/*Returns the session ID in this user's chain where the node is found first. */
+std::string node_session(std::string session, std::string node)
+{
+	if (
+			session_widget_exists(session_widget(session,node))
+			|| session == "global") return session;
+	return node_session(getPrevSession(session),node);
+}
 
 void emerge(Dynamic* widget)
 {
@@ -217,21 +225,11 @@ void emerge(Dynamic* widget)
 	storage = widget->storageLocker();
 	sessionid = requestSessionID(Application::mogu()->sessionId());
 	if (sessionid == "global") return;
-	swidget = session_widget(sessionid, storage);
+
+	swidget = session_widget(node_session(sessionid, storage),storage);
+
 	WidgetTypes type = (WidgetTypes)
 			(widget->getProperties()->type & WIDGET_HO_BITS);
-
-
-	while (!session_widget_exists( swidget ))
-	{
-		/*If we've reached the start of the list and it's still not found,
-		 * exit the function without making any changes. If the global
-		 * session DOES contain the data, the conditional would have passed.
-		 */
-		if (sessionid == "global") return;
-		sessionid = getPrevSession(sessionid);
-		swidget = session_widget(sessionid, storage);
-	}
 
 	switch(type)
 	{
@@ -313,6 +311,47 @@ std::string getSlotName(const std::string& snode)
 	std::string nodePolicy = "widgets."+snode+".policy";
 	Redis::command("hget", nodePolicy, "slot");
 	return Redis::toString();
+}
+
+std::string dynamicLookup(std::string storage_name, std::string arg)
+{
+	using namespace Application;
+	using namespace Enums::NodeValueTypes::RedisTypes;
+	using std::string;
+	string sessionid = requestSessionID(mogu()->sessionId());
+	string storage_hash = Hash::toHash(storage_name);
+	string node =
+			session_widget(
+					node_session(sessionid,storage_hash),storage_hash);
+
+	string policy = "widgets."+storage_name+".policy";
+
+	/* Determine whether the data in that node was supposed to have been encrypted */
+	Redis::command("hget", policy, "encrypted");
+	bool encrypted = Redis::getInt();
+
+	/* Determine the type of node that we're dealing with */
+	Redis::command("type", node);
+	string node_type = Redis::toString();
+
+	/* If we have a list or hash node, get the extra value that should
+	 * have been passed in.
+	 */
+	if (node_type == REDIS_HSH)
+	{
+		Redis::command("hget",node,arg);
+	}
+	else if (node_type == REDIS_LST)
+	{
+		Redis::command("lindex",node,arg);
+	}
+	else
+	{
+		Redis::command("get",node);
+	}
+	string raw_string = Redis::toString();
+	if (encrypted) return Security::decrypt(raw_string);
+	return raw_string;
 }
 
 }//namespace SubmissoinHandler
