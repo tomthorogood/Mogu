@@ -1,4 +1,5 @@
 from redis_cheats import full_list
+import os
 
 def clean_str(string):
     return string.replace("\"","\\\"")
@@ -144,143 +145,103 @@ def export_session(db,session):
         output += "%s%s" % (title,body)
     return output
 
-def export(db, filename):
+def export(db, outInfo, toPackage):
     widgets = [key for key in db.keys('widgets.*') \
             if db.type(key) == 'hash' and \
             '.events' not in key and \
             '.children' not in key and \
             '.policy' not in key
             ]
-
-    output = "#!/usr/bin/env python\n#Mogu Import File: %s \n\n" % filename
-
-    for widget in widgets:
-        output += export_widget_dict(db,widget)
-
-    for widget in widgets:
-        temp = export_widget_events(db,widget)
-        if "\"" in temp:
-            output += temp
-
-    for widget in widgets:
-        temp = export_widget_children(db,widget)
-        if "\"" in temp:
-            output += temp
     
-    policies = db.keys("*.policy")
-    for p in policies:
-        temp = export_widget_policy(db,p)
-        if "\"" in temp:
-            output += temp
-
-    perspectives = db.keys("perspectives.*")
-    perspectives_ = []
-    for p in perspectives:
-        ex = p.split('.')
-        perspectives_.append(ex[1])
-    perspectives = perspectives_
-    for perspective in perspectives:
-        output += export_perspective(db,perspective)
-
-    validators = db.keys("validators.*")
-    for validator in validators:
-        temp = export_validator(db, validator)
-        if "\"" in temp:
-            output += temp
-
-    global_events = db.keys("events.*")
-    for event in global_events:
-        title = dict_entry_line("global_events", event.replace("events.",""))
-        body = dict_str(db.hgetall(event))
-        output += "%s%s\n\n" % (title,body)
-
-    meta_values = db.keys("meta.*")
-    for key in meta_values:
-        key_id = key.replace("meta.","")
-        key_type = db.type(key)
-        title = dict_entry_line("meta", key_id)
-        if key_type == "string":
-            body = "\"%s\"" % (db.hget(key))
-        elif key_type == "list":
-            body = list_str(db,full_list(key))
+    if not toPackage:
+        output = "#!/usr/bin/env python\n#Mogu Import File: %s \n\n" % outInfo
+    
+    for widget in widgets:
+        if toPackage:
+            filename = ("".join(widget.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, export_widget_dict(db,widget))
         else:
-            body = dict_str(db.hgetall(key))
-        output += "%s%s" % (title,body)
-
-    __sessions = db.keys("s.*")
-    sessions = []
-    for sesh in __sessions:
-        sid = sesh.split(".")[1]
-        if sid not in sessions:
-            sessions.append(sid)
-    for session in sessions:
-        output += export_session(db,session)
-        
-    write_content(filename, output, 'w')
-    
-def export_to_directory(db, filename):
-    widgets = [key for key in db.keys('widgets.*') \
-            if db.type(key) == 'hash' and \
-            '.events' not in key and \
-            '.children' not in key and \
-            '.policy' not in key
-            ]
-
-    output = "#!/usr/bin/env python\n#Mogu Import File: %s \n\n" % filename
-
-    for widget in widgets:
-        write_content(widget, output+export_widget_dict(db,widget), 'w')
-
-    for widget in widgets:
-        temp = export_widget_events(db,widget)
-        if "\"" in temp:
-            write_content(widget,temp)
-
-    for widget in widgets:
-        temp = export_widget_children(db,widget)
-        if "\"" in temp:
-            write_content(widget, temp)
-    
-    policies = db.keys("*.policy")
-    for p in policies:
-        temp = export_widget_policy(db,p)
-        if "\"" in temp:
-            write_content(widget, temp)
-
-    perspectives = db.keys("perspectives.*")
-    perspectives_ = []
-    for p in perspectives:
-        ex = p.split('.')
-        perspectives_.append(ex[1])
-    perspectives = perspectives_
-    for perspective in perspectives:
-        write_content(perspective,export_perspective(db,perspective))
-
-    validators = db.keys("validators.*")
-    for validator in validators:
-        temp = export_validator(db, validator)
-        if "\"" in temp:
-            write_content(validator,temp)
-
-    global_events = db.keys("events.*")
-    for event in global_events:
-        title = dict_entry_line("global_events", event.replace("events.",""))
-        body = dict_str(db.hgetall(event))
-        write_content(event, "%s%s\n\n" % (title,body))
-
-    meta_values = db.keys("meta.*")
-    for key in meta_values:
-        key_id = key.replace("meta.","")
-        key_type = db.type(key)
-        title = dict_entry_line("meta", key_id)
-        if key_type == "string":
-            body = "\"%s\"" % (db.hget(key))
-        elif key_type == "list":
-            body = list_str(db,full_list(key))
-        else:
-            body = dict_str(db.hgetall(key))
+            output += export_widget_dict(db,widget)
             
-        write_content(key, "%s%s" % (title,body))
+
+    for widget in widgets:
+        temp = export_widget_events(db,widget)
+        if "\"" in temp:
+            if toPackage:
+                filename = ("".join(widget.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
+
+    for widget in widgets:
+        temp = export_widget_children(db,widget)
+        if "\"" in temp:
+            if toPackage:
+                filename = ("".join(widget.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
+    
+    policies = db.keys("*.policy")
+    for p in policies:
+        temp = export_widget_policy(db,p)
+        if "\"" in temp:
+            if toPackage:
+                filename = ("".join(p.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
+            
+    perspectives = db.keys("perspectives.*")
+    perspectives_ = []
+    for p in perspectives:
+        ex = p.split('.')
+        perspectives_.append(ex[1])
+    perspectives = perspectives_
+    for perspective in perspectives:
+        if toPackage:
+            filename = ("".join(perspective.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, export_perspective(db,perspective))
+        else:
+            output += export_perspective(db,perspective)
+
+    validators = db.keys("validators.*")
+    for validator in validators:
+        temp = export_validator(db, validator)
+        if "\"" in temp:
+            if toPackage:
+                filename = ("".join(validator.split(":")[:-1]))+".mogu"
+                write_content(outInfo+"/"+filename, temp)
+            else:
+                output += temp
+        
+    global_events = db.keys("events.*")
+    for event in global_events:
+        title = dict_entry_line("global_events", event.replace("events.",""))
+        body = dict_str(db.hgetall(event))
+        if toPackage:
+            filename = ("".join(event.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, "%s%s\n\n" % (title,body))
+        else:    
+            output += "%s%s\n\n" % (title,body)
+
+    meta_values = db.keys("meta.*")
+    for key in meta_values:
+        key_id = key.replace("meta.","")
+        key_type = db.type(key)
+        title = dict_entry_line("meta", key_id)
+        if key_type == "string":
+            body = "\"%s\"" % (db.hget(key))
+        elif key_type == "list":
+            body = list_str(db,full_list(key))
+        else:
+            body = dict_str(db.hgetall(key))
+        
+        if toPackage:            
+            filename = ("".join(key.split(":")[:-1]))+".mogu"
+            write_content(outInfo+"/"+filename, "%s%s" % (title,body))
+        else:
+            output += "%s%s" % (title,body) 
 
     __sessions = db.keys("s.*")
     sessions = []
@@ -289,10 +250,23 @@ def export_to_directory(db, filename):
         if sid not in sessions:
             sessions.append(sid)
     for session in sessions:
-        write_content(session, export_session(db,session))
+        if toPackage:
+            write_content(outInfo+"/sessions.mogu", export_session(db,session))
+        else:        
+            output += export_session(db,session)
+        
+    if not toPackage:
+        write_content(outInfo, output, 'w')
+        
     
 def write_content(filename, content, writeMode='a'):
+
+    if not filename.endswith(".mogu"):
+        filename+=".mogu"
+    
+    preface = "" if os.path.exists(filename) else "#!/usr/bin/env python\n#Mogu Import File: %s \n\n"%filename
+
     f = open(filename, writeMode)
-    f.write(content.replace("\n\"","\"\n"))
+    f.write(preface+content.replace("\n\"","\"\n"))
     f.close()
     
