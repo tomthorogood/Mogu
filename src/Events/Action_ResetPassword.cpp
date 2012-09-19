@@ -12,6 +12,9 @@
 #include <Sessions/Lookups.h>
 #include <Redis/RedisCore.h>
 #include <algorithm>
+#include <Static.h>
+#include <Mogu.h>
+#include <Events/MoldableActionCenter.h>
 
 namespace Events{
 namespace ActionCenter{

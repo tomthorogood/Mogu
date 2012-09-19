@@ -195,7 +195,7 @@ bool change_session ()
 
 	SessionParams sessionParams;
 	sessionParams.next_session 	= session_packet.first;
-	sessionParams.last_session 	= last_session;
+	sessionParams.last_session 	= usr_last_session;
 	sessionParams.auth_string 	= e_auth_string;
 	sessionParams.auth_token 	= token_packet.first;
 	sessionParams.e_userid 		= e_userid;
@@ -223,10 +223,6 @@ bool register_user()
 		p_userid
 		,p_userauth
 		,e_userid
-		,e_userauth
-		,e_auth_string
-		,e_auth_token
-		,session_name
 		,salt
 	;
 	TokenCycles session_packet;
@@ -258,7 +254,7 @@ bool register_user()
 
 
 	// Otherwise, we're golden //
-	session_name = Generator::generate_id(&session_packet, e_userid);
+	Generator::generate_id(&session_packet, e_userid);
 	salt = Security::generate_salt();
 
 	//Give the user some salt:
@@ -278,7 +274,7 @@ bool register_user()
 
 
 	Security::create_auth_token(
-			session_name, p_userid, p_userauth, &auth_token_packet);
+			session_packet.first, p_userid, p_userauth, &auth_token_packet);
 
 	SessionParams prms;
 	prms.auth_string = auth_str_packet.first;
@@ -291,8 +287,8 @@ bool register_user()
 	add_session(&prms);
 
 	// Finally, change the environment //
-	setSessionID(session_name);
-	setAuthToken(e_auth_token);
+	setSessionID(session_packet.first);
+	setAuthToken(auth_token_packet.first);
 
 	//___CLEANUP___//
 	return true;

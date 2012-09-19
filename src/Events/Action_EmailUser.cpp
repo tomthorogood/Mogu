@@ -11,6 +11,7 @@
 #include <hash.h>
 #include <Sessions/Submission.h>
 #include <Events/MoldableActionCenter.h>
+#include <Sessions/Lookups.h>
 
 namespace Events
 {
@@ -18,20 +19,6 @@ namespace ActionCenter
 {
 namespace Actions
 {
-
-struct EmailPacket
-{
-	std::string to_address;
-	std::string subject;
-	std::string message;
-
-	EmailPacket()
-	{
-		to_address = EMPTY;
-		subject = EMPTY;
-		message = EMPTY;
-	}
-};
 
 int send_system_email(EmailPacket* email)
 {
