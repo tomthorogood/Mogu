@@ -53,6 +53,7 @@ std::string getHashField(const std::string& snode);
  */
 std::string getSlotName(const std::string& snode);
 
+std::string userNodeLookup(std::string sessionid, std::string storage, std::string arg=EMPTY);
 std::string dynamicLookup(std::string storage, std::string arg=EMPTY);
 
 

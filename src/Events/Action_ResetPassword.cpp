@@ -8,6 +8,8 @@
 #include <declarations.h>
 #include <Security/Security.h>
 #include <Sessions/Submission.h>
+#include <TurnLeftLib/Utils/randomcharset.h>
+#include <Sessions/Lookups.h>
 #include <Redis/RedisCore.h>
 #include <algorithm>
 
@@ -18,53 +20,71 @@ namespace Actions{
 bool change_password(std::string username, std::string new_password)
 {
 	using namespace Sessions::SubmissionHandler;
+	using namespace Sessions::Lookups;
 	using std::find;
 
-	//First, encrypt this username so we can start the lookups.
-	std::string e_username = Security::encrypt(username);
+	//Make sure user exists.
+	std::string e_userid = Security::encrypt(username);
+	if (!hashkey_exists(__NODE_SESSION_LOOKUP,e_userid)) return false;
 
-	//Make sure the user exists:
-	Redis::command("hexists", __NODE_SESSION_LOOKUP, e_username);
-	if (! (bool) Redis::getInt() ) return false;
+	std::string salt = user_salt(e_userid);
 
-	//Get the user's salt
-	Redis::command("hexists", __NODE_SALT_LOOKUP, e_username);
-	if (! (bool) Redis::getInt()) return false;
-	Redis::command("hget", __NODE_SALT_LOOKUP, e_username);
-	std::string user_salt = Redis::toString();
+	//Get the user's auth token
+	std::string usr_last_session = last_session(username);
+	std::string raw_auth_tok = raw_last_authtoken(usr_last_session);
+	std::string num_auth_tok_cycles = proofed_last_authtoken(e_userid);
+	int i_tok_cycles = atoi(num_auth_tok_cycles.c_str());
+	std::string auth_token = raw_auth_tok;
+	for (int i = 0; i < i_tok_cycles; i++)
+	{
+		auth_token = Security::collision_proof(raw_auth_tok);
+	}
 
-	//Then, get the last known session for this user:
-	Redis::command("hget", __NODE_SESSION_LOOKUP, e_username);
-	std::string n_last_session = Redis::toString();
+	//Create the new auth string
+	TokenCycles new_auth_str;
+	new_auth_str.first =
+			Security::create_raw_auth_string(username, salt, new_password);
+	Security::proof_auth_string(&new_auth_str);
 
-	//Get the user's last auth token from their session.
-	std::string meta_node = session_widget(n_last_session, __META_HASH);
-	Redis::command(n_last_session, __AUTH_HASH);
-	std::string auth_token = Redis::toString();
-
-	//Get all the values from the auth node and put them into a vector
-	Redis::strvector auth_vec;
-	Redis::command("hgetall", __NODE_AUTH_LOOKUP);
-	Redis::toVector(auth_vec);
-
-	//Find the auth token within the vector.
-	Redis::strvector::iterator iter = find(
-			auth_vec.begin(), auth_vec.end(), auth_token);
-
-	//The previous entry will be the user authstring
-	std::string user_auth = *--iter;
-
-	std::string new_auth_string = Security::create_auth_string(
-			username,
-			user_salt,
-			new_password);
-
-	//Set the new auth string to the old auth token:
-	Redis::command("hset", __NODE_AUTH_LOOKUP, new_auth_string, auth_token);
+	//Set the new auth string to the current auth token
+	Redis::command("hset", __NODE_AUTH_LOOKUP, new_auth_str.first, auth_token);
 	Redis::clear();
-	//Remove the old auth string
-	Redis::command("hdel", __NODE_AUTH_LOOKUP, user_auth);
+	if (new_auth_str.second > 0)
+	{//set the colission table if necessary
+		std::string s = itoa(new_auth_str.second);
+		Redis::command(
+				"hset", __NODE_COLLISION_STR_LOOKUP,e_userid,s);
+		Redis::clear();
+	}
+	else if (hashkey_exists(__NODE_COLLISION_STR_LOOKUP, e_userid))
+	{//if the new auth string had no collisions, delete the entry from
+		//the database node
+		Redis::command("hdel", __NODE_COLLISION_STR_LOOKUP, e_userid);
+		Redis::clear();
+	}
+	return true;
+}
 
+bool reset_password(std::string username)
+{
+	using TurnLeft::Utils::RandomCharSet;
+	std::string e_userid = Security::encrypt(username);
+	RandomCharSet rchar;
+	std::string new_password = rchar.generate(8);
+	if (!change_password(username,new_password)) return false;
+	std::string URL = Application::mogu()->bookmarkUrl();
+	EmailPacket pkt;
+	pkt.to_address = get_user_email(username);
+	pkt.subject = "Password Reset Request from "+URL;
+	pkt.message =
+			"You recently requested that your password for"
+			+ URL + " be reset. Your new password is " + new_password
+			+ ". You are encouraged to change this password next time you "
+			+ "log in. If you did not request your password be changed, you "
+			+ "should log in and change it immediately and ensure that your "
+			+ "email has not been compromised. Thank you.";
+	send_system_email(&pkt);
+	return true;
 }
 
 

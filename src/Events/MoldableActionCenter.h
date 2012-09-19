@@ -99,8 +99,9 @@ bool register_user ();
 void set_index(Listeners* listeners, BroadcastMessage* broadcast);
 void increment_index(Listeners* listeners);
 void decrement_index(Listeners* listeners);
-void email_current_user(
-		std::string message, std::string subject="Mail from FinancialFirsts.org!");
+std::string get_user_email(std::string username);
+void send_system_email(EmailPacket*);
+void email_current_user(EmailPacket*);
 } //namespace Actions
 
 } //Namspace ActionCenter

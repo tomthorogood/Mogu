@@ -35,7 +35,14 @@ namespace Events
     class BroadcastMessage;
     class EventNodeExtractor;
     class EventNodeProcessor;
-    /* Also includes namespace ActionCenter, which contains functions only */
+
+    namespace ActionCenter
+    {
+    	namespace Actions
+    	{
+    		struct EmailPacket;
+    	}
+    }
 }
 
 namespace Nodes

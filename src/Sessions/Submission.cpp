@@ -290,13 +290,13 @@ std::string getSlotName(const std::string& snode)
 	return Redis::toString();
 }
 
-std::string dynamicLookup(std::string storage_name, std::string arg)
+std::string userNodeLookup(
+		std::string sessionid,
+		std::string storage_name,
+		std::string arg)
 {
-	using namespace Application;
-	using namespace Enums::NodeValueTypes::RedisTypes;
 	using std::string;
-	string sessionid = requestSessionID(mogu()->sessionId());
-
+	using namespace Enums::NodeValueTypes::RedisTypes;
 	// The hashed value of the storage node's name
 	string h_st_node = Hash::toHash(storage_name);
 	string node =
@@ -328,6 +328,15 @@ std::string dynamicLookup(std::string storage_name, std::string arg)
 	string raw_string = Redis::toString();
 	if (encrypted) return Security::decrypt(raw_string);
 	return raw_string;
+}
+
+std::string dynamicLookup(std::string storage_name, std::string arg)
+{
+	using namespace Application;
+	using namespace Enums::NodeValueTypes::RedisTypes;
+	using std::string;
+	string sessionid = requestSessionID(mogu()->sessionId());
+	return userNodeLookup(sessionid, storage_name, arg);
 }
 
 }//namespace SubmissoinHandler

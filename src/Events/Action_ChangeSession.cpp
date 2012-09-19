@@ -77,7 +77,7 @@ namespace{
 			std::stringstream s;
 			s << p->token_cycles;
 			command("hset",
-					__NODE_COLLISION_TOK_LOOKUP, p->auth_string, s.str());
+					__NODE_COLLISION_TOK_LOOKUP, p->e_userid, s.str());
 		}
 		clear();
 		command("hset", __NODE_SESSION_LOOKUP, p->e_userid, p->next_session);
@@ -171,7 +171,7 @@ bool change_session ()
 	std::string last_meta = prhshd_session_node(usr_last_session, __META_HASH);
 	last_auth = raw_last_authtoken(usr_last_session);
 
-	std::string authtok_cycles = proofed_last_authtoken(e_auth_string);
+	std::string authtok_cycles = proofed_last_authtoken(e_userid);
 	if (authtok_cycles != EMPTY)
 	{
 		int num_cycles = atoi(authtok_cycles.c_str());

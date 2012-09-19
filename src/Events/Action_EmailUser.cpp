@@ -19,18 +19,46 @@ namespace ActionCenter
 namespace Actions
 {
 
-void email_current_user(
-		std::string message
-		,std::string subject)
+struct EmailPacket
+{
+	std::string to_address;
+	std::string subject;
+	std::string message;
+
+	EmailPacket()
+	{
+		to_address = EMPTY;
+		subject = EMPTY;
+		message = EMPTY;
+	}
+};
+
+int send_system_email(EmailPacket* email)
+{
+	std::string command = "echo ";
+	command += email->message
+			+ " |mail -s \""
+			+email->subject+"\" "
+			+email->to_address;
+	return system(command.c_str());
+}
+
+std::string get_user_email(std::string username)
+{
+	using namespace Sessions::SubmissionHandler;
+	const std::string contact_storage = Hash::toHash("contact");
+	const std::string email_hash = Hash::toHash("contact_email");
+	std::string usr_session = Sessions::Lookups::last_session(username);
+	return userNodeLookup(usr_session, contact_storage, email_hash);
+}
+
+int email_current_user(EmailPacket* email)
 {
 	using namespace Sessions::SubmissionHandler;
 	const std::string contact_storage = "contact";
 	const std::string email_hash = Hash::toHash("contact_email");
-	std::string email_address = dynamicLookup(contact_storage,email_hash);
-
-	std::string command = "echo ";
-	command += message + " |mail -s \""+subject+"\" " + email_address;
-	system(command.c_str());
+	email->to_address = dynamicLookup(contact_storage,email_hash);
+	return send_system_email(email);
 }
 
 }//namespace Actions
