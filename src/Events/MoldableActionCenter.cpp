@@ -304,7 +304,7 @@ void directListeners(BroadcastMessage* broadcast)
         	break;}
 
         case Action::email_user:{
-        	Actions::email_current_user();
+        	//Actions::email_current_user();
         	break;}
 
     	default:

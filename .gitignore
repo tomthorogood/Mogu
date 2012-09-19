@@ -8,6 +8,7 @@
 *grindout.xml
 *.patch
 *.orig
+mogu.conf
 docs/html
 cli/cli_src/clihash
 mogu-server
