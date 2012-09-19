@@ -305,8 +305,24 @@ void directListeners(BroadcastMessage* broadcast)
 
         case Action::email_user:{
         	std::string message = broadcast->getMessage()->getString();
-        	Actions::email_current_user(message);
+        	Actions::EmailPacket pkt;
+        	std::string URL = Application::mogu()->bookmarkUrl();
+        	pkt.subject = "New eMail from " + URL;
+        	pkt.message = message;
+        	Actions::email_current_user(&pkt);
         	break;}
+
+        case Action::reset_password:{
+        	std::string message = broadcast->getMessage()->getString();
+        	if (!Actions::reset_password(message))
+        	{
+        		broadcast->getBroadcaster()->fail().emit();
+        	}
+        	else
+        	{
+        		broadcast->getBroadcaster()->succeed().emit();
+        	}
+        }
 
     	default:
     		return; // Don't do anything unexpected to application state.

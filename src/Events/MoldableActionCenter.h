@@ -102,6 +102,8 @@ void decrement_index(Listeners* listeners);
 std::string get_user_email(std::string username);
 void send_system_email(EmailPacket*);
 void email_current_user(EmailPacket*);
+void reset_password(std::string username);
+void change_password(std::string username, std::string new_pass);
 } //namespace Actions
 
 } //Namspace ActionCenter
