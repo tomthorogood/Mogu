@@ -1,6 +1,9 @@
 """
 Defines better syntax for mogu
 """
+
+
+
 def enum(keyword):
     return "{%s}" % keyword
 
@@ -11,6 +14,8 @@ def Number(num):
         return "~%f~" % num
     else:
         raise InvalidFormatException(num,int)
+def State(name):
+    return "$%s$" % name
 
 def dynamic(wtype):
     return enum(wtype+"|dynamic")

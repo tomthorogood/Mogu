@@ -15,7 +15,7 @@ namespace Sessions
 namespace Generator
 {
 
-std::string generate_id(std::string current_id =0);
+std::string generate_id(TokenCycles* packet, std::string current_id =EMPTY);
 
 
 }

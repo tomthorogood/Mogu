@@ -9,9 +9,16 @@
 #define SUBMISSION_H_
 
 #include <declarations.h>
-
+#include <hash.h>
 namespace Sessions{
 namespace SubmissionHandler{
+
+/*!\brief Formats a node key for lookup by hashing the 'storage' attribute
+ *
+ * @param session The session ID ("global" or numeric ID)
+ * @param p_storage The plaintext storage node ("number_of_cats")
+ * @return The node lookup string ("s.global.1245915847985")
+ */
 
 /* Uses the storage policy of the node in question to make an informed decision
  * about what to do with the data.

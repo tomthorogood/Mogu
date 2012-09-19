@@ -7,6 +7,7 @@
 
 #include <time.h>
 #include <Sessions/SessionIDGenerator.h>
+#include <Sessions/Lookups.h>
 #include <hash.h>
 #include <sstream>
 #include <stdlib.h>
@@ -17,7 +18,7 @@ namespace Generator{
 
 using std::stringstream;
 
-std::string generate_id (std::string salt)
+void generate_id (TokenCycles* packet,std::string salt)
 {
 	stringstream stream;
 	if (salt == "")
@@ -32,8 +33,12 @@ std::string generate_id (std::string salt)
 	}
 	stream << time(NULL);
 	std::string to_hash(stream.str());
-	std::string hashed_string = Hash::toHash(to_hash);
-	return hashed_string;
+	packet->first = Hash::toHash(to_hash);
+	//TODO email sysadmin and prompt a merge if hashing more than X times
+	while (Lookups::session_exists(packet->first))
+	{
+		packet->first = Hash::toHash(packet->first);
+	}
 }
 
 }//namespace Generator

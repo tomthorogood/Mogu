@@ -304,7 +304,8 @@ void directListeners(BroadcastMessage* broadcast)
         	break;}
 
         case Action::email_user:{
-        	//Actions::email_current_user();
+        	std::string message = broadcast->getMessage()->getString();
+        	Actions::email_current_user(message);
         	break;}
 
     	default:

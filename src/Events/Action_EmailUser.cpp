@@ -10,13 +10,18 @@
 #include <Redis/RedisCore.h>
 #include <hash.h>
 #include <Sessions/Submission.h>
+#include <Events/MoldableActionCenter.h>
 
+namespace Events
+{
+namespace ActionCenter
+{
 namespace Actions
 {
 
 void email_current_user(
 		std::string message
-		,std::string subject="Mail from FinancialFirsts.org")
+		,std::string subject)
 {
 	using namespace Sessions::SubmissionHandler;
 	const std::string contact_storage = "contact";
@@ -28,5 +33,6 @@ void email_current_user(
 	system(command.c_str());
 }
 
-
 }//namespace Actions
+}//namespace ActionCenter
+}//namespace Events

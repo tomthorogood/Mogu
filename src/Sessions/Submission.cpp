@@ -6,7 +6,7 @@
  */
 
 #include <Sessions/Submission.h>
-#include <hash.h>
+#include <Sessions/Lookups.h>
 #include <Core/Dynamic.h>
 #include <Static.h>
 #include <Redis/RedisCore.h>
@@ -28,21 +28,7 @@ namespace Sessions{
 namespace SubmissionHandler{
 using Goo::Dynamic;
 using namespace Enums::SubmissionPolicies;
-
-
-inline std::string session_widget(std::string session, std::string p_storage)
-{
-	return "s."+session+"."+Hash::toHash(p_storage);
-}
-
-inline std::string getPrevSession(std::string session)
-{
-	Redis::command(
-			"hget",
-			"s."+session+"."+Hash::toHash("meta"),
-			Hash::toHash("prev"));
-	return Redis::toString();
-}
+using namespace Sessions::Lookups;
 
 inline bool session_widget_exists(std::string node)
 {
@@ -67,7 +53,7 @@ void absorb(std::string value_unenc, std::string snode)
 	/* The storage node will be a hashed version of the node template name,
 	 * within the current session namespace.
 	 */
-	std::string storageNode = "s."+session_id+"."+storage_locker;
+	std::string storageNode = session_node(session_id, snode);
 
 	/* If widget info is stored at widgets.firstName,
 	 * and the user session id is 235r308gg, and the
@@ -198,13 +184,22 @@ void absorb(std::string value_unenc, std::string snode)
 }
 
 /*Returns the session ID in this user's chain where the node is found first. */
-std::string node_session(std::string session, std::string node)
+std::string node_session(std::string session, std::string ph_node)
 {
-	if (
-			session_widget_exists(session_widget(session,node))
-			|| session == "global") return session;
-	return node_session(getPrevSession(session),node);
+	if ( session_widget_exists(prhshd_session_node(session,ph_node))
+		|| session == "global") return session;
+	return node_session(linked_session(session),ph_node);
 }
+
+std::string storage_arg(std::string pt_node_name)
+{
+	std::string node = "widgets."+pt_node_name+".policy";
+	if (!hashkey_exists(node, "arg")) return EMPTY;
+
+	Redis::command("hget", node, "arg");
+	return Redis::toString();
+}
+
 
 void emerge(Dynamic* widget)
 {
@@ -213,20 +208,9 @@ void emerge(Dynamic* widget)
 	using namespace Enums::WidgetTypes;
 	using std::string;
 
-	string
-		sessionid
-		,prev_session
-		,hprev
-		,storage
-		,swidget
-	;
+	string storage = widget->storageLocker();
 
-	hprev = Hash::toHash("prev");
-	storage = widget->storageLocker();
-	sessionid = requestSessionID(Application::mogu()->sessionId());
-	if (sessionid == "global") return;
-
-	swidget = session_widget(node_session(sessionid, storage),storage);
+	std::string emerged_string = dynamicLookup(storage, storage_arg(storage));
 
 	WidgetTypes type = (WidgetTypes)
 			(widget->getProperties()->type & WIDGET_HO_BITS);
@@ -234,15 +218,7 @@ void emerge(Dynamic* widget)
 	switch(type)
 	{
 	case text:{
-		Redis::command("get", swidget);
-		std::string _newtext = Redis::toString();
-
-		if (requiresEncryption(storage))
-		{
-			_newtext = Security::decrypt(_newtext);
-		}
-
-		Wt::WString newtext(_newtext);
+		Wt::WString newtext(emerged_string);
 		Wt::WText* w = (Wt::WText*) widget->widget(0);
 		w->setText(newtext);
 		break;}
@@ -254,6 +230,7 @@ void emerge(Dynamic* widget)
 bool requiresEncryption(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
+	if (!hashkey_exists, nodePolicy, "encrypted") return false;
 	Redis::command("hget", nodePolicy, "encrypted");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(Redis::toString(), &val);
@@ -319,16 +296,15 @@ std::string dynamicLookup(std::string storage_name, std::string arg)
 	using namespace Enums::NodeValueTypes::RedisTypes;
 	using std::string;
 	string sessionid = requestSessionID(mogu()->sessionId());
-	string storage_hash = Hash::toHash(storage_name);
-	string node =
-			session_widget(
-					node_session(sessionid,storage_hash),storage_hash);
 
-	string policy = "widgets."+storage_name+".policy";
+	// The hashed value of the storage node's name
+	string h_st_node = Hash::toHash(storage_name);
+	string node =
+			prhshd_session_node(
+					node_session(sessionid,h_st_node),h_st_node);
 
 	/* Determine whether the data in that node was supposed to have been encrypted */
-	Redis::command("hget", policy, "encrypted");
-	bool encrypted = Redis::getInt();
+	bool encrypted = requiresEncryption(storage_name);
 
 	/* Determine the type of node that we're dealing with */
 	Redis::command("type", node);

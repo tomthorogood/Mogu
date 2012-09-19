@@ -12,6 +12,7 @@
 #include <Static.h>
 #include <Sessions/Submission.h>
 #include <Sessions/SessionIDGenerator.h>
+#include <Sessions/Lookups.h>
 #include <Mogu.h>
 #include <Exceptions/Exceptions.h>
 #include <Security/Security.h>
@@ -21,18 +22,34 @@ namespace ActionCenter{
 namespace Actions{
 using std::string;
 
+struct SessionParams
+{
+	std::string next_session;
+	std::string last_session;
+	std::string auth_string;
+	std::string auth_token;
+	std::string e_userid;
+	int token_cycles;
+	int session_cycles;
+
+	SessionParams()
+	{
+		next_session 	= EMPTY;
+		last_session 	= EMPTY;
+		auth_string 	= EMPTY;
+		auth_token 		= EMPTY;
+		e_userid 		= EMPTY;
+		token_cycles 	= 0;
+		session_cycles 	= 0; //currently unused. deprecate?
+	}
+};
+
 namespace{
 
 	const string userid_key = "USERID";
 	const string userauth_key = "USERAUTH";
-	string
-		prev_session
-		,auth_field
-		,meta_hash
-		,collision_hash
-		,session_lookup
-		,auth_lookup
-		,salt_lookup
+	string collision_hash
+
 	;
 
 	bool __init__ = false;
@@ -40,42 +57,31 @@ namespace{
 	void init ()
 	{
 		using namespace Hash;
-		prev_session = toHash("prev");
-		auth_field = toHash("auth");
-		meta_hash = toHash("meta");
 		collision_hash = toHash("collisions");
-		salt_lookup = toHash("salt");
-		session_lookup = toHash(SESSION_LOOKUP);
-		auth_lookup = toHash(AUTH_LOOKUP);
 		__init__ = true;
 	}
 
-	inline void add_session(
-			string next_session
-			,string last_session
-			,string auth_string
-			,string auth_token
-			,string e_userid)
+	inline void add_session(SessionParams* p)
 	{
 		using namespace Redis;
+		using Sessions::Lookups::prhshd_session_node;
+		string next_meta = prhshd_session_node(p->next_session, __META_HASH);;
 
-		string next_meta = "s."+next_session+"."+meta_hash;
-		string glob_auth = "s.global."+auth_lookup;
-		string glob_user = "s.global."+session_lookup;
-
-		command("hset", next_meta, prev_session, last_session);
+		command("hset", next_meta, __PREV_HASH, p->last_session);
 		clear();
-		command("hset", next_meta, auth_field, auth_token);
+		command("hset", next_meta, __AUTH_HASH, p->auth_token);
 		clear();
-		command("hset", glob_auth, auth_string, auth_token);
+		command("hset", __NODE_AUTH_LOOKUP, p->auth_string, p->auth_token);
+		if (p->token_cycles > 0)
+		{
+			std::stringstream s;
+			s << p->token_cycles;
+			command("hset",
+					__NODE_COLLISION_TOK_LOOKUP, p->auth_string, s.str());
+		}
 		clear();
-		command("hset", glob_user, e_userid, next_session);
+		command("hset", __NODE_SESSION_LOOKUP, p->e_userid, p->next_session);
 		clear();
-	}
-
-	inline string collision_proof (string estr)
-	{
-		return Security::encrypt ( Hash::toHash(estr) );
 	}
 }
 
@@ -87,8 +93,11 @@ bool change_session ()
 	using namespace Application;
 	using namespace Exceptions;
 	using namespace Sessions;
+	using namespace Sessions::SubmissionHandler;
+	using namespace Sessions::Lookups;
 	using namespace Redis;
 	using namespace Hash;
+	using Security::collision_proof;
 
 
 	if (!__init__) init();
@@ -96,16 +105,14 @@ bool change_session ()
 	const string mogu_session			= mogu()->sessionId();
 
 	string
-		p_userid		//plaintext user id (out of scope after this method)
-		,e_userid		//encrypted user id
-		,salt			//user's salt
-		,last_session	//id of the user's last session
-		,e_auth_string	//user's encrypted auth string
-		,last_auth		//auth token stored with the last session
-		,next_auth		//auth token stored with the new session
-		,access_auth	//auth token to test against `last_auth`
-		,p_userauth		//the encrypted user password
-		,next_session	//the new user session created upon successful login
+		p_userid
+		,p_userauth
+		,e_userid
+		,salt
+		,e_auth_string
+		,usr_last_session
+		,last_auth
+		,access_auth
 	;
 
 	//__BODY__//
@@ -130,27 +137,24 @@ bool change_session ()
 	e_userid 	= Security::encrypt(p_userid);
 
 	// Make sure the user exists
-	command("hexists s.global."+session_lookup, e_userid);
-	if (! (bool) getInt())
-	{
-		return false;
-	}
+	if (!hashkey_exists(__NODE_SESSION_LOOKUP, e_userid)) return false;
 
 	// Next, get the user's salt and session, and construct their auth string.
-	command("hget s.global."+salt_lookup, Security::encrypt(p_userid));
-	salt = toString();
-	command("hget s.global."+session_lookup, e_userid);
-	last_session = toString();
-	e_auth_string = Security::create_auth_string(p_userid, salt, p_userauth);
-	/* Next, determine if this string was collision proofed upon creation,
+	salt = user_salt(e_userid);
+	usr_last_session = Lookups::last_session(p_userid);
+
+	e_auth_string = Security::create_raw_auth_string(
+			p_userid, salt, p_userauth);
+
+	/* Determine if this string was collision proofed upon creation,
 	 * and if so, get the number of collision proofing cycles and run them:
 	 */
-	command("hexists s.global."+auth_lookup+"."+collision_hash, e_userid);
-	if ( (bool) getInt())
+
+	std::string authstring_cycles = proofed_authstring(e_userid);
+	if (authstring_cycles != EMPTY)
 	{
-		command("hget s.global."+auth_lookup+"."+collision_hash, e_userid);
-		int num_cycles = getInt();
-		for (int i = 0; i < num_cycles; i++)
+		int num_cycles = atoi(authstring_cycles.c_str());
+		for (int c = 0; c < num_cycles; c++)
 		{
 			e_auth_string = collision_proof(e_auth_string);
 		}
@@ -159,42 +163,57 @@ bool change_session ()
 	/* Now that we have their auth string, we can make sure that it exists
 	 * in the auth_lookup table:
 	 */
-	command("hexists s.global."+auth_lookup, e_auth_string);
-	if (! (bool) getInt())
-	{
-		return false;
-	}
+	if (!hashkey_exists(__NODE_AUTH_LOOKUP, e_auth_string)) return false;
 
 	/* Now, we'll retrieve the auth token to make sure that it matches
 	 * the one stored in the user's last_session.
 	 */
-	command("hget s."+last_session+"."+meta_hash, auth_field);
-	last_auth = toString();
-	command("hget s.global."+auth_lookup, e_auth_string);
-	access_auth = toString();
-	if (last_auth != access_auth) return false;
+	std::string last_meta = prhshd_session_node(usr_last_session, __META_HASH);
+	last_auth = raw_last_authtoken(usr_last_session);
 
-	next_session = Sessions::Generator::generate_id(salt);
-	next_auth = Security::create_auth_token(
-			next_session,
+	std::string authtok_cycles = proofed_last_authtoken(e_auth_string);
+	if (authtok_cycles != EMPTY)
+	{
+		int num_cycles = atoi(authtok_cycles.c_str());
+		for (int c = 0; c < num_cycles; c++)
+		{
+			last_auth = collision_proof(last_auth);
+		}
+	}
+
+	access_auth = access_token(e_auth_string);
+
+	TokenCycles session_packet;
+	Sessions::Generator::generate_id(&session_packet,salt);
+
+	TokenCycles token_packet;
+	Security::create_auth_token(
+			session_packet.first,
 			p_userid,
-			p_userauth);
+			p_userauth,
+			&token_packet);
 
-	add_session(
-			next_session, last_session, e_auth_string, next_auth, e_userid);
-	setSessionID(next_session);
-	setAuthToken(next_auth);
+	SessionParams sessionParams;
+	sessionParams.next_session 	= session_packet.first;
+	sessionParams.last_session 	= last_session;
+	sessionParams.auth_string 	= e_auth_string;
+	sessionParams.auth_token 	= token_packet.first;
+	sessionParams.e_userid 		= e_userid;
+	sessionParams.token_cycles 	= token_packet.second;
+	sessionParams.session_cycles= session_packet.second;
+	add_session(&sessionParams);
+	setSessionID(session_packet.first);
+	setAuthToken(token_packet.first);
 	return true;
 }
 
 
-
-//TODO YOU ARE HERE
 bool register_user()
 {
 	using namespace Application;
 	using namespace Exceptions;
 	using namespace Sessions;
+	using namespace Sessions::Lookups;
 	using namespace Redis;
 	using namespace Hash;
 
@@ -210,20 +229,12 @@ bool register_user()
 		,session_name
 		,salt
 	;
+	TokenCycles session_packet;
+	TokenCycles auth_str_packet;
+	TokenCycles auth_token_packet;
+
 
 	const string mogu_session = mogu()->sessionId();
-
-	// (h|e) userid : sessionid
-	string session_lookup_node = "s.global."+session_lookup;
-
-	// (e) auth string : auth token
-	string auth_table = "s.global."+auth_lookup;
-
-	// (e) userid : salt
-	string salt_table = "s.global."+salt_lookup;
-
-	// (e) userid : #collisions (if not 0)
-	string auth_collisions = auth_table + "." + collision_hash;
 
 	try
 	{
@@ -242,60 +253,42 @@ bool register_user()
 	e_userid	= Security::encrypt(p_userid);
 
 	// Make sure the username doesn't already exist //
-	command("hexists", session_lookup_node, e_userid);
-	if ( (bool) getInt() ) return false;
-	command("hexists", salt_table, e_userid); //in case of compromise
-	if ( (bool) getInt() ) return false;
+	if (!hashkey_exists(__NODE_SESSION_LOOKUP,e_userid))return false;
+	if (!hashkey_exists(__NODE_SALT_LOOKUP, e_userid)) return false;
+
 
 	// Otherwise, we're golden //
-	session_name = Generator::generate_id(e_userid);
+	session_name = Generator::generate_id(&session_packet, e_userid);
 	salt = Security::generate_salt();
 
 	//Give the user some salt:
-	command("hset", salt_table, e_userid, salt);
+	command("hset", __NODE_SALT_LOOKUP, e_userid, salt);
 	clear();
 
-	e_auth_string = Security::create_auth_string(
+	//Create the user's auth string and set up the collision table, if necessary
+	auth_str_packet.first = Security::create_raw_auth_string(
 			p_userid, salt, p_userauth);
-
-	/* If the auth string exists in the lookup table, we must continue
-	 * hashing our encrypted string and checking it against the table.
-	 */
-	command("hexists", auth_table, e_auth_string);
-	bool auth_exists = (bool) getInt();
-	int num_cycles =0;
-	while (auth_exists)
+	Security::proof_auth_string(&auth_str_packet);
+	if (auth_str_packet.second > 0)
 	{
-		/* Hash the encryption, and encrypt it again: */
-		e_auth_string = collision_proof(e_auth_string);
-		command("hexists", auth_table, e_auth_string);
-		/* Test whether the newly generated key exists */
-		auth_exists = (bool) getInt();
-
-		/* Increase the number of collision proofing cycles. */
-		++num_cycles;
-
-		/* Convert the number of cycles to a string */
-		std::stringstream st;
-		st << num_cycles;
-
-		/* Set the auth_collisions table to (e) userid : num_collisions
-		 * So when they try to login again, we'll be able to perform the
-		 * correct algorithms on their login credentials.
-		 */
-		command("hset", auth_collisions, e_userid, st.str());
-		clear();
-
+		std::stringstream s;
+		s << auth_str_packet.second;
+		command("hset", __NODE_COLLISION_STR_LOOKUP,e_userid, s.str());
 	}
 
-	/* It really doesn't matter if this happens to be the same as another
-	 * auth token, as it's only accessible through the unique auth string.
-	 */
-	e_auth_token = Security::create_auth_token(
-			session_name, p_userid, p_userauth);
 
-	add_session(
-			session_name, "global", e_auth_string, e_auth_token, e_userid);
+	Security::create_auth_token(
+			session_name, p_userid, p_userauth, &auth_token_packet);
+
+	SessionParams prms;
+	prms.auth_string = auth_str_packet.first;
+	prms.auth_token = auth_token_packet.first;
+	prms.e_userid = e_userid;
+	prms.last_session = "global";
+	prms.next_session = session_packet.first;
+	prms.session_cycles = session_packet.second;
+	prms.token_cycles = auth_token_packet.second;
+	add_session(&prms);
 
 	// Finally, change the environment //
 	setSessionID(session_name);
