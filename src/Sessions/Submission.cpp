@@ -230,7 +230,7 @@ void emerge(Dynamic* widget)
 bool requiresEncryption(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
-	if (!hashkey_exists, nodePolicy, "encrypted") return false;
+	if (!hashkey_exists( nodePolicy, "encrypted")) return false;
 	Redis::command("hget", nodePolicy, "encrypted");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(Redis::toString(), &val);
@@ -321,10 +321,12 @@ std::string userNodeLookup(
 	{
 		Redis::command("lindex",node,arg);
 	}
-	else
+	else if (node_type == REDIS_STR)
 	{
 		Redis::command("get",node);
 	}
+	else return EMPTY;
+
 	string raw_string = Redis::toString();
 	if (encrypted) return Security::decrypt(raw_string);
 	return raw_string;

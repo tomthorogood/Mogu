@@ -10,6 +10,7 @@
 #include <crypt/PacketCenter.h>
 #include <Exceptions/Exceptions.h>
 #include <Redis/RedisCore.h>
+#include <iostream>
 
 namespace Application
 {
@@ -73,6 +74,9 @@ void setAuthToken(std::string token)
 
 void setSessionID(std::string session)
 {
+#ifdef DEBUG
+	std::cout << "CHANGING SESSION TO THE " << session << " KEYSPACE!";
+#endif
 	__sessionID = session;
 }
 

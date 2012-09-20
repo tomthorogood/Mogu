@@ -134,6 +134,7 @@ bool change_session ()
 				"setting it. Are you sure you've called the slot directives?");
 	}
 
+	TurnLeft::Utils::stolower(p_userid);
 	e_userid 	= Security::encrypt(p_userid);
 
 	// Make sure the user exists
@@ -246,11 +247,12 @@ bool register_user()
 			"setting it. Are you sure you've called the slot directives?");
 	}
 
+	TurnLeft::Utils::stolower(p_userid);
 	e_userid	= Security::encrypt(p_userid);
 
 	// Make sure the username doesn't already exist //
-	if (!hashkey_exists(__NODE_SESSION_LOOKUP,e_userid))return false;
-	if (!hashkey_exists(__NODE_SALT_LOOKUP, e_userid)) return false;
+	if (hashkey_exists(__NODE_SESSION_LOOKUP,e_userid))return false;
+	if (hashkey_exists(__NODE_SALT_LOOKUP, e_userid)) return false;
 
 
 	// Otherwise, we're golden //
