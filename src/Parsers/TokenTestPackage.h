@@ -55,6 +55,15 @@ struct TokenTestPackage
 			case float_value:
 				__nval_final->setFloat(atof( ival.c_str()));
 				break;
+			case widget_state:{
+				WidgetStateParser parser;
+				Enums::WidgetTypes::States st = parser.parse(__args[0]);
+				Nodes::NodeValue* state_val = __broadcaster->getState(st);
+				Nodes::ReadType type = state_val->getType();
+				if (type == integer_value)
+					__nval_final->setInt(state_val->getInt());
+				else if (type == string_value)
+					__nval_final->setString(state_val->getString());
 			default:
 				__nval_final->setString(ival);
 		}

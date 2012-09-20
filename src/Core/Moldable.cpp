@@ -213,4 +213,31 @@ NodeValue* Moldable::getState(States state)
 	return value;
 }
 
+Nodes::NodeValue* Moldable::getState(Enums::WidgetTypes::States state)
+{
+	using namespace Enums::WidgetTypes;
+	Nodes::NodeValue* val = new Nodes::NodeValue();
+	switch(state)
+	{
+	case num_children:{
+		int n = countMoldableChildren();
+		val->setInt(n);
+		break;}
+	case current_index:{
+		Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
+		int n = stack->currentIndex();
+		val->setInt(n);
+		break;}
+	case is_hidden:{
+		bool v = isHidden();
+		val->setInt( (bool) v);
+		break;}
+	default:
+		val->setInt(0);
+	}
+	__state_cache[state] = val;
+	return val;
+}
+
+
 }// namespace Goo
