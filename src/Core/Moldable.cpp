@@ -186,33 +186,6 @@ void Moldable::addGoo (const string& nodeName)
 #endif
 } // addGoo()
 
-NodeValue* Moldable::getState(States state)
-{
-	NodeValue* value = new NodeValue();
-	switch(state)
-	{
-	case num_children:{
-		value->setInt(countMoldableChildren());
-		break;}
-	case registered_name:{
-		if (Parsers::StyleParser::widgetHasProperty(getNode(), "name"))
-		{
-			std::string name = Parsers::StyleParser::getWidgetProperty
-				(getNode(), "name");
-			value->setString(name);
-		}
-		break;}
-	case current_index:{
-		Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
-		value->setInt(stack->currentIndex());
-		break;}
-	case is_hidden:{
-		value->setInt( (int) isHidden());
-		break;}
-	}
-	return value;
-}
-
 Nodes::NodeValue* Moldable::getState(Enums::WidgetTypes::States state)
 {
 	using namespace Enums::WidgetTypes;
