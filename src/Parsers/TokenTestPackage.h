@@ -11,6 +11,7 @@
 #include <declarations.h>
 #include <Types/NodeValue.h>
 
+
 namespace Parsers
 {
 
@@ -37,28 +38,9 @@ struct TokenTestPackage
 		__r_node_type ="";
 	}
 
-	inline void interpret(
+	void interpret(
 			Enums::NodeValueTypes::InterpretationMode _mode,
-			size_t arg=0)
-	{
-		using namespace Enums::NodeValueTypes;
-		std::string ival = _mode == VAL ? __val : __args[arg];
-		using namespace Enums::NodeValueTypes;
-		switch(__val_type)
-		{
-			case integer_value:
-				__nval_final->setInt(atoi(ival.c_str()));
-				break;
-			case enum_value:
-				__nval_final->setInt( (int) __callback(ival));
-				break;
-			case float_value:
-				__nval_final->setFloat(atof( ival.c_str()));
-				break;
-			default:
-				__nval_final->setString(ival);
-		}
-	}
+			size_t arg=0);
 };
 
 }//namespace Parsers

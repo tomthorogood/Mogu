@@ -10,35 +10,52 @@
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <TurnLeftLib/Utils/inlines.h>
 #include <Security/Security.h>
+#include <Sessions/Lookups.h>
 #include <hash.h>
 
 
 namespace Security
 {
 using std::string;
-string create_auth_string(
-		string userid,
-		string salt,
-		string userauth)
-{
-	string ustr,hstr,estr;
 
-	ustr = userid+salt+userauth;
-	hstr = Hash::toHash(ustr);
-	estr = encrypt(hstr);
-	return estr;
+std::string create_raw_auth_string(
+		string userid
+		,string salt
+		,string userauth)
+{
+	string ustr = userid+salt+userauth;
+	string hstr = Hash::toHash(ustr);
+	return encrypt(hstr);
 }
 
-string create_auth_token(
+void proof_auth_string(TokenCycles* packet)
+{
+	while (Sessions::Lookups::auth_string_exists(packet->first))
+	{
+		packet->first = collision_proof(packet->first);
+		packet->second++;
+	}
+}
+
+void create_auth_token(
 		string sessionid,
 		string userid,
-		string userauth)
+		string userauth,
+		TokenCycles* envelope)
 {
 	string ustr,hstr,estr;
 	ustr = sessionid+userid+userauth;
 	hstr = Hash::toHash(ustr);
 	estr = encrypt(hstr);
-	return estr;
+	envelope->first = estr;
+	envelope->second = 0;
+
+	while (Sessions::Lookups::auth_token_exists(envelope->first))
+	{
+		envelope->first = collision_proof(envelope->first);
+		envelope->second++;
+	}
+	Redis::command("sadd", __NODE_ALL_AUTHS, envelope->first);
 }
 
 string generate_salt()

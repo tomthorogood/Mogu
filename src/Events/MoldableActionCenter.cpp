@@ -304,8 +304,25 @@ void directListeners(BroadcastMessage* broadcast)
         	break;}
 
         case Action::email_user:{
-        	//Actions::email_current_user();
+        	std::string message = broadcast->getMessage()->getString();
+        	Actions::EmailPacket pkt;
+        	std::string URL = Application::mogu()->bookmarkUrl();
+        	pkt.subject = "New eMail from " + URL;
+        	pkt.message = message;
+        	Actions::email_current_user(&pkt);
         	break;}
+
+        case Action::reset_password:{
+        	std::string message = broadcast->getMessage()->getString();
+        	if (!Actions::reset_password(message))
+        	{
+        		broadcast->getBroadcaster()->fail().emit();
+        	}
+        	else
+        	{
+        		broadcast->getBroadcaster()->succeed().emit();
+        	}
+        }
 
     	default:
     		return; // Don't do anything unexpected to application state.
@@ -582,7 +599,7 @@ BroadcastMessage* generateNewBroadcast(
             &Parsers::enum_callback <Parsers::SignalActionParser>);
 
     /*The message type can be anything EXCEPT an enumerated value*/
-    processor->set(Field::message, message_str);
+    processor->set(Field::message, message_str, broadcaster);
 
     unsigned char signal_type = (unsigned char)
             processor->getValue(Field::signal)->getInt();

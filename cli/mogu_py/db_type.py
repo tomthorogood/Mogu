@@ -338,3 +338,11 @@ class Validator(DictNode):
         self.keystone_reqs = {
                 "regex" :   ("test",)
         }
+
+class DataNode(Node):
+    def __init__(self):
+        super(DataNode, self).__init__("data")
+        self.node_construction += ".%s"
+    def _import(self,db, data, flags):
+        self.node_type = type(data)
+        super(DataNode, self)._import(db, data, flags)

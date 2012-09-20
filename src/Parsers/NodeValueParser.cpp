@@ -25,6 +25,9 @@ inline std::string itoa(int i)
 	return s.str();
 }
 
+/* The first test determines whether we've reached a final type, or whether
+ * we need to do more node lookups in order to find the values we seek.
+ */
 TokenTestResult __test_t1(TokenTestPackage* pkg)
 {
 	using namespace RedisTypes;
@@ -55,18 +58,26 @@ TokenTestResult __test_t1(TokenTestPackage* pkg)
 	}
 }
 
+/* This second test uses the second token taken from the syntax string and
+ * based on its type determines the value thereof. This token will reside in
+ * the 'arg' field of the test package, as it will be an argument of the
+ * first token, which must be a node. Examples include:
+ * 	@token1=node@ {enum_arg}
+ * 	@token1=node@ $state_arg$
+ * 	@token1=node@ hash_field
+ * 	@token1=node@ ^index^
+ */
 TokenTestResult __test_t2(TokenTestPackage* pkg)
 {
 	using namespace Enums::NodeValueTypes::RedisTypes;
 
 	/* We can't get information from a list with a string.
 	 * Something is wrong. */
-
 	std::string result;
 	if ( pkg->__r_node_type == REDIS_LST
 		&& (pkg->__val_type == string_value)) return ERR;
 
-	pkg->interpret(ARG);
+	pkg->interpret(ARG); // Parse the next argument and set it in __nval_final
 	if (pkg->__r_node_type == REDIS_LST)
 	{
 		std::string _arg = itoa(pkg->__nval_final->getInt());
@@ -157,15 +168,27 @@ NodeValueParser::NodeValueParser(
 
 	} while (token != EMPTY);
 
+	/* Populate the 'TokenTestPackage' with current values, which will
+	 * be manipulated by the tests in order to logically parse the values
+	 * into a final resolution. The TokenTestPackage is there to avoid
+	 * an ungodly amount of passed parameters.
+	 */
 	TokenTestPackage pkg(nval);
 	pkg.__broadcaster 		= broadcaster;
 	pkg.__callback 			= callback;
 	pkg.__val 				= declaration[0].first;
 	pkg.__val_type 			= declaration[0].second;
 
+	/* The first test is required, and will set the stage for future
+	 * tests.
+	 */
 	pkg.__last_result = t_tests[0](&pkg);
-
 	size_t nargs =1;
+
+	/* Thereafter, we continue to parse the information in the package using
+	 * test(x), where x is dynamically bound based on how many tests we've
+	 * performed. (Super proud of this little block of code, by the way!)
+	 */
 	while (pkg.__last_result == NXT_NODE)
 	{
 		pkg.__args.push_back(declaration[nargs].first);

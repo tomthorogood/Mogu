@@ -62,6 +62,7 @@ namespace RedisTypes{
 	const std::string REDIS_STR = "string";
 	const std::string REDIS_LST = "list";
 	const std::string REDIS_HSH = "hash";
+	const std::string REDIS_NUL = "none";
 }
 
 } //namespace NodeValueTypes

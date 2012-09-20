@@ -93,13 +93,33 @@ void cleanupBroadcast(BroadcastMessage* broadcast);
 
 //_______ACTION RESOLUTIONS ________//
 namespace Actions{
+
+struct EmailPacket
+{
+	std::string to_address;
+	std::string subject;
+	std::string message;
+
+	EmailPacket()
+	{
+		to_address = EMPTY;
+		subject = EMPTY;
+		message = EMPTY;
+	}
+};
+
+
 bool change_session ();
 bool register_user ();
 
 void set_index(Listeners* listeners, BroadcastMessage* broadcast);
 void increment_index(Listeners* listeners);
 void decrement_index(Listeners* listeners);
-void email_current_user();
+std::string get_user_email(std::string username);
+int send_system_email(EmailPacket*);
+int email_current_user(EmailPacket*);
+bool reset_password(std::string username);
+bool change_password(std::string username, std::string new_pass);
 } //namespace Actions
 
 } //Namspace ActionCenter

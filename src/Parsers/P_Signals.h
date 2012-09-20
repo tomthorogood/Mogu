@@ -84,7 +84,7 @@ public:
 	    enumMap["succeed"]		= Trigger::succeed;
 	    enumMap["keyup"]		= Trigger::keyup;
 	    enumMap["enter"] 		= Trigger::enter_pressed;
-	    enumMap["enter"]		= Trigger::index_changed;
+	    enumMap["index_changed"]= Trigger::index_changed;
 	}
 };
 

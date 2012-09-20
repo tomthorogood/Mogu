@@ -3,7 +3,7 @@ from db_type import *
 from coloring import warn
 from syntax import *
 class ImportPackage(object):
-    def __init__(self, widgets, tree, events, perspectives, global_events, meta, policies, sessions, validators):
+    def __init__(self, widgets, tree, events, perspectives, global_events, meta, policies, sessions, validators, data):
         self.widgets = widgets
         self.tree = tree
         self.events = events
@@ -13,6 +13,7 @@ class ImportPackage(object):
         self.policies = policies
         self.sessions = sessions
         self.validators = validators
+        self.data = data
 
 #Creates a 
 def evaluate_files(filenames):
@@ -27,6 +28,7 @@ def evaluate_files(filenames):
     policies = {}
     sessions = {}
     validators = {}
+    data = {}
 
     for filename in filenames:
         
@@ -35,7 +37,7 @@ def evaluate_files(filenames):
 
         files.append(f)
     
-        packages.append(ImportPackage(widgets, tree, events, perspectives, global_events, meta, policies, sessions,validators))
+        packages.append(ImportPackage(widgets, tree, events, perspectives, global_events, meta, policies, sessions,validators, data))
 
     for everyFile in files:
         everyFile.close()
@@ -124,6 +126,19 @@ def import_files(db, args, moguFiles, pyFiles):
             w = WidgetChildren()
             w.build(widget)
             w._import(db, package.tree[widget], lflags)
+
+        for dnode in package.data:
+            n = DataNode()
+            n.build(dnode)
+            dnflags = None
+            data = package.data[dnode]
+            if (isinstance(data,str)):
+                dnflags = sflags
+            elif (isinstance(data,list)):
+                dnflags = lflags
+            elif (isinstance(data,dict)):
+                dnflags = dflags
+            n._import(db, data, dnflags)
 
         for session in package.sessions:
             for storage in package.sessions[session]:
