@@ -599,7 +599,7 @@ BroadcastMessage* generateNewBroadcast(
             &Parsers::enum_callback <Parsers::SignalActionParser>);
 
     /*The message type can be anything EXCEPT an enumerated value*/
-    processor->set(Field::message, message_str);
+    processor->set(Field::message, message_str, broadcaster);
 
     unsigned char signal_type = (unsigned char)
             processor->getValue(Field::signal)->getInt();
