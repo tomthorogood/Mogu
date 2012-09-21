@@ -86,6 +86,9 @@ bool reset_password(std::string username)
 	if (!change_password(username,new_password)) return false;
 	std::string URL = Application::mogu()->bookmarkUrl();
 	EmailPacket pkt;
+#ifdef DEBUG
+	std::cout << get_user_email(username) << std::endl;
+#endif
 	pkt.to_address = get_user_email(username);
 	pkt.subject = "Password Reset Request from "+URL;
 	pkt.message =

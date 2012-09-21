@@ -278,6 +278,11 @@ bool register_user()
 	Security::create_auth_token(
 			session_packet.first, p_userid, p_userauth, &auth_token_packet);
 
+	const std::string contact_storage = Hash::toHash("contact");
+	const std::string email_hash = Hash::toHash("contact_email");
+	std::string contact_node = prhshd_session_node(
+			session_packet.first, contact_storage);
+	Redis::command("hset", contact_node, email_hash, e_userid);
 	SessionParams prms;
 	prms.auth_string = auth_str_packet.first;
 	prms.auth_token = auth_token_packet.first;
