@@ -85,7 +85,7 @@ args = parser.parse_args()
 command = args.command[0]
 
 db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
-
+print("Connected to port %s:%d|%d" % (args.redis_host, args.redis_port, args.redis_db))
 # mogu import filename F [--merge --redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
 if command == "import":
     pyFiles = []
@@ -237,10 +237,12 @@ if command == "delete":
 
     if args.filename:
         f = open(args.filename,"r")
-        keys = f.readlines()
-        
+        keys = [key.replace("\n","") for key in f.readlines()]
+        print(keys)
     for key in keys:
-        if (db.exists(key)):
+        ex = db.exists(key)
+        print(ex)
+        if (ex):
             warning = warn("%s will be permanently deleted. THERE IS NO UNDO!" % key)
             if confirm(warning, args.yes):
                 db.delete(key)
@@ -302,7 +304,7 @@ if command == "export-widget":
         f.write(output_str)
     
     f.close()
-    clean_file(filename)
+    #clean_file(filename)
 #END export-widget
 
 if command == "merge-sessions":

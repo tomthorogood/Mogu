@@ -1,4 +1,6 @@
 from redis_cheats import full_list
+from sets import Set
+from coloring import *
 import os
 
 def clean_str(string):
@@ -13,6 +15,15 @@ def dict_str(dict_entries):
     entries_body = (",\n".join(str_entries))+","
     output = "{\n%s\n}\n" % entries_body
     return output
+
+
+def set_str(set_entries, quote="\""):
+    str_entries = []
+    for entry in set_entries:
+        as_string = "\t%s%s%s" % (quote, entry, quote)
+        str_entries.append(as_string)
+    body = (",\n".join(str_entries))+","
+    output = "Set([\n%s\n])\n" % body
 
 def list_str(list_entries, quote="\""):
     str_entries = []
@@ -127,6 +138,9 @@ def export_session(db,session):
         elif t == "list":
             l = full_list(db, name)
             body = list_str(l)
+        elif t == "set":
+            s = db.smembers(name)
+            body = set_str(s)
         else:
             body = " \t\"%s\"\n" % clean_str(db.get(name))
         output += "%s%s" % (title,body)

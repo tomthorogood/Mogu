@@ -9,6 +9,7 @@
 #include <Security/Security.h>
 #include <Sessions/Submission.h>
 #include <TurnLeftLib/Utils/randomcharset.h>
+#include <TurnLeftLib/Utils/inlines.h>
 #include <Sessions/Lookups.h>
 #include <Redis/RedisCore.h>
 #include <algorithm>
@@ -36,11 +37,15 @@ bool change_password(std::string username, std::string new_password)
 	std::string usr_last_session = last_session(username);
 	std::string raw_auth_tok = raw_last_authtoken(usr_last_session);
 	std::string num_auth_tok_cycles = proofed_last_authtoken(e_userid);
-	int i_tok_cycles = atoi(num_auth_tok_cycles.c_str());
 	std::string auth_token = raw_auth_tok;
-	for (int i = 0; i < i_tok_cycles; i++)
+	if (num_auth_tok_cycles != EMPTY)
 	{
-		auth_token = Security::collision_proof(raw_auth_tok);
+		int i_tok_cycles = atoi(num_auth_tok_cycles.c_str());
+
+		for (int i = 0; i < i_tok_cycles; i++)
+		{
+			auth_token = Security::collision_proof(raw_auth_tok);
+		}
 	}
 
 	//Create the new auth string
@@ -71,9 +76,13 @@ bool change_password(std::string username, std::string new_password)
 bool reset_password(std::string username)
 {
 	using TurnLeft::Utils::RandomCharSet;
+	TurnLeft::Utils::stolower(username);
 	std::string e_userid = Security::encrypt(username);
 	RandomCharSet rchar;
 	std::string new_password = rchar.generate(8);
+#ifdef DEBUG
+	std::cout << "NEW PASSWORD: " << new_password << std::endl;
+#endif
 	if (!change_password(username,new_password)) return false;
 	std::string URL = Application::mogu()->bookmarkUrl();
 	EmailPacket pkt;

@@ -76,7 +76,7 @@ inline std::string linked_session(std::string sessionid)
 inline std::string raw_last_authtoken(std::string session)
 {
 	std::string meta_node = session_node(session, "meta");
-	Redis::command("get", meta_node, __AUTH_HASH);
+	Redis::command("hget", meta_node, __AUTH_HASH);
 	return Redis::toString();
 }
 

@@ -62,6 +62,7 @@ public:
 	    enumMap["javascript"]		= Action::javascript;
 	    enumMap["email_user"]		= Action::email_user;
 	    enumMap["read_state"]		= Action::read_state;
+	    enumMap["reset_password"] 	= Action::reset_password;
 	    enumMap["reload"]			= Action::reload;
 #ifdef TERM_ENABLED
 	    enumMap["TERMINATE"]		= Action::TERM;
