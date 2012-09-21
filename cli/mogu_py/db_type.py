@@ -1,8 +1,10 @@
+from sets import Set
 import sys
 import subprocess
 import bytemaps
 import mimport as todb
 from snippets import confirm
+from snippets import clrln
 from exceptions import *
 import cityhash
 required_event_parameters = {
@@ -131,6 +133,8 @@ class Node(object):
         return entry in val
 
     def _import(self,db, data, flags):
+        #clrln()
+        #sys.stdout.write("writing node %s" % self.node)
         if self.node_type is str:
             f = bytemaps.StrStorage
             method = todb.import_string
@@ -142,6 +146,9 @@ class Node(object):
             for key in data:
                 data[key] = self.wrap(key, data[key])
             method = todb.import_dict
+        elif self.node_type is Set:
+            f = bytemaps.ListStorage
+            method = todb.import_set
         else:
             raise NodeTypeError(self)
         merge = bytemaps.is_set(flags, f.is_merge)
@@ -305,6 +312,12 @@ class SessionList(Node):
         super(SessionList, self).__init__("s")
         self.node_construction += ".%s.%s"
         self.node_type = list
+
+class SessionSet(Node):
+    def __init__(self):
+        super(SessionSet, self).__init__("s")
+        self.node_construction += ".%s.%s"
+        self.node_type = Set
 
 class SessionStr(Node):
     def __init__(self):

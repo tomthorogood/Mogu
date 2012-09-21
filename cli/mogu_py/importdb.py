@@ -2,6 +2,7 @@ from snippets import confirm
 from db_type import *
 from coloring import warn
 from syntax import *
+from sets import Set
 class ImportPackage(object):
     def __init__(self, widgets, tree, events, perspectives, global_events, meta, policies, sessions, validators, data):
         self.widgets = widgets
@@ -32,16 +33,13 @@ def evaluate_files(filenames):
 
     for filename in filenames:
         
+#        print("Importing File: %s" % filename)
         f = open(filename,'r')
         execfile(filename)
-
-        files.append(f)
+        f.close()
     
-        packages.append(ImportPackage(widgets, tree, events, perspectives, global_events, meta, policies, sessions,validators, data))
-
-    for everyFile in files:
-        everyFile.close()
-
+    packages.append(ImportPackage(widgets, tree, events, perspectives, global_events, meta, policies, sessions,validators, data))
+#    print("Done creating packages. Writing to database.")
     return packages
 
 """
@@ -52,16 +50,6 @@ imports a list of files into the redis database.
 @moguFiles - a list of mogu scripts to be imported
 """
 def import_files(db, args, moguFiles, pyFiles):
-    if args.flushdb:
-        message = warn(
-                "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
-                    args.redis_db, args.redis_host, args.redis_port))
-        if confirm(message,args.yes):
-            db.flushdb()
-
-        else:            
-            print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
-            sys.exit()
 
     packages = evaluate_files(pyFiles+moguFiles)
     
@@ -148,6 +136,9 @@ def import_files(db, args, moguFiles, pyFiles):
                     fl = dflags
                 elif isinstance(entry, list):
                     s = SessionList()
+                    fl = lflags
+                elif isinstance(entry, Set):
+                    s = SessionSet()
                     fl = lflags
                 else:
                     s = SessionStr()

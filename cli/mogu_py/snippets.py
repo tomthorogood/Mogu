@@ -1,4 +1,8 @@
 from coloring import *
+import sys
+def clrln():
+    sys.stdout.write("\r")
+    sys.stdout.flush()
 
 def confirm(message, assume_yes=False):
     message = warn(message)

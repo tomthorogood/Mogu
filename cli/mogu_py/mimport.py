@@ -22,6 +22,7 @@ def import_string(db, node, data, flags):
     if not testing:
         db.set(node, data)
 
+
 def import_dict (db, node, data, flags):
     """
     @param db the redis database connection
@@ -48,6 +49,11 @@ def import_dict (db, node, data, flags):
             data[entry] = clean_string(data[entry])
         if not testing:
             db.hset(node, entry, data[entry])
+
+def import_set(db, node, data, flags):
+    testing = b.is_set(flags, b.ListStorage.is_test)
+    for element in data:
+        db.sadd(node, element)
 
 def import_list(db, node, data, flags):
     testing = b.is_set(flags, b.ListStorage.is_test)

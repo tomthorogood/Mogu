@@ -100,21 +100,29 @@ if command == "import":
 
 # mogu import-directory directory D [--merge --redis-port --redis-host --redis-select --redis-auth --redis-flush --assume-yes --test-only]
 if command == "import-directory":
+    if args.flushdb:
+        message = warn(
+                "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
+                    args.redis_db, args.redis_host, args.redis_port))
+        if confirm(message,args.yes):
+            db.flushdb()
+
+        else:            
+            print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
+            sys.exit()
+
     for directory in args.command[1:]:
-        dir_path = directory +"/"
-        filenames = os.listdir(directory)
-
-        pyFiles = []
-        moguFiles = []
-
-        for filename in filenames:
-            if filename.endswith(".py"):
-                pyFiles.append(dir_path+filename)
-            elif filename.endswith(".mogu"):
-                moguFiles.append(dir_path+filename)
-
-        importdb.import_files(db, args, moguFiles, pyFiles)
-
+        dir_dict = {}
+        for root, subs, files in os.walk(directory):
+            dir_dict[root] = ([],[])
+            for filename in files:
+                fname = os.path.join(root,filename)
+                if filename.endswith(".py"):
+                    dir_dict[root][0].append(fname)
+                elif filename.endswith(".mogu"):
+                    dir_dict[root][1].append(fname)
+        for d in dir_dict:
+            importdb.import_files(db, args, dir_dict[d][1], dir_dict[d][0])
 
 # mogo export filename [--resis-port --redis-host --redis-select --redis-auth --single-file]
 if command == "export":
