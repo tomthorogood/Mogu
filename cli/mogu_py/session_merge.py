@@ -37,7 +37,7 @@
 # Session 1 -> prev: global
 # Session 8 -> prev: Session 1
 #
-import cityhash
+from cityhash import Hash
 from collections import OrderedDict
 
 
@@ -51,11 +51,8 @@ def merge_all(db):
     """
     node = "s.global.%s" % Hash.session_lookup
     session_list = db.hvals(node)
-    print(session_list)
     for session in session_list:
-        print("*******************")
         merge_user_sessions(db, session)
-        print("*******************")
 
 def merge_user_sessions(db, endpoint):
     """
@@ -69,15 +66,10 @@ def merge_user_sessions(db, endpoint):
 
     # Assembles the linked list of all the user's sessions.
     while previous != "global":
-        print previous
         linked_list.append(previous)
         metanode = "s.%s.%s" % (previous, Hash.meta)
-        print(metanode)
         previous = db.hget(metanode, Hash.prev)
-        print("Next link: %s" % previous)
 
-    print("Done with while loop!")
-    x = raw_input()
     # Next, weed out all of the sessions that have only the 'meta'
     # data attached, meaning no data was recorded from the user. Those
     # will be skipped in all subsequent steps, since they can be deleted harmlessly.
@@ -85,7 +77,7 @@ def merge_user_sessions(db, endpoint):
     # be deleted
 
     for node in linked_list:
-        if node is not linked_list[-1]:
+        if node in linked_list[1:-1]:
             # A prunable session will have exactly 1 key in the database:
             node_keys = db.keys("s.%s.*")
             if len(node_keys) is 1:
@@ -147,6 +139,12 @@ def merge_user_sessions(db, endpoint):
                     for entry in data:
                         db.hset(write_to, entry, data[entry])
 
+                elif ndoe_type == "set":
+                    data = Set(db.smembers(node_name))
+                    for entry in data:
+                        db.sadd(write_to, entry)
+                    
+
     # Great! Now get rid of absolutely everything that
     # is not the first or last nodes!
 
@@ -161,4 +159,7 @@ def merge_user_sessions(db, endpoint):
     db.hset("s.%s.%s" % (endpoint, Hash.meta), Hash.prev, linked_list[-1])
 
     # And we're done! 
-
+if __name__ == "__main__":
+    from redis import Redis
+    db = Redis()
+    merge_all(db)
