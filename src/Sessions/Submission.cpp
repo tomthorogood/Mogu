@@ -23,12 +23,14 @@
 #include <sstream>
 #include <Security/Security.h>
 #include <Wt/WText>
+#include <TurnLeftLib/Utils/inlines.h>
 
 namespace Sessions{
 namespace SubmissionHandler{
 using Goo::Dynamic;
 using namespace Enums::SubmissionPolicies;
 using namespace Sessions::Lookups;
+using TurnLeft::Utils::trimchar;
 
 inline bool session_widget_exists(std::string node)
 {
@@ -328,7 +330,13 @@ std::string userNodeLookup(
 	else return EMPTY;
 
 	string raw_string = Redis::toString();
-	if (encrypted) return Security::decrypt(raw_string);
+	if (encrypted)
+	{
+		std::string dec = Security::decrypt(raw_string);
+		char padding = '_';
+		trimchar(dec,padding);
+		return dec;
+	}
 	return raw_string;
 }
 

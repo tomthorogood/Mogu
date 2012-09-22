@@ -27,16 +27,19 @@ int send_system_email(EmailPacket* email)
 			+ " |mail -s \""
 			+email->subject+"\" "
 			+email->to_address;
+#ifdef DEBUG
+	std::cout << command << std::endl;
+#endif
 	return system(command.c_str());
 }
 
 std::string get_user_email(std::string username)
 {
 	using namespace Sessions::SubmissionHandler;
-	const std::string contact_storage = Hash::toHash("contact");
+	//const std::string contact_storage = Hash::toHash("contact");
 	const std::string email_hash = Hash::toHash("contact_email");
 	std::string usr_session = Sessions::Lookups::last_session(username);
-	return userNodeLookup(usr_session, contact_storage, email_hash);
+	return userNodeLookup(usr_session, "contact", email_hash);
 }
 
 int email_current_user(EmailPacket* email)

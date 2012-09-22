@@ -316,6 +316,9 @@ void directListeners(BroadcastMessage* broadcast)
         	std::string message = broadcast->getMessage()->getString();
         	std::string uid = Application::retrieveSlot(
         			"USERID", Application::mogu()->sessionId());
+#ifdef DEBUG
+        	std::cout << uid << std::endl;
+#endif
         	if (!Actions::reset_password(uid))
         	{
         		broadcast->getBroadcaster()->fail().emit();
