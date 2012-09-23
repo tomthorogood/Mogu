@@ -5,7 +5,7 @@ includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
 executable := mogu-server
 o:=0
 devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
-gen_config := cli/mogu_py/config_generator.py
+gen_config := cli/src/config_generator.py
 
 turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
 sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
