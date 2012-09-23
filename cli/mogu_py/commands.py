@@ -1,4 +1,8 @@
 from find_orphans import *
+from session_merge import merge_all as merge_sessions
+from config_generator import write_config_file
+
+
 
 def m_import (args, db):
     if not args.filename:

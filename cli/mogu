@@ -369,10 +369,3 @@ if command == "dbdiff":
     else:
         message = ok(message)
     print message
-
-if command == "whatis":
-    for arg in args.command[1:]:
-        print whatis(db,arg)
-if command == "version":
-    print VERSION
-

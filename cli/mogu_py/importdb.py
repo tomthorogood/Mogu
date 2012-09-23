@@ -33,13 +33,11 @@ def evaluate_files(filenames):
 
     for filename in filenames:
         
-#        print("Importing File: %s" % filename)
         f = open(filename,'r')
         execfile(filename)
         f.close()
     
     packages.append(ImportPackage(widgets, tree, events, perspectives, global_events, meta, policies, sessions,validators, data))
-#    print("Done creating packages. Writing to database.")
     return packages
 
 """
@@ -50,7 +48,6 @@ imports a list of files into the redis database.
 @moguFiles - a list of mogu scripts to be imported
 """
 def import_files(db, args, moguFiles, pyFiles):
-
     packages = evaluate_files(pyFiles+moguFiles)
     
     for package in packages:
