@@ -15,7 +15,7 @@ def Number(num):
         return "~%f~" % num
     else:
         raise InvalidFormatException(num,int)
-
+number = Number
 def State(name):
     return "$%s$" % name
 

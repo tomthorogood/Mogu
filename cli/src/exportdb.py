@@ -120,7 +120,7 @@ def export_widget_dict(db,widget):
     pattern = Pattern.Widget(widget)
     return dict_to_string(
             "widgets",
-            pattern.name
+            pattern.name,
             db.hgetall(pattern.node)
             )
 
@@ -139,7 +139,7 @@ def export_validator(db, validator):
     pattern = Pattern.Validator(validator)
     return dict_to_string(
             "validators",
-            pattern.name
+            pattern.name,
             db.hgetall(pattern.node)
             )
 def export_widget_events(db,widget):

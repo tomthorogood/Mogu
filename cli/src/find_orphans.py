@@ -69,4 +69,4 @@ def find_orphans(args, db):
 if __name__ == "__main__":
     import redis
     db = redis.Redis()
-    find_orphans(db)
+    find_orphans(1,db)

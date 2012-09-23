@@ -1,6 +1,6 @@
 from coloring import *
 from redis_cheats import *
-from node_names import NodePattern as Pattern
+from node_name import NodePatterns as Pattern
 def find_parent(db,widget):
     children_lists = [key for key in db.keys("*.children")]
     for _list in children_lists:

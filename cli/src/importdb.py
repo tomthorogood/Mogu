@@ -12,7 +12,7 @@ def _import (args, db):
     for filename in args.command[1:]:
         if filename.endswith(".py"):
             pyFiles.append(filename)
-        elif filename.endswith(".mogu")
+        elif filename.endswith(".mogu"):
             moguFiles.append(filename)
     importdb.import_files(db, args, moguFiles, pyFiles)
 

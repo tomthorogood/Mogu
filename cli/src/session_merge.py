@@ -162,4 +162,4 @@ def merge_user_sessions(db, endpoint):
 if __name__ == "__main__":
     from redis import Redis
     db = Redis()
-    merge_all(db)
+    merge_all(1,db)
