@@ -1,3 +1,6 @@
+# CLI Parser
+from cli_parser import getCLIArgs
+
 # find-orphans
 from find_orphans import *
 

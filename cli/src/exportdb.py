@@ -126,7 +126,7 @@ def export_widget_dict(db,widget):
 
 def export_widget_policy(db,policy):
     pattern = Pattern.WidgetPolicy(policy)
-    if db.exists(policy):
+    if db.exists(pattern.node):
         return dict_to_string(
                 "policies",
                 pattern.name,
@@ -163,7 +163,7 @@ def export_perspective(db,perspective):
     if (len(perspective_nodes) is 0):
         return ""
     output = ""
-    title = dict_entry_line("perspectives", perspective.name)
+    title = dict_entry_line("perspectives", pattern.name)
     perspective_dicts = []
     for node in perspective_nodes:
         perspective_dicts.append(dict_str(db.hgetall(node)))
@@ -194,7 +194,7 @@ def export_data(db, data_node):
         val = db.hgetall(pattern.node)
         body = dictstr(val)
     elif dtype == "list":
-        val = full_list(db,patter.node)
+        val = full_list(db,pattern.node)
         body = list_str(val)
     elif dtype == "set":
         val = db.smembers(pattern.node)
@@ -208,7 +208,7 @@ def export_data(db, data_node):
 def export_session(db,session):
     pattern = Pattern.Session(session)
     output = empty_dict_entry_line("sessions", pattern.name)
-    _session_nodes = db.keys("%s.*" % session.node)
+    _session_nodes = db.keys("%s.*" % pattern.node)
     session_nodes = []
     for n in _session_nodes:
         session_nodes.append(n.split(".")[2])

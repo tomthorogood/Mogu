@@ -5,7 +5,7 @@ from syntax import *
 from sets import Set
 
 
-def _import (args, db):
+def import_ (args, db):
     pyFiles = []
     moguFiles = []
 
@@ -14,10 +14,10 @@ def _import (args, db):
             pyFiles.append(filename)
         elif filename.endswith(".mogu"):
             moguFiles.append(filename)
-    importdb.import_files(db, args, moguFiles, pyFiles)
-
+    import_files(db, args, moguFiles, pyFiles)
 
 def import_directory(args, db):
+    import os
     if args.flushdb:
         message = warn(
                 "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
@@ -30,6 +30,7 @@ def import_directory(args, db):
             sys.exit()
 
     for directory in args.command[1:]:
+        print("Importing directory %s " % directory) 
         dir_dict = {}
         for root, subs, files in os.walk(directory):
             dir_dict[root] = ([],[])
@@ -40,7 +41,7 @@ def import_directory(args, db):
                 elif filename.endswith(".mogu"):
                     dir_dict[root][1].append(fname)
         for d in dir_dict:
-            importdb.import_files(db, args, dir_dict[d][1], dir_dict[d][0])
+            import_files(db, args, dir_dict[d][1], dir_dict[d][0])
 
 
 def m_import (args, db):

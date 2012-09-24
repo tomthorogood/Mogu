@@ -1,2 +1,1 @@
-from cli_parser import *
-import commands
+import commands as cli

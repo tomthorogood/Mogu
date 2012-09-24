@@ -22,33 +22,33 @@ class NodeName(object):
 class NodePatterns:
     class Widget(NodeName):
         def __init__(self, string):
-            super(Widget, self).__init__(
+            super(NodePatterns.Widget, self).__init__(
                     string,NodeNameParams(begin="widgets."))
 
     class WidgetPolicy(NodeName):
         def __init__(self, string):
-            super(WidgetPolicy, self).__init__(
+            super(NodePatterns.WidgetPolicy, self).__init__(
                     string, NodeNameParams(
                         begin="widgets.",
                         end=".policy"))
     class Validator(NodeName):
         def __init__(self,string):
-            super(Validator, self).__init__(
+            super(NodePatterns.Validator, self).__init__(
                     string, NodeNameParams(begin="validators."))
 
     class Perspective(NodeName):
         def __init__(self, string):
-            super(Perspective, self).__init__(
+            super(NodePatterns.Perspective, self).__init__(
                     string, NodeNameParams(begin="perspectives."))
 
     class Data(NodeName):
         def __init__(self, string):
-            super(Data, self).__init__(
+            super(NodePatterns.Data, self).__init__(
                     string, NodeNameParams(begin="data."))
 
     class Session(NodeName):
         def __init__(self, string):
-            super(Session, self).__init__(
+            super(NodePatterns.Session, self).__init__(
                     string, NodeNameParams(begin="s."))
 
 

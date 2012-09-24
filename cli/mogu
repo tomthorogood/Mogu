@@ -1,29 +1,30 @@
 #!/usr/bin/env python
 
-from src import getCLIArgs
-from src import commands
+from redis import Redis
+from src import cli
 
-args,conf = getCLIArgs()
+args,conf = cli.getCLIArgs()
 command = args.command[0]
 db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
 args.config = conf
 
-cmd_map = {
-        "import"            :   commands._import,
-        "import-directory"  :   commands.import_directory,
-        "find-orphans"      :   commands.find_orphans,
-        "merge-sessions"    :   commands.merge_sessions,
-        "export"            :   commands.export_all,
-        "export-widget"     :   commands.export_widget,
-        "start"             :   commands.start,
-        "newfile"           :   commands.newfile,
-        "purge-sessions"    :   commands.purge_sessions,
-        "delete"            :   commands.delete,
-        "init"              :   commands.init,
-        "relate"            :   commands.relate,
-        "create_config"     :   commands.create_config,
-        "find-missing"      :   commands.find_missing_children
+
+cli_map = {
+        "import"            :   cli.import_,
+        "import-directory"  :   cli.import_directory,
+        "find-orphans"      :   cli.find_orphans,
+        "merge-sessions"    :   cli.merge_sessions,
+        "export"            :   cli.export_all,
+        "export-widget"     :   cli.export_widget,
+        "start"             :   cli.start,
+        "newfile"           :   cli.newfile,
+        "purge-sessions"    :   cli.purge_sessions,
+        "delete"            :   cli.delete,
+        "init"              :   cli.init,
+        "relate"            :   cli.relate,
+        "create_config"     :   cli.create_config,
+        "find-missing"      :   cli.find_missing_children
         }
 
 if __name__ == "__main__":
-    cmd_map(command)(args, db)
+    cli_map[command](args, db)

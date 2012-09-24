@@ -1,5 +1,8 @@
 from ConfigParser import SafeConfigParser
+from ConfigParser import NoOptionError
+from argparse import ArgumentParser
 from mogupy_conf import *
+from exceptions import *
 
 def getCLIArgs():
     global CONFIG_FILE    
@@ -89,4 +92,4 @@ def getCLIArgs():
             dest="merge", action="store_true", default=False,
             help="Will not delete nodes before setting values, which could result in unexpected behaviour, but can make things easier when adding one-offs.")
 
-    return parser.parse_args(), conf
+    return parser.parse_args(), config
