@@ -38,7 +38,7 @@ enum WidgetTypes {
     checkbox_menu		=0xC,
     multi_select		=0xD,
     password			=0xE,
-    template_group		=0x10
+    foreach				=0x10,
 
 };
 

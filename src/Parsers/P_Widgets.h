@@ -32,27 +32,28 @@ public:
 	WidgetTypeParser()
 	{
 	    namespace WidgetTypes = Enums::WidgetTypes;
-	    enumMap["text"]             = WidgetTypes::text;
-	    enumMap["link"]             = WidgetTypes::link;
-	    enumMap["image"]            = WidgetTypes::image;
-	    enumMap["image link"]       = WidgetTypes::image_link;
-	    enumMap["image_link"]       = WidgetTypes::image_link;
-	    enumMap["submit button"]    = WidgetTypes::button;
-	    enumMap["submit"]           = WidgetTypes::button;
-	    enumMap["radio button"]     = WidgetTypes::radio_button_menu;
-	    enumMap["text area"]        = WidgetTypes::textarea;
-	    enumMap["textarea"]         = WidgetTypes::textarea;
-	    enumMap["input"]            = WidgetTypes::input_text;
-	    enumMap["input text"]       = WidgetTypes::input_text;
-	    enumMap["dropdown menu"]    = WidgetTypes::dropdown_menu;
-	    enumMap["dropdown"]         = WidgetTypes::dropdown_menu;
-	    enumMap["checkbox menu"]    = WidgetTypes::checkbox_menu;
-	    enumMap["checkbox"]         = WidgetTypes::checkbox_menu;
-	    enumMap["multi select"]     = WidgetTypes::multi_select;
-	    enumMap["container"]        = WidgetTypes::container;
+	    enumMap["text"]            = WidgetTypes::text;
+	    enumMap["link"]            = WidgetTypes::link;
+	    enumMap["image"]           = WidgetTypes::image;
+	    enumMap["image link"]      = WidgetTypes::image_link;
+	    enumMap["image_link"]      = WidgetTypes::image_link;
+	    enumMap["submit button"]   = WidgetTypes::button;
+	    enumMap["submit"]          = WidgetTypes::button;
+	    enumMap["radio button"]    = WidgetTypes::radio_button_menu;
+	    enumMap["text area"]       = WidgetTypes::textarea;
+	    enumMap["textarea"]        = WidgetTypes::textarea;
+	    enumMap["input"]           = WidgetTypes::input_text;
+	    enumMap["input text"]      = WidgetTypes::input_text;
+	    enumMap["dropdown menu"]   = WidgetTypes::dropdown_menu;
+	    enumMap["dropdown"]        = WidgetTypes::dropdown_menu;
+	    enumMap["checkbox menu"]   = WidgetTypes::checkbox_menu;
+	    enumMap["checkbox"]        = WidgetTypes::checkbox_menu;
+	    enumMap["multi select"]    = WidgetTypes::multi_select;
+	    enumMap["container"]       = WidgetTypes::container;
 	    enumMap["password"]			= WidgetTypes::password;
-	    enumMap["stacked"]          = WidgetTypes::stack;
+	    enumMap["stacked"]         = WidgetTypes::stack;
 	    enumMap["stack"]			= WidgetTypes::stack;
+	    enumMap["foreach"]			= WidgetTypes::foreach;
 	}
 
 	virtual Enums::WidgetTypes::WidgetTypes parse(const std::string& val)

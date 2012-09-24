@@ -32,10 +32,9 @@ using std::string;
 void conceptualize (Moldable* widget)
 {
 	GooVariables* vars = widget->getProperties();
-	WidgetTypes type = getWidgetType(widget);
-	vars->type = type;
 	std::string widgetNode = widget->getNode();
-
+	WidgetTypes type = getWidgetType(widgetNode);
+	vars->type = type;
 
 	if (widgetIsDynamic(widgetNode))
 	{
@@ -52,12 +51,12 @@ void conceptualize (Moldable* widget)
 		vars->flags |= has_events;
 	}
 
-	if (widgetBlocksActions(widget))
+	if (widgetBlocksActions(widgetNode))
 	{
 		vars->flags |= blocks_actions;
 	}
 
-	if (widgetHasChildren(widget))
+	if (widgetHasChildren(widgetNode))
 	{
 		vars->flags |= has_children;
 	}
@@ -89,7 +88,7 @@ void conceptualize (Moldable* widget)
 	// Mask HO bits to get true widget type
 	if ( (type & WIDGET_HO_BITS) > stack)
 	{
-		vars->content = getWidgetText(widget);
+		vars->content = getWidgetText(widgetNode);
 	}
 
 	if ((type & WIDGET_HO_BITS) == image)
@@ -121,7 +120,7 @@ void mold(Moldable* widget)
 
 	if (vars->flags & blocks_actions)
 	{
-		vars->actionBlocking = getActionBlock(widget);
+		vars->actionBlocking = getActionBlock(node);
 	}
 
 	if (widgetHasProperty(node, "tooltip"))
@@ -167,7 +166,7 @@ void mold(Moldable* widget)
 			if (vars->flags & has_animation)
 			{
 				Wt::WAnimation::AnimationEffect effect =
-						getWidgetAnimation(widget);
+						getWidgetAnimation(node);
 				Wt::WAnimation transition(effect);
 				stack->setTransitionAnimation(transition,true);
 			}
@@ -203,7 +202,7 @@ void mold(Moldable* widget)
 
 	if (vars->flags & has_children)
 	{
-		getWidgetChildren(widget, vars->children);
+		getWidgetChildren(node, vars->children);
 		int num_children = vars->children.size();
 		for (int i = 0; i < num_children; i++)
 		{

@@ -23,15 +23,52 @@ namespace StyleParser
 {
 
 
-WidgetType getWidgetType(Goo::Moldable* broadcaster);
-std::string getWidgetText(Goo::Moldable* broadcaster);
-std::string getWidgetImgSource(Goo::Moldable* broadcaster);
+inline WidgetType getWidgetType(std::string nodeName)
+{
+   WidgetType __type;
+   Nodes::NodeValue val;
+   std::string reply_str = getWidgetProperty(
+    		nodeName, "type");
+   Parsers::NodeValueParser parser(reply_str, &val, NONE,
+            Parsers::enum_callback <Parsers::WidgetTypeParser>);
+   __type = (WidgetType) val.getInt();
+    return __type;
+}
 
-Wt::WAnimation::AnimationEffect getWidgetAnimation(
-        Goo::Moldable* broadcaster);
 
-void getWidgetChildren(
-        Goo::Moldable* broadcaster, Redis::strvector& empty_vector);
+inline std::string getWidgetText(std::string nodeName)
+{
+    std::string reply_str = getWidgetProperty(nodeName, "content");
+    Nodes::NodeValue val;
+    Parsers::NodeValueParser parser(reply_str, &val, NONE);
+    return val.getString();
+}
+
+inline std::string getWidgetImgSource(std::string nodeName);
+
+inline Wt::WAnimation::AnimationEffect getWidgetAnimation(
+        std::string nodeName)
+{
+    Redis::command("hget", nodeName, "animation");
+    std::string animation_str = Redis::toString();
+    Nodes::NodeValue val;
+    NodeValueParser value(animation_str, &val, NONE,
+            &Parsers::enum_callback<Parsers::WtAnimationParser>);
+    return (Wt::WAnimation::AnimationEffect) val.getInt();
+}
+
+inline void getWidgetChildren(
+        std::string nodeName, Redis::strvector& children)
+{
+    nodeName.append(".children");
+    int num_children =0;
+
+    Redis::command("llen", nodeName);
+    num_children = Redis::getInt();
+    std::string _num_children = itoa(num_children);
+    Redis::command("lrange", nodeName, "0", _num_children);
+    Redis::toVector(children);
+}
 
 
 inline std::string getWidgetProperty(
@@ -47,11 +84,34 @@ inline bool widgetHasProperty(std::string nodeName, std::string property)
 	return (bool) Redis::getInt();
 }
 
-bool widgetHasChildren(Goo::Moldable* broadcaster);
-bool widgetBlocksActions(Goo::Moldable* broadcaster);
-bool widgetIsDynamic(std::string);
+inline bool widgetHasChildren(std::string nodeName)
+{
+    nodeName.append(".children");
+    Redis::command("exists", nodeName);
+    return Redis::getInt() == 1;
+}
 
-uint8_t getActionBlock(Goo::Moldable* broadcaster);
+inline bool widgetBlocksActions(std::string nodeName)
+{
+    Redis::command("hexists", nodeName, "block");
+    return (bool) Redis::getInt();
+}
+
+inline bool widgetIsDynamic(std::string nodeName)
+{
+	Redis::command("hget", nodeName, "type");
+	std::string type_str = Redis::toString();
+	size_t index = type_str.find("dynamic");
+#ifdef DEBUG
+	if (index != std::string::npos)
+	{
+		std::cout << nodeName << " IS DYNAMIC" << std::endl;
+	}
+#endif
+	return index != std::string::npos;
+}
+
+uint8_t getActionBlock(std::string nodeName);
 
 } //namespace StyleParser
 

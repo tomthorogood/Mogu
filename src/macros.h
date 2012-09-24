@@ -11,6 +11,7 @@
 #define WIDGET_HO_BITS 0x3f
 #define MAX_TOKENS 3
 #define EMPTY ""
+#define NONE 0
 
 //Pre-hashed values to speed up common queries:
 #define __AUTH_HASH "8163637335359820509"
