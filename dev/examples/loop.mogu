@@ -1,0 +1,27 @@
+# The following set of syntax would create a list of each element at 
+# data.bar:list, and each of them would have the same template as 
+# "foo" (meaning all would have the same "foo bar baz" class, and
+# all would, when clicked, display the message at tpl:foo:other.
+
+templates["foo"] = \
+{
+    type        :   text,
+    styles      :   "foo bar baz",
+    do.events   :   [
+    {
+        trigger :   click,
+        action  :   change.text,
+        listener:   this,
+        message :   "@data.tpl:foo:other@"
+    }]
+}
+
+widgets["bar"] = \
+{
+    type        :   foreach,
+    content     :   "@data.bar:list@",
+    template    :   "foo"
+}
+
+data["bar:list"] = ["somethingsomething","somethingdarkside","somethingthing","complete"]
+data["tpl:foo:other"] = "But I wanted to go to Taschi station to pick up some power converters!"

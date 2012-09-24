@@ -34,16 +34,23 @@ syn keyword wrappedValues dropdown checkbox multi container password stack
 syn keyword wrappedvalues on off
 
 syn keyword dictNames events widgets perspectives global_events policies tree
-syn keyword dictNames meta sessions validators
+syn keyword dictNames meta sessions validators data templates
 
 syn match digits '\d\+' contained
 
-syn match pyStr /\".*\"/ contained
-syn match pyStr "'.*'" contained
+syn region  pyStr
+      \ start=+[uU]\=\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
+syn region  pyStr
+      \ start=+[uU]\=\z('''\|"""\)+ end="\z1" keepend
+
+"syn match pyStr /\".*\"/ contained
+"syn match pyStr \"'.*'" contained 
 syn match numFn 'Number(\d\+)' contained contains=digits
+syn match wrpFn 'Wrapper(.*)' contained
+syn match pyComment "#.*$"
 
 syn match pyFlow '[\ \t]\+\s\+\.' contained nextgroup=subWord
-syn region pyDict transparent start="{" end="}" contains=dictEntries,subWords,wrappedValues,pyStr,pyFlow,numFn
+syn region pyDict transparent start="{" end="}" contains=dictEntries,subWords,wrappedValues,pyStr,pyFlow,numFn,wrpFn
 syn region pyList transparent start="\[" end="]" contains=pyStr,pyDict
 
 hi def link dictEntries Statement
@@ -57,5 +64,6 @@ hi def link pyList Function
 hi def link pyFlow Function
 hi def link numFn Function
 hi def link digits Constant
+hi def link pyComment Comment
 
 let b:current_syntax="mogu"
