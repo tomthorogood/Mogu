@@ -70,7 +70,18 @@ def m_import (args, db):
 
 
 class ImportPackage(object):
-    def __init__(self, widgets, tree, events, perspectives, global_events, meta, policies, sessions, validators, data):
+    def __init__(self, 
+            widgets, 
+            tree, 
+            events,
+            perspectives, 
+            global_events, 
+            meta, 
+            policies, 
+            sessions, 
+            validators, 
+            data, 
+            templates):
         self.widgets = widgets
         self.tree = tree
         self.events = events
@@ -81,6 +92,7 @@ class ImportPackage(object):
         self.sessions = sessions
         self.validators = validators
         self.data = data
+        self.templates = templates
 
 #Creates a 
 def evaluate_files(filenames):
@@ -96,6 +108,7 @@ def evaluate_files(filenames):
     sessions = {}
     validators = {}
     data = {}
+    templates = {}
 
     for filename in filenames:
         
@@ -103,7 +116,18 @@ def evaluate_files(filenames):
         execfile(filename)
         f.close()
     
-    packages.append(ImportPackage(widgets, tree, events, perspectives, global_events, meta, policies, sessions,validators, data))
+    packages.append(ImportPackage(
+        widgets, 
+        tree, 
+        events, 
+        perspectives, 
+        global_events, 
+        meta, 
+        policies, 
+        sessions,
+        validators, 
+        data,
+        templates,))
     return packages
 
 """
@@ -208,6 +232,11 @@ def import_files(db, args, moguFiles, pyFiles):
                     fl = sflags
                 s.build(session,storage)
                 s._import(db, entry, fl)
+
+        for template in package.templates:
+            t = Template()
+            t.build(template)
+            t._import(db, package.templates[template], dflags)
 
         for validator in package.validators:
             v = Validator()

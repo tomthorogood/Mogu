@@ -100,17 +100,6 @@ def dbl_dict_entry_line(dict_name, innerdict_name, entry_name):
 def empty_dict_entry_line(dict_name, innerdict_name):
     return "%s[\"%s\"] = {}\n" % (dict_name, innerdict_name)
 
-def test(filename):
-    widgets = {}
-    tree = {}
-    events = {}
-    meta = {}
-    perspectives = {}
-    try:
-        execfile(filename)
-    except Exception as e:
-        raise MoguImportException(filename, e.__str__())
-
 def dict_to_string(dict_name,entry_name,entries):
     title = dict_entry_line(dict_name,entry_name)
     body = dict_str(entries)
@@ -193,7 +182,7 @@ def export_data(db, data_node):
     dtype = db.type(pattern.node)
     if dtype == "hash":
         val = db.hgetall(pattern.node)
-        body = dictstr(val)
+        body = dict_str(val)
     elif dtype == "list":
         val = full_list(db,pattern.node)
         body = list_str(val)
@@ -204,6 +193,14 @@ def export_data(db, data_node):
         body = " \t\"%s\"\n" % clean_str(db.get(pattern.node))
 
     output += "%s" % (body)
+    return output
+
+def export_template(db, tname):
+    pattern = Pattern.Template(tname)
+    output = dict_entry_line("templates", pattern.name)
+    val = db.hgetall(pattern.node)
+    body = dict_str(val)
+    output += body
     return output
 
 def export_session(db,session):
@@ -346,6 +343,14 @@ def export(db, outInfo, toPackage):
         else:
             output += export_data(db,nname)
     
+    templates = db.keys("templates.*")
+    for t in templates:
+        tname = t.split(".")[1]
+        if toPackage:
+            write_content(outInfo+"/templates.mogu", export_template(db,tname))
+        else:
+            output += export_data(db,tname)
+
     if not toPackage:
         write_content(outInfo, output, 'w')
     

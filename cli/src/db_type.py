@@ -136,6 +136,7 @@ class Node(object):
     def _import(self,db, data, flags):
         #clrln()
         #sys.stdout.write("writing node %s" % self.node)
+        print(self.node_type)
         if self.node_type is str:
             f = bytemaps.StrStorage
             method = todb.import_string
@@ -173,6 +174,7 @@ class DictNode(Node):
         self.keystone = None
         self.keystone_reqs = {}
         self.node_type = dict
+        print(self.node_type)
 
     def assert_requirements(self, db, data=None):
         if not self.keystone_reqs:
@@ -231,6 +233,11 @@ class Widget(DictNode):
                 "password"  :   (None,)
                 }
 
+class Template(DictNode):
+    def __init__(self):
+        super(Template, self).__init__("templates")
+        self.node_construction += ".%s"
+        
 
 class WidgetEvent(Widget):
     def __init__(self):
@@ -325,17 +332,6 @@ class SessionStr(Node):
         super(SessionStr, self).__init__("s")
         self.node_construction += ".%s.%s"
         self.node_type = str
-
-class Template(Namespace):
-    def __init__(self):
-        super(Template, self).__init__("templates")
-        self.node_construction += ".%s"
-
-class TemplateWidget(DictNode):
-    def __init__(self):
-        super(TemplateWidget, self).__init__("templates")
-        self.node_construction += "%s.%d"
-        self.node_type = dict
 
 class GlobalEvent(DictNode):
     def __init__(self):

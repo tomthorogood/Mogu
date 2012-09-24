@@ -25,6 +25,11 @@ class NodePatterns:
             super(NodePatterns.Widget, self).__init__(
                     string,NodeNameParams(begin="widgets."))
 
+    class Template(NodeName):
+        def __init__(self, string):
+            super(NodePatterns.Template, self).__init__(
+                    string, NodeNameParams(begin="templates."))
+
     class WidgetPolicy(NodeName):
         def __init__(self, string):
             super(NodePatterns.WidgetPolicy, self).__init__(
