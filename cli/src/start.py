@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from mogupy_conf import META_KEYS
-
+from os import system
 def start(args,db):
     global META_KEYS
     config = args.conf

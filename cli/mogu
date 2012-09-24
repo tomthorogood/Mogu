@@ -6,7 +6,7 @@ from src import cli
 args,conf = cli.getCLIArgs()
 command = args.command[0]
 db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
-args.config = conf
+args.conf = conf
 
 
 cli_map = {

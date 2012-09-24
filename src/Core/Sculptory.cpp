@@ -51,7 +51,7 @@ void conceptualize (Moldable* widget)
 		vars->flags |= has_events;
 	}
 
-	if (widgetBlocksActions(widgetNode))
+	if (widgetHasProperty(widgetNode, "block"))
 	{
 		vars->flags |= blocks_actions;
 	}
@@ -88,7 +88,7 @@ void conceptualize (Moldable* widget)
 	// Mask HO bits to get true widget type
 	if ( (type & WIDGET_HO_BITS) > stack)
 	{
-		vars->content = getWidgetText(widgetNode);
+		vars->content = getWidgetProperty(widgetNode, "content");
 	}
 
 	if ((type & WIDGET_HO_BITS) == image)

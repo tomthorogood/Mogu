@@ -136,7 +136,6 @@ class Node(object):
     def _import(self,db, data, flags):
         #clrln()
         #sys.stdout.write("writing node %s" % self.node)
-        print(self.node_type)
         if self.node_type is str:
             f = bytemaps.StrStorage
             method = todb.import_string
@@ -174,10 +173,14 @@ class DictNode(Node):
         self.keystone = None
         self.keystone_reqs = {}
         self.node_type = dict
-        print(self.node_type)
 
     def assert_requirements(self, db, data=None):
         if not self.keystone_reqs:
+            try:
+                if data["template"]:
+                    return
+            except KeyError:
+                pass
             return
         self.check_name()
         if self.keystone:

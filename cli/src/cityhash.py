@@ -4,7 +4,7 @@ import subprocess
 
 def to_city_hash(string):
     proc = subprocess.Popen(
-            ["/etc/mogu/cli_src/clihash", string],
+            ["/etc/mogu/c/clihash", string],
             shell=False, stdout=subprocess.PIPE)
     return proc.communicate()[0].replace("\n","")
 

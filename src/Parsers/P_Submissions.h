@@ -42,8 +42,8 @@ public:
 	StorageWrappingParser()
 	{
 		namespace Type 		= Enums::SubmissionPolicies;
-		enumMap["none"] 		= Type::NONE;
-		enumMap["string"]		= Type::NONE;
+		enumMap["none"] 		= Type::none;
+		enumMap["string"]		= Type::none;
 		enumMap["enum"] 		= Type::enumerated_type;
 		enumMap["static_node"] 	= Type::static_node;
 		enumMap["dynamic_node"] = Type::dynamic_node;

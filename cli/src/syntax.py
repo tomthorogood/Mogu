@@ -19,7 +19,6 @@ number = Number
 
 def widget(name):
     return "@%s@" % name
-Widget = widget
 
 def State(name):
     return "$%s$" % name
@@ -150,6 +149,7 @@ multi       = enum("multi_select")
 container   = enum("container")
 password    = enum("password")
 stack       = enum("stack")
+template    = "template"
 
 if __name__ == "__main__":
     widgets = {}

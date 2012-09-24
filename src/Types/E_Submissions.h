@@ -21,7 +21,7 @@ enum StorageType{
 };
 
 enum DataWrapping{
-	NONE,
+	none,
 	enumerated_type,
 	static_node,
 	dynamic_node,

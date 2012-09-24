@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+from snippets import confirm
+from coloring import *
 def init(args,db):
     # First, check to make sure there isn't a Mogu application
     # already configured in the database
