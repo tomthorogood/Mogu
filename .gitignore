@@ -10,7 +10,8 @@
 *.orig
 mogu.conf
 docs/html
-cli/cli_src/clihash
+cli/c/clihash
+cli/c/clidec
 mogu-server
 resources/mogu/*
 Debug/*

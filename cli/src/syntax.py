@@ -16,6 +16,11 @@ def Number(num):
     else:
         raise InvalidFormatException(num,int)
 number = Number
+
+def widget(name):
+    return "@%s@" % name
+Widget = widget
+
 def State(name):
     return "$%s$" % name
 
@@ -44,6 +49,10 @@ class next(object):
 
 class add(object):
     child   = enum("add_child")
+
+class new(object):
+    style   =   enum("style_changed")
+    index   =   enum("index_changed")
 
 class storage(object):
     list    = enum("list")

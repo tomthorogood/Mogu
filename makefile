@@ -30,14 +30,14 @@ install: mogu.conf
 	$(MAKE) uninstall
 	mkdir -p /etc/mogu
 	cp $< /etc/mogu
-	cd cli/cli_src && $(MAKE) all
+	cd cli/c && $(MAKE) all
 	cp -r cli/* /etc/mogu
 	cp -r resources/ /etc/mogu
 	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
 	ln -s /etc/mogu/mogu /usr/bin/mogu
 
 install-cli: mogu.conf
-	cd cli/cli_src && $(MAKE) all
+	cd cli/c && $(MAKE) all
 	cp -r cli/* /etc/mogu
 	cp $< /etc/mogu
 
@@ -64,7 +64,7 @@ upgrade:
 	$(MAKE) install
 
 clean:
-	cd cli/cli_src && $(MAKE) clean
+	cd cli/c && $(MAKE) clean
 	rm -rf $(objects)
 	rm -rf *.pyc
 

@@ -1,6 +1,7 @@
 from redis_cheats import full_list
 from node_name import NodePatterns as Pattern
 from coloring import *
+from snippets import *
 from sets import Set
 
 import string
