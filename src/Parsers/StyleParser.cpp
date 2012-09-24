@@ -20,7 +20,7 @@ namespace StyleParser
 using std::string;
 using Goo::Moldable;
 
-uint8_t getActionBlock(std::string nodeName)
+mapped getActionBlock(std::string nodeName)
 {
     uint8_t block   =0;
     Redis::command("hget", nodeName, "block");
