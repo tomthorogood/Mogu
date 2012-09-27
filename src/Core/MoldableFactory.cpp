@@ -6,6 +6,7 @@
  */
 
 #include <Core/MoldableFactory.h>
+#include <Types/ListNodeGenerator.h>
 #include <Static.h>
 #include <Wt/WWidget>
 #include <Wt/WString>
@@ -56,6 +57,18 @@ inline void getNumChildren(MoldableTemplate* __tmpl)
 	__tmpl->num_children = Redis::getInt();
 }
 
+inline void addChildren(MoldableTemplate* __tmpl, Wt::WContainerWidget* m)
+{
+	std::string chnode = __tmpl->node+".children";
+	ListNodeGenerator gen(chnode,__tmpl->num_children);
+	for (int i = 0; i < __tmpl->num_children; i++)
+	{
+		MoldableTemplate* t = conceptualize(gen.next());
+		Moldable* w = sculpt(t);
+		m->addWidget(w);
+	}
+}
+
 inline void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
 {
 	Wt::WStackedWidget* stack = new Wt::WStackedWidget();
@@ -69,13 +82,20 @@ inline void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
 		Wt::WAnimation transition(e);
 		stack->setTransitionAnimation(transition,true);
 	}
+	if (__tmpl->num_children > 0)
+	{
+		addChildren(__tmpl, stack);
+	}
 	m->addWidget(stack);
 }
 
 inline void __sculpt_container(MoldableTemplate* __tmpl, Moldable *m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-
+	if (__tmpl->num_children > 0)
+	{
+		addChildren(__tmpl,m);
+	}
 }
 inline void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 {
@@ -87,8 +107,21 @@ inline void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 
 inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 {
-	if (__tmpl->flags & is_stacked) __sculpt_stack(__tmpl,m);
-
+	Wt::WContainerWidget* bearer =m;
+	if (__tmpl->flags & is_stacked)
+	{
+		__sculpt_stack(__tmpl,m);
+		bearer = (Wt::WContainerWidget*) m->widget(0);
+	}
+	getNumChildren(__tmpl);
+	MoldableTemplate* cpy = new MoldableTemplate(*__tmpl);
+	Redis::command("hget", cpy->node, "template");
+	std::string tpl_name = Redis::toString();
+	cpy->type = getWidgetType(tpl_name);
+	for (int i = 0; i < __tmpl->num_children; i++)
+	{
+		bearer->addWidget(sculpt(cpy));
+	}
 }
 inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)
 {
@@ -162,7 +195,6 @@ MoldableTemplate* conceptualize(const std::string& node)
 	if (widgetHasProperty(node, "block")) __tmpl->flags |= blocks_actions;
 	if (widgetHasProperty(node, "validator")) __tmpl->flags |= is_validated;
 	if (widgetHasProperty(node, "name")) __tmpl->flags |= is_named;
-	if (widgetHasChildren(node)) __tmpl->flags |= has_children;
 	if (widgetHasProperty(node, "tooltip")) __tmpl->flags |= has_tooltip;
 
 	if (widgetHasProperty(node,"class"))
@@ -206,7 +238,6 @@ Moldable* sculpt(MoldableTemplate* __tmpl)
 		__sculpt_stack(__tmpl,m);
 		break;}
 	case foreach:{
-		getNumChildren(__tmpl);
 		__sculpt_foreach(__tmpl,m);
 		break;}
 	case text:{
@@ -246,6 +277,7 @@ Moldable* sculpt(MoldableTemplate* __tmpl)
 		__sculpt_password_field(__tmpl,m);
 		break;}
 	}
+	++__tmpl->num_connected_widgets;
 	return m;
 }
 

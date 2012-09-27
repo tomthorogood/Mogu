@@ -15,6 +15,8 @@
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
 #include <Core/Moldable.h>
+#include <Core/MoldableTemplate.h>
+#include <Core/MoldableFactory.h>
 #include <Static.h>
 #include <Mogu.h>
 #include <Wt/WString>
@@ -30,7 +32,7 @@ namespace ActionCenter
 using std::string;
 namespace Action = Enums::SignalActions;
 
-using Goo::Moldable;
+using namespace Goo;
 
 namespace {
     ListenerMap listenerMap;
@@ -419,7 +421,9 @@ void directListeners(BroadcastMessage* broadcast)
 			{
     			std::string constructorNode =
     					broadcast->getMessage()->getString();
-    			widget->addGoo(constructorNode);
+    			MoldableTemplate* tpl =
+    					MoldableFactory::conceptualize(constructorNode);
+    			widget->addWidget(MoldableFactory::sculpt(tpl));
 			}
     	}
     	break;}
