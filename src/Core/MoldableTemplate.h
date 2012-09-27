@@ -15,25 +15,26 @@ namespace Goo
 
 struct MoldableTemplate
 {
-	masked 	flags;
-	masked 	actionBlocking;
-	mapped 	type;
-	bool 	dynamic;
+	uint16_t	flags;
+	uint16_t	num_children;
+	masked 		actionBlocking;
+	mapped 		type;
 	std::string location;
 	std::string source;
 	std::string content;
 	std::string style;
+	std::string name;
+	std::string node;
 
 	MoldableTemplate() {
 		flags 			=0;
 		actionBlocking 	=0;
 		type			=0;
-		dynamic			=false;
+		num_children	=0;
 		location		=EMPTY;
 		source			=EMPTY;
 		content			=EMPTY;
 		style			=EMPTY;
-
 	}
 };
 

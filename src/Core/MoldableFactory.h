@@ -15,6 +15,7 @@ namespace Goo{
 namespace MoldableStudio{
 
 MoldableTemplate* conceptualize(const std::string& nodeName);
+MoldableTemplate* conceptualize(const MoldableTemplate* t);
 Moldable* sculpt (MoldableTemplate*);
 
 }

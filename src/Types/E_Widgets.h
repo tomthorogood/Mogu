@@ -51,7 +51,9 @@ enum Properties
     blocks_actions      =0x10,
     is_named			=0x20,
     is_validated		=0x40,
-    is_dynamic			=0x80
+    is_dynamic			=0x80,
+    property_txfr		=0x100,
+    has_tooltip			=0x200
 };
 
 enum States {
