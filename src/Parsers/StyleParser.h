@@ -31,16 +31,16 @@ namespace StyleParser
  * @return
  */
 
-inline std::string getWidgetProperty(std::string&,const char*);
+inline std::string getWidgetProperty(const std::string&,const char*);
 
-inline bool nodeHasProperty(std::string& nodeName, const char* property)
+inline bool nodeHasProperty(const std::string& nodeName, const char* property)
 {
 	Redis::command("hexists", nodeName, property);
 	return (bool) Redis::getInt();
 }
 
 inline bool widgetHasProperty(
-		std::string& nodeName, const char* property)
+		const std::string& nodeName, const char* property)
 {
 	if (!nodeHasProperty(nodeName, property)
 		&& nodeHasProperty(nodeName, "template"))

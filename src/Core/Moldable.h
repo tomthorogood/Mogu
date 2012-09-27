@@ -97,6 +97,7 @@ private:
 
 
 public:
+    Moldable();
     /*!\brief The standard constrcutor for a ModdableGoo instance.
      *
      * @param constructorNode The node in the database that contains the
