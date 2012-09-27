@@ -12,7 +12,6 @@ namespace Goo
 {
     class RedisInterface;
     class Moldable;
-    class Dynamic;
     struct MoldableTemplate;
     struct GooVariables;
 }
@@ -88,11 +87,6 @@ namespace Wt
     class WLink;
     class WImage;
     class WRegExpValidator;
-}
-
-namespace Redis
-{
-    typedef std::vector <std::string> strvector;
 }
 
 namespace Bayes{

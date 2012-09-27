@@ -13,7 +13,10 @@ namespace Bayes{
 	typedef void (*NodeManipulator)(Node*,Node*);
 }
 
-
+namespace Redis
+{
+    typedef std::vector <std::string> strvector;
+}
 namespace Maps
 {
 	typedef std::map <std::string,std::string> Strings;

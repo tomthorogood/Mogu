@@ -5,7 +5,23 @@
  *      Author: tom
  */
 
-#include <MoldableFactory.h>
+#include <Core/MoldableFactory.h>
+#include <Static.h>
+#include <Wt/WWidget>
+#include <Wt/WString>
+#include <Wt/WLineEdit>
+#include <Wt/WStackedWidget>
+#include <Wt/WContainerWidget>
+#include <Wt/WAnchor>
+#include <Wt/WImage>
+#include <Wt/WText>
+#include <Wt/WAnimation>
+
+#include <Parsers/StyleParser.h>
+#include <Parsers/NodeValueParser.h>
+#include <Validators/Validators.h>
+#include <Types/Enums.h>
+#include <Core/Moldable.h>
 
 namespace Goo{
 namespace MoldableFactory{
@@ -14,13 +30,6 @@ using namespace Parsers::StyleParser;
 using namespace Application;
 using namespace Enums::WidgetTypes;
 using namespace Enums::SignalTypes;
-
-/*!\brief A stacked widget *must* have children. Therefore, it will
- * check for them automatically, and there will be an error they do
- * not exist.
- * @param __tmpl
- * @param m
- */
 
 inline void setStyle(const std::string& _style, Wt::WWidget* m)
 {
@@ -106,7 +115,7 @@ inline void __sculpt_image_link(MoldableTemplate* __tmpl, Moldable* m)
 	m->addWidget(a);
 }
 
-inline void __sculpt_button(MoldableTemplate* __tmpl,Moldable* m);
+inline void __sculpt_button(MoldableTemplate* __tmpl,Moldable* m){}
 inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
@@ -124,7 +133,7 @@ inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 inline void __sculpt_password_field(MoldableTemplate* __tmpl,Moldable* m)
 {
 	__sculpt_input_txt(__tmpl,m);
-	Wt::WLineEdit* p = (Wt::WLineEdit) m->widget(0);
+	Wt::WLineEdit* p = (Wt::WLineEdit*) m->widget(0);
 	p->setEchoMode(Wt::WLineEdit::Password);
 }
 
@@ -143,7 +152,8 @@ inline void __sculpt_multi_select(MoldableTemplate* __tmpl,Moldable* m){}
 MoldableTemplate* conceptualize(const std::string& node)
 {
 	MoldableTemplate* __tmpl = new MoldableTemplate();
-	WidgetTypes type = getWidgetType(node);
+	__tmpl->type = getWidgetType(node);
+
 	__tmpl->node = node;
 
 	if (widgetIsDynamic(node)) __tmpl->flags |= is_dynamic;
@@ -178,13 +188,13 @@ MoldableTemplate* conceptualize(const MoldableTemplate* __orig, size_t index)
 	concept_loc += " " + itoa(index);
 	Nodes::NodeValue v;
 	Parsers::NodeValueParser parser(concept_loc,&v);
-	t->content = parser.getValue()->getString();
+	t->content = v.getString();
 	return t;
 }
 
 Moldable* sculpt(MoldableTemplate* __tmpl)
 {
-	Moldable* m = new Moldable();
+	Moldable* m = new Moldable(__tmpl);
 	switch(__tmpl->type)
 	{
 	case container:{
@@ -205,7 +215,7 @@ Moldable* sculpt(MoldableTemplate* __tmpl)
 	case image:{
 		__sculpt_image(__tmpl,m);
 		break;}
-	case WidgetTypes::link:{
+	case Enums::WidgetTypes::link:{
 		__sculpt_link(__tmpl,m);
 		break;}
 	case image_link:{

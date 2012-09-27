@@ -6,12 +6,12 @@
  */
 
 #include <Core/Moldable.h>
-#include <Core/Dynamic.h>
+#include <Core/MoldableFactory.h>
+#include <Wt/WContainerWidget>
 #include <Wt/WStackedWidget>
 #include <Wt/WString>
 
 #include <Events/Bindery.h>
-#include <Core/Sculptory.h>
 #include <Parsers/StyleParser.h>
 #include <Parsers/Parsers.h>
 #include <Types/NodeValue.h>
@@ -44,48 +44,28 @@ GooVariables::GooVariables() : children()
     source          = "";
 }
 
-Moldable::Moldable(
-        const string& constructorNode,
-        Wt::WContainerWidget* parent
-)
-: Wt::WContainerWidget (parent)
+Moldable::Moldable(MoldableTemplate* tpl)
+: Wt::WContainerWidget ()
     ,children()
     ,__style_changed(this)
     ,__index_changed(this)
     ,__failed_test(this)
     ,__succeeded_test(this)
 {
-	__node = constructorNode;
-
+	__tmpl = tpl;
 #ifdef DEBUG
-    __NODE_NAME = constructorNode.c_str();
+    __NODE_NAME = __tmpl->node.c_str();
     std::cout << "CREATING " << __NODE_NAME << std::endl;
 #endif
 
     // Not all widgets will have a bindery. This may remain null.
     bindery =0;
-    baseVariables = new GooVariables();
-
-    /* Allow the sculptory to determine how this widget should look once it is
-     * loaded.
-     */
-    conceptualize(this);
-}
-
-Moldable::Moldable(MoldableTemplate*)
-	:children()
-	,__style_changed(this)
-	,__index_changed(this)
-	,__failed_test(this)
-	,__succeeded_test(this)
-{
-
 }
 
 Moldable::~Moldable()
 {
 	if (bindery !=0) delete bindery;
-	delete baseVariables;
+	delete __tmpl;
 	std::map<States,NodeValue*>::iterator cache_iter = __state_cache.begin();
 	while (cache_iter != __state_cache.end())
 	{
@@ -108,10 +88,7 @@ Moldable::load()
 
 		Wt::WContainerWidget::load();
 
-		//Use the properties to draw the widget on the user's screen.
-		mold(this);
-
-		if (baseVariables->flags & Enums::WidgetTypes::has_events)
+		if (__tmpl->flags & Enums::WidgetTypes::has_events)
 		{
 			do_if_has_events();
 		}
@@ -138,55 +115,9 @@ void Moldable::__validate()
 
 void Moldable::addGoo (const string& nodeName)
 {
-	Moldable* newGoo =0;
-
-	/* If the new widget is dynamic, we must ensure the
-	 * integrity of the user session
-	 */
-	if (Parsers::StyleParser::widgetIsDynamic(nodeName))
-	{
-		/* We retrieve the auth token for the session to store it with the widget
-		 * ensuring that the widget can only be written or displayed as long as
-		 * the auth token remains valid.
-		 */
-		std::string token = Application::requestAuthToken(
-				Application::requestSessionID(
-				Application::mogu()->sessionId()));
-		token = Hash::toHash(token);
-		newGoo = new Dynamic(
-				Application::encrypt(token),
-				nodeName);
-	}
-	// If we haven't set newGoo yet, it must be a standard Moldable widget.
-	if (newGoo ==0)
-	{
-		newGoo = new Moldable(nodeName);
-	}
-
-	/* If we have a stacked widget, we must add the new child to the stack,
-	 * not to the base widget.
-	 */
-	if ( (baseVariables->type & WIDGET_HO_BITS) == Enums::WidgetTypes::stack)
-    {
-        Wt::WStackedWidget* stack =
-                (Wt::WStackedWidget*) widget(0);
-        stack->addWidget(newGoo);
-    }
-
-	// Otherwise, add the widget as normal.
-    else
-    {
-        addWidget(newGoo);
-    }
-
-    /* Because the children vector receives a pointer to the newGoo widget,
-     * it doesn't really matter whether or not it is contained directly as
-     * a child of this widget, or as a stacked container child, because it
-     * can be interacted with just the same from external widgets requesting
-     * access to their content. Isn't that special?
-     */
-    children.add(newGoo);
-    children.trim();
+	MoldableTemplate* __tmpl = MoldableFactory::conceptualize(nodeName);
+	Moldable* newGoo = MoldableFactory::sculpt(__tmpl);
+	addWidget(newGoo);
 
 #ifdef DEBUG
     for (unsigned int i = 0; i < children.size(); i++)

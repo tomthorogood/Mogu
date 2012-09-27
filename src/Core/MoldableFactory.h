@@ -12,7 +12,7 @@
 
 namespace Goo{
 
-namespace MoldableStudio{
+namespace MoldableFactory{
 
 MoldableTemplate* conceptualize(const std::string& nodeName);
 MoldableTemplate* conceptualize(const MoldableTemplate* t);

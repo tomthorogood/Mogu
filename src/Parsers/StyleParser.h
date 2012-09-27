@@ -78,7 +78,7 @@ inline std::string getFromTemplate(
  * @return
  */
 inline std::string getWidgetProperty(
-		std::string& nodeName, const char* property)
+		const std::string& nodeName, const char* property)
 {
 	/* If the widget node does not have the property in question,
 	 * but does have the 'template' property, we'll build the template
