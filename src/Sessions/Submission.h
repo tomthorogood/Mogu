@@ -25,9 +25,6 @@ namespace SubmissionHandler{
  */
 void absorb(std::string value, std::string node);
 
-/* Retrieves information from a user session, if applicable */
-void emerge(Goo::Dynamic* widget);
-
 /* Returns whether or not this widget needs to be encrypted before storage */
 bool requiresEncryption(const std::string& snode);
 

@@ -18,6 +18,7 @@
 
 #include <Mogu.h>
 #include <Core/Moldable.h>
+#include <Core/MoldableFactory.h>
 #include <Parsers/StyleParser.h>
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
@@ -42,8 +43,11 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     useStyleSheet(styleSheet);
 
     std::string outermost_container = "widgets.wrapper";
+    Goo::MoldableTemplate* __wrapper_tmpl =
+    		Goo::MoldableFactory::conceptualize(outermost_container);
 
-    __wrapper = new Goo::Moldable(outermost_container);
+
+    __wrapper = Goo::MoldableFactory::sculpt(__wrapper_tmpl);
 
     root()->addWidget(__wrapper);
 

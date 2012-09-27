@@ -15,7 +15,6 @@
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
 #include <Core/Moldable.h>
-#include <Core/Dynamic.h>
 #include <Static.h>
 #include <Mogu.h>
 #include <Wt/WString>
@@ -32,7 +31,6 @@ using std::string;
 namespace Action = Enums::SignalActions;
 
 using Goo::Moldable;
-using Goo::Dynamic;
 
 namespace {
     ListenerMap listenerMap;
@@ -476,7 +474,7 @@ void directListeners(BroadcastMessage* broadcast)
     case Action::store_value:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Dynamic* widget = (Dynamic*) listeners->at(w);
+    		Moldable* widget = (Moldable*) listeners->at(w);
     		std::string val;
     		if (widget->allowsAction(Action::store_value))
     		{
@@ -503,7 +501,7 @@ void directListeners(BroadcastMessage* broadcast)
     case Action::slot:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Dynamic* widget = (Dynamic*) listeners->at(w);
+    		Moldable* widget = (Moldable*) listeners->at(w);
     		if (widget->allowsAction(Action::slot))
     		{
     			std::string slot_ = broadcast->getMessage()->getString();
@@ -570,7 +568,7 @@ void directListeners(BroadcastMessage* broadcast)
     case Action::reload:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Dynamic* widget = (Dynamic*) listeners->at(w);
+    		Moldable* widget = (Moldable*) listeners->at(w);
     		widget->clear();
     		widget->setReload().load();
     	}

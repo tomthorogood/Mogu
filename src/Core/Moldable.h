@@ -32,8 +32,6 @@
 //!\brief The namespace in which the Mogu Core is located.
 namespace Goo
 {
-
-
 /////////////////////////////////////////////////////////////
 /* Begin Moldable Class */
 /////////////////////////////////////////////////////////////
@@ -51,7 +49,7 @@ private:
 #ifdef DEBUG
 	const char* __NODE_NAME; //easier to see in the Eclipse debug screen.
 #endif
-
+	MoldableTemplate* __tmpl;
 	std::string __node; //!< This widget's location in the database
 
 	/*!\brief A cache of this widget's state inquiries. */
@@ -64,13 +62,7 @@ private:
      * widget() method will return WWidgets.
      * \sa addGoo()
      */
-    TurnLeft::Utils::HungryVector <Moldable*> children;
-
-    /*!\brief A simple struct holding the values for the possible
-     * content variables.
-     * \sa GooVariables
-     */
-    GooVariables* baseVariables;
+    std::vector <Moldable*> children;
 
     /*!\brief Signal emitted when the style is changed. */
     Wt::Signal <> __style_changed;
@@ -191,15 +183,15 @@ public:
     inline bool allowsAction(Enums::SignalActions::SignalAction action)
     {
     	return !(
-			(baseVariables->actionBlocking & action)
-			|| (baseVariables->actionBlocking == Enums::SignalActions::BLOCK));
+			(__tmpl->actionBlocking & action)
+			|| (__tmpl->actionBlocking == Enums::SignalActions::BLOCK));
     }
 
     /*!\brief Returns whether or not this widget is named.*/
     inline bool isNamed()
     {
 		mapped named = Enums::WidgetTypes::is_named;
-		return baseVariables->flags & named;
+		return __tmpl->flags & named;
     }
 
     /*!\brief Allows another widget to remove a specific child from this
@@ -214,15 +206,15 @@ public:
     }
 
     /*!\brief Provides an accessor to the widget's properties */
-    inline GooVariables* getProperties()
+    inline MoldableTemplate* getProperties()
     {
-    	return baseVariables;
+    	return __tmpl;
     }
 
     /*\brief Returns this widget's type. */
     inline const mapped& getType() const
     {
-    	return baseVariables->type;
+    	return __tmpl->type;
     }
 
     /*!\brief If this widget is provided a validator, its first child is

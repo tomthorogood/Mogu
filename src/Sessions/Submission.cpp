@@ -7,7 +7,6 @@
 
 #include <Sessions/Submission.h>
 #include <Sessions/Lookups.h>
-#include <Core/Dynamic.h>
 #include <Static.h>
 #include <Redis/RedisCore.h>
 #include <Parsers/NodeValueParser.h>
@@ -27,7 +26,6 @@
 
 namespace Sessions{
 namespace SubmissionHandler{
-using Goo::Dynamic;
 using namespace Enums::SubmissionPolicies;
 using namespace Sessions::Lookups;
 using TurnLeft::Utils::trimchar;
@@ -200,33 +198,6 @@ std::string storage_arg(std::string pt_node_name)
 
 	Redis::command("hget", node, "arg");
 	return Redis::toString();
-}
-
-
-void emerge(Dynamic* widget)
-{
-
-	using namespace Application;
-	using namespace Enums::WidgetTypes;
-	using std::string;
-
-	string storage = widget->storageLocker();
-
-	std::string emerged_string = dynamicLookup(storage, storage_arg(storage));
-
-	WidgetTypes type = (WidgetTypes)
-			(widget->getProperties()->type & WIDGET_HO_BITS);
-
-	switch(type)
-	{
-	case text:{
-		Wt::WString newtext(emerged_string);
-		Wt::WText* w = (Wt::WText*) widget->widget(0);
-		w->setText(newtext);
-		break;}
-	default: return;
-	}
-
 }
 
 bool requiresEncryption(const std::string& snode)
