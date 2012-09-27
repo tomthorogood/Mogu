@@ -150,21 +150,6 @@ inline void getWidgetChildren(
     Redis::toVector(children);
 }
 
-
-
-
-/*!\brief Returns whether not the widget has children.
- *
- * @param nodeName The widget being questioned
- * @return
- */
-inline bool widgetHasChildren(std::string nodeName)
-{
-    nodeName.append(".children");
-    Redis::command("exists", nodeName);
-    return Redis::getInt() == 1;
-}
-
 /*!\brief Returns whether or not the widget is considered dynamic for
  * reading purposes.
  * @param nodeName The widget in question

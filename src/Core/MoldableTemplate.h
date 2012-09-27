@@ -25,16 +25,26 @@ struct MoldableTemplate
 	std::string style;
 	std::string name;
 	std::string node;
+	bool deleteable;
+	uint16_t	num_connected_widgets;
+
 
 	MoldableTemplate() {
 		flags 			=0;
 		actionBlocking 	=0;
 		type			=0;
 		num_children	=0;
+		num_connected_widgets =0;
 		location		=EMPTY;
 		source			=EMPTY;
 		content			=EMPTY;
 		style			=EMPTY;
+		deleteable 		=false;
+	}
+
+	inline void disconnect()
+	{
+		if (--num_connected_widgets <= 0) deleteable = true;
 	}
 };
 

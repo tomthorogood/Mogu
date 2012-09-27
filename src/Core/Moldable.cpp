@@ -65,7 +65,8 @@ Moldable::Moldable(MoldableTemplate* tpl)
 Moldable::~Moldable()
 {
 	if (bindery !=0) delete bindery;
-	delete __tmpl;
+	__tmpl->disconnect();
+	if (__tmpl->deleteable) delete __tmpl;
 	std::map<States,NodeValue*>::iterator cache_iter = __state_cache.begin();
 	while (cache_iter != __state_cache.end())
 	{
@@ -92,6 +93,7 @@ Moldable::load()
 		{
 			do_if_has_events();
 		}
+
 		__reload = false; //Don't allow this to be reloaded accidentally.
     }
 }
@@ -112,20 +114,6 @@ void Moldable::__validate()
 	}
 	__failed_test.emit();
 } // validate
-
-void Moldable::addGoo (const string& nodeName)
-{
-	MoldableTemplate* __tmpl = MoldableFactory::conceptualize(nodeName);
-	Moldable* newGoo = MoldableFactory::sculpt(__tmpl);
-	addWidget(newGoo);
-
-#ifdef DEBUG
-    for (unsigned int i = 0; i < children.size(); i++)
-    {
-    	assert (children.at(i) != 0);
-    }
-#endif
-} // addGoo()
 
 Nodes::NodeValue* Moldable::getState(Enums::WidgetTypes::States state)
 {
