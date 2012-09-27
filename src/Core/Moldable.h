@@ -26,48 +26,13 @@
 #include <Events/Bindery.h>
 #include <Redis/RedisCore.h>
 #include <Wt/WLineEdit>
+#include <Core/MoldableTemplate.h>
 #include <Wt/WSignal> // Templated Type
 
 //!\brief The namespace in which the Mogu Core is located.
 namespace Goo
 {
 
-////////////////////////////////////////////////////////
-/*!\brief Holds the information about the widget retrieved from the database
- * so that the widget doesn't actually build the information until it is
- * necessary.
- */
-struct GooVariables
-{
-    Redis::strvector children;
-
-    /*!\brief Corresponds to a core set of eight widget properties.
-     *TODO: Make this more scalable and flexible
-     */
-    masked flags; //!<\sa Enums::SignalTypes::Properties
-
-    /*!\brief Determines which actions are blocked by the widget in qusetion. */
-    masked actionBlocking;
-
-    /*!\brief The integral type of the widget in question. See the ByteMaps
-     * spreadsheet in dev_resources for more information.
-     */
-    mapped type;
-
-    bool dynamic; //TODO This needs to be worked into 'flags'.
-
-    std::string location;    //!< Used for external links only.
-    std::string source;      //!< URI for image file, if applicable.
-
-    /*!\brief This field can contain any number of things. For text widgets,
-     * this represents the text (or html/text combo) that will be displayed
-     * on the user's screen. For images, this represents the 'alt' tag. For
-     * links, this is the anchor text.
-     */
-    std::string content;
-
-    GooVariables();
-};
 
 /////////////////////////////////////////////////////////////
 /* Begin Moldable Class */
@@ -132,7 +97,7 @@ private:
 
 
 public:
-    /*!\brief The standard (and only!) constrcutor for a ModdableGoo instance.
+    /*!\brief The standard constrcutor for a ModdableGoo instance.
      *
      * @param constructorNode The node in the database that contains the
      * information about this widget.
@@ -143,6 +108,12 @@ public:
     Moldable (
             const std::string& constructorNode,
             Wt::WContainerWidget* parent =0);
+
+    /*!\brief Overloaded constructor for the Moldable instance takes the pointer
+     * to a MoldableTemplate object. Instead of being sent to the sculptory for
+     * conceptualizing, it gets its properties from here instead.
+     */
+    Moldable (MoldableTemplate*);
 
     virtual ~Moldable();
 
