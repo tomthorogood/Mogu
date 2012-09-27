@@ -13,6 +13,8 @@ namespace Goo
     class RedisInterface;
     class Moldable;
     class Dynamic;
+    struct MoldableTemplate;
+    struct GooVariables;
 }
 
 namespace Exceptions
@@ -90,7 +92,7 @@ namespace Wt
 
 namespace Redis
 {
-    typedef TurnLeft::Utils::HungryVector <std::string> strvector;
+    typedef std::vector <std::string> strvector;
 }
 
 namespace Bayes{
@@ -98,7 +100,6 @@ namespace Bayes{
 	class Node;
 	class Edge;
 	class Manipulation;
-
 }
 
 

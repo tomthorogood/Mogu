@@ -99,8 +99,7 @@ void toVector(strvector& vec)
     for (unsigned int i = 0; i < reply->elements; i++)
     {
         string str(reply->element[i]->str);
-        if (i == 0) vec[0] = str;
-        else vec.push_back(str);
+        vec.push_back(str);
     }
     done(reply, redis);
 }

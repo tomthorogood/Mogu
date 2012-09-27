@@ -72,6 +72,16 @@ Moldable::Moldable(
     conceptualize(this);
 }
 
+Moldable::Moldable(MoldableTemplate*)
+	:children()
+	,__style_changed(this)
+	,__index_changed(this)
+	,__failed_test(this)
+	,__succeeded_test(this)
+{
+
+}
+
 Moldable::~Moldable()
 {
 	if (bindery !=0) delete bindery;
