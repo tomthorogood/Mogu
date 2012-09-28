@@ -169,6 +169,10 @@ EventBindery::~EventBindery()
 		}
 		++iter;
 	}
+#ifdef DEBUG
+	std::cout << "Deleting bindery for " <<
+			__broadcaster->getProperties()->node << std::endl;
+#endif
 }
 
 }//namespace events
