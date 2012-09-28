@@ -90,23 +90,7 @@ private:
 
 public:
     Moldable();
-    /*!\brief The standard constrcutor for a ModdableGoo instance.
-     *
-     * @param constructorNode The node in the database that contains the
-     * information about this widget.
-     * @param source_file The file contains the template information that
-     * this widget uses.
-     * @param parent (optional) The parent widget of this widget.
-     */
-    Moldable (
-            const std::string& constructorNode,
-            Wt::WContainerWidget* parent =0);
-
-    /*!\brief Overloaded constructor for the Moldable instance takes the pointer
-     * to a MoldableTemplate object. Instead of being sent to the sculptory for
-     * conceptualizing, it gets its properties from here instead.
-     */
-    Moldable (MoldableTemplate*);
+    Moldable(MoldableTemplate*);
 
     virtual ~Moldable();
 
@@ -118,12 +102,6 @@ public:
      */
     virtual void load();
 
-    /*!\brief Adds a child ModdableGoo widget and, if that widget is set to
-     * propogate its destrution signal upwards, listens for the melt signal.
-     * @param nodeName The node in the database where information about the child
-     * widget is stored.
-     */
-    void addGoo (const std::string& nodeName);
 
     /*!\brief An implementation of the setStyleClass method which also
      * emits the new style as part of the styleChanged signal.
@@ -133,6 +111,11 @@ public:
     {
         Wt::WContainerWidget::setStyleClass(style);
         __style_changed.emit();
+    }
+
+    inline void addMoldableChild(Moldable* __child)
+    {
+    	children.push_back(__child);
     }
 
     /*!\brief Retrieves a Moldable widget from this widget.
@@ -154,12 +137,6 @@ public:
     	return children.size();
     }
 
-    /*!\brief Retrieves a node property from the database.
-     * @param key The key that would be from the database.
-     * @return The value attached to the key.
-     */
-    std::string getMappedValue(std::string key);
-
     /*!\brief Provides an accessor for the styleChanged signal. */
     Wt::Signal<>& styleChanged()
 	{
@@ -172,7 +149,7 @@ public:
      */
     inline std::string getNode()
     {
-    	return __node;
+    	return __tmpl->node;
     }
 
     /*!\brief Alerts the caller to whether or not this widget allows a
@@ -185,13 +162,6 @@ public:
     	return !(
 			(__tmpl->actionBlocking & action)
 			|| (__tmpl->actionBlocking == Enums::SignalActions::BLOCK));
-    }
-
-    /*!\brief Returns whether or not this widget is named.*/
-    inline bool isNamed()
-    {
-		mapped named = Enums::WidgetTypes::is_named;
-		return __tmpl->flags & named;
     }
 
     /*!\brief Allows another widget to remove a specific child from this

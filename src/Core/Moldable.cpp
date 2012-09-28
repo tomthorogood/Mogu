@@ -32,17 +32,7 @@ using Nodes::NodeValue;
 using std::cout;
 using std::endl;
 
-GooVariables::GooVariables() : children()
-{
-    flags		        =0;
-    actionBlocking      =0;
-    type				=0;
-    dynamic				=false;
-
-    content         = "";
-    location        = "";
-    source          = "";
-}
+Moldable::Moldable() : Wt::WContainerWidget() {}
 
 Moldable::Moldable(MoldableTemplate* tpl)
 : Wt::WContainerWidget ()
@@ -96,11 +86,6 @@ Moldable::load()
 
 		__reload = false; //Don't allow this to be reloaded accidentally.
     }
-}
-
-std::string Moldable::getMappedValue(std::string key)
-{
-	return Parsers::StyleParser::getWidgetProperty(__node, key.c_str());
 }
 
 void Moldable::__validate()

@@ -43,7 +43,7 @@ inline void getNumChildren(MoldableTemplate* __tmpl)
 	std::string node;
 	if (__tmpl->type == foreach)
 	{
-		std::string node = __tmpl->content;
+		node = __tmpl->content;
 		/*Currently, a foreach loop's content field
 		 * will have '@data.source.blah.@'
 		 */
@@ -51,13 +51,14 @@ inline void getNumChildren(MoldableTemplate* __tmpl)
 	}
 	else
 	{
-		std::string node = __tmpl->node+".children";
+		node = __tmpl->node+".children";
 	}
 	Redis::command("llen",node);
 	__tmpl->num_children = Redis::getInt();
 }
 
-inline void addChildren(MoldableTemplate* __tmpl, Wt::WContainerWidget* m)
+inline void addChildren(MoldableTemplate* __tmpl,
+		Wt::WContainerWidget* c, Moldable* m=0)
 {
 	std::string chnode = __tmpl->node+".children";
 	ListNodeGenerator gen(chnode,__tmpl->num_children);
@@ -65,7 +66,9 @@ inline void addChildren(MoldableTemplate* __tmpl, Wt::WContainerWidget* m)
 	{
 		MoldableTemplate* t = conceptualize(gen.next());
 		Moldable* w = sculpt(t);
-		m->addWidget(w);
+		c->addWidget(w);
+		if (m == 0) m = (Moldable*) c;
+		m->addMoldableChild(w);
 	}
 }
 
@@ -84,7 +87,7 @@ inline void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
 	}
 	if (__tmpl->num_children > 0)
 	{
-		addChildren(__tmpl, stack);
+		addChildren(__tmpl, stack, m);
 	}
 	m->addWidget(stack);
 }
@@ -161,6 +164,7 @@ inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 		in->keyWentUp().connect(
 				m, &Moldable::__validate);
 	}
+	m->addWidget(in);
 
 }
 inline void __sculpt_password_field(MoldableTemplate* __tmpl,Moldable* m)

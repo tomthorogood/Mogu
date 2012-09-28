@@ -35,10 +35,6 @@ namespace Triggers = Enums::SignalTriggers;
 EventBindery::EventBindery(Moldable* broadcaster)
 : extractorMap()
 {
-#ifdef DEBUG
-	std::cout << "************** BINDERY FOR " << broadcaster->getNode();
-	std::cout << "**************" << std::endl;
-#endif
     __broadcaster = broadcaster;
     string eventNamespace = broadcaster->getNode();
     eventNamespace.append(".events.*");
@@ -47,16 +43,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
     /* This returns a list of all events for the widget in question. */
     Redis::toVector(eventNodes);
 
-
     int num_events = eventNodes.size();
-#ifdef DEBUG
-    std::cout << "Event nodes : ";
-    for (int i = 0; i < num_events; i++)
-    {
-    	std::cout << eventNodes.at(i) << ",";
-    }
-    std::cout << std::endl;
-#endif
     /* Then, we need to iterate through each of these events. */
     for (int e = 0; e < num_events; e++)
     {
@@ -88,10 +75,6 @@ EventBindery::EventBindery(Moldable* broadcaster)
         if (iter == extractorMap.end())
         {
             extractorMap[trigger].reserve(1);
-#ifdef DEBUG
-            std::cout << trigger_str << "{" << trigger << "}";
-            std::cout << " vector is at " << &extractorMap[trigger] << std::endl;
-#endif
             extractorMap[trigger][0] = extractor;
         }
         else
@@ -100,10 +83,6 @@ EventBindery::EventBindery(Moldable* broadcaster)
         /* Finally, add the extractor created into the vector associated with
          * the trigger.
          */
-#ifdef DEBUG
-        	std::cout << "Adding extractor " << extractor << " to " << &extractorMap[trigger];
-        	std::cout << " for trigger " << trigger_str << "{" << trigger << "}" << std::endl;
-#endif
         	extractorMap[trigger].push_back(extractor);
         }
     }
@@ -116,27 +95,6 @@ EventBindery::EventBindery(Moldable* broadcaster)
     for (iter = extractorMap.begin(); iter != extractorMap.end(); iter++)
     {
         Triggers::SignalTrigger trigger = iter->first;
-#ifdef DEBUG
-    	/* When debugging, let's grab the vector out of the map and output
-    	 * all of the messages that we're binding to this trigger.
-    	 */
-    	ExtractorVector* extv = &iter->second;
-    	std::cout << "Checking vector " << extv << std::endl;
-    	assert(extv != 0);
-    	for (unsigned int i = 0; i < extv->size(); i++)
-    	{
-    		std::cout <<"\t" << i << " : Extractor=" << extv->at(i);
-    	}
-    	std::cout << std::endl << "Binding trigger " << trigger << " to broadcasts: " << std::endl;
-    	for (unsigned int i = 0; i < extv->size(); i++)
-    	{
-    		EventNodeExtractor* ext = extv->at(i);
-    		std::cout << "Getting message from extractor " << ext << std::endl;
-    		std::string message = ext->getValue(Enums::Labels::message);
-    		std::cout << message << std::endl;
-    	}
-    	std::cout << " to " << broadcaster->getNode() << std::endl;
-#endif
 
         switch(trigger)
         {
@@ -181,9 +139,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
         default:return;
         }
     }
-#ifdef DEBUG
-    std::cout << "********************************************" << std::endl;
-#endif
+
 }
 
 void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
@@ -203,9 +159,6 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 EventBindery::~EventBindery()
 {
 	ExtractorMap::iterator iter = extractorMap.begin();
-#ifdef DEBUG
-	std::cout << "Bindery " << this << " being deleted!" << std::endl;
-#endif
 	while (iter != extractorMap.end())
 	{
 		ExtractorVector* vec = &iter->second;
