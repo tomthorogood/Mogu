@@ -20,6 +20,12 @@ class EventNodeExtractor
     std::map <Node::Labels, std::string> stringValues;
 public:
     EventNodeExtractor(std::string nodeName);
+    ~EventNodeExtractor()
+    {
+#ifdef DEBUG
+    	std::cout << "Deleting extractor (" << this << ")." << std::endl;
+#endif
+    }
     std::string getValue(Node::Labels index);
     bool exists(Node::Labels index);
 };
