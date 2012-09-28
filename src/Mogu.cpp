@@ -23,9 +23,6 @@
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
 
-#ifdef TERM_ENABLED
-#include <Wt/WText>
-#endif
 
 
 Mogu::Mogu(const Wt::WEnvironment& env)
