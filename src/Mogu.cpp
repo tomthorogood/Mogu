@@ -19,6 +19,7 @@
 #include <Mogu.h>
 #include <Core/Moldable.h>
 #include <Core/MoldableFactory.h>
+#include <Core/MoldableTemplate.h>
 #include <Parsers/StyleParser.h>
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
@@ -51,6 +52,9 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     internalPathChanged().connect(this, &Mogu::handlePathChange);
 
     std::string entry_path = internalPath();
+#ifdef DEBUG
+    std::cout << "Entry Path: " << entry_path << std::endl;
+#endif
     if (entry_path != "/" && entry_path.length() > 0)
     {
     	handlePathChange(entry_path);
@@ -65,6 +69,9 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 void Mogu::handlePathChange(std::string path)
 {
 	std::string perspective = path.substr(1,path.length()-1);
+#ifdef DEBUG
+	std::cout << "Perspective Chain: " << perspective << std::endl;
+#endif
 	TurnLeft::Utils::Explosion explosion(perspective);
 	std::string molds[16];
 	explosion.explode('/',molds);

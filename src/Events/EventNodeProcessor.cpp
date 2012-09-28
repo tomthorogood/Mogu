@@ -18,6 +18,9 @@ EventNodeProcessor::EventNodeProcessor(bool recycled)
     {
         values[i] = 0;
     }
+#ifdef DEBUG
+    std::cout << "Creating EventNodeProcessor ("<<this<<")" << std::endl;
+#endif
 }
 
 void EventNodeProcessor::set (
@@ -45,6 +48,9 @@ EventNodeProcessor::~EventNodeProcessor()
 			delete values[i];
 		}
 	}
+#ifdef DEBUG
+	std::cout << "Deleting EventNodeProcessor ("<<this<<")"<<std::endl;
+#endif
 }
 
 } // namespace Events
