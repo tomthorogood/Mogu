@@ -1,7 +1,7 @@
 source_files := src
 branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Validators Security
 
-includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
+includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include -L/usr/local/lib
 executable := mogu-server
 o:=0
 devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash

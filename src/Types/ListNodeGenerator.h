@@ -16,7 +16,7 @@ class ListNodeGenerator
 	size_t __current;
 	std::string __node;
 public:
-	ListNodeGenerator(const std::string& node, size_t max);
+	ListNodeGenerator(const std::string& node, size_t max=0);
 	std::string next();
 };
 

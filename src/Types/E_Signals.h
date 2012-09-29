@@ -164,15 +164,15 @@ enum SignalAction{
 
 namespace SignalTriggers{
 enum SignalTrigger{
-    click			=0
-    ,style_changed	=1
-    ,mouseover		=2
-    ,mouseout		=3
-    ,fail			=4
-    ,succeed		=5
-    ,keyup			=6
-    ,enter_pressed	=7
-    ,index_changed	=8
+    click			=0x1
+    ,style_changed	=0x2
+    ,mouseover		=0x4
+    ,mouseout		=0x8
+    ,fail			=0x10
+    ,succeed		=0x20
+    ,keyup			=0x40
+    ,enter_pressed	=0x80
+    ,index_changed	=0x100
 };
 } //namespace SignalTriggers
 

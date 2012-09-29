@@ -12,8 +12,15 @@ ListNodeGenerator::ListNodeGenerator(
 		const std::string& node, size_t max)
 {
 	__node 		= node;
-	__max 		= max;
 	__current 	= 0;
+
+	if (!max)
+	{
+		Redis::command("llen", node);
+		__max = Redis::getInt();
+	}
+
+
 }
 
 std::string ListNodeGenerator::next()
