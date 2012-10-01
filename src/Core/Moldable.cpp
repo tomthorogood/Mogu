@@ -36,7 +36,7 @@ Moldable::Moldable() : Wt::WContainerWidget() {}
 
 Moldable::Moldable(MoldableTemplate* tpl)
 : Wt::WContainerWidget ()
-    ,children()
+    ,mchildren()
     ,__style_changed(this)
     ,__index_changed(this)
     ,__failed_test(this)

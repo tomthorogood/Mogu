@@ -573,8 +573,9 @@ void directListeners(BroadcastMessage* broadcast)
     	for (int w = 0; w < num_listeners; w++)
     	{
     		Moldable* widget = (Moldable*) listeners->at(w);
-    		widget->clear();
-    		widget->setReload().load();
+    		MoldableFactory::sculpt(widget->getProperties(), widget);
+    		//widget->clear();
+    		//widget->setReload().load();
     	}
     	break;}
 

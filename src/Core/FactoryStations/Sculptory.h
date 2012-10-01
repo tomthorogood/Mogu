@@ -23,6 +23,8 @@
 #include <Wt/WImage>
 #include <Wt/WText>
 #include <Core/Moldable.h>
+#include <Sessions/Lookups.h>
+#include <Sessions/Submission.h>
 
 namespace Goo{
 namespace MoldableFactory{
@@ -36,6 +38,8 @@ using namespace Enums::SignalTypes;
 void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m);
 void addChildren(MoldableTemplate* __tmpl,
 		Wt::WContainerWidget* c, Moldable* m=0);
+void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m);
+
 
 inline void setStyle(const std::string& _style, Wt::WWidget* m)
 {
@@ -73,13 +77,6 @@ inline void __sculpt_container(MoldableTemplate* __tmpl, Moldable *m)
 	{
 		addChildren(__tmpl,m);
 	}
-}
-inline void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
-{
-	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	Wt::WString txt(__tmpl->content);
-	Wt::WContainerWidget* wtcw = (Wt::WContainerWidget*) m;
-	wtcw->addWidget(new Wt::WText(txt));
 }
 
 inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)

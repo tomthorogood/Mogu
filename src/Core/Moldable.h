@@ -63,7 +63,7 @@ private:
      * widget() method will return WWidgets.
      * \sa addGoo()
      */
-    std::vector <Moldable*> children;
+    std::vector <Moldable*> mchildren;
 
     /*!\brief Signal emitted when the style is changed. */
     Wt::Signal <> __style_changed;
@@ -116,7 +116,7 @@ public:
 
     inline void addMoldableChild(Moldable* __child)
     {
-    	children.push_back(__child);
+    	mchildren.push_back(__child);
     }
 
     /*!\brief Retrieves a Moldable widget from this widget.
@@ -126,7 +126,7 @@ public:
      */
     inline Moldable* child (int index)
     {
-    	return children.at(index);
+    	return mchildren.at(index);
     }
 
     /*!\brief Returns the number of moldable children this widget contains.
@@ -135,7 +135,7 @@ public:
      */
     inline int countMoldableChildren()
     {
-    	return children.size();
+    	return mchildren.size();
     }
 
     /*!\brief Provides an accessor for the styleChanged signal. */

@@ -84,14 +84,20 @@ MoldableTemplate* conceptualize(const MoldableTemplate* __orig, size_t index)
 	return t;
 }
 
-Moldable* sculpt(MoldableTemplate* __tmpl)
+Moldable* sculpt(MoldableTemplate* __tmpl, Moldable* m)
 {
-	Moldable* m = new Moldable(__tmpl);
+	bool mnew = m==0;
+	if (mnew) m = new Moldable(__tmpl);
 
 	if (__tmpl->flags&is_named)
 	{
 		std::string name = getWidgetProperty(__tmpl->node, "name");
 		Application::mogu()->registerWidget(name, m);
+	}
+	if (__tmpl->flags&has_tooltip)
+	{
+		Wt::WString tooltip(getWidgetProperty(__tmpl->node, "tooltip"));
+		m->setToolTip(tooltip, Wt::XHTMLText);
 	}
 
 	switch(__tmpl->type)
@@ -144,7 +150,7 @@ Moldable* sculpt(MoldableTemplate* __tmpl)
 		__sculpt_password_field(__tmpl,m);
 		break;}
 	}
-	++__tmpl->num_connected_widgets;
+	if (mnew)++__tmpl->num_connected_widgets;
 	return m;
 }
 
