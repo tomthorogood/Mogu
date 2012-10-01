@@ -9,6 +9,7 @@
 #include <Core/Moldable.h>
 #include <Core/FactoryStations/Sculptory.h>
 #include <Wt/WStackedWidget>
+#include <Mogu.h>
 
 namespace Goo{
 namespace MoldableFactory{
@@ -53,5 +54,36 @@ void addChildren(MoldableTemplate* __tmpl,
 		m->addMoldableChild(w);
 	}
 }
+
+void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
+{
+	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
+	if ( (__tmpl->flags & is_dynamic) &&
+			Application::requestSessionID(
+					Application::mogu()->sessionId()) != "global")
+
+	{
+		std::string content =
+				Sessions::SubmissionHandler::dynamicLookup(
+						remove_widget_prefix(__tmpl->node));
+		Nodes::NodeValue v;
+		Parsers::NodeValueParser p(content,&v,m);
+		__tmpl->content = v.getString();
+	}
+	Wt::WString txt(__tmpl->content);
+
+	if (m->children().size() > 0)
+	{
+		Wt::WText* t = (Wt::WText*) m->widget(0);
+		t->setText(txt);
+	}
+	else
+	{
+		Wt::WContainerWidget* wtcw = (Wt::WContainerWidget*) m;
+		wtcw->addWidget(new Wt::WText(txt));
+	}
+
+}
+
 
 }}}

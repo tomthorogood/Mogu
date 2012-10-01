@@ -19,6 +19,10 @@ ListNodeGenerator::ListNodeGenerator(
 		Redis::command("llen", node);
 		__max = Redis::getInt();
 	}
+	else
+	{
+		__max = max;
+	}
 
 
 }
