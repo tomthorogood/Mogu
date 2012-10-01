@@ -161,7 +161,7 @@ class Node(object):
                 c = True
             else:
                 c = confirm("%s already exists. It will be DELETED before writing new data." % self.node, assume_yes)
-           if not c:
+            if not c:
                 return
             else:
                 db.delete(self.node)
