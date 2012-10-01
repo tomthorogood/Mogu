@@ -48,7 +48,6 @@ class Moldable : public Wt::WContainerWidget
 private:
 #ifdef DEBUG
 	const char* __NODE_NAME; //easier to see in the Eclipse debug screen.
-	Wt::Signal <> __debugged;
 #endif
 	MoldableTemplate* __tmpl;
 	std::string __node; //!< This widget's location in the database
@@ -236,9 +235,6 @@ public:
 
     Nodes::NodeValue* getState(Enums::WidgetTypes::States state);
 
-#ifdef DEBUG
-    inline Wt::Signal<>& debugged() { return __debugged;}
-#endif
 };
 
 } //namespace Goo
