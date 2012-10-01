@@ -14,4 +14,3 @@ int main (int argc, char** argv)
     Wt::ApplicationCreator fn = &createApplication;
     return Wt::WRun(argc, argv, fn);
 }
-
