@@ -193,7 +193,7 @@ class DictNode(Node):
             reqs = self.keystone_reqs[keystone_val]
         else:
             reqs = self.keystone_reqs
-        if reqs[0] is not None:
+        if isinstance(reqs,dict):
             for req in reqs:
                 if self.has(db, req, data):
                     continue
