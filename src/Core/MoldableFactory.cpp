@@ -19,6 +19,8 @@
 #include <Wt/WText>
 #include <Wt/WAnimation>
 
+#include <Mogu.h>
+
 #include <Parsers/StyleParser.h>
 #include <Parsers/NodeValueParser.h>
 #include <Validators/Validators.h>
@@ -85,6 +87,13 @@ MoldableTemplate* conceptualize(const MoldableTemplate* __orig, size_t index)
 Moldable* sculpt(MoldableTemplate* __tmpl)
 {
 	Moldable* m = new Moldable(__tmpl);
+
+	if (__tmpl->flags&is_named)
+	{
+		std::string name = getWidgetProperty(__tmpl->node, "name");
+		Application::mogu()->registerWidget(name, m);
+	}
+
 	switch(__tmpl->type)
 	{
 	case container:{
