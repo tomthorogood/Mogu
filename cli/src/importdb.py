@@ -5,7 +5,19 @@ from syntax import *
 from sets import Set
 
 
+def flush(args):
+    if args.flushdb:
+        message = warn(
+                "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
+                    args.redis_db, args.redis_host, args.redis_port))
+        if confirm(message,args.yes):
+            db.flushdb()
+        else:            
+            print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
+            sys.exit()
+
 def import_ (args, db):
+    flush(args)
     pyFiles = []
     moguFiles = []
 
@@ -18,17 +30,7 @@ def import_ (args, db):
 
 def import_directory(args, db):
     import os
-    if args.flushdb:
-        message = warn(
-                "WARNING: This will overwrite all data in datbase number %d  of your Redis instance at %s:%d" % (
-                    args.redis_db, args.redis_host, args.redis_port))
-        if confirm(message,args.yes):
-            db.flushdb()
-
-        else:            
-            print("No problem. If you're nervous, you can always remove the --redis-flush argument from your command")
-            sys.exit()
-
+    flush(args)
     for directory in args.command[1:]:
         print("Importing directory %s " % directory) 
         dir_dict = {}
