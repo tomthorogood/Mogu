@@ -62,7 +62,7 @@ MoldableTemplate* conceptualize(const std::string& node)
 		__tmpl->content = getWidgetProperty(node, "content");
 
 	if (widgetHasProperty(node, "source"))
-		__tmpl->content = getWidgetProperty(node,"source");
+		__tmpl->source = getWidgetProperty(node,"source");
 
 	if (widgetHasProperty(node, "location"))
 		__tmpl->location = getWidgetProperty(node, "location");

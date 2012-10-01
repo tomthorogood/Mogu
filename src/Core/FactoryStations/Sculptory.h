@@ -10,6 +10,19 @@
 
 #include <declarations.h>
 #include <Core/MoldableTemplate.h>
+#include <Core/MoldableFactory.h>
+#include <Redis/RedisCore.h>
+#include <Wt/WString>
+#include <Wt/WWidget>
+#include <Static.h>
+#include <Parsers/StyleParser.h>
+#include <Types/ListNodeGenerator.h>
+#include <Wt/WContainerWidget>
+#include <Validators/Validators.h>
+#include <Wt/WAnchor>
+#include <Wt/WImage>
+#include <Wt/WText>
+#include <Core/Moldable.h>
 
 namespace Goo{
 namespace MoldableFactory{
@@ -19,6 +32,10 @@ using namespace Parsers::StyleParser;
 using namespace Application;
 using namespace Enums::WidgetTypes;
 using namespace Enums::SignalTypes;
+
+void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m);
+void addChildren(MoldableTemplate* __tmpl,
+		Wt::WContainerWidget* c, Moldable* m=0);
 
 inline void setStyle(const std::string& _style, Wt::WWidget* m)
 {
@@ -45,40 +62,9 @@ inline void getNumChildren(MoldableTemplate* __tmpl)
 	__tmpl->num_children = Redis::getInt();
 }
 
-inline void addChildren(MoldableTemplate* __tmpl,
-		Wt::WContainerWidget* c, Moldable* m=0)
-{
-	std::string chnode = __tmpl->node+".children";
-	ListNodeGenerator gen(chnode,__tmpl->num_children);
-	for (int i = 0; i < __tmpl->num_children; i++)
-	{
-		MoldableTemplate* t = conceptualize(gen.next());
-		Moldable* w = sculpt(t);
-		c->addWidget(w);
-		if (m == 0) m = (Moldable*) c;
-		m->addMoldableChild(w);
-	}
-}
 
-inline void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
-{
-	Wt::WStackedWidget* stack = new Wt::WStackedWidget();
-	if (__tmpl->style != EMPTY)
-	{
-		setStyle(__tmpl->style,stack);
-	}
-	if (__tmpl->flags & has_animation)
-	{
-		Wt::WAnimation::AnimationEffect e = getWidgetAnimation(__tmpl->node);
-		Wt::WAnimation transition(e);
-		stack->setTransitionAnimation(transition,true);
-	}
-	if (__tmpl->num_children > 0)
-	{
-		addChildren(__tmpl, stack, m);
-	}
-	m->addWidget(stack);
-}
+
+
 
 inline void __sculpt_container(MoldableTemplate* __tmpl, Moldable *m)
 {
@@ -92,8 +78,8 @@ inline void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Wt::WString txt(__tmpl->content);
-	Wt::WText* wtxt = new Wt::WText(txt);
-	m->addWidget(wtxt);
+	Wt::WContainerWidget* wtcw = (Wt::WContainerWidget*) m;
+	wtcw->addWidget(new Wt::WText(txt));
 }
 
 inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)

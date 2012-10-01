@@ -136,6 +136,10 @@ EventBindery::EventBindery(Moldable* broadcaster)
         	broadcaster->stackIndexChanged().connect(
         			this, &EventBindery::indexChangedSlot);
         }
+        case Triggers::debugged:{
+        	broadcaster->debugged().connect(
+        			this, &EventBindery::debuggedSlot);
+        	break;}
         default:return;
         }
     }

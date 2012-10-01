@@ -156,6 +156,7 @@ enum SignalAction{
     ,javascript			=0x40
     ,email_user			=0x41
     ,reset_password		=0x42
+    ,STDOUT				=0xFD
     ,TERM				=0xFE
     ,BLOCK				=0xFF
 };
@@ -173,6 +174,7 @@ enum SignalTrigger{
     ,keyup			=0x40
     ,enter_pressed	=0x80
     ,index_changed	=0x100
+    ,debugged		=0x200
 };
 } //namespace SignalTriggers
 

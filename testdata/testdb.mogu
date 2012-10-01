@@ -1,0 +1,14 @@
+# Mogu Import File testdb.mogu
+
+widgets["wrapper"] = { 
+    type    :   container,
+    styles  :   "container"
+}
+
+events["wrapper"] = [{
+    trigger :   "{debugged}",
+    action  :   "{stdout}",
+    listener:   this,
+    signal  :   Number(209),
+    message :   "Debug Signal emitted, caught, and handled."
+}]

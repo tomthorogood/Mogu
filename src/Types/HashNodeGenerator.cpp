@@ -6,7 +6,9 @@
  */
 
 
-#include <HashNodeGenerator.h>
+#include <Types/HashNodeGenerator.h>
+#include <Redis/RedisCore.h>
+#include <string.h>
 #include <cassert>
 
 HashNodeGenerator::HashNodeGenerator (const std::string& node)
