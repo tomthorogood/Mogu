@@ -10,6 +10,7 @@
 
 #include <declarations.h>
 #include <Redis/RedisCore.h>
+#include <hiredis/hiredis.h>
 
 namespace Redis
 {
@@ -36,7 +37,7 @@ public:
 	inline virtual std::string next()
 	{
 		if (__current >= __reply->elements) return EMPTY;
-		std::string nxt = __reply->element[__current];
+		std::string nxt = __reply->element[__current]->str;
 		++__current;
 		return nxt;
 	}

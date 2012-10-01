@@ -73,6 +73,11 @@ class EventBindery : public Wt::WObject
     	handleVoidSignal(Enums::SignalTriggers::index_changed);
     }
 
+    inline void debuggedSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::debugged);
+    }
+
 public:
     EventBindery(Goo::Moldable* broadcaster);
     ~EventBindery();

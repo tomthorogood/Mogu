@@ -7,8 +7,9 @@
 
 #include <Core/FactoryStations/Bindery.h>
 #include <Redis/RedisCore.h>
+#include <Core/Moldable.h>
 #include <Redis/ListReturnGenerator.h>
-
+#include <MoguDBDefs.h>
 namespace Goo{
 namespace MoldableFactory{
 namespace Bindery{

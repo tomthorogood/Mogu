@@ -64,6 +64,7 @@ public:
 	    enumMap["read_state"]		= Action::read_state;
 	    enumMap["reset_password"] 	= Action::reset_password;
 	    enumMap["reload"]			= Action::reload;
+	    enumMap["stdout"]			= Action::STDOUT;
 #ifdef TERM_ENABLED
 	    enumMap["TERMINATE"]		= Action::TERM;
 #endif
@@ -86,6 +87,7 @@ public:
 	    enumMap["keyup"]		= Trigger::keyup;
 	    enumMap["enter"] 		= Trigger::enter_pressed;
 	    enumMap["index_changed"]= Trigger::index_changed;
+	    enumMap["debug"]		= Trigger::debugged;
 	}
 };
 

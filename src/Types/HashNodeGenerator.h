@@ -9,6 +9,7 @@
 #define HASHNODEGENERATOR_H_
 
 #include <Redis/RedisCore.h>
+#include <hiredis/hiredis.h>
 
 class HashNodeGenerator
 {
@@ -19,9 +20,14 @@ public:
 	HashNodeGenerator (const std::string& node);
 	inline std::pair <std::string,std::string>* next()
 	{
-		if (current >= __reply->elements) return std::make_pair(EMPTY,EMPTY);
-		_pr = std::make_pair(
-				__reply->element[current],__reply->element[++current]);
+		_pr = (current >= __reply->elements) ?
+				std::make_pair(
+						(std::string) EMPTY, (std::string) EMPTY)
+
+				: std::make_pair(
+						(std::string) __reply->element[current]->str,
+						(std::string) __reply->element[++current]->str
+				);
 		++current;
 		return &_pr;
 	}

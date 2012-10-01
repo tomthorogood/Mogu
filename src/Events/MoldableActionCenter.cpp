@@ -578,6 +578,15 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
+    case Action::STDOUT:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Moldable* widget = (Moldable*) listeners->at(w);
+    		std::cout << widget->getNode() << " says: ";
+    		std::cout << broadcast->getMessage()->getString() << std::endl;
+    	}
+    }
+
     default:return; // Don't do anything unexpected!
     }
 }

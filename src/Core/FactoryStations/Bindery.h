@@ -23,8 +23,6 @@ using Parsers::NodeValueParser;
 void bind_all_events(Moldable* widget);
 void bind_event (const std::string&,Moldable*);
 
-
-
 }
 }
 

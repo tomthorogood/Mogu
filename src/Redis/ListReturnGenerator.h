@@ -8,6 +8,8 @@
 #ifndef LISTRETURNGENERATOR_H_
 #define LISTRETURNGENERATOR_H_
 
+#include <Redis/Generator.h>
+
 namespace Redis
 {
 
@@ -16,7 +18,7 @@ class ListReturnGenerator : public Generator
 public:
 	ListReturnGenerator(const std::string& command)
 	{
-		__reply = redisCommand(context(),command.c_str());
+		__reply = (redisReply*) redisCommand(context(),command.c_str());
 	}
 };
 
