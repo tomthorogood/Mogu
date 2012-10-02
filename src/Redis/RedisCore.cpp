@@ -111,12 +111,6 @@ int toInt()
     done(reply, redis);
     return atoi(ret_c);
 }
-
-void disconnect()
-{
-    redisFree(redis);
-}
-
 } //namespace Redis
 
 

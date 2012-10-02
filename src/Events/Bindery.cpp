@@ -18,6 +18,7 @@
 #include <Static.h>
 
 #include <Types/NodeValue.h>
+#include <Mogu.h>
 
 #include <Core/Moldable.h>
 
@@ -145,6 +146,14 @@ EventBindery::EventBindery(Moldable* broadcaster)
 
 void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 {
+#ifdef DEBUG
+	std::cout << "Wt Session: " << Application::mogu()->sessionId();
+	std::cout << " | " << "User Session: ";
+	std::cout <<
+			Application::requestSessionID(
+					Application::mogu()->sessionId());
+	std::cout << std::endl;
+#endif
    ExtractorVector* extractors = &extractorMap[trigger];
    int num_extractors = extractors->size();
    for (int e = 0; e < num_extractors; e++)
