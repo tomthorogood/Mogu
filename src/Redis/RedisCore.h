@@ -45,7 +45,6 @@ int toInt();
 long long getInt();
 float toFloat();
 void clear();
-void disconnect();
 
 } //namespace Redis
 

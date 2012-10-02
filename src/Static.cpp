@@ -76,6 +76,7 @@ void setSessionID(std::string session)
 {
 #ifdef DEBUG
 	std::cout << "CHANGING SESSION TO THE " << session << " KEYSPACE!";
+	std::cout << std::endl;
 #endif
 	__sessionID = session;
 }

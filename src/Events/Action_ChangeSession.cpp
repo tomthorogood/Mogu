@@ -72,14 +72,15 @@ namespace{
 		command("hset", next_meta, __AUTH_HASH, p->auth_token);
 		clear();
 		command("hset", __NODE_AUTH_LOOKUP, p->auth_string, p->auth_token);
+		clear();
 		if (p->token_cycles > 0)
 		{
 			std::stringstream s;
 			s << p->token_cycles;
 			command("hset",
 					__NODE_COLLISION_TOK_LOOKUP, p->e_userid, s.str());
+			clear();
 		}
-		clear();
 		command("hset", __NODE_SESSION_LOOKUP, p->e_userid, p->next_session);
 		clear();
 	}
@@ -272,6 +273,7 @@ bool register_user()
 		std::stringstream s;
 		s << auth_str_packet.second;
 		command("hset", __NODE_COLLISION_STR_LOOKUP,e_userid, s.str());
+		clear();
 	}
 
 
@@ -283,6 +285,7 @@ bool register_user()
 	std::string contact_node = prhshd_session_node(
 			session_packet.first, contact_storage);
 	Redis::command("hset", contact_node, email_hash, e_userid);
+	Redis::clear();
 	SessionParams prms;
 	prms.auth_string = auth_str_packet.first;
 	prms.auth_token = auth_token_packet.first;
