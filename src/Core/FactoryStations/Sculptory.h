@@ -88,13 +88,17 @@ inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 		bearer = (Wt::WContainerWidget*) m->widget(0);
 	}
 	getNumChildren(__tmpl);
-	MoldableTemplate* cpy = new MoldableTemplate(*__tmpl);
-	Redis::command("hget", cpy->node, "template");
-	std::string tpl_name = Redis::toString();
-	cpy->type = getWidgetType(tpl_name);
 	for (int i = 0; i < __tmpl->num_children; i++)
 	{
+		MoldableTemplate* cpy = new MoldableTemplate(*__tmpl);
+		cpy->num_children =0;
+		std::string tpl_name = getWidgetProperty(__tmpl->node, "template");
+		std::string datanode = cpy->content.substr(1,cpy->content.length()-2);
+		Redis::command("lindex", datanode, itoa(i));
+		cpy->content = Redis::toString();
+		cpy->type = getWidgetType("templates."+tpl_name);
 		bearer->addWidget(sculpt(cpy));
+
 	}
 }
 inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)

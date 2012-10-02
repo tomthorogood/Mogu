@@ -2,13 +2,23 @@
 
 widgets["wrapper"] = { 
     type    :   container,
-    styles  :   "container"
 }
 
-events["wrapper"] = [{
-    trigger :   "{debugged}",
-    action  :   "{stdout}",
-    listener:   this,
-    signal  :   Number(209),
-    message :   "Debug Signal emitted, caught, and handled."
-}]
+data["loopdata"] = [
+    "foo",
+    "bar",
+    "baz"
+]
+
+templates["looplist"] = {
+    type    :   text,
+    styles  :   "red_outline"
+}
+
+widgets["looptest"] = {
+    type    :   "{foreach}",
+    template:   "looplist",
+    content: "@data.loopdata@"
+}
+
+tree["wrapper"] = ["looptest",]
