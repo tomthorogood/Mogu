@@ -11,7 +11,7 @@ def assertending(string,ending):
     return string
 
 def removeending(string,ending):
-    if string.endswith(ending):
+    while string.endswith(ending):
         index = string.rfind(ending)
         string = string[:index]
     return string
@@ -22,7 +22,7 @@ def assertstart(string,beginning):
     return string
 
 def removebeginning(string,beginning):
-    if string.startswith(beginning):
+    while string.startswith(beginning):
         string = string[len(beginning):]
     return string
 

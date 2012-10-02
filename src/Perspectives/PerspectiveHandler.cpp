@@ -23,16 +23,15 @@ namespace Handler{
 
 void mold(std::string perspective)
 {
-	Mogu* app = Application::mogu();
 	namespace Action = Enums::SignalActions;
 	std::string action_str;
 	std::string message_str;
 	int num_widgets = 0;
 	Redis::strvector namespace_;
 
-
-	Redis::command("keys","perspectives."+perspective+".*");
-	Redis::toVector(namespace_);
+	mApp;
+	app->redisCommand("keys","perspectives."+perspective+".*");
+	Redis::toVector(app->reply(),namespace_);
 	num_widgets = namespace_.size();
 
 	for (int w = 0; w < num_widgets; w++)
@@ -44,15 +43,15 @@ void mold(std::string perspective)
 		Action::SignalAction action;
 		Goo::Moldable* widget;
 
-		Redis::command("hget",affect_node,"name");
-		name = Redis::toString();
+		app->redisCommand("hget",affect_node,"name");
+		name = Redis::toString(app->reply());
 		if (!app->widgetIsRegistered(name)) return;
 
-		Redis::command("hget", affect_node, "action");
-		action_str = Redis::toString();
+		app->redisCommand("hget", affect_node, "action");
+		action_str = Redis::toString(app->reply());
 
-		Redis::command("hget", affect_node, "message");
-		message_str = Redis::toString();
+		app->redisCommand("hget", affect_node, "message");
+		message_str = Redis::toString(app->reply());
 
 		widget = app->registeredWidget(name);
 

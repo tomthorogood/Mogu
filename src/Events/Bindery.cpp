@@ -40,9 +40,10 @@ EventBindery::EventBindery(Moldable* broadcaster)
     string eventNamespace = broadcaster->getNode();
     eventNamespace.append(".events.*");
     strvector eventNodes;
-    Redis::command("keys", eventNamespace);
+    mApp;
+    app->redisCommand("keys", eventNamespace);
     /* This returns a list of all events for the widget in question. */
-    Redis::toVector(eventNodes);
+    Redis::toVector(app->reply(),eventNodes);
 
     int num_events = eventNodes.size();
     /* Then, we need to iterate through each of these events. */
@@ -147,11 +148,10 @@ EventBindery::EventBindery(Moldable* broadcaster)
 void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 {
 #ifdef DEBUG
-	std::cout << "Wt Session: " << Application::mogu()->sessionId();
+	mApp;
+	std::cout << "Wt Session: " << app->sessionId();
 	std::cout << " | " << "User Session: ";
-	std::cout <<
-			Application::requestSessionID(
-					Application::mogu()->sessionId());
+	std::cout << app->sessionID();
 	std::cout << std::endl;
 #endif
    ExtractorVector* extractors = &extractorMap[trigger];

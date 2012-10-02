@@ -32,8 +32,9 @@ using TurnLeft::Utils::trimchar;
 
 inline bool session_widget_exists(std::string node)
 {
-	Redis::command("exists", node);
-	return (bool) Redis::getInt();
+	mApp;
+	app->redisCommand("exists", node);
+	return (bool) Redis::getInt(app->reply());
 }
 
 void absorb(std::string value_unenc, std::string snode)
@@ -43,9 +44,8 @@ void absorb(std::string value_unenc, std::string snode)
 	namespace Widget = Enums::WidgetTypes;
 	/* We will only continue if all authorization checks are passed.
 	 */
-	std::string session_id =
-			Application::requestSessionID(
-					Application::mogu()->sessionId());
+	mApp;
+	std::string session_id = app->sessionID();
 
 	/* Determine the location of the node's template */
 	std::string storage_locker = Hash::toHash(snode);
@@ -61,8 +61,6 @@ void absorb(std::string value_unenc, std::string snode)
 	 * s.235r308gg.123hu
 	 */
 	std::string value_enc;
-
-
 	bool encrypted = requiresEncryption(snode);
 	if (encrypted)
 	{
@@ -110,9 +108,8 @@ void absorb(std::string value_unenc, std::string snode)
 	 */
 	case list:{
 		if (mode_ == replace)
-		{
-			Redis::command("del", storageNode);
-			Redis::clear();
+		{	mApp;
+			app->redisCommand("del", storageNode);
 		}
 		redis_command = "rpush";
 		break;}
@@ -125,9 +122,9 @@ void absorb(std::string value_unenc, std::string snode)
 	case hash:{
 		std::string field = getHashField(snode);
 		if (mode_ == append)
-		{
-			Redis::command("hget", storageNode,field);
-			std::string current_val = Redis::toString();
+		{	mApp;
+			app->redisCommand("hget", storageNode,field);
+			std::string current_val = Redis::toString(app->reply());
 			if (encrypted)
 			{
 				current_val = Security::decrypt(current_val);
@@ -152,8 +149,9 @@ void absorb(std::string value_unenc, std::string snode)
 			redis_command = "append";
 			if (encrypted)
 			{
-				Redis::command("get", storageNode);
-				std::string current_val = Redis::toString();
+				mApp;
+				app->redisCommand("get", storageNode);
+				std::string current_val = Redis::toString(app->reply());
 				current_val = Security::decrypt(current_val);
 				std::string concat_val = current_val + " " + value_unenc;
 				value_enc = Security::encrypt(concat_val);
@@ -179,8 +177,7 @@ void absorb(std::string value_unenc, std::string snode)
 	}
 	//"command node" | "command node field" ->
 	//				"command node "value"" | "command node field "value" "
-	Redis::command(redis_command, value);
-	Redis::clear();
+	app->redisCommand(redis_command, value);
 }
 
 /*Returns the session ID in this user's chain where the node is found first. */
@@ -195,18 +192,19 @@ std::string storage_arg(std::string pt_node_name)
 {
 	std::string node = "widgets."+pt_node_name+".policy";
 	if (!hashkey_exists(node, "arg")) return EMPTY;
-
-	Redis::command("hget", node, "arg");
-	return Redis::toString();
+	mApp;
+	app->redisCommand("hget", node, "arg");
+	return Redis::toString(app->reply());
 }
 
 bool requiresEncryption(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
 	if (!hashkey_exists( nodePolicy, "encrypted")) return false;
-	Redis::command("hget", nodePolicy, "encrypted");
+	mApp;
+	app->redisCommand("hget", nodePolicy, "encrypted");
 	Nodes::NodeValue val;
-	Parsers::NodeValueParser parser(Redis::toString(), &val);
+	Parsers::NodeValueParser parser(Redis::toString(app->reply()), &val);
 
 	return (bool) val.getInt();
 }
@@ -214,10 +212,11 @@ bool requiresEncryption(const std::string& snode)
 StorageMode getStorageMode(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
-	Redis::command("hget", nodePolicy,"mode");
+	mApp;
+		app->redisCommand("hget", nodePolicy,"mode");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
-			Redis::toString()
+			Redis::toString(app->reply())
 			,&val, 0x0 //No need to pass in a widget
 			,&Parsers::enum_callback <Parsers::StorageModeParser>);
 	return (StorageMode) val.getInt();
@@ -226,10 +225,11 @@ StorageMode getStorageMode(const std::string& snode)
 StorageType getStorageType(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
-	Redis::command("hget", nodePolicy, "storage_type");
+	mApp;
+	app->redisCommand("hget", nodePolicy, "storage_type");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
-			Redis::toString()
+			Redis::toString(app->reply())
 			,&val
 			,0x0 // No need to pass in a widget
 			,&Parsers::enum_callback <Parsers::StorageTypeParser>);
@@ -239,10 +239,11 @@ StorageType getStorageType(const std::string& snode)
 DataWrapping getDataWrapping(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
-	Redis::command("hget", nodePolicy, "data_type");
+	mApp;
+	app->redisCommand("hget", nodePolicy, "data_type");
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
-			Redis::toString(),
+			Redis::toString(app->reply()),
 			&val,
 			0x0,
 			&Parsers::enum_callback <Parsers::StorageWrappingParser>);
@@ -252,15 +253,17 @@ DataWrapping getDataWrapping(const std::string& snode)
 std::string getHashField(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
-	Redis::command("hget", nodePolicy, "field");
-	return Redis::toString();
+	mApp;
+	app->redisCommand("hget", nodePolicy, "field");
+	return Redis::toString(app->reply());
 }
 
 std::string getSlotName(const std::string& snode)
 {
 	std::string nodePolicy = "widgets."+snode+".policy";
-	Redis::command("hget", nodePolicy, "slot");
-	return Redis::toString();
+	mApp;
+	app->redisCommand("hget", nodePolicy, "slot");
+	return Redis::toString(app->reply());
 }
 
 std::string userNodeLookup(
@@ -280,27 +283,31 @@ std::string userNodeLookup(
 	bool encrypted = requiresEncryption(storage_name);
 
 	/* Determine the type of node that we're dealing with */
-	Redis::command("type", node);
-	string node_type = Redis::toString();
+	mApp;
+	app->redisCommand("type", node);
+	string node_type = Redis::toString(app->reply());
 
 	/* If we have a list or hash node, get the extra value that should
 	 * have been passed in.
 	 */
 	if (node_type == REDIS_HSH)
 	{
-		Redis::command("hget",node,arg);
+		mApp;
+		app->redisCommand("hget",node,arg);
 	}
 	else if (node_type == REDIS_LST)
 	{
-		Redis::command("lindex",node,arg);
+		mApp;
+		app->redisCommand("lindex",node,arg);
 	}
 	else if (node_type == REDIS_STR)
 	{
-		Redis::command("get",node);
+		mApp;
+		app->redisCommand("get",node);
 	}
 	else return EMPTY;
 
-	string raw_string = Redis::toString();
+	string raw_string = Redis::toString(app->reply());
 	if (encrypted)
 	{
 		std::string dec = Security::decrypt(raw_string);
@@ -316,7 +323,8 @@ std::string dynamicLookup(std::string storage_name, std::string arg)
 	using namespace Application;
 	using namespace Enums::NodeValueTypes::RedisTypes;
 	using std::string;
-	string sessionid = requestSessionID(mogu()->sessionId());
+	mApp;
+	string sessionid = app->sessionID();
 	return userNodeLookup(sessionid, storage_name, arg);
 }
 

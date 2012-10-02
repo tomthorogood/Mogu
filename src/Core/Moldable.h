@@ -27,6 +27,7 @@
 #include <Redis/RedisCore.h>
 #include <Wt/WLineEdit>
 #include <Core/MoldableTemplate.h>
+#include <Wt/WApplication>
 #include <Wt/WSignal> // Templated Type
 
 //!\brief The namespace in which the Mogu Core is located.
@@ -51,6 +52,8 @@ private:
 #endif
 	MoldableTemplate* __tmpl;
 	std::string __node; //!< This widget's location in the database
+
+	Mogu* __app;
 
 	/*!\brief A cache of this widget's state inquiries. */
 	std::map <Enums::WidgetTypes::States, Nodes::NodeValue*> __state_cache;
@@ -232,6 +235,8 @@ public:
 
     /*!\brief Returns whether or not this widget may be reloaded */
     inline bool reload() { return __reload; }
+
+    inline Mogu* app() { return __app;}
 
     Nodes::NodeValue* getState(Enums::WidgetTypes::States state);
 

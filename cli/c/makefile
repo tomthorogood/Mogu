@@ -10,7 +10,7 @@ libs = -lturnleft -lcityhash -lhiredis -lcrypto
 all: $(EXES)
 
 clihash:
-	g++ -o $@ -I$(MAIN_SRC) $@.cpp $(MAIN_SRC)/hash.cpp -lcityhash
+	g++ -o $@ -I$(MAIN_SRC) $@.cpp $(MAIN_SRC)/hash.cpp -lwt -lcityhash
 
 clidec:
 	g++ -o $@ -D$(dbg) -I$(MAIN_SRC) $@.cpp $(dec_deps_r) $(libs)

@@ -62,8 +62,9 @@ inline void getNumChildren(MoldableTemplate* __tmpl)
 	{
 		node = __tmpl->node+".children";
 	}
-	Redis::command("llen",node);
-	__tmpl->num_children = Redis::getInt();
+	mApp;
+	app->redisCommand("llen",node);
+	__tmpl->num_children = Redis::getInt(app->reply());
 }
 
 
@@ -94,8 +95,9 @@ inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 		cpy->num_children =0;
 		std::string tpl_name = getWidgetProperty(__tmpl->node, "template");
 		std::string datanode = cpy->content.substr(1,cpy->content.length()-2);
-		Redis::command("lindex", datanode, itoa(i));
-		cpy->content = Redis::toString();
+		mApp;
+		app->redisCommand("lindex", datanode, itoa(i));
+		cpy->content = Redis::toString(app->reply());
 		cpy->type = getWidgetType("templates."+tpl_name);
 		bearer->addWidget(sculpt(cpy));
 

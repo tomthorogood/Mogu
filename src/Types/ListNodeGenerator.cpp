@@ -7,6 +7,8 @@
 
 #include <Types/ListNodeGenerator.h>
 #include <Redis/RedisCore.h>
+#include <Mogu.h>
+#include <Wt/WApplication>
 
 ListNodeGenerator::ListNodeGenerator(
 		const std::string& node, size_t max)
@@ -16,8 +18,9 @@ ListNodeGenerator::ListNodeGenerator(
 
 	if (!max)
 	{
-		Redis::command("llen", node);
-		__max = Redis::getInt();
+		mApp;
+		app->redisCommand("llen", node);
+		__max = Redis::getInt(app->reply());
 	}
 	else
 	{
@@ -31,9 +34,10 @@ std::string ListNodeGenerator::next()
 {
 	if (__current < __max)
 	{
-		Redis::command("lindex", __node, itoa(__current));
+		mApp;
+		app->redisCommand("lindex", __node, itoa(__current));
 		++__current;
-		return Redis::toString();
+		return Redis::toString(app->reply());
 	}
 	return EMPTY;
 }

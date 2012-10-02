@@ -41,7 +41,7 @@ namespace {
 
 void submitBroadcast(BroadcastMessage* broadcast)
 {
-
+	mApp;
     namespace TypeBits = Enums::SignalTypes;
     unsigned char signalType = broadcast->getSignalType();
 
@@ -65,7 +65,6 @@ void submitBroadcast(BroadcastMessage* broadcast)
         {
         	std::string listener_name =
         			broadcast->getListenerName();
-        	Mogu* app = Application::mogu();
 
         	if (app->widgetIsRegistered(listener_name))
         	{
@@ -256,6 +255,7 @@ void updateListeners(BroadcastMessage* broadcast)
 
 void directListeners(BroadcastMessage* broadcast)
 {
+	mApp;
     namespace Action = Enums::SignalActions;
     Listeners* listeners = listenerMap[broadcast];
     Action::SignalAction action = broadcast->getAction();
@@ -273,7 +273,7 @@ void directListeners(BroadcastMessage* broadcast)
     	{
     	case Action::set_internal_path:{
     		std::string path = broadcast->getMessage()->getString();
-    		Application::mogu()->setInternalPath(path);
+    		app->setInternalPath(path);
     		break;}
 
     	case Action::register_user:{
@@ -300,13 +300,13 @@ void directListeners(BroadcastMessage* broadcast)
 
         case Action::javascript:{
         	std::string script = broadcast->getMessage()->getString();
-        	Application::mogu()->doJavaScript(script);
+        	app->doJavaScript(script);
         	break;}
 
         case Action::email_user:{
         	std::string message = broadcast->getMessage()->getString();
         	Actions::EmailPacket pkt;
-        	std::string URL = Application::mogu()->bookmarkUrl();
+        	std::string URL = app->bookmarkUrl();
         	pkt.subject = "New eMail from " + URL;
         	pkt.message = message;
         	Actions::email_current_user(&pkt);
@@ -315,7 +315,7 @@ void directListeners(BroadcastMessage* broadcast)
         case Action::reset_password:{
         	std::string message = broadcast->getMessage()->getString();
         	std::string uid = Application::retrieveSlot(
-        			"USERID", Application::mogu()->sessionId());
+        			"USERID", app->sessionId());
 #ifdef DEBUG
         	std::cout << uid << std::endl;
 #endif
@@ -441,7 +441,6 @@ void directListeners(BroadcastMessage* broadcast)
     			msg_type = broadcast->getMessageType();
     			if (msg_type == Nodes::string_value)
     			{
-    				Mogu* app = Application::mogu();
     				std::string msg = broadcast->getMessage()->getString();
     				if (app->widgetIsRegistered(msg))
     				{
@@ -524,7 +523,7 @@ void directListeners(BroadcastMessage* broadcast)
     		if (widget->allowsAction(Action::match))
     		{
     			Wt::WLineEdit* input = (Wt::WLineEdit*) widget->widget(0);
-    			Goo::Moldable* _test = Application::mogu()->registeredWidget(
+    			Goo::Moldable* _test = app->registeredWidget(
     					broadcast->getMessage()->getString());
     			Wt::WLineEdit* test = (Wt::WLineEdit*)
     					_test->widget(0);

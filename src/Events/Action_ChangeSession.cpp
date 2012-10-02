@@ -63,26 +63,27 @@ namespace{
 
 	inline void add_session(SessionParams* p)
 	{
+		mApp;
 		using namespace Redis;
 		using Sessions::Lookups::prhshd_session_node;
 		string next_meta = prhshd_session_node(p->next_session, __META_HASH);;
 
-		command("hset", next_meta, __PREV_HASH, p->last_session);
-		clear();
-		command("hset", next_meta, __AUTH_HASH, p->auth_token);
-		clear();
-		command("hset", __NODE_AUTH_LOOKUP, p->auth_string, p->auth_token);
-		clear();
+		app->redisCommand("hset", next_meta, __PREV_HASH, p->last_session);
+
+		app->redisCommand("hset", next_meta, __AUTH_HASH, p->auth_token);
+
+		app->redisCommand("hset", __NODE_AUTH_LOOKUP, p->auth_string, p->auth_token);
+
 		if (p->token_cycles > 0)
 		{
 			std::stringstream s;
 			s << p->token_cycles;
-			command("hset",
+			app->redisCommand("hset",
 					__NODE_COLLISION_TOK_LOOKUP, p->e_userid, s.str());
-			clear();
+
 		}
-		command("hset", __NODE_SESSION_LOOKUP, p->e_userid, p->next_session);
-		clear();
+		app->redisCommand("hset", __NODE_SESSION_LOOKUP, p->e_userid, p->next_session);
+
 	}
 }
 
@@ -102,8 +103,8 @@ bool change_session ()
 
 
 	if (!__init__) init();
-
-	const string mogu_session			= mogu()->sessionId();
+	mApp;
+	const string mogu_session	= app->sessionId();
 
 	string
 		p_userid
@@ -204,8 +205,8 @@ bool change_session ()
 	sessionParams.token_cycles 	= token_packet.second;
 	sessionParams.session_cycles= session_packet.second;
 	add_session(&sessionParams);
-	setSessionID(session_packet.first);
-	setAuthToken(token_packet.first);
+	app->setSessionID(session_packet.first);
+	app->setAuthToken(token_packet.first);
 	return true;
 }
 
@@ -231,8 +232,8 @@ bool register_user()
 	TokenCycles auth_str_packet;
 	TokenCycles auth_token_packet;
 
-
-	const string mogu_session = mogu()->sessionId();
+	mApp;
+	const string mogu_session = app->sessionId();
 
 	try
 	{
@@ -261,8 +262,7 @@ bool register_user()
 	salt = Security::generate_salt();
 
 	//Give the user some salt:
-	command("hset", __NODE_SALT_LOOKUP, e_userid, salt);
-	clear();
+	app->redisCommand("hset", __NODE_SALT_LOOKUP, e_userid, salt);
 
 	//Create the user's auth string and set up the collision table, if necessary
 	auth_str_packet.first = Security::create_raw_auth_string(
@@ -272,8 +272,7 @@ bool register_user()
 	{
 		std::stringstream s;
 		s << auth_str_packet.second;
-		command("hset", __NODE_COLLISION_STR_LOOKUP,e_userid, s.str());
-		clear();
+		app->redisCommand("hset", __NODE_COLLISION_STR_LOOKUP,e_userid, s.str());
 	}
 
 
@@ -284,8 +283,7 @@ bool register_user()
 	const std::string email_hash = Hash::toHash("contact_email");
 	std::string contact_node = prhshd_session_node(
 			session_packet.first, contact_storage);
-	Redis::command("hset", contact_node, email_hash, e_userid);
-	Redis::clear();
+	app->redisCommand("hset", contact_node, email_hash, e_userid);
 	SessionParams prms;
 	prms.auth_string = auth_str_packet.first;
 	prms.auth_token = auth_token_packet.first;
@@ -297,8 +295,8 @@ bool register_user()
 	add_session(&prms);
 
 	// Finally, change the environment //
-	setSessionID(session_packet.first);
-	setAuthToken(auth_token_packet.first);
+	app->setSessionID(session_packet.first);
+	app->setAuthToken(auth_token_packet.first);
 
 	//___CLEANUP___//
 	return true;

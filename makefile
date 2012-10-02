@@ -4,7 +4,7 @@ branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Valid
 includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include -L/usr/local/lib
 executable := mogu-server
 o:=0
-devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash
+devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash -lwt
 gen_config := cli/src/config_generator.py
 
 turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
@@ -30,14 +30,12 @@ install: mogu.conf
 	$(MAKE) uninstall
 	mkdir -p /etc/mogu
 	cp $< /etc/mogu
-	cd cli/c && $(MAKE) all
 	cp -r cli/* /etc/mogu
 	cp -r resources/ /etc/mogu
 	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
 	ln -s /etc/mogu/mogu /usr/bin/mogu
 
 install-cli: mogu.conf
-	cd cli/c && $(MAKE) all
 	cp -r cli/* /etc/mogu
 	cp $< /etc/mogu
 
@@ -48,9 +46,9 @@ uninstall:
 
 %.o:
 ifeq ($(dbg),on)
-	$(command) -c -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@)
+	$(command) -c -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) $(devel_libs)
 else
-	$(command) -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
+	$(command) -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) $(devel_libs)
 endif
 
 $(turnleft):
@@ -64,7 +62,6 @@ upgrade:
 	$(MAKE) install
 
 clean:
-	cd cli/c && $(MAKE) clean
 	rm -rf $(objects)
 	rm -rf *.pyc
 

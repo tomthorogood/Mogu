@@ -18,6 +18,7 @@
 
 
 #include <declarations.h>
+#include <hiredis/hiredis.h>
 
 namespace Redis
 {
@@ -32,19 +33,20 @@ std::string join (
         std::string arg5 =""
         );
 
-void command (
+void* command (
+		redisContext* c,
         std::string arg1,
         std::string arg2 ="",
         std::string arg3 ="",
         std::string arg4 ="",
         std::string arg5 ="");
 
-void toVector(strvector& vec);
-std::string toString();
-int toInt();
-long long getInt();
-float toFloat();
-void clear();
+void toVector(redisReply* r, strvector& vec);
+std::string toString(redisReply* r);
+int toInt(redisReply* r);
+long long getInt(redisReply* r);
+float toFloat(redisReply* r);
+void clear(redisReply* r);
 
 } //namespace Redis
 

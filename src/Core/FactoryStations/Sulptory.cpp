@@ -57,10 +57,10 @@ void addChildren(MoldableTemplate* __tmpl,
 
 void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 {
+	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	if ( (__tmpl->flags & is_dynamic) &&
-			Application::requestSessionID(
-					Application::mogu()->sessionId()) != "global")
+			app->sessionID() != "global")
 
 	{
 		std::string content =

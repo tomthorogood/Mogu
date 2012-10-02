@@ -17,55 +17,6 @@
  */
 namespace Application
 {
-	/*!\brief Returns a pointer to the Mogu object.
-	 * This is mostly used to ensure there hasn't been memory corruption when
-	 * validating sessions. It also allows widgets to communicate with the
-	 * application itself.
-	 * @return a pointer to the application instance
-	 */
-	Mogu* mogu();
-
-	/*!\brief Called when an application instance starts. The Mogu instance
-	 * will tell the namespace that it exists, and hand over a pointer to itself
-	 * which can be used anywhere else in the application.
-	 * @param application A pointer to a Mogu instance.
-	 */
-	void defineMogu(Mogu* application);
-
-	/*!\brief Requests the user session id. By default, this will return 'global'
-	 * unless the 'change_session' action has taken place.
-	 * @param wtsession A pointer to the mogu session. This makes sure that the
-	 * application requesting the session is the same application which set up
-	 * the session, and averts disaster should something untoward happen to
-	 * memory.
-	 * @return The user's current working session id.
-	 */
-	std::string requestSessionID(std::string wtsession);
-
-	/*!\brief Requests the user's authentication token (mostly used when
-	 * instantiating dynamic widgets). The user's session ID is required to
-	 * access this to prevent corruption.
-	 * @param sessionid The user's session id, which must match what the
-	 * Application *thinks* the user's session id is.
-	 * @return The user's encrypted authentication token.
-	 */
-	std::string requestAuthToken(std::string sessionid);
-
-	/*!\brief Sets the user's authentication token. */
-	void setAuthToken(std::string auth);
-
-	/*!\brief Sets the Wt session ID automatically generated when a connection
-	 * is made.
-	 * @param session
-	 */
-	void setWtSession(std::string session);
-
-	/*!\brief Sets the user session id (only used if the change_session action
-	 * takes place.
-	 * @param session
-	 */
-	void setSessionID(std::string session);
-
 	/*!\brief Encrypts a string of any variable length. It is done in the
 	 * application namespace to avoid constantly created and deleting the
 	 * server's encryption key, which could lead to indecent exposure.

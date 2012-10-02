@@ -9,6 +9,9 @@
 #include <Events/NodeConfiguration.h>
 #include <Redis/RedisCore.h>
 #include <Parsers/Parsers.h>
+#include <Wt/WApplication>
+#include <Mogu.h>
+
 namespace Events{
 
 using std::string;
@@ -17,11 +20,12 @@ using std::map;
 
 EventNodeExtractor::EventNodeExtractor(string nodeName)
 {
+	mApp;
     string command = "hkeys ";
     command.append(nodeName);
-    Redis::command(command);
+    app->redisCommand(command);
     strvector keys;
-    Redis::toVector(keys);
+    Redis::toVector(app->reply(),keys);
     Parsers::NodeLabelParser keyParser;
     int num_keys = keys.size();
     for (int k = 0; k < num_keys; k++)
@@ -29,8 +33,8 @@ EventNodeExtractor::EventNodeExtractor(string nodeName)
         string key = keys.at(k);
         command = "hget ";
         command.append(nodeName).append(" ").append(key);
-        Redis::command(command);
-        stringValues[keyParser.parse(key)] = Redis::toString();
+        app->redisCommand(command);
+        stringValues[keyParser.parse(key)] = Redis::toString(app->reply());
     }
 #ifdef DEBUG
     std::cout << "Creating event node extractor (" << this <<") for "

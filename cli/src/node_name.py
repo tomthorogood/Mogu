@@ -12,12 +12,12 @@ class NodeName(object):
         self.node = string
 
         if params.begin:
-            self.name = removebeginning(string, params.begin)
-            self.node = assertstart(string, params.begin)
+            self.name = removebeginning(self.name, params.begin)
+            self.node = assertstart(self.node, params.begin)
 
         if params.end:
-            self.name = removeending(string, params.end)
-            self.node = assertending(string, params.end)
+            self.name = removeending(self.name, params.end)
+            self.node = assertending(self.node, params.end)
 
 class NodePatterns:
     class Widget(NodeName):

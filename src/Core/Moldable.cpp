@@ -50,6 +50,7 @@ Moldable::Moldable(MoldableTemplate* tpl)
 
     // Not all widgets will have a bindery. This may remain null.
     bindery =0;
+    __app = MoguApp;
 }
 
 Moldable::~Moldable()

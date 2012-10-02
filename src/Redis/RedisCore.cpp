@@ -10,6 +10,7 @@
 #include <hiredis/hiredis.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cassert>
 
 namespace Redis{
 
@@ -17,9 +18,7 @@ using std::stringstream;
 using std::string;
 
 namespace{
-    redisContext* redis =0;
-    redisReply* reply =0;
-    stringstream stream;
+    static stringstream stream;
 } //unnamed namespace
 
 void done(redisReply* _reply, redisContext* _redis)
@@ -27,11 +26,6 @@ void done(redisReply* _reply, redisContext* _redis)
     freeReplyObject(_reply);
     redisFree(_redis);
 
-}
-
-void clear()
-{
-    done(reply, redis);
 }
 
 std::string join (
@@ -58,57 +52,58 @@ std::string join (
     return buff_out;
 }
 
-void command (
+void* command (
+		redisContext* c,
         string arg1, string arg2, string arg3, string arg4, string arg5)
 {
     std::string buff = join (arg1, arg2, arg3, arg4, arg5);
     const char* __command = buff.c_str();
-	redis = redisConnect(REDIS_HOST, REDIS_PORT);
-
-	if ( strcmp(__command, "") != 0)
-    {
-    	reply = (redisReply*) redisCommand(redis, __command);
-    }
-    stream.str("");
+    void* vr = redisCommand(c, __command);
+    if (c->err)
+	{
+		std::cout << c->errstr << std::endl;
+	}
+	stream.str("");
+	return vr;
 }
 
-string toString()
+string toString(redisReply* reply)
 {
     string ret(reply->str);
-    done(reply, redis);
+    freeReplyObject(reply);
     return ret;
 }
 
-long long getInt()
+long long getInt(redisReply* reply)
 {
     long long ret_int = reply->integer;
-    done(reply, redis);
+    freeReplyObject(reply);
     return ret_int;
 }
 
-float toFloat()
+float toFloat(redisReply* reply)
 {
     string ret_str(reply->str);
     const char* ret_c = ret_str.c_str();
-    done(reply, redis);
+    freeReplyObject(reply);
     return atof(ret_c);
 }
 
-void toVector(strvector& vec)
+void toVector(redisReply* reply, strvector& vec)
 {
     for (unsigned int i = 0; i < reply->elements; i++)
     {
         string str(reply->element[i]->str);
         vec.push_back(str);
     }
-    done(reply, redis);
+    freeReplyObject(reply);
 }
 
-int toInt()
+int toInt(redisReply* reply)
 {
     string ret_str(reply->str);
     const char* ret_c = ret_str.c_str();
-    done(reply, redis);
+    freeReplyObject(reply);
     return atoi(ret_c);
 }
 } //namespace Redis

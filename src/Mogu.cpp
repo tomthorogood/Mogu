@@ -15,6 +15,7 @@
 #include <Wt/WString>
 #include <Wt/WStackedWidget>
 #include <TurnLeftLib/Utils/explosion.h>
+#include <TurnLeftLib/Utils/randomcharset.h>
 
 #include <Mogu.h>
 #include <Core/Moldable.h>
@@ -24,19 +25,18 @@
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
 
-
-
 Mogu::Mogu(const Wt::WEnvironment& env)
 :   Wt::WApplication(env)
 {
-	Application::defineMogu(this);
-	Application::setWtSession(sessionId());
+	TurnLeft::Utils::RandomCharSet rchar;
 
-	std::string global_auth = AUTH_TOKEN;
-	std::string auth_hash = Hash::toHash(global_auth);
-	Application::setAuthToken(auth_hash);
-	Application::setSessionID(GLOBAL_SESSION);
+	__session = GLOBAL_SESSION;
+	__auth_token = AUTH_TOKEN;
+	__instanceid = rchar.generate(4);
 
+	widgetRegister = new WidgetRegister();
+	__reply = 0;
+	__redis = redisConnect(REDIS_HOST,REDIS_PORT);
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
 
@@ -55,6 +55,7 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 #ifdef DEBUG
     std::cout << "Entry Path: " << entry_path << std::endl;
 #endif
+
     if (entry_path != "/" && entry_path.length() > 0)
     {
     	handlePathChange(entry_path);
@@ -85,4 +86,6 @@ void Mogu::handlePathChange(std::string path)
 
 Mogu::~Mogu()
 {
+	if (__reply != 0) freeReplyObject(__reply);
+	redisFree(__redis);
 }

@@ -13,6 +13,10 @@
 #define EMPTY ""
 #define NONE 0
 
+
+#define MoguApp (Mogu*) wApp
+#define mApp Mogu* app = MoguApp
+
 //Pre-hashed values to speed up common queries:
 #define __AUTH_HASH "8163637335359820509"
 #define __META_HASH "9532958398116805642"

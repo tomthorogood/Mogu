@@ -12,6 +12,9 @@
 #include <Types/NodeValue.h>
 #include <sstream>
 
+#include <Wt/WApplication>
+#include <Mogu.h>
+
 namespace Parsers{
 
 using Nodes::NodeValue;
@@ -38,12 +41,13 @@ TokenTestResult __test_t1(TokenTestPackage* pkg)
 	}
 	else
 	{
-		Redis::command("type", pkg->__val);
-		pkg->__r_node_type = Redis::toString();
+		mApp;
+		app->redisCommand("type", pkg->__val);
+		pkg->__r_node_type = Redis::toString(app->reply());
 		if (pkg->__r_node_type == REDIS_STR)
 		{
-			Redis::command("get", pkg->__val);
-			std::string r_node_rslt = Redis::toString();
+			app->redisCommand("get", pkg->__val);
+			std::string r_node_rslt = Redis::toString(app->reply());
 			NodeValueParser recursive_parser(
 					r_node_rslt
 					,pkg->__nval_final
@@ -73,6 +77,7 @@ TokenTestResult __test_t2(TokenTestPackage* pkg)
 
 	/* We can't get information from a list with a string.
 	 * Something is wrong. */
+	mApp;
 	std::string result;
 	if ( pkg->__r_node_type == REDIS_LST
 		&& (pkg->__val_type == string_value)) return ERR;
@@ -81,8 +86,8 @@ TokenTestResult __test_t2(TokenTestPackage* pkg)
 	if (pkg->__r_node_type == REDIS_LST)
 	{
 		std::string _arg = itoa(pkg->__nval_final->getInt());
-		Redis::command("lindex", pkg->__val, _arg);
-		result = Redis::toString();
+		app->redisCommand("lindex", pkg->__val, _arg);
+		result = Redis::toString(app->reply());
 	}
 
 	if (pkg->__r_node_type == REDIS_HSH)
@@ -96,8 +101,8 @@ TokenTestResult __test_t2(TokenTestPackage* pkg)
 		{
 			_arg = itoa(pkg->__nval_final->getInt());
 		}
-		Redis::command("hget", pkg->__val, _arg);
-		result = Redis::toString();
+		app->redisCommand("hget", pkg->__val, _arg);
+		result = Redis::toString(app->reply());
 	}
 
 	NodeValueParser recursive_parser(

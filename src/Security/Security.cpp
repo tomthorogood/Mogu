@@ -55,7 +55,8 @@ void create_auth_token(
 		envelope->first = collision_proof(envelope->first);
 		envelope->second++;
 	}
-	Redis::command("sadd", __NODE_ALL_AUTHS, envelope->first);
+	mApp;
+	app->redisCommand("sadd", __NODE_ALL_AUTHS, envelope->first);
 }
 
 string generate_salt()

@@ -16,7 +16,7 @@
 #include <Wt/WRegExpValidator>
 #include <Redis/RedisCore.h>
 #include <Types/NodeValue.h>
-
+#include <Wt/WApplication>
 namespace Validators{
 
 using namespace Parsers::StyleParser;
@@ -30,8 +30,9 @@ Wt::WValidator* createValidator(std::string validatorName)
 {
 	Wt::WValidator* validator =0;
 	string validator_node = "validators."+validatorName;
-	Redis::command("hget", validator_node, "type");
-	string vtype = Redis::toString();
+	mApp;
+	string vtype =
+	Parsers::StyleParser::getWidgetProperty(validator_node, "type");
 	Nodes::NodeValue vval;
 	Parsers::NodeValueParser nparser (
 			vtype, &vval,NULL,
@@ -48,12 +49,10 @@ Wt::WValidator* createValidator(std::string validatorName)
 Wt::WRegExpValidator* createRegexValidator(const string& node)
 {
 	Wt::WRegExpValidator* validator =0;
-	Redis::command("hget", node, "test");
-	string pattern = Redis::toString();
+	string pattern =
+			Parsers::StyleParser::getWidgetProperty(node, "test");
 	Wt::WString wpattern(pattern);
 	validator = new Wt::WRegExpValidator(wpattern);
-
-
 	return validator;
 }
 

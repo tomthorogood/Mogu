@@ -54,21 +54,20 @@ bool change_password(std::string username, std::string new_password)
 			Security::create_raw_auth_string(username, salt, new_password);
 	Security::proof_auth_string(&new_auth_str);
 
+	mApp;
+
 	//Set the new auth string to the current auth token
-	Redis::command("hset", __NODE_AUTH_LOOKUP, new_auth_str.first, auth_token);
-	Redis::clear();
+	app->redisCommand("hset", __NODE_AUTH_LOOKUP, new_auth_str.first, auth_token);
 	if (new_auth_str.second > 0)
 	{//set the colission table if necessary
 		std::string s = itoa(new_auth_str.second);
-		Redis::command(
+		app->redisCommand(
 				"hset", __NODE_COLLISION_STR_LOOKUP,e_userid,s);
-		Redis::clear();
 	}
 	else if (hashkey_exists(__NODE_COLLISION_STR_LOOKUP, e_userid))
 	{//if the new auth string had no collisions, delete the entry from
 		//the database node
-		Redis::command("hdel", __NODE_COLLISION_STR_LOOKUP, e_userid);
-		Redis::clear();
+		app->redisCommand("hdel", __NODE_COLLISION_STR_LOOKUP, e_userid);
 	}
 	return true;
 }
@@ -84,7 +83,8 @@ bool reset_password(std::string username)
 	std::cout << "NEW PASSWORD: " << new_password << std::endl;
 #endif
 	if (!change_password(username,new_password)) return false;
-	std::string URL = Application::mogu()->bookmarkUrl();
+	mApp;
+	std::string URL = app->bookmarkUrl();
 	EmailPacket pkt;
 #ifdef DEBUG
 	std::cout << get_user_email(username) << std::endl;

@@ -12,6 +12,7 @@
 #include <Redis/RedisCore.h>
 #include <Types/NodeValue.h>
 #include <Parsers/Parsers.h>
+#include <Mogu.h>
 #include <Parsers/NodeValueParser.h>
 
 #include <Wt/WAnimation> //For AnimationEffect enum.
@@ -35,8 +36,9 @@ inline std::string getWidgetProperty(const std::string&,const char*);
 
 inline bool nodeHasProperty(const std::string& nodeName, const char* property)
 {
-	Redis::command("hexists", nodeName, property);
-	return (bool) Redis::getInt();
+	mApp;
+	app->redisCommand("hexists", nodeName, property);
+	return (bool) Redis::getInt(app->reply());
 }
 
 inline bool widgetHasProperty(
@@ -50,8 +52,9 @@ inline bool widgetHasProperty(
 
 		return nodeHasProperty(tpl, property);
 	}
-	Redis::command("hexists", nodeName, property);
-	return (bool) Redis::getInt();
+	mApp;
+	app->redisCommand("hexists", nodeName, property);
+	return (bool) Redis::getInt(app->reply());
 }
 
 /*!\brief Retrieves a property from a widget template. Essentially
@@ -65,8 +68,9 @@ inline std::string getFromTemplate(
 		std::string& tpl_node,
 		const char* tpl_field)
 {
-	Redis::command("hget", tpl_node, tpl_field);
-	return Redis::toString();
+	mApp;
+	app->redisCommand("hget", tpl_node, tpl_field);
+	return Redis::toString(app->reply());
 }
 
 /*!\brief Retrieves an arbirary property from a widget node. If the
@@ -95,8 +99,9 @@ inline std::string getWidgetProperty(
 		std::string prop = getFromTemplate(tpl,property);
 		return prop;
 	}
-	Redis::command("hget", nodeName, property);
-	return Redis::toString();
+	mApp;
+	app->redisCommand("hget", nodeName, property);
+	return Redis::toString(app->reply());
 }
 
 
@@ -143,11 +148,12 @@ inline void getWidgetChildren(
 {
     nodeName.append(".children");
     int num_children =0;
-    Redis::command("llen", nodeName);
-    num_children = Redis::getInt();
+    mApp;
+    app->redisCommand("llen", nodeName);
+    num_children = Redis::getInt(app->reply());
     std::string _num_children = itoa(num_children);
-    Redis::command("lrange", nodeName, "0", _num_children);
-    Redis::toVector(children);
+    app->redisCommand("lrange", nodeName, "0", _num_children);
+    Redis::toVector(app->reply(), children);
 }
 
 /*!\brief Returns whether or not the widget is considered dynamic for
