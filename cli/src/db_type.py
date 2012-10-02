@@ -233,7 +233,8 @@ class Widget(DictNode):
                 "link"      :   ("content", "location"),
                 "text"      :   ("content",),
                 "input"     :   (None,),
-                "password"  :   (None,)
+                "password"  :   (None,),
+                "foreach"   :   ("template","content")
                 }
 
 class Template(DictNode):
