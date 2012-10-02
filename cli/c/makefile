@@ -1,5 +1,5 @@
 MAIN_SRC := $(CURDIR)/../../src
-EXES := clihash clidec
+EXES := clihash
 dbg = NODEBUG
 
 dec_deps := hash.cpp Security/Security.cpp crypt/BlowfishKey.cpp crypt/PacketCenter.cpp Redis/RedisCore.cpp crypt/Packet.cpp
