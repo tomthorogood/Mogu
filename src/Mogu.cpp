@@ -88,4 +88,5 @@ Mogu::~Mogu()
 {
 	if (__reply != 0) freeReplyObject(__reply);
 	redisFree(__redis);
+	delete widgetRegister;
 }

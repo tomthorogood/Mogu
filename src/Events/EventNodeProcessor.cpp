@@ -1,7 +1,6 @@
 
 #include <Events/EventNodeProcessor.h>
 #include <Core/Moldable.h>
-#include <Events/NodeConfiguration.h>
 #include <Parsers/NodeValueParser.h>
 #include <Types/NodeValue.h>
 
@@ -11,10 +10,10 @@ using std::string;
 using Goo::Moldable;
 using Parsers::NodeValueParser;
 
-EventNodeProcessor::EventNodeProcessor(bool recycled)
+
+EventNodeProcessor::EventNodeProcessor()
 {
-    __recycled = recycled;
-    for (int i =0; i < EventNodeConfiguration::NUM_FIELDS; i++)
+    for (int i =0; i < MAX_FIELDS; i++)
     {
         values[i] = 0;
     }
@@ -41,7 +40,7 @@ Nodes::NodeValue* EventNodeProcessor::getValue(Node::Labels index)
 
 EventNodeProcessor::~EventNodeProcessor()
 {
-	for (int i = 0; i < EventNodeConfiguration::NUM_FIELDS; i++)
+	for (int i = 0; i < MAX_FIELDS; i++)
 	{
 		if (values[i] != 0)
 		{

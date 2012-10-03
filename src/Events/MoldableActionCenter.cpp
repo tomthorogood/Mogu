@@ -9,7 +9,6 @@
 #include <Events/MoldableActionCenter.h>
 #include <Events/EventNodeExtractor.h>
 #include <Events/EventNodeProcessor.h>
-#include <Events/NodeConfiguration.h>
 #include <Events/BroadcastMessage.h>
 #include <Parsers/Parsers.h>
 #include <Wt/WStackedWidget>
@@ -599,13 +598,10 @@ BroadcastMessage* generateNewBroadcast(
     namespace Signal = Enums::SignalTypes;
     namespace SignalBits = Enums::SignalTypes;
     namespace Field = Enums::Labels;
-#ifdef DEBUG
-    assert(broadcaster != 0);
-#endif
 
-    string signal_type_str = extract.getValue(Field::signal);
-    string action_str = extract.getValue(Field::action);
-    string message_str = extract.getValue(Field::message);
+    string signal_type_str 	= extract.getValue(Field::signal);
+    string action_str 		= extract.getValue(Field::action);
+    string message_str 		= extract.getValue(Field::message);
 
     /*The signal type will always be an integral value. For now. */
     processor->set(Field::signal, signal_type_str);
@@ -617,7 +613,7 @@ BroadcastMessage* generateNewBroadcast(
     /*The message type can be anything EXCEPT an enumerated value*/
     processor->set(Field::message, message_str, broadcaster);
 
-    unsigned char signal_type = (unsigned char)
+    uint8_t signal_type = (uint8_t)
             processor->getValue(Field::signal)->getInt();
 
 
@@ -626,6 +622,7 @@ BroadcastMessage* generateNewBroadcast(
         string degradation_str = extract.getValue(Field::degradation);
         processor->set(Field::degradation, degradation_str);
     }
+
     if (signal_type & SignalBits::transforms)
     {
         string next_action_str = extract.getValue(Field::nextAction);
@@ -638,6 +635,7 @@ BroadcastMessage* generateNewBroadcast(
     	string listener_str = extract.getValue(Field::listeners);
     	processor->set(Field::listeners,listener_str);
     }
+
     else if (signal_type & SignalBits::specific_listeners)
     {
         string listeners_str = extract.getValue(Field::listeners);
@@ -657,7 +655,7 @@ BroadcastMessage*  generateNewBroadcast(
     /* An event node processor created here will not be needed again, and can
      * be safely deleted after the broadcast message is created.
      */
-    EventNodeProcessor* processor = new Events::EventNodeProcessor(false);
+    EventNodeProcessor* processor = new Events::EventNodeProcessor();
     return generateNewBroadcast(broadcaster, extract, processor);
 }
 

@@ -58,16 +58,19 @@ bool change_password(std::string username, std::string new_password)
 
 	//Set the new auth string to the current auth token
 	app->redisCommand("hset", __NODE_AUTH_LOOKUP, new_auth_str.first, auth_token);
+	app->freeReply();
 	if (new_auth_str.second > 0)
 	{//set the colission table if necessary
 		std::string s = itoa(new_auth_str.second);
 		app->redisCommand(
 				"hset", __NODE_COLLISION_STR_LOOKUP,e_userid,s);
+		app->freeReply();
 	}
 	else if (hashkey_exists(__NODE_COLLISION_STR_LOOKUP, e_userid))
 	{//if the new auth string had no collisions, delete the entry from
 		//the database node
 		app->redisCommand("hdel", __NODE_COLLISION_STR_LOOKUP, e_userid);
+		app->freeReply();
 	}
 	return true;
 }

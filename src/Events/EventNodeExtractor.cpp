@@ -6,7 +6,6 @@
  */
 
 #include <Events/EventNodeExtractor.h>
-#include <Events/NodeConfiguration.h>
 #include <Redis/RedisCore.h>
 #include <Parsers/Parsers.h>
 #include <Wt/WApplication>

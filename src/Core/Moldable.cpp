@@ -61,12 +61,6 @@ Moldable::~Moldable()
 	if (bindery !=0) delete bindery;
 	__tmpl->disconnect();
 	if (__tmpl->deleteable) delete __tmpl;
-	std::map<States,NodeValue*>::iterator cache_iter = __state_cache.begin();
-	while (cache_iter != __state_cache.end())
-	{
-		delete cache_iter->second;
-		++cache_iter;
-	}
 }
 
 
@@ -104,30 +98,28 @@ void Moldable::__validate()
 	__failed_test.emit();
 } // validate
 
-Nodes::NodeValue* Moldable::getState(Enums::WidgetTypes::States state)
+void Moldable::getState(Enums::WidgetTypes::States state,
+		Nodes::NodeValue& val)
 {
 	using namespace Enums::WidgetTypes;
-	Nodes::NodeValue* val = new Nodes::NodeValue();
 	switch(state)
 	{
 	case num_children:{
 		int n = countMoldableChildren();
-		val->setInt(n);
+		val.setInt(n);
 		break;}
 	case current_index:{
 		Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
 		int n = stack->currentIndex();
-		val->setInt(n);
+		val.setInt(n);
 		break;}
 	case is_hidden:{
 		bool v = isHidden();
-		val->setInt( (bool) v);
+		val.setInt( (bool) v);
 		break;}
 	default:
-		val->setInt(0);
+		val.setInt(0);
 	}
-	__state_cache[state] = val;
-	return val;
 }
 
 

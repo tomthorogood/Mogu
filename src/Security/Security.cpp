@@ -57,6 +57,7 @@ void create_auth_token(
 	}
 	mApp;
 	app->redisCommand("sadd", __NODE_ALL_AUTHS, envelope->first);
+	app->freeReply();
 }
 
 string generate_salt()

@@ -69,10 +69,13 @@ namespace{
 		string next_meta = prhshd_session_node(p->next_session, __META_HASH);;
 
 		app->redisCommand("hset", next_meta, __PREV_HASH, p->last_session);
+		app->freeReply();
 
 		app->redisCommand("hset", next_meta, __AUTH_HASH, p->auth_token);
+		app->freeReply();
 
 		app->redisCommand("hset", __NODE_AUTH_LOOKUP, p->auth_string, p->auth_token);
+		app->freeReply();
 
 		if (p->token_cycles > 0)
 		{
@@ -80,9 +83,11 @@ namespace{
 			s << p->token_cycles;
 			app->redisCommand("hset",
 					__NODE_COLLISION_TOK_LOOKUP, p->e_userid, s.str());
+			app->freeReply();
 
 		}
 		app->redisCommand("hset", __NODE_SESSION_LOOKUP, p->e_userid, p->next_session);
+		app->freeReply();
 
 	}
 }
@@ -263,6 +268,7 @@ bool register_user()
 
 	//Give the user some salt:
 	app->redisCommand("hset", __NODE_SALT_LOOKUP, e_userid, salt);
+	app->freeReply();
 
 	//Create the user's auth string and set up the collision table, if necessary
 	auth_str_packet.first = Security::create_raw_auth_string(
@@ -273,6 +279,7 @@ bool register_user()
 		std::stringstream s;
 		s << auth_str_packet.second;
 		app->redisCommand("hset", __NODE_COLLISION_STR_LOOKUP,e_userid, s.str());
+		app->freeReply();
 	}
 
 
@@ -284,6 +291,7 @@ bool register_user()
 	std::string contact_node = prhshd_session_node(
 			session_packet.first, contact_storage);
 	app->redisCommand("hset", contact_node, email_hash, e_userid);
+	app->freeReply();
 	SessionParams prms;
 	prms.auth_string = auth_str_packet.first;
 	prms.auth_token = auth_token_packet.first;

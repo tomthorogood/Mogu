@@ -11,7 +11,6 @@
 #include <Parsers/NodeValueParser.h>
 #include <Parsers/Parsers.h>
 
-#include <Events/NodeConfiguration.h>
 #include <Events/EventNodeExtractor.h>
 #include <Events/EventNodeProcessor.h>
 #include <Events/MoldableActionCenter.h>
@@ -147,14 +146,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
 
 void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 {
-#ifdef DEBUG
-	mApp;
-	std::cout << "Wt Session: " << app->sessionId();
-	std::cout << " | " << "User Session: ";
-	std::cout << app->sessionID();
-	std::cout << std::endl;
-#endif
-   ExtractorVector* extractors = &extractorMap[trigger];
+   ExtractorVector* extractors = &( extractorMap[trigger] );
    int num_extractors = extractors->size();
    for (int e = 0; e < num_extractors; e++)
    {

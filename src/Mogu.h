@@ -116,6 +116,7 @@ public:
 	}
 
 	inline redisReply* reply() { return __reply;}
+	inline void freeReply() {freeReplyObject(__reply);}
 
 	inline std::string instanceID() { return __instanceid; }
 	inline std::string sessionID() { return __session;}

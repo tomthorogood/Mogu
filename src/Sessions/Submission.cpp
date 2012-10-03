@@ -178,6 +178,7 @@ void absorb(std::string value_unenc, std::string snode)
 	//"command node" | "command node field" ->
 	//				"command node "value"" | "command node field "value" "
 	app->redisCommand(redis_command, value);
+	app->freeReply();
 }
 
 /*Returns the session ID in this user's chain where the node is found first. */

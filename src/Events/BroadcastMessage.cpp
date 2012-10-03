@@ -7,7 +7,6 @@
 
 #include <Events/BroadcastMessage.h>
 #include <Core/Moldable.h>
-#include <Events/NodeConfiguration.h>
 #include <Events/EventNodeProcessor.h>
 #include <stdio.h>
 

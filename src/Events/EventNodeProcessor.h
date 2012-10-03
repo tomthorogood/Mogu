@@ -9,24 +9,19 @@
 #define EVENTNODEPROCESSOR_H_
 
 #include <declarations.h>
-#include <Events/NodeConfiguration.h>
 
-namespace Goo
-{
-    class Moldable;
-}
 
 namespace Events{
+const size_t MAX_FIELDS = 11;
 
 namespace Node = Enums::Labels;
 
 class EventNodeProcessor
 {
 private:
-    Nodes::NodeValue* values[EventNodeConfiguration::NUM_FIELDS];
-    bool __recycled;
+    Nodes::NodeValue* values[MAX_FIELDS];
 public:
-    EventNodeProcessor(bool recycled =true);
+    EventNodeProcessor();
     virtual ~EventNodeProcessor();
     void set(
             Node::Labels index,
@@ -36,10 +31,6 @@ public:
             );
 
     Nodes::NodeValue* getValue(Node::Labels index);
-    inline bool isRecycled()
-    {
-        return __recycled;
-    }
 
     inline bool valueExists(Node::Labels index)
     {

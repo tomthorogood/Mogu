@@ -30,13 +30,14 @@ void TokenTestPackage::interpret(
 				break;
 			case widget_state:{
 				WidgetStateParser parser;
+				Nodes::NodeValue state_val;
 				Enums::WidgetTypes::States st = parser.parse(__args[0]);
-				Nodes::NodeValue* state_val = __broadcaster->getState(st);
-				Nodes::ReadType type = state_val->getType();
+				__broadcaster->getState(st, state_val);
+				Nodes::ReadType type = state_val.getType();
 				if (type == Nodes::int_value)
-					__nval_final->setInt(state_val->getInt());
+					__nval_final->setInt(state_val.getInt());
 				else if (type == Nodes::string_value)
-					__nval_final->setString(state_val->getString());
+					__nval_final->setString(state_val.getString());
 				break;}
 			default:
 				__nval_final->setString(ival);
