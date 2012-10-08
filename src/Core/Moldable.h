@@ -88,6 +88,7 @@ private:
         bindery = new Events::EventBindery(this);
     }
 
+    std::string (*__value_callback)(Moldable&);
 
 public:
     Moldable();
@@ -235,6 +236,16 @@ public:
     inline bool reload() { return __reload; }
 
     inline Mogu* app() { return __app;}
+
+    inline void setValueCallback(std::string(*cb)(Moldable&))
+    {
+    	__value_callback = cb;
+    }
+
+    inline std::string valueCallback()
+    {
+    	return __value_callback(*this);
+    }
 
     void getState(	Enums::WidgetTypes::States state, Nodes::NodeValue& val);
 

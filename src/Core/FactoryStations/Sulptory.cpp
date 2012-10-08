@@ -82,7 +82,7 @@ void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 		Wt::WContainerWidget* wtcw = (Wt::WContainerWidget*) m;
 		wtcw->addWidget(new Wt::WText(txt));
 	}
-
+	m->setValueCallback(&Callbacks::__value_wtext);
 }
 
 

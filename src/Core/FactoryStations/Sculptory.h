@@ -142,6 +142,7 @@ inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 				m, &Moldable::__validate);
 	}
 	m->addWidget(in);
+	m->setValueCallback(&Callbacks::__value_wlineedit);
 
 }
 inline void __sculpt_password_field(MoldableTemplate* __tmpl,Moldable* m)
