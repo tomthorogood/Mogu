@@ -343,9 +343,6 @@ void directListeners(BroadcastMessage* broadcast)
      */
     case Action::set_style:{
         string new_style = broadcast->getMessage()->getString();
-#ifdef DEBUG
-        assert("" != new_style);
-#endif
         Wt::WString wNewStyle(new_style);
 
         for (int w = 0; w < num_listeners; w++)
@@ -560,7 +557,10 @@ void directListeners(BroadcastMessage* broadcast)
     		{
     			Wt::WText* text = (Wt::WText*) widget->widget(0);
     			std::string t = text->text().toUTF8();
-    			if (broadcast->getMessage()->getString() != t)
+    			Nodes::NodeValue v;
+    			Parsers::NodeValueParser p(
+    					broadcast->getMessage()->getString(), &v);
+    			if (v.getString() != t)
     			{
     				broadcast->getBroadcaster()->fail().emit();
     			}
