@@ -89,7 +89,7 @@ private:
     }
 
     std::string (*__value_callback)(Moldable&);
-    std::string (*__setvalue_callback)(Moldable&, std::string& txt);
+    void (*__setvalue_callback)(Moldable&, std::string&);
 
 public:
     Moldable();

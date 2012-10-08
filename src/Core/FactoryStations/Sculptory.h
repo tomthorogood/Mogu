@@ -11,6 +11,7 @@
 #include <declarations.h>
 #include <Core/MoldableTemplate.h>
 #include <Core/MoldableFactory.h>
+#include <Core/FactoryStations/PropertyCallbacks.h>
 #include <Redis/RedisCore.h>
 #include <Wt/WString>
 #include <Wt/WWidget>

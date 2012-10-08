@@ -61,6 +61,7 @@ enum States {
 	,registered_name	=0x2
 	,current_index		=0x3
 	,is_hidden			=0x4
+	,value				=0x5
 };
 } //namespace WidgetTypes
 

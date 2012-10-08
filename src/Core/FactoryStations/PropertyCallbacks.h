@@ -21,8 +21,7 @@ std::string __value_wtext(Moldable& widget);
 std::string __value_wlineedit(Moldable& widget);
 std::string __value_abstract(Moldable& widget);
 void __setvalue_wtext(Moldable& widget, std::string& newtext);
-void __setvalue_wlineedit(Moldable& widget);
-}
+void __setvalue_wlineedit(Moldable& widget, std::string& newtext);
 
 }//namespace Callbacks
 }//namespace ModlableFactory
