@@ -6,7 +6,7 @@
  */
 
 
-#include <PropertyCallbacks.h>
+#include <Core/FactoryStations/PropertyCallbacks.h>
 #include <Wt/WText>
 #include <Wt/WLineEdit>
 #include <Parsers/StyleParser.h>

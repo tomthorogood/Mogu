@@ -11,6 +11,8 @@
 #include <Events/EventNodeProcessor.h>
 #include <Events/BroadcastMessage.h>
 #include <Parsers/Parsers.h>
+#include <Parsers/StyleParser.h>
+#include <Parsers/NodeValueParser.h>
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
 #include <Core/Moldable.h>
@@ -35,7 +37,6 @@ using namespace Goo;
 
 namespace {
     ListenerMap listenerMap;
-    int SIGNALRANGE[2] = {198,255};
 }
 
 void submitBroadcast(BroadcastMessage* broadcast)
@@ -43,12 +44,6 @@ void submitBroadcast(BroadcastMessage* broadcast)
 	mApp;
     namespace TypeBits = Enums::SignalTypes;
     unsigned char signalType = broadcast->getSignalType();
-
-    // Verify the integrity of this broadcast.
-    if (signalType < SIGNALRANGE[0] || signalType > SIGNALRANGE[1])
-    {
-        //@TODO: Throw Error!
-    }
 
     /* If this is the first time we're transmitting this broadcast,
      * determine who should be listening to it.
@@ -413,12 +408,13 @@ void directListeners(BroadcastMessage* broadcast)
     	for (int w = 0; w < num_listeners; w++)
     	{
     		Moldable* widget = listeners->at(w);
+    		Nodes::NodeValue v;
+    		Parsers::NodeValueParser p(
+    				broadcast->getMessage()->getString(), &v);
     		if (widget->allowsAction(Action::add_widget))
 			{
-    			std::string constructorNode =
-    					broadcast->getMessage()->getString();
     			MoldableTemplate* tpl =
-    					MoldableFactory::conceptualize(constructorNode);
+    					MoldableFactory::conceptualize(v.getString());
     			widget->addWidget(MoldableFactory::sculpt(tpl));
 			}
     	}
@@ -457,7 +453,6 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
-    /* Removes all children from the tree. */
     case Action::clear:{
     	for (int w = 0; w < num_listeners; w++)
     	{
@@ -474,25 +469,31 @@ void directListeners(BroadcastMessage* broadcast)
     	for (int w = 0; w < num_listeners; w++)
     	{
     		Moldable* widget = (Moldable*) listeners->at(w);
-    		std::string val;
     		if (widget->allowsAction(Action::store_value))
     		{
-    			switch(widget->getType() & WIDGET_HO_BITS)
-    			{
-    			case Enums::WidgetTypes::input_text:{
-    				Wt::WLineEdit* input = (Wt::WLineEdit*)
-    						widget->widget(0);
-    				val = input->valueText().toUTF8();
-    				break;}
-    			}
+    			std::string val = widget->valueCallback();
     			std::string snode 	= broadcast->getMessage()->getString();
-#ifdef DEBUG
-    			std::cout << "Storing " << val << " at " << snode << std::endl;
-#endif
     			if (widget->allowsAction(Action::store_value))
     			{
     				Sessions::SubmissionHandler::absorb(val, snode);
     			}
+    		}
+    	}
+    	break;}
+
+    case Action::store_abstract:{
+    	for (int w = 0; w < num_listeners; w++)
+    	{
+    		Nodes::NodeValue v;
+    		Parsers::NodeValueParser p(
+    				broadcast->getMessage()->getString(), &v);
+    		Moldable* widget = (Moldable*) listeners->at(w);
+    		if (widget->allowsAction(Action::store_abstract))
+    		{
+    			using namespace Parsers::StyleParser;
+    			std::string abstract = getWidgetProperty(
+    					widget->getNode(), "abstract");
+    			Sessions::SubmissionHandler::absorb(abstract, v.getString());
     		}
     	}
     	break;}
@@ -532,31 +533,12 @@ void directListeners(BroadcastMessage* broadcast)
 			}
     	}
     	break;}
-    case Action::test_text:{
-    	for (int w = 0; w < num_listeners; w++)
-    	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::test_text))
-    		{
-    			Wt::WText* text = (Wt::WText*) widget->widget(0);
-    			std::string t = text->text().toUTF8();
-    			Nodes::NodeValue v;
-    			Parsers::NodeValueParser p(
-    					broadcast->getMessage()->getString(), &v);
-    			if (v.getString() != t)
-    			{
-    				broadcast->getBroadcaster()->fail().emit();
-    			}
-    		}
-    	}
-    	break;}
+
     case Action::reload:{
     	for (int w = 0; w < num_listeners; w++)
     	{
     		Moldable* widget = (Moldable*) listeners->at(w);
     		MoldableFactory::sculpt(widget->getProperties(), widget);
-    		//widget->clear();
-    		//widget->setReload().load();
     	}
     	break;}
 

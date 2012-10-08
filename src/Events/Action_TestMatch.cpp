@@ -6,6 +6,9 @@
  */
 
 #include <Events/MoldableActionCenter.h>
+#include <Types/NodeValue.h>
+#include <Parsers/NodeValueParser.h>
+#include <Events/BroadcastMessage.h>
 
 namespace Events
 {
