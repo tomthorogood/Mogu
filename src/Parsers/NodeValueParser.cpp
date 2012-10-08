@@ -141,6 +141,7 @@ NodeValueParser::NodeValueParser(
 		NodeValue* nval,
 		Moldable* broadcaster,
 		int(*callback)(const std::string&))
+	:	declaration()
 {
 
 	__m_token_test t_tests[2] = {
