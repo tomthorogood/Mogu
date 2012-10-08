@@ -543,7 +543,10 @@ void directListeners(BroadcastMessage* broadcast)
     		if (widget->allowsAction(Action::set_text))
 			{
     			Wt::WText* text = (Wt::WText*) widget->widget(0);
-    			std::string _newText = broadcast->getMessage()->getString();
+    			Nodes::NodeValue v;
+    			Parsers::NodeValueParser p(
+    					broadcast->getMessage()->getString(), &v);
+    			std::string _newText = v.getString();
 				Wt::WString newtext(_newText);
     				text->setText(newtext);
 			}
