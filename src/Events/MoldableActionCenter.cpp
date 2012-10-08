@@ -512,43 +512,23 @@ void directListeners(BroadcastMessage* broadcast)
     	}
     	break;}
 
-    case Action::match:{
-    	for (int w = 0; w < num_listeners; w++)
-    	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::match))
-    		{
-    			Wt::WLineEdit* input = (Wt::WLineEdit*) widget->widget(0);
-    			Goo::Moldable* _test = app->registeredWidget(
-    					broadcast->getMessage()->getString());
-    			Wt::WLineEdit* test = (Wt::WLineEdit*)
-    					_test->widget(0);
-    			string textToMatch = input->valueText().toUTF8();
-    			string textToTest = test->valueText().toUTF8();
-    			if (textToMatch != textToTest)
-    			{
-    				broadcast->getBroadcaster()->fail().emit();
-    			}
-    			else
-    			{
-    				broadcast->getBroadcaster()->succeed().emit();
-    			}
-    		}
-    	}
-    	break;}
+    case Action::match:
+    case Action::test_text:
+    	Actions::test(*(listeners->at(0)), *broadcast) ?
+    				broadcast->getBroadcaster()->succeed().emit()
+    			: 	broadcast->getBroadcaster()->fail().emit();
+    	break;
+
     case Action::set_text:{
     	for (int w = 0; w < num_listeners; w++)
     	{
+    		Nodes::NodeValue v;
+    		Parsers::NodeValueParser p(
+    				broadcast->getMessage()->getString(), &v);
     		Moldable* widget = listeners->at(w);
     		if (widget->allowsAction(Action::set_text))
 			{
-    			Wt::WText* text = (Wt::WText*) widget->widget(0);
-    			Nodes::NodeValue v;
-    			Parsers::NodeValueParser p(
-    					broadcast->getMessage()->getString(), &v);
-    			std::string _newText = v.getString();
-				Wt::WString newtext(_newText);
-    				text->setText(newtext);
+    			widget->setValueCallback(v.getString());
 			}
     	}
     	break;}

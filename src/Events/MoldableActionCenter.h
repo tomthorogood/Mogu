@@ -120,6 +120,7 @@ int send_system_email(EmailPacket*);
 int email_current_user(EmailPacket*);
 bool reset_password(std::string username);
 bool change_password(std::string username, std::string new_pass);
+bool test(Goo::Moldable&,BroadcastMessage&);
 } //namespace Actions
 
 } //Namspace ActionCenter

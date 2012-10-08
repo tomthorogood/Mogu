@@ -80,7 +80,7 @@ public:
     }
 
     /*!\brief If the type is `string_value`, returns a string. */
-    inline std::string getString()
+    inline std::string& getString()
     {
     	return as_string;
     }

@@ -89,6 +89,7 @@ private:
     }
 
     std::string (*__value_callback)(Moldable&);
+    std::string (*__setvalue_callback)(Moldable&, std::string& txt);
 
 public:
     Moldable();
@@ -242,10 +243,21 @@ public:
     	__value_callback = cb;
     }
 
+    inline void setSetValueCallback(void(*cb)(Moldable&, std::string&))
+    {
+    	__setvalue_callback = cb;
+    }
+
     inline std::string valueCallback()
     {
     	return __value_callback(*this);
     }
+
+    inline void setValueCallback(std::string& newtxt)
+    {
+    	__setvalue_callback(*this, newtxt);
+    }
+
 
     void getState(	Enums::WidgetTypes::States state, Nodes::NodeValue& val);
 

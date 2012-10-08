@@ -40,6 +40,20 @@ std::string __value_abstract(Moldable& widget)
 	return EMPTY;
 }
 
+void __setvalue_wtext(Moldable& widget, std::string& newtext)
+{
+	Wt::WText* txtwidget = static_cast<Wt::WText*>(widget.widget(0));
+	Wt::WString wtxt(newtext);
+	txtwidget->setText(wtxt);
+}
+
+void __setvalue_wlineedit(Moldable& widget, std::string& newtext)
+{
+	Wt::WLineEdit* input = static_cast<Wt::WLineEdit*>(widget.widget(0));
+	Wt::WString wtxt(newtext);
+	input->setValueText(wtxt);
+}
+
 }//namespace Callbacks
 }//namespace ModlableFactory
 }//namespace Goo
