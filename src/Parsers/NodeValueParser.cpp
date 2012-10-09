@@ -10,6 +10,7 @@
 #include <Redis/RedisCore.h>
 #include <Parsers/TokenTestPackage.h>
 #include <Types/NodeValue.h>
+#include <Core/Moldable.h>
 #include <sstream>
 
 #include <Wt/WApplication>

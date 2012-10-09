@@ -8,6 +8,7 @@
 #include <Parsers/TokenTestPackage.h>
 #include <Parsers/Parsers.h>
 #include <Core/Moldable.h>
+#include <Parsers/NodeValueParser.h>
 namespace Parsers
 {
 void TokenTestPackage::interpret(
@@ -43,7 +44,7 @@ void TokenTestPackage::interpret(
 			// Both of these are technically just going to contain strings.
 			case registry_value:
 			case redis_command:{
-				Parsers::NodeValueParser p(__val,&__nval_final);
+				Parsers::NodeValueParser p(__val,__nval_final);
 				break;}
 			default:
 				__nval_final->setString(ival);
