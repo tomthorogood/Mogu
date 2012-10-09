@@ -33,7 +33,7 @@ typedef std::vector <decl_pair> MoguDeclaration;
 typedef std::pair <std::string,int> TokenCycles;
 
 typedef Enums::NodeValueTypes::TokenTestResult (*__m_token_test)
-	(Parsers::TokenTestPackage*);
+	(Parsers::TokenTestPackage&);
 
 typedef int (*__m_enm_parse)(const std::string&);
 
