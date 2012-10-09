@@ -13,7 +13,7 @@ using Parsers::NodeValueParser;
 
 EventNodeProcessor::EventNodeProcessor()
 {
-    for (int i =0; i < MAX_FIELDS; i++)
+    for (size_t i =0; i < MAX_FIELDS; i++)
     {
         values[i] = 0;
     }
@@ -40,7 +40,7 @@ Nodes::NodeValue* EventNodeProcessor::getValue(Node::Labels index)
 
 EventNodeProcessor::~EventNodeProcessor()
 {
-	for (int i = 0; i < MAX_FIELDS; i++)
+	for (size_t i = 0; i < MAX_FIELDS; i++)
 	{
 		if (values[i] != 0)
 		{
