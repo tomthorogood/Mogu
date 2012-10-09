@@ -259,6 +259,9 @@ void directListeners(BroadcastMessage* broadcast)
     {
     	assert (listeners->at(i) != 0);
     }
+    std::cout << "Parsing Action " << action << " for ";
+    std::cout << listeners->size() << " listeners from ";
+    std::cout << broadcast->getBroadcaster()->getNode() << std::endl;
 #endif
 
     if (broadcast->getListenerType() == Enums::Family::application)

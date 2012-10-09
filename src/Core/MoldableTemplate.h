@@ -39,6 +39,7 @@ struct MoldableTemplate
 		source			=EMPTY;
 		content			=EMPTY;
 		style			=EMPTY;
+		name			=EMPTY;
 		deleteable 		=false;
 	}
 

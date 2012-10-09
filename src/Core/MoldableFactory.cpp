@@ -92,7 +92,10 @@ Moldable* sculpt(MoldableTemplate* __tmpl, Moldable* m)
 
 	if (__tmpl->flags&is_named)
 	{
-		std::string name = getWidgetProperty(__tmpl->node, "name");
+		std::string name = (__tmpl->name != EMPTY) ?
+					__tmpl->name
+				:	 getWidgetProperty(__tmpl->node, "name");
+
 		app->registerWidget(name, m);
 	}
 	if (__tmpl->flags&has_tooltip)

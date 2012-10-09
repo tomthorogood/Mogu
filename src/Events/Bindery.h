@@ -53,6 +53,7 @@ class EventBindery : public Wt::WObject
     	handleVoidSignal(Enums::SignalTriggers::keyup);
     }
 
+
     inline void failSlot()
     {
     	handleVoidSignal(Enums::SignalTriggers::fail);
