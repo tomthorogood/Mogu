@@ -21,13 +21,6 @@ using Nodes::NodeValue;
 using namespace Enums::NodeValueTypes;
 using Goo::Moldable;
 
-inline std::string itoa(int i)
-{
-	std::stringstream s;
-	s << i;
-	return s.str();
-}
-
 /* The first test determines whether we've reached a final type, or whether
  * we need to do more node lookups in order to find the values we seek.
  */
