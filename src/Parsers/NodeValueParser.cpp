@@ -24,28 +24,38 @@ using Goo::Moldable;
 /* The first test determines whether we've reached a final type, or whether
  * we need to do more node lookups in order to find the values we seek.
  */
-TokenTestResult __test_t1(TokenTestPackage* pkg)
+TokenTestResult __test_t1(TokenTestPackage& pkg)
 {
+	mApp;
+
 	using namespace RedisTypes;
-	if (pkg->__val_type != node_value)
+	if (pkg.__val_type != node_value)
 	{
-		pkg->interpret(VAL);
-		return CPL;
+		pkg.interpret(VAL);
+
+		return
+				pkg.__val_type <= float_value ? CPL
+				: pkg.__val_type == registry_value ? NXT_REG
+				: NXT_CMD;
 	}
-	else
+	else //(pkg->__val_type == node_value)
 	{
-		mApp;
-		app->redisCommand("type", pkg->__val);
-		pkg->__r_node_type = Redis::toString(app->reply());
-		if (pkg->__r_node_type == REDIS_STR)
+		/* Determine the type of the node we're dealing with */
+		app->redisCommand("type", pkg.__val);
+		pkg.__r_node_type = Redis::toString(app->reply());
+
+		/* If the node is a string, node, it takes no arguments and
+		 * can therefore be parsed without moving into __test_t2.
+		 */
+		if (pkg.__r_node_type == REDIS_STR)
 		{
-			app->redisCommand("get", pkg->__val);
+			app->redisCommand("get", pkg.__val);
 			std::string r_node_rslt = Redis::toString(app->reply());
 			NodeValueParser recursive_parser(
 					r_node_rslt
-					,pkg->__nval_final
-					,pkg->__broadcaster
-					,pkg->__callback);
+					,pkg.__nval_final
+					,pkg.__broadcaster
+					,pkg.__callback);
 			return recursive_parser.getResult();
 		}
 		else
@@ -58,52 +68,71 @@ TokenTestResult __test_t1(TokenTestPackage* pkg)
 /* This second test uses the second token taken from the syntax string and
  * based on its type determines the value thereof. This token will reside in
  * the 'arg' field of the test package, as it will be an argument of the
- * first token, which must be a node. Examples include:
+ * first token, which is either a node, registry value, or redis command.
+ * Examples include:
  * 	@token1=node@ {enum_arg}
  * 	@token1=node@ $state_arg$
  * 	@token1=node@ hash_field
  * 	@token1=node@ ^index^
+ * 	|named_widget| $state_arg$
+ * 	!redis_command!| arg [...] #NOT CURRENTLY SUPPORTED#
+ *
  */
-TokenTestResult __test_t2(TokenTestPackage* pkg)
+TokenTestResult __test_t2(TokenTestPackage& pkg)
 {
 	using namespace Enums::NodeValueTypes::RedisTypes;
 
-	/* We can't get information from a list with a string.
-	 * Something is wrong. */
+
 	mApp;
 	std::string result;
-	if ( pkg->__r_node_type == REDIS_LST
-		&& (pkg->__val_type == string_value)) return ERR;
 
-	pkg->interpret(ARG); // Parse the next argument and set it in __nval_final
-	if (pkg->__r_node_type == REDIS_LST)
+	/* We can't get information from a list with a string.
+	 * Something is wrong. */
+	if ( pkg.__r_node_type == REDIS_LST
+		&& (pkg.__val_type == string_value)) return ERR;
+
+	pkg.interpret(ARG); // Parse the next argument and set it in __nval_final
+
+	if (pkg.__r_node_type == REDIS_LST)
 	{
-		std::string _arg = itoa(pkg->__nval_final->getInt());
-		app->redisCommand("lindex", pkg->__val, _arg);
+		std::string _arg = itoa(pkg.__nval_final->getInt());
+		app->redisCommand("lindex", pkg.__val, _arg);
 		result = Redis::toString(app->reply());
 	}
 
-	if (pkg->__r_node_type == REDIS_HSH)
+	if (pkg.__r_node_type == REDIS_HSH)
 	{
 		std::string _arg;
-		if (pkg->__val_type == string_value)
+		if (pkg.__val_type == string_value)
 		{
-			_arg = pkg->__args[0];
+			_arg = pkg.__args[0];
 		}
 		else
 		{
-			_arg = itoa(pkg->__nval_final->getInt());
+			_arg = itoa(pkg.__nval_final->getInt());
 		}
-		app->redisCommand("hget", pkg->__val, _arg);
+		app->redisCommand("hget", pkg.__val, _arg);
 		result = Redis::toString(app->reply());
 	}
 
 	NodeValueParser recursive_parser(
 			result
-			, pkg->__nval_final
-			, pkg->__broadcaster
-			, pkg->__callback);
+			, pkg.__nval_final
+			, pkg.__broadcaster
+			, pkg.__callback);
 	return recursive_parser.getResult();
+}
+
+TokenTestResult __test_tReg(TokenTestPackage& pkg)
+{
+	using namespace Enums::WidgetTypes;
+	mApp;
+	std::string result;
+	pkg.interpret(ARG);
+	Moldable& otherWidget = *(app->registeredWidget(pkg.__val));
+	otherWidget.getState(
+			(States) pkg.__nval_final->getInt(), *(pkg.__nval_final));
+	return CPL;
 }
 
 inline NodeValueTypes getMoguType(std::string token)
@@ -123,6 +152,9 @@ inline NodeValueTypes getMoguType(std::string token)
 		break;
 	case '$' : ntype = (fchar == '$')? widget_state : string_value;
 		break;
+	case '|' : ntype = (fchar == '|')? registry_value : string_value;
+		break;
+	case '!' : ntype = (fchar == '!')? redis_command : string_value;
 	default:
 		ntype = string_value;
 	}
@@ -181,18 +213,24 @@ NodeValueParser::NodeValueParser(
 	/* The first test is required, and will set the stage for future
 	 * tests.
 	 */
-	pkg.__last_result = t_tests[0](&pkg);
+	pkg.__last_result = t_tests[0](pkg);
 	size_t nargs =1;
 
 	/* Thereafter, we continue to parse the information in the package using
 	 * test(x), where x is dynamically bound based on how many tests we've
 	 * performed. (Super proud of this little block of code, by the way!)
 	 */
-	while (pkg.__last_result == NXT_NODE)
+	if (pkg.__last_result == NXT_NODE)
 	{
 		pkg.__args.push_back(declaration[nargs].first);
 		pkg.__val_type = declaration[nargs].second;
-		pkg.__last_result = t_tests[nargs](&pkg);
+		pkg.__last_result = t_tests[nargs](pkg);
+	}
+	else if (pkg.__last_result == NXT_REG)
+	{
+		pkg.__args.push_back(declaration[nargs].first);
+		pkg.__val_type = declaration[nargs].second;
+		pkg.__last_result = __test_tReg(pkg);
 	}
 }
 
