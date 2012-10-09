@@ -78,6 +78,7 @@ public:
 		enumMap["num_children"] 	= num_children;
 		enumMap["name"] 			= registered_name;
 		enumMap["hidden"] 			= is_hidden;
+		enumMap["value"]			= value;
 	}
 };
 }//namespace Parsers

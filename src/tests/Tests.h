@@ -8,9 +8,12 @@
 #ifndef T_TOKENGENERATOR_H_
 #define T_TOKENGENERATOR_H_
 
+#include <tests/T_NodeValueParser.h>
+
 namespace TestReports
 {
 	std::string T_MoguScript_Tokenizer();
+	std::string Suite_NodeValueParser();
 }
 
 

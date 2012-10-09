@@ -11,6 +11,7 @@ using namespace std;
 int main()
 {
 	cout << TestReports::T_MoguScript_Tokenizer() << endl;
+	cout << TestReports::Suite_NodeValueParser() << endl;
 }
 
 

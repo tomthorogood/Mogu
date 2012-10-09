@@ -24,7 +24,13 @@ BroadcastMessage::BroadcastMessage(
         Moldable* broadcaster, EventNodeProcessor *processor)
 {
     __broadcaster = broadcaster;
+
     Nodes::NodeValue* incoming_message = processor->getValue(Labels::message);
+
+#ifdef DEBUG
+    std::cout << "Message from " << broadcaster->getNode() << " : \"";
+    std::cout << incoming_message << "\"" << std::endl;
+#endif
 
     __interrupt = 0;
 
