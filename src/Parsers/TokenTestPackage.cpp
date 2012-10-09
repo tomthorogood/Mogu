@@ -39,6 +39,12 @@ void TokenTestPackage::interpret(
 				else if (type == Nodes::string_value)
 					__nval_final->setString(state_val.getString());
 				break;}
+
+			// Both of these are technically just going to contain strings.
+			case registry_value:
+			case redis_command:{
+				Parsers::NodeValueParser p(__val,&__nval_final);
+				break;}
 			default:
 				__nval_final->setString(ival);
 		}

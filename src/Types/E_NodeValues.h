@@ -42,6 +42,10 @@ enum NodeValueTypes{
 
     /*!\brief Reads a node from the database */
     ,node_value			=0x9
+
+    ,registry_value		=0xA
+
+    ,redis_command		=0xB
 };
 
 enum TokenTestResult{
@@ -50,6 +54,8 @@ enum TokenTestResult{
 	,REQ_STR	=0x2
 	,ICPL_CMD	=0x3
 	,NXT_NODE	=0x4
+	,NXT_REG	=0x5
+	,NXT_CMD	=0x6
 	,CPL		=0x8
 };
 
