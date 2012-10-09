@@ -24,6 +24,8 @@ public:
 		add_pair('@','@'); // For nodes
 		add_pair('~','~'); // For floats
 		add_pair('$','$'); // For states
+		add_pair('!','!'); // For redis commands
+		add_pair('|','|'); // For registered widgets
 	}
 
 	/*!\brief If the first token is a string, the entire thing is treated
