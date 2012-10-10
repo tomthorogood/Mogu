@@ -80,16 +80,15 @@ void submitBroadcast(BroadcastMessage& broadcast)
         	std::string name = broadcast.properties->listener.r_listener;
         	if (app->widgetIsRegistered(name))
         	{
-        		listener->add(app->registeredWidget(name));
+        		listener->push_back(app->registeredWidget(name));
         	}
         }
 
         else // Otherwise, provide a default value of the broadcaster.
         {
-        	listener->add(broadcast.broadcaster);
+        	listener->push_back(broadcast.broadcaster);
         }
 
-        listener->trim();
         listenerMap[&broadcast] = listener;
     }
 
@@ -98,31 +97,12 @@ void submitBroadcast(BroadcastMessage& broadcast)
      */
     int degradation = --(broadcast.properties->degradation);
 
-    if (degradation>0)
+    while (degradation>=0)
     {
-        updateListeners(broadcast);
-        submitBroadcast(broadcast);
-        return; // Avoid side effects with recursion!
+    	updateListeners(broadcast);
+    	--degradation;
     }
-
-
-    /* If the broadcast was previously repeated, but is on its final stop
-     * we'll upgrade the action to be the nextAction if applicable,
-     * and start over.
-     */
-    if (degradation == 0 )
-    {
-        broadcast.upgradeAction();
-        if (
-        		(broadcast.properties->action == Action::rebroadcast)
-        		&& (!registryListener)
-        		&& (f_listener != Family::application))
-        {
-            updateListeners(broadcast);
-        }
-        submitBroadcast(broadcast);
-        return; // Avoid side effects with recursion!
-    }
+    broadcast.upgradeAction();
 
     if (broadcast.properties->action == Action::rebroadcast)
     {
@@ -149,7 +129,7 @@ void submitBroadcast(BroadcastMessage& broadcast)
     /* If this is a nuclear event, we lastly have to do one more
      * calculation of listeners.
      */
-    if (!registryListener && f_listener != Family::application)
+    if (!registryListener && (f_listener != Family::application))
     {
         getNuclearFamily(broadcast);
     }
@@ -183,13 +163,13 @@ void getNuclearFamily(BroadcastMessage& broadcast)
             for (unsigned int k = 0; k < num_children; k++)
             {
                 Moldable* child = listener->child(k);
-                new_listeners->add(child);
+                new_listeners->push_back(child);
             }
             break;}
 
         case Family::parent:{
             Moldable* parent = (Moldable*) listener->parent();
-            new_listeners->add(parent);
+            new_listeners->push_back(parent);
             break;}
 
         case Family::siblings:{
@@ -200,15 +180,15 @@ void getNuclearFamily(BroadcastMessage& broadcast)
                 Moldable* sibling = parent->child(k);
                 if (sibling != listener)
                 {
-                    new_listeners->add(sibling);
+                    new_listeners->push_back(sibling);
                 }
             }
             break;}
         default:
-            new_listeners->add(listener);
+            new_listeners->push_back(listener);
         }
     }
-    new_listeners->trim();
+
     listenerMap[&broadcast] = new_listeners;
 #ifdef DEBUG // Make sure  that all listeners are actual objects
     for (unsigned int i = 0; i < new_listeners->size(); i++)
@@ -235,7 +215,7 @@ void updateListeners(BroadcastMessage& broadcast)
         // Add the parent of each of the current listeners.
         case Action::bubble:{
             Moldable* parent = (Moldable*) listener->parent();
-            new_listeners->add(parent);
+            new_listeners->push_back(parent);
             break;}
 
         // Add the children of each of the current listeners.
@@ -244,7 +224,7 @@ void updateListeners(BroadcastMessage& broadcast)
             for (int k = 0; k < num_children; k++)
             {
                 Moldable* child = listener->child(k);
-                new_listeners->add(child);
+                new_listeners->push_back(child);
             }
             break;}
 
@@ -259,7 +239,6 @@ void updateListeners(BroadcastMessage& broadcast)
         // Free the memory the current_listener list is using.
         delete current_listeners;
     }
-    new_listeners->trim();
 #ifdef DEBUG // Make sure  that all listeners are actual objects
     for (unsigned int i = 0; i < new_listeners->size(); i++)
     {

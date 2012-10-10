@@ -21,7 +21,7 @@ namespace Events
 namespace ActionCenter
 {
 
-typedef TurnLeft::Utils::HungryVector <Goo::Moldable*> Listeners;
+typedef std::vector <Goo::Moldable*> Listeners;
 typedef std::map <BroadcastMessage*, Listeners*> ListenerMap;
 
 /*!\brief Degrades the message signal, determining whether it needs to
