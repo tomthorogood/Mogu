@@ -25,7 +25,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	std::string action_str		= getWidgetProperty(node, "action");
 	std::string msg_str			= getWidgetProperty(node, "message");
 	std::string listener_str 	= getWidgetProperty(node, "listeners");
-
+	message.original = msg_str;
 	Nodes::NodeValue v;
 
 	if (widgetHasProperty(node, "degradation"))
@@ -35,7 +35,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 				degrad_str
 				,&v
 				,NONE);
-		degradation = (uint16_t) v.getInt();
+		degradation = v.getInt();
 		if (widgetHasProperty(node, "nextAction"))
 		{
 			std::string nxt_str = getWidgetProperty(node, "nextAction");
@@ -46,11 +46,11 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 					,&Parsers::enum_callback
 						<Parsers::SignalActionParser>);
 			next_action = (SignalAction) v.getInt();
-		} else next_action = 0;
+		} else next_action = (Enums::SignalActions::SignalAction) 0;
 	} else
 	{
 		degradation = 0;
-		next_action = 0;
+		next_action = (Enums::SignalActions::SignalAction) 0;
 	}
 
 	/*The trigger string will always be parseable to an enumerated type,
@@ -100,12 +100,12 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	}
 	else
 	{
-		listener.f_listener = v.getInt();
+		listener.f_listener = (Enums::Family::_Family) v.getInt();
 		listener.type = listener.family;
 	}
 
 	Parsers::MoguScript_Tokenizer t(msg_str);
-	if (t.next() == msg_str)
+	if ((t.next() == msg_str) && t.startsWithString())
 	{
 		message.status = message.processed;
 	}
@@ -114,8 +114,5 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 		message.status = message.delayed;
 	}
 	message.value.setString(msg_str);
-
-
 }
-
-}
+}//namespace Events

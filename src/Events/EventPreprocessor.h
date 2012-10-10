@@ -19,6 +19,10 @@ struct PreprocessedEventListener
 	std::string r_listener;
 	Ltype type;
 
+	PreprocessedEventListener() {
+		r_listener = EMPTY;
+	}
+
 	PreprocessedEventListener(const std::string& listener)
 	{
 		type = registry;
@@ -36,6 +40,7 @@ struct PreprocessedMessage
 {
 	enum Mtype { processed, delayed };
 	Mtype status;
+	std::string original;
 	Nodes::NodeValue value;
 	PreprocessedMessage() : value() {}
 };
@@ -47,7 +52,7 @@ struct EventPreprocessor
 	Enums::SignalActions::SignalAction next_action;
 	PreprocessedEventListener listener;
 	PreprocessedMessage message;
-	uint16_t degradation;
+	int degradation;
 
 	EventPreprocessor (const std::string& node);
 };

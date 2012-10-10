@@ -7,7 +7,8 @@
 
 #include <Events/BroadcastMessage.h>
 #include <Core/Moldable.h>
-#include <Events/EventNodeProcessor.h>
+#include <Events/EventPreprocessor.h>
+#include <Parsers/NodeValueParser.h>
 #include <stdio.h>
 
 namespace Events{
@@ -33,10 +34,9 @@ BroadcastMessage::BroadcastMessage (
 	if (preproc->message.status == preproc->message.delayed)
 	{
 		Parsers::NodeValueParser p(
-				preproc->message.value.getString()
+				preproc->message.original
 				,&preproc->message.value
 				,broadcaster);
-		preproc->message.status = preproc->message.processed;
 	}
 }
 

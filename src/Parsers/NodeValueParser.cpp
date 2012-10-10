@@ -9,6 +9,7 @@
 #include <Parsers/MoguScript_Tokenizer.h>
 #include <Redis/RedisCore.h>
 #include <Parsers/TokenTestPackage.h>
+#include <Parsers/Parsers.h>
 #include <Types/NodeValue.h>
 #include <Core/Moldable.h>
 #include <sstream>
@@ -33,11 +34,9 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 	if (pkg.__val_type != node_value)
 	{
 		pkg.interpret(VAL);
-
-		return
-				pkg.__val_type <= float_value ? CPL
-				: pkg.__val_type == registry_value ? NXT_REG
-				: NXT_CMD;
+		if (pkg.__val_type <= float_value) return CPL;
+		else if (pkg.__val_type == registry_value) return NXT_REG;
+		else return NXT_CMD;
 	}
 	else //(pkg->__val_type == node_value)
 	{
@@ -127,12 +126,13 @@ TokenTestResult __test_t2(TokenTestPackage& pkg)
 TokenTestResult __test_tReg(TokenTestPackage& pkg)
 {
 	using namespace Enums::WidgetTypes;
+
+	Enums::WidgetTypes::States s;
+	WidgetStateParser p;
+	s = p.parse(pkg.__args[0]);
 	mApp;
-	std::string result;
-	pkg.interpret(ARG);
-	Moldable& otherWidget = *(app->registeredWidget(pkg.__val));
-	otherWidget.getState(
-			(States) pkg.__nval_final->getInt(), *(pkg.__nval_final));
+	Moldable* w = app->registeredWidget(pkg.__val);
+	w->getState(s, *(pkg.__nval_final));
 	return CPL;
 }
 
@@ -176,7 +176,6 @@ NodeValueParser::NodeValueParser(
 	};
 	parsedValue = nval;
 	MoguScript_Tokenizer tokenizer(full_value);
-	nval->setOriginal(full_value);
 
 	std::string token = EMPTY;
 

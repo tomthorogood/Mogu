@@ -61,18 +61,18 @@ public:
 	 */
 	inline void registerWidget(std::string name, Goo::Moldable* widget)
 	{
-		widgetRegister[name] = *widget;
+		widgetRegister[name] = widget;
 	}
 
 	inline void registerWidget(std::string name, Goo::Moldable& widget)
 	{
-		widgetRegister[name] = widget;
+		widgetRegister[name] = &widget;
 	}
 
 	/*!\brief Returns a widget from the registry based on its name. */
 	inline Goo::Moldable* registeredWidget(std::string name)
 	{
-		return &(widgetRegister[name]);
+		return widgetRegister[name];
 	}
 
 	/*!\brief Removes a widget from the registry. */

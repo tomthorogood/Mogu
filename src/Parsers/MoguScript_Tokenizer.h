@@ -15,9 +15,11 @@ namespace Parsers{
 
 class MoguScript_Tokenizer : public TokenGenerator
 {
+	bool starts_with_string;
 public:
 	MoguScript_Tokenizer (std::string value = EMPTY) : TokenGenerator(value)
 	{
+		starts_with_string = false;
 		add_pair('{','}'); // For Enums
 		add_pair('^','^'); // For ints
 		add_pair('`','`'); // For files
@@ -39,6 +41,10 @@ public:
 	 * a string.
 	 */
 	virtual std::string next (char delimiter = ' ');
+	inline const bool& startsWithString() const
+	{
+		return starts_with_string;
+	}
 
 };
 

@@ -34,8 +34,7 @@ namespace Events
 {
     class EventBindery;
     class BroadcastMessage;
-    class EventNodeExtractor;
-    class EventNodeProcessor;
+    class EventPreprocessor;
 
     namespace ActionCenter
     {
