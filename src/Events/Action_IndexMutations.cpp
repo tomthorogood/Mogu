@@ -19,7 +19,7 @@ namespace Actions{
 using Goo::Moldable;
 namespace Action = Enums::SignalActions;
 
-void set_index (Listeners* listeners, BroadcastMessage* broadcast)
+void set_index (Listeners* listeners, int& new_index)
 {
 	int num_listeners = listeners->size();
 	for (int i = 0; i < num_listeners; i++)
@@ -27,9 +27,8 @@ void set_index (Listeners* listeners, BroadcastMessage* broadcast)
 		Moldable* widget = listeners->at(i);
 		if (widget->allowsAction(Action::set_index))
 		{
-			int new_index = broadcast->getMessage()->getInt();
 			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
-					widget->widget(0);
+			widget->widget(0);
 			stack->setCurrentIndex(new_index);
 			widget->stackIndexChanged().emit();
 		}

@@ -112,7 +112,7 @@ struct EmailPacket
 bool change_session ();
 bool register_user ();
 
-void set_index(Listeners* listeners, BroadcastMessage* broadcast);
+void set_index(Listeners* listeners, int& index);
 void increment_index(Listeners* listeners);
 void decrement_index(Listeners* listeners);
 std::string get_user_email(std::string username);

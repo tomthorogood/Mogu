@@ -14,15 +14,15 @@
 namespace Events
 {
 
-typedef TurnLeft::Utils::HungryVector <EventNodeExtractor*> ExtractorVector;
-typedef std::map
-        <Enums::SignalTriggers::SignalTrigger, ExtractorVector> ExtractorMap;
-
+typedef std::vector <EventPreprocessor*> PreprocessorVector;
+typedef std::map <Enums::SignalTriggers::SignalTrigger, PreprocessorVector>
+	PreprocessorMap;
 
 class EventBindery : public Wt::WObject
 {
-    ExtractorMap extractorMap;
+
     Goo::Moldable* __broadcaster;
+    PreprocessorMap __map;
 
     void handleVoidSignal(
             Enums::SignalTriggers::SignalTrigger trigger);
@@ -52,7 +52,6 @@ class EventBindery : public Wt::WObject
     {
     	handleVoidSignal(Enums::SignalTriggers::keyup);
     }
-
 
     inline void failSlot()
     {

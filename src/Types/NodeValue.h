@@ -103,7 +103,7 @@ public:
     }
 
     /*!\brief If the type is `int_value`, returns the int.*/
-    inline int getInt()
+    inline int& getInt()
     {
     	return __numerics->as_int;
     }
