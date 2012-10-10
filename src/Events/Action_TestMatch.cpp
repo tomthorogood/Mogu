@@ -24,7 +24,9 @@ bool test(Moldable& widget, BroadcastMessage& broadcast)
 	{
 		Nodes::NodeValue v;
 		Parsers::NodeValueParser p(
-				broadcast.getMessage()->getString(), &v);
+				broadcast.getMessage()->getOriginal()
+				, &v
+				, broadcast.getBroadcaster());
 		return widget.valueCallback() == v.getString();
 	}
 	return false;
