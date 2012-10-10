@@ -20,6 +20,11 @@ namespace Labels = Enums::Labels;
 namespace SignalType = Enums::SignalTypes;
 namespace TypeBit = Enums::SignalTypes;
 
+
+#ifdef DEBUG
+static int __BROADCAST_MESSAGE_COUNT =0;
+#endif
+
 BroadcastMessage::BroadcastMessage(
         Moldable* broadcaster, EventNodeProcessor *processor)
 {
@@ -28,8 +33,10 @@ BroadcastMessage::BroadcastMessage(
     Nodes::NodeValue* incoming_message = processor->getValue(Labels::message);
 
 #ifdef DEBUG
-    std::cout << "Message from " << broadcaster->getNode() << " : \"";
-    std::cout << incoming_message << "\"" << std::endl;
+    std::cout << "Message ";
+    std::cout << ++__BROADCAST_MESSAGE_COUNT << " from ";
+    std::cout << broadcaster->getNode() << " : \"";
+    std::cout << incoming_message->getString() << "\"" << std::endl;
 #endif
 
     __interrupt = 0;

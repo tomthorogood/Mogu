@@ -18,6 +18,7 @@ private:
 
 	MoguDeclaration declaration;
 	Nodes::NodeValue* parsedValue;
+	std::string orig_string;
 
 	inline std::string unwrap(std::string str)
 	{

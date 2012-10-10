@@ -176,6 +176,8 @@ NodeValueParser::NodeValueParser(
 	};
 	parsedValue = nval;
 	MoguScript_Tokenizer tokenizer(full_value);
+	nval->setOriginal(full_value);
+
 	std::string token = EMPTY;
 
 	/* First, we are going to iterate over the parseable string, retrieving

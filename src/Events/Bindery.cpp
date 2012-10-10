@@ -148,10 +148,7 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 {
    ExtractorVector* extractors = &( extractorMap[trigger] );
    int num_extractors = extractors->size();
-#ifdef DEBUG
-   std::cout << "There are " << num_extractors << " callbacks attached to";
-   std::cout << " this event. " << std::endl;
-#endif
+
    for (int e = 0; e < num_extractors; e++)
    {
        EventNodeExtractor* extractor = extractors->at(e);

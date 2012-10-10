@@ -8,6 +8,7 @@
 #ifndef NODEVALUE_H_
 #define NODEVALUE_H_
 
+#include <declarations.h>
 #include <string>
 
 
@@ -46,6 +47,11 @@ class NodeValue
     /*!\brief If the value is a string, it is stored here. */
     std::string as_string;
 
+    /*!\brief Sometimes a value may need to be parsed again later. This is
+     * a sloppy solution to that problem.
+     */
+    std::string orig_string;
+
     /*!\brief If the value is numeric, it is stord here. */
     NumericUnion* __numerics;
 
@@ -64,6 +70,17 @@ public:
     	as_string = val;
     	__type = string_value;
     }
+
+    /*!\brief Sets the original string for values that do not
+     * parse to strings.
+     * @param val
+     */
+    inline void setOriginal(std::string val)
+    {
+    	orig_string = val;
+    }
+
+    inline std::string getOriginal() { return orig_string;}
 
     /*!\brief Sets an int as well as __type */
     inline void setInt(int val)

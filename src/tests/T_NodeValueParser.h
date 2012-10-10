@@ -20,8 +20,7 @@ TestValue __m_named_state (va_list* args)
 	std::string s_val_in = va_arg(args, const char*);
 	Goo::Moldable* w = va_arg(args, Goo::Moldable*);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser(s_val_in,&v,w,
-			&Parsers::enum_callback<Parsers::WidgetStateParser>);
+	Parsers::NodeValueParser(s_val_in,&v,w);
 	TestValue result(v.getString());
 	return result;
 }

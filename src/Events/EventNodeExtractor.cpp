@@ -34,6 +34,10 @@ EventNodeExtractor::EventNodeExtractor(string nodeName)
         command.append(nodeName).append(" ").append(key);
         app->redisCommand(command);
         stringValues[keyParser.parse(key)] = Redis::toString(app->reply());
+#ifdef DEBUG
+        std::cout << command << " " << stringValues[keyParser.parse(key)];
+        std::cout << std::endl;
+#endif
     }
 #ifdef DEBUG
     std::cout << "Creating event node extractor (" << this <<") for "
