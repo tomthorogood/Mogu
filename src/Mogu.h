@@ -12,6 +12,7 @@
 #include <Wt/WApplication>
 #include <signal.h>
 #include <Redis/RedisCore.h>
+#include <Core/Moldable.h>
 
 #ifndef AUTH_TOKEN
 #define AUTH_TOKEN "BendTheWeb"
@@ -27,7 +28,7 @@ class Mogu : public Wt::WApplication
 	void handlePathChange(std::string path);
 
 	/*!\brief A map of named widgets. */
-	WidgetRegister* widgetRegister;
+	WidgetRegister widgetRegister;
 
 	/*!\brief The widget that started it all... */
 	Goo::Moldable* __wrapper;
@@ -49,8 +50,8 @@ public:
 	 */
 	inline bool widgetIsRegistered(std::string name)
 	{
-		WidgetRegister::iterator iter = widgetRegister->find(name);
-		return iter != widgetRegister->end();
+		WidgetRegister::iterator iter = widgetRegister.find(name);
+		return iter != widgetRegister.end();
 	}
 
 	/*!\brief Adds a widget into the widget registry.
@@ -60,21 +61,26 @@ public:
 	 */
 	inline void registerWidget(std::string name, Goo::Moldable* widget)
 	{
-		(*widgetRegister)[name] = widget;
+		widgetRegister[name] = *widget;
+	}
+
+	inline void registerWidget(std::string name, Goo::Moldable& widget)
+	{
+		widgetRegister[name] = widget;
 	}
 
 	/*!\brief Returns a widget from the registry based on its name. */
 	inline Goo::Moldable* registeredWidget(std::string name)
 	{
-		return (*widgetRegister)[name];
+		return &(widgetRegister[name]);
 	}
 
 	/*!\brief Removes a widget from the registry. */
 	inline void deregisterWidget(std::string name)
 	{
 		if (!widgetIsRegistered(name)) return;
-		WidgetRegister::iterator iter = widgetRegister->find(name);
-		widgetRegister->erase(iter);
+		WidgetRegister::iterator iter = widgetRegister.find(name);
+		widgetRegister.erase(iter);
 	}
 
 	inline void loadAnalytics(std::string id)

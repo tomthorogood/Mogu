@@ -23,7 +23,7 @@ namespace Maps
 }
 
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
-typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
+typedef std::map <std::string, Goo::Moldable&> WidgetRegister;
 
 typedef std::vector <std::pair <char,char> > CharCouplets;
 
