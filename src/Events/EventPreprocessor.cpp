@@ -19,9 +19,15 @@ using namespace Enums::SignalActions;
 using namespace Enums::SignalTriggers;
 using namespace Parsers::StyleParser;
 
+inline std::string valOrEmpty(const std::string& node, const char* field)
+{
+	return (widgetHasProperty(node, field)) ?
+				getWidgetProperty(node, field) : EMPTY;
+}
+
 EventPreprocessor::EventPreprocessor (const std::string& node)
 {
-	std::string trigger_str 	= getWidgetProperty(node, "trigger");
+	std::string trigger_str 	= valOrEmpty(node, "trigger");
 	std::string action_str		= getWidgetProperty(node, "action");
 	std::string msg_str			= getWidgetProperty(node, "message");
 	std::string listener_str 	= getWidgetProperty(node, "listeners");
@@ -56,12 +62,15 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	/*The trigger string will always be parseable to an enumerated type,
 	 * so we can do that now.
 	 */
-	Parsers::NodeValueParser trigger_p(
-			trigger_str,
-			&v,
-			NONE
-			,&Parsers::enum_callback <Parsers::SignalTriggerParser>);
-	trigger = (SignalTrigger) v.getInt();
+	if (trigger_str != EMPTY)
+	{
+		Parsers::NodeValueParser trigger_p(
+				trigger_str,
+				&v,
+				NONE
+				,&Parsers::enum_callback <Parsers::SignalTriggerParser>);
+		trigger = (SignalTrigger) v.getInt();
+	}
 
 
 	/*The action string will always be parseable to an enumerated type,

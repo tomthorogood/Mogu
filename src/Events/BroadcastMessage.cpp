@@ -33,6 +33,9 @@ BroadcastMessage::BroadcastMessage (
 	 */
 	if (preproc->message.status == preproc->message.delayed)
 	{
+#ifdef DEBUG
+		std::cout << "Parsing delayed message: " << preproc->message.original << std::endl;
+#endif
 		Parsers::NodeValueParser p(
 				preproc->message.original
 				,&preproc->message.value

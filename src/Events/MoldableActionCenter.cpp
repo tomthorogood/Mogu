@@ -97,6 +97,7 @@ void submitBroadcast(BroadcastMessage& broadcast)
      * of listeners will be, and then start over
      */
     int degradation = --(broadcast.properties->degradation);
+
     if (degradation>0)
     {
         updateListeners(broadcast);
@@ -271,9 +272,9 @@ void directListeners(BroadcastMessage& broadcast)
 {
 	mApp;
     namespace Action = Enums::SignalActions;
-    BroadcastMessage* bptr = &broadcast;
-    Listeners* listeners = listenerMap[bptr];
-    Nodes::NodeValue& message = broadcast.properties->message.value;
+    BroadcastMessage* bptr 		= &broadcast;
+    Listeners* listeners 		= listenerMap[bptr];
+    Nodes::NodeValue& message 	= broadcast.properties->message.value;
 
     Action::SignalAction action = broadcast.properties->action;
     Family::_Family f_listener;
@@ -281,16 +282,23 @@ void directListeners(BroadcastMessage& broadcast)
 
 
 #ifdef DEBUG // Make sure  that all listeners are actual objects
-    for (unsigned int i = 0; i < listeners->size(); i++)
-    {
-    	assert (listeners->at(i) != 0);
-    }
     std::cout << "Parsing Action " << action << " for ";
     std::cout << listeners->size() << " listeners from ";
     std::cout << broadcast.broadcaster->getNode() << std::endl;
+    std::cout << "Listeners: ";
+    for (size_t i = 0; i < listeners->size(); ++i)
+    {
+    	if (i != 0) std::cout << ", ";
+    	std::cout << listeners->at(i)->getNode();
+    }
+    std::cout << std::endl;
+    std::cout << "Message: ";
+    if (message.getType() == Nodes::string_value) std::cout << message.getString();
+    else std::cout << message.getInt();
+    std::cout << std::endl;
 #endif
 
-    if (f_listener == Enums::Family::application)
+    if (!registryListener && (f_listener == Enums::Family::application))
     {
     	switch(action)
     	{
@@ -564,6 +572,9 @@ void directListeners(BroadcastMessage& broadcast)
 
     default:return; // Don't do anything unexpected!
     }
+#ifdef DEBUG
+    std::cout << "DONE. Cleaning Up." << std::endl;
+#endif
 }
 
 
