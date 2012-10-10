@@ -18,16 +18,11 @@ namespace Actions
 {
 using Goo::Moldable;
 
-bool test(Moldable& widget, BroadcastMessage& broadcast)
+bool test(Moldable& widget, Nodes::NodeValue& val)
 {
 	if (widget.allowsAction(Enums::SignalActions::match))
 	{
-		Nodes::NodeValue v;
-		Parsers::NodeValueParser p(
-				broadcast.getMessage()->getOriginal()
-				, &v
-				, broadcast.getBroadcaster());
-		return widget.valueCallback() == v.getString();
+		return widget.valueCallback() == val.getString();
 	}
 	return false;
 }

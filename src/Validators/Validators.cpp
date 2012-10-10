@@ -30,7 +30,6 @@ Wt::WValidator* createValidator(std::string validatorName)
 {
 	Wt::WValidator* validator =0;
 	string validator_node = "validators."+validatorName;
-	mApp;
 	string vtype =
 	Parsers::StyleParser::getWidgetProperty(validator_node, "type");
 	Nodes::NodeValue vval;

@@ -26,7 +26,7 @@
 #include <hash.h>
 
 Mogu::Mogu(const Wt::WEnvironment& env)
-:   Wt::WApplication(env)
+:   Wt::WApplication(env), widgetRegister()
 {
 	TurnLeft::Utils::RandomCharSet rchar;
 
@@ -34,7 +34,6 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 	__auth_token = AUTH_TOKEN;
 	__instanceid = rchar.generate(4);
 
-	widgetRegister = new WidgetRegister();
 	__reply = 0;
 	__redis = redisConnect(REDIS_HOST,REDIS_PORT);
     std::string styleSheet("/resources/mogu/style.css");
@@ -87,5 +86,4 @@ void Mogu::handlePathChange(std::string path)
 Mogu::~Mogu()
 {
 	redisFree(__redis);
-	delete widgetRegister;
 }

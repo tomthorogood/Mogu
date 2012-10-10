@@ -16,6 +16,7 @@
 #include <Types/NodeValue.h>
 #include <Wt/WStackedWidget>
 #include <Events/MoldableActionCenter.h>
+#include <Events/EventPreprocessor.h>
 
 namespace Perspective{
 namespace Handler{
@@ -87,10 +88,9 @@ void mold(std::string perspective)
 			}}
 		case Action::rebroadcast:{
 			std::string _message = "events."+message_val.getString();
-			Events::ActionCenter::submitBroadcast(
-					Events::ActionCenter::generateNewBroadcast(
-							widget, _message)
-			);
+			Events::EventPreprocessor preproc(_message);
+			Events::BroadcastMessage msg(NULL,&preproc);
+			Events::ActionCenter::submitBroadcast(msg);
 			break;}
 		default: break;
 		}

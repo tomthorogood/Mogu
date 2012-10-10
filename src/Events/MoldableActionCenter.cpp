@@ -7,9 +7,8 @@
 
 
 #include <Events/MoldableActionCenter.h>
-#include <Events/EventNodeExtractor.h>
-#include <Events/EventNodeProcessor.h>
 #include <Events/BroadcastMessage.h>
+#include <Events/EventPreprocessor.h>
 #include <Parsers/Parsers.h>
 #include <Parsers/StyleParser.h>
 #include <Parsers/NodeValueParser.h>
@@ -137,7 +136,8 @@ void submitBroadcast(BroadcastMessage& broadcast)
     	for (size_t listener = 0; listener < num_listeners; ++listener)
     	{
     		Moldable* __listener = listeners->at(listener);
-    		BroadcastMessage newmsg(__listener, nodeName);
+    		EventPreprocessor preproc(nodeName);
+    		BroadcastMessage newmsg(__listener, &preproc);
     		submitBroadcast(newmsg);
     	}
 
@@ -161,7 +161,7 @@ void getNuclearFamily(BroadcastMessage& broadcast)
 {
     namespace Family = Enums::Family;
     Family::_Family familyMembers = broadcast.properties->listener.f_listener;
-    Listeners* current_listeners = listenerMap[broadcast];
+    Listeners* current_listeners = listenerMap[&broadcast];
     Listeners* new_listeners = new Listeners();
 
     unsigned int num_current = current_listeners->size();
@@ -208,7 +208,7 @@ void getNuclearFamily(BroadcastMessage& broadcast)
         }
     }
     new_listeners->trim();
-    listenerMap[broadcast] = new_listeners;
+    listenerMap[&broadcast] = new_listeners;
 #ifdef DEBUG // Make sure  that all listeners are actual objects
     for (unsigned int i = 0; i < new_listeners->size(); i++)
     {
@@ -529,7 +529,7 @@ void directListeners(BroadcastMessage& broadcast)
 
     case Action::match:
     case Action::test_text:
-    	Actions::test(*(listeners->at(0)), broadcast) ?
+    	Actions::test(*(listeners->at(0)), message) ?
     				broadcast.broadcaster->succeed().emit()
     			: 	broadcast.broadcaster->fail().emit();
     	break;

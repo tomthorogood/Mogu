@@ -11,7 +11,6 @@ NodeValue::NodeValue()
     __numerics = new NumericUnion();
     __type = NO_VALUE;
     as_string = EMPTY;
-    orig_string = EMPTY;
 }
 
 NodeValue::NodeValue(NodeValue* proto)
@@ -38,7 +37,6 @@ void NodeValue::copy(NodeValue* proto)
 	default:
 		break;
 	}
-	orig_string = proto->getOriginal();
 }
 
 NodeValue::~NodeValue()

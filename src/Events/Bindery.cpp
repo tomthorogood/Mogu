@@ -10,10 +10,8 @@
 
 #include <Parsers/NodeValueParser.h>
 #include <Parsers/Parsers.h>
-
-#include <Events/EventNodeExtractor.h>
-#include <Events/EventNodeProcessor.h>
 #include <Events/MoldableActionCenter.h>
+#include <Events/EventPreprocessor.h>
 #include <Static.h>
 
 #include <Types/NodeValue.h>

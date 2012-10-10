@@ -26,6 +26,7 @@ string MoguScript_Tokenizer::next(char delimiter)
 			}
 		}
 		setCurrentPosition(orig.length());
+		starts_with_string = true;
 		return orig;
 	}
 	return TokenGenerator::next();
