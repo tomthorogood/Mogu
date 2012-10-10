@@ -62,7 +62,7 @@ std::string Suite_NodeValueParser()
 	TestSuite suite("NodeValueParser Suite");
 	std::string __hello  		= "Hello, World!";
 	std::string __hello_name 	= "HelloWidget";
-	std::string __hello_r 	= "|HelloWidget| {value}";
+	std::string __hello_r 	= "|HelloWidget| $value$";
 
 	Evaluation __e_named_state(ResultType::t_str, &__m_named_state);
 	TestValue __v_named_state(__hello);
@@ -76,7 +76,7 @@ std::string Suite_NodeValueParser()
 	T_NodeValueParser t1(
 			__tpl_named_state
 			,__hello_r
-			, "NVP|T1->namedWidget|T2->value enum"
+			,__hello_r
 			,&__v_named_state
 			,&__e_named_state);
 
