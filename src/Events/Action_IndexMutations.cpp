@@ -28,7 +28,7 @@ void set_index (Listeners* listeners, int& new_index)
 		if (widget->allowsAction(Action::set_index))
 		{
 			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
-			widget->widget(0);
+					widget->widget(0);
 			stack->setCurrentIndex(new_index);
 			widget->stackIndexChanged().emit();
 		}
@@ -44,29 +44,18 @@ void increment_index(Listeners* listeners)
 		Moldable* widget = listeners->at(w);
 		if (widget->allowsAction(Action::increment_index))
 		{
-#ifdef DEBUG
-			std::cout << "Setting index of " << widget->getNode() << std::endl;
-#endif
 			Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
 				widget->widget(0);
 			int current_index = stack->currentIndex();
-#ifdef DEBUG
-			std::cout << "Current Index: " << current_index << std::endl;
-			std::cout << "Next Index: " << current_index-1 << std::endl;
-			std::cout << "Max Index: " << stack->count() << std::endl;
-#endif
 			if (++current_index < stack->count())
 			{
-#ifdef DEBUG
-				std::cout << "Changing index to  ";
-				std::cout << current_index << std::endl;
-#endif
 				stack->setCurrentIndex(current_index);
 				widget->stackIndexChanged().emit();
 			}
 		}
 	}
 }
+
 void decrement_index(Listeners* listeners)
 {
 	int num_listeners = listeners->size();
@@ -80,11 +69,6 @@ void decrement_index(Listeners* listeners)
 			int current_index = stack->currentIndex();
 			if (--current_index >=0)
 			{
-	#ifdef DEBUG
-				std::cout << "CHANGING INDEX OF";
-				std::cout << widget->getNode() << " TO ";
-				std::cout << current_index << std::endl;
-	#endif
 				stack->setCurrentIndex(current_index);
 				widget->stackIndexChanged().emit();
 			}
