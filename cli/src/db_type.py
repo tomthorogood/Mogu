@@ -8,21 +8,6 @@ from snippets import clrln
 from exceptions import *
 import cityhash
 
-required_event_parameters = {
-        "198"       :       ("action","message","nextAction","degradation"),
-        "199"       :       ("action","message","nextAction","degradation","trigger"),
-        "202"       :       ("action","message","degradation"),
-        "203"       :       ("action","message","degradation","trigger"),
-        "208"       :       ("action","message","listeners"),
-        "209"       :       ("action","message","listeners","trigger"),
-        "214"       :       ("action","message","listeners","nextAction","degradation"),
-        "215"       :       ("action","message","listeners","nextAction","degradation","trigger"),
-        "218"       :       ("action","message","listeners","degradation"),
-        "219"       :       ("action","message","listeners","degradation","trigger"),
-        "225"       :       ("action","message","listeners","trigger"),
-        "233"       :       ("action","message","listeners","trigger")
-        }
-
 class Node(object):
     # STATIC ITEMS
     class Wrappers:
@@ -247,8 +232,6 @@ class WidgetEvent(Widget):
     def __init__(self):
         super(WidgetEvent, self).__init__()
         self.node_construction += ".events.%d"
-        self.keystone = "signal"
-        self.keystone_reqs = required_event_parameters
 
 class DynamicDefault(Node):
     def __init__(self, stype):
@@ -284,9 +267,6 @@ class WidgetPolicy(Widget):
             dyndef.build(self.widget_name)
             dyndef._import(db, data["default"], flags)
         super(WidgetPolicy, self)._import(db, data, flags)
-
-
-
 
 class WidgetChildren(Node):
     def __init__(self):
