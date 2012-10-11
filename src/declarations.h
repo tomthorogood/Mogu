@@ -8,7 +8,7 @@
 #ifndef DECLARATIONS_H_
 #define DECLARATIONS_H_
 
-#include <macros.h>
+#include <Config/macros.h>
 
 #include <TurnLeftLib/TurnLeft.h>
 #include <TurnLeftLib/Utils/enumparser.h>
@@ -21,10 +21,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <inline_utils.h>
+#include <Config/inline_utils.h>
 #include <iostream>
 
-#include <forward_declarations.h>
-#include <typedefs.h>
+#include <Config/forward_declarations.h>
+#include <Config/typedefs.h>
 
 #endif /* DECLARATIONS_H_ */

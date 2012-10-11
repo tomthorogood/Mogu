@@ -1,5 +1,5 @@
 source_files := src
-branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Validators Security Core/FactoryStations
+branch_subs := Events Core Redis Parsers Types Perspectives crypt Sessions Validators Security Core/FactoryStations Config
 
 includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include -L/usr/local/lib
 executable := mogu-server
