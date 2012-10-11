@@ -27,73 +27,19 @@ void mold(std::string perspective)
 	namespace Action = Enums::SignalActions;
 	std::string action_str;
 	std::string message_str;
-	int num_widgets = 0;
-	Redis::strvector namespace_;
+	size_t num_molds = 0;
+	Redis::strvector keyspace;
 
 	mApp;
 	app->redisCommand("keys","perspectives."+perspective+".*");
-	Redis::toVector(app->reply(),namespace_);
-	num_widgets = namespace_.size();
+	Redis::toVector(app->reply(),keyspace);
+	num_molds = keyspace.size();
 
-	for (int w = 0; w < num_widgets; w++)
+	for (int w = 0; w < num_molds; w++)
 	{
-		std::string affect_node = namespace_.at(w);
-		std::string name;
-		std::string action_str;
-		std::string message_str;
-		Action::SignalAction action;
-		Goo::Moldable* widget;
-
-		app->redisCommand("hget",affect_node,"name");
-		name = Redis::toString(app->reply());
-		if (!app->widgetIsRegistered(name)) return;
-
-		app->redisCommand("hget", affect_node, "action");
-		action_str = Redis::toString(app->reply());
-
-		app->redisCommand("hget", affect_node, "message");
-		message_str = Redis::toString(app->reply());
-
-		widget = app->registeredWidget(name);
-
-		Nodes::NodeValue
-			action_val,
-			message_val;
-
-		Parsers::NodeValueParser action_parser(action_str, &action_val,
-				widget,
-				&Parsers::enum_callback <Parsers::SignalActionParser>);
-
-		Parsers::NodeValueParser message_parser(
-				message_str, &message_val, widget);
-
-		action = (Action::SignalAction)
-				action_val.getInt();
-
-		switch(action)
-		{
-		case Action::set_index:{
-			if (widget->allowsAction(Action::set_index))
-			{
-				Wt::WStackedWidget* stack = (Wt::WStackedWidget*)
-						widget->widget(0);
-				stack->setCurrentIndex(message_val.getInt());
-				break;
-			}}
-		case Action::set_style:{
-			if (widget->allowsAction(Action::set_style))
-			{
-				widget->setStyleClass(message_val.getString());
-				break;
-			}}
-		case Action::rebroadcast:{
-			std::string _message = "events."+message_val.getString();
-			Events::EventPreprocessor preproc(_message);
-			Events::BroadcastMessage msg(NULL,&preproc);
-			Events::ActionCenter::submitBroadcast(msg);
-			break;}
-		default: break;
-		}
+		Events::EventPreprocessor preproc(keyspace[w]);
+		Events::BroadcastMessage msg(NULL, &preproc);
+		Events::ActionCenter::submitBroadcast(msg);
 	}
 }
 
