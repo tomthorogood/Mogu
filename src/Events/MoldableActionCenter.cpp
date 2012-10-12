@@ -91,18 +91,30 @@ void submitBroadcast(BroadcastMessage& broadcast)
 
         listenerMap[&broadcast] = listener;
     }
-
+#ifdef DEBUG
+    std::string action_str;
+    if (broadcast.properties->action == Enums::SignalActions::trickle)
+    	action_str = "trickle";
+    else if
+    	(broadcast.properties->action == Enums::SignalActions::bubble)
+    	action_str = "bubble";
+    else action_str = "ERROR";
+    if (broadcast.properties->degradation > 0)
+    {
+    	std::cout << "Degradation: " << broadcast.properties->degradation << " ";
+    	std::cout << "| Action: " << action_str << std::endl;
+    }
+#endif
     /* If this broadcast is getting repeated, determine who the next set
      * of listeners will be, and then start over
      */
-    int degradation = --(broadcast.properties->degradation);
+    int degradation = broadcast.properties->degradation;
 
-    while (degradation>=0)
+    while (--degradation>=0)
     {
     	updateListeners(broadcast);
-    	--degradation;
     }
-    broadcast.upgradeAction();
+    broadcast.updateAction();
 
     if (broadcast.properties->action == Action::rebroadcast)
     {
@@ -205,8 +217,8 @@ void updateListeners(BroadcastMessage& broadcast)
     Listeners* current_listeners = listenerMap[&broadcast];
     Listeners* new_listeners = new Listeners();
 
-    unsigned int num_current = current_listeners->size();
-    for (unsigned int c = 0; c < num_current; c++)
+    size_t num_current = current_listeners->size();
+    for (size_t c = 0; c < num_current; c++)
     {
         Moldable* listener = current_listeners->at(c);
         switch(direction)
@@ -261,20 +273,23 @@ void directListeners(BroadcastMessage& broadcast)
 
 
 #ifdef DEBUG // Make sure  that all listeners are actual objects
-    std::cout << "Parsing Action " << action << " for ";
-    std::cout << listeners->size() << " listeners from ";
-    std::cout << broadcast.broadcaster->getNode() << std::endl;
-    std::cout << "Listeners: ";
-    for (size_t i = 0; i < listeners->size(); ++i)
+    if (broadcast.broadcaster!=0)
     {
-    	if (i != 0) std::cout << ", ";
-    	std::cout << listeners->at(i)->getNode();
+		std::cout << "Parsing Action " << action << " for ";
+		std::cout << listeners->size() << " listeners from ";
+		std::cout << broadcast.broadcaster->getNode() << std::endl;
+		std::cout << "Listeners: ";
+		for (size_t i = 0; i < listeners->size(); ++i)
+		{
+			if (i != 0) std::cout << ", ";
+			std::cout << listeners->at(i)->getNode();
+		}
+		std::cout << std::endl;
+		std::cout << "Message: ";
+		if (message.getType() == Nodes::string_value) std::cout << message.getString();
+		else std::cout << message.getInt();
+		std::cout << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << "Message: ";
-    if (message.getType() == Nodes::string_value) std::cout << message.getString();
-    else std::cout << message.getInt();
-    std::cout << std::endl;
 #endif
 
     if (!registryListener && (f_listener == Enums::Family::application))
@@ -562,6 +577,7 @@ void cleanupBroadcast(BroadcastMessage& broadcast)
     /* First, delete all Listener objects associated with the broadcast */
     delete listenerMap[&broadcast];
     listenerMap.erase(&broadcast);
+    broadcast.updateAction();
 }
 
 } //Namespace ActionCenter

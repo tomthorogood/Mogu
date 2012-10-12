@@ -23,7 +23,7 @@ struct BroadcastMessage
 	Goo::Moldable* 		broadcaster;
 	EventPreprocessor* 	properties;
 	BroadcastMessage(Goo::Moldable*, EventPreprocessor*);
-	void upgradeAction();
+	void updateAction();
 };
 
 

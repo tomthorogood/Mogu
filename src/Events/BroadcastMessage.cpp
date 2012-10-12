@@ -43,11 +43,15 @@ BroadcastMessage::BroadcastMessage (
 	}
 }
 
-void BroadcastMessage::upgradeAction()
+void BroadcastMessage::updateAction()
 {
+	if (properties->next_action == 0) return;
+
+	Enums::SignalActions::SignalAction current = properties->action;
 	properties->action = (properties->next_action != 0) ?
 			properties->next_action
 			:properties->action;
+	properties->next_action = current;
 }
 }//namespace Events
 

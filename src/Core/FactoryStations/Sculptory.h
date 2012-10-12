@@ -68,10 +68,6 @@ inline void getNumChildren(MoldableTemplate* __tmpl)
 	__tmpl->num_children = Redis::getInt(app->reply());
 }
 
-
-
-
-
 inline void __sculpt_container(MoldableTemplate* __tmpl, Moldable *m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);

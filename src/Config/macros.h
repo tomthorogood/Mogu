@@ -15,9 +15,11 @@
 
 
 #define MoguApp (Mogu*) wApp
+
+//Provides access to the user-specific instance of Mogu
 #define mApp Mogu* app = MoguApp
 
-//Pre-hashed values to speed up common queries:
+//Pre-hashed values to speed up common queries -- DO NOT CHANGE:
 #define __AUTH_HASH "8163637335359820509"
 #define __META_HASH "9532958398116805642"
 #define __PREV_HASH "653035263252793737"
