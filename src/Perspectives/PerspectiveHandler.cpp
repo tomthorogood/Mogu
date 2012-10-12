@@ -35,7 +35,7 @@ void mold(std::string perspective)
 	Redis::toVector(app->reply(),keyspace);
 	num_molds = keyspace.size();
 
-	for (int w = 0; w < num_molds; w++)
+	for (size_t w = 0; w < num_molds; w++)
 	{
 		Events::EventPreprocessor preproc(keyspace[w]);
 		Events::BroadcastMessage msg(NULL, &preproc);
