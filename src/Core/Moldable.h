@@ -79,6 +79,8 @@ private:
     /*!\brief Signal emitted if the widget is given a test which it passes. */
     Wt::Signal <> __succeeded_test;
 
+    Wt::Signal <bool> __hidden_changed;
+
 
     /*!\brief Parses the values in the events node and binds
      * these events to user activity.
@@ -104,6 +106,8 @@ public:
      * balance between performance and memory.
      */
     virtual void load();
+    virtual void setHidden(
+    		bool hidden, const Wt::WAnimation& animation= Wt::WAnimation());
 
 
     /*!\brief An implementation of the setStyleClass method which also
@@ -216,6 +220,11 @@ public:
     inline Wt::Signal<>& succeed()
 	{
     	return __succeeded_test;
+	}
+
+    inline Wt::Signal<bool>& hiddenChanged()
+	{
+    	return __hidden_changed;
 	}
 
     /*!\brief Validates this widget's first child, which will emit either the

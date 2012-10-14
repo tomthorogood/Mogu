@@ -57,6 +57,14 @@ inline bool widgetHasProperty(
 	return (bool) Redis::getInt(app->reply());
 }
 
+inline bool widgetHasEvents(
+		const std::string& nodeName)
+{
+	mApp;
+	app->redisCommand("exists", nodeName+".events.1");
+	return (bool) Redis::getInt(app->reply());
+}
+
 /*!\brief Retrieves a property from a widget template. Essentially
  * the same as the getWidgetProperty field, but named differently
  * for readability and maintainability.

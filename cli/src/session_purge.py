@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+from snippets import *
+from cityhash import * 
 def purge_sessions(args,db):
     gnamespace = "s.global.%s"
 

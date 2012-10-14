@@ -51,7 +51,7 @@ MoldableTemplate* conceptualize(const std::string& node)
 
 	if (widgetIsDynamic(node)) __tmpl->flags |= is_dynamic;
 	if (widgetHasProperty(node, "animation")) __tmpl->flags |= has_animation;
-	if (widgetHasProperty(node,"events")) __tmpl->flags |= has_events;
+	if (widgetHasEvents(node)) __tmpl->flags |= has_events;
 	if (widgetHasProperty(node, "block")) __tmpl->flags |= blocks_actions;
 	if (widgetHasProperty(node, "validator")) __tmpl->flags |= is_validated;
 	if (widgetHasProperty(node, "name")) __tmpl->flags |= is_named;

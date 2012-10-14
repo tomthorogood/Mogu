@@ -79,6 +79,7 @@ public:
 		enumMap["name"] 			= registered_name;
 		enumMap["hidden"] 			= is_hidden;
 		enumMap["value"]			= value;
+		enumMap["style"]			= currentstyle;
 	}
 };
 }//namespace Parsers

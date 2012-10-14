@@ -62,7 +62,7 @@ Moldable::~Moldable()
 }
 
 
-void
+virtual void
 Moldable::load()
 {
     /* Don't create content until the widget is loaded and visible. */
@@ -82,6 +82,13 @@ Moldable::load()
 
 		__reload = false; //Don't allow this to be reloaded accidentally.
     }
+}
+
+virtual void Moldable::setHidden(
+		bool hidden, const Wt::WAnimation& animation)
+{
+	Wt::WContainerWidget::setHidden(hidden,animation);
+	__hidden_changed.emit(isHidden());
 }
 
 void Moldable::__validate()
@@ -117,6 +124,9 @@ void Moldable::getState(Enums::WidgetTypes::States state,
 		break;}
 	case value:{
 		val.setString(valueCallback());
+		break;}
+	case currentstyle:{
+		val.setString(styleClass().toUTF8());
 		break;}
 	default:
 		val.setInt(0);
