@@ -40,6 +40,13 @@ std::string __value_abstract(Moldable& widget)
 	return EMPTY;
 }
 
+std::string __value_container(Moldable& widget)
+{
+	Nodes::NodeValue v;
+	widget.getState(Enums::WidgetTypes::currentstyle, v);
+	return v.getString();
+}
+
 void __setvalue_wtext(Moldable& widget, std::string& newtext)
 {
 	Wt::WText* txtwidget = static_cast<Wt::WText*>(widget.widget(0));

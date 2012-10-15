@@ -30,6 +30,9 @@ std::string __value_wtext(Moldable& widget);
 std::string __value_wlineedit(Moldable& widget);
 std::string __value_abstract(Moldable& widget);
 
+/*!\brief Since containers do not have a text value, their style will be used. */
+std::string __value_container(Moldable& widget);
+
 /*!\brief Sets the valu of a WText widget. Bound to moldable->setValueCallback(str)*/
 void __setvalue_wtext(Moldable& widget, std::string& newtext);
 

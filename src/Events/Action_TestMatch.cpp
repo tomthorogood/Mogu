@@ -22,7 +22,7 @@ bool test(Moldable& widget, Nodes::NodeValue& val)
 {
 	if (widget.allowsAction(Enums::SignalActions::match))
 	{
-		return widget.valueCallback() == val.getString();
+		return val.getString().find(widget.valueCallback()) != std::string::npos;
 	}
 	return false;
 }

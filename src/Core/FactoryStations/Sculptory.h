@@ -34,7 +34,6 @@ namespace Sculptory{
 using namespace Parsers::StyleParser;
 using namespace Application;
 using namespace Enums::WidgetTypes;
-using namespace Enums::SignalTypes;
 
 void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m);
 void addChildren(MoldableTemplate* __tmpl,
@@ -77,6 +76,7 @@ inline void __sculpt_container(MoldableTemplate* __tmpl, Moldable *m)
 	{
 		addChildren(__tmpl,m);
 	}
+	m->setValueCallback(&Callbacks::__value_container);
 }
 
 inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
@@ -99,8 +99,8 @@ inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 		cpy->content = Redis::toString(app->reply());
 		cpy->type = getWidgetType("templates."+tpl_name);
 		bearer->addWidget(sculpt(cpy));
-
 	}
+	m->setValueCallback(&Callbacks::__value_container);
 }
 inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)
 {

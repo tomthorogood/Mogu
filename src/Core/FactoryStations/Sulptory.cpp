@@ -18,7 +18,6 @@ namespace Sculptory{
 using namespace Parsers::StyleParser;
 using namespace Application;
 using namespace Enums::WidgetTypes;
-using namespace Enums::SignalTypes;
 
 void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
 {
@@ -37,6 +36,7 @@ void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
 	{
 		addChildren(__tmpl, stack, m);
 	}
+	m->setValueCallback(&Callbacks::__value_container);
 	m->addWidget(stack);
 }
 

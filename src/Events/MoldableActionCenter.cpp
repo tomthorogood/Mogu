@@ -60,7 +60,6 @@ inline void handleBoolAction(
 void submitBroadcast(BroadcastMessage& broadcast)
 {
 	mApp;
-    namespace TypeBits = Enums::SignalTypes;
     Family::_Family f_listener;
     bool registryListener = listenerIsRegistered(f_listener, broadcast);
 
