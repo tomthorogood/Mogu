@@ -64,6 +64,7 @@ public:
 	    enumMap["email_user"]		= Action::email_user;
 	    enumMap["read_state"]		= Action::read_state;
 	    enumMap["reset_password"] 	= Action::reset_password;
+	    enumMap["onload"]			= Action::onload;
 	    enumMap["reload"]			= Action::reload;
 	    enumMap["stdout"]			= Action::STDOUT;
 #ifdef TERM_ENABLED

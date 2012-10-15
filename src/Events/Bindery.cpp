@@ -106,8 +106,12 @@ EventBindery::EventBindery(Moldable* broadcaster)
         	break;}
         }
 
+        case Triggers::onload:{
+        	broadcaster->onLoad().connect(
+        			this, &EventBindery::onLoadSlot);
+        	break;}
+
         default:return;
-        }
     }
 
 }

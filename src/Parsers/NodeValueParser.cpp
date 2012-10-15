@@ -31,15 +31,23 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 	mApp;
 
 	using namespace RedisTypes;
-	if (pkg.__val_type != node_value)
+	if (
+			pkg.__val_type != node_value
+			&&pkg.__val_type != dynamic_storage)
 	{
 		pkg.interpret(VAL);
 		if (pkg.__val_type <= float_value) return CPL;
 		else if (pkg.__val_type == registry_value) return NXT_REG;
 		else return NXT_CMD;
 	}
-	else //(pkg->__val_type == node_value)
+	else // if (pkg.__val_type == node_value || pkg.__val_type = dynamic_storage)
 	{
+		/* If it's storage, parse the actual node we need to look up. */
+		if (pkg.__val_type == dynamic_storage)
+		{
+			pkg.__val = Sessions
+					::SubmissionHandler::dynamicLookup(pkg.__val);
+		}
 		/* Determine the type of the node we're dealing with */
 		app->redisCommand("type", pkg.__val);
 		pkg.__r_node_type = Redis::toString(app->reply());

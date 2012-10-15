@@ -86,6 +86,10 @@ class EventBindery : public Wt::WObject
     	handleBoolSignal(Enums::SignalTriggers::hidden_changed, boolean);
     }
 
+    inline void onLoadSlot()
+    {
+    	handleVoidSignal(Enums::SignalTriggers::onload);
+    }
 public:
     EventBindery(Goo::Moldable* broadcaster);
     ~EventBindery();

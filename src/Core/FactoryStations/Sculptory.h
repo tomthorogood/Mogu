@@ -44,7 +44,9 @@ void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m);
 
 inline void setStyle(const std::string& _style, Wt::WWidget* m)
 {
-	Wt::WString style(_style);
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(_style,&v);
+	Wt::WString style(v.getString());
 	m->setStyleClass(style);
 }
 

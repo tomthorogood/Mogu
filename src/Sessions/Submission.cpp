@@ -293,11 +293,15 @@ std::string userNodeLookup(
 	 */
 	if (node_type == REDIS_HSH)
 	{
+		// If we can't parse down to the final value, return the node itself
+		if (arg == EMPTY) return node;
 		mApp;
 		app->redisCommand("hget",node,arg);
 	}
 	else if (node_type == REDIS_LST)
 	{
+		// If we can't parse down to the final value, return the node itself
+		if (arg == EMPTY) return node;
 		mApp;
 		app->redisCommand("lindex",node,arg);
 	}

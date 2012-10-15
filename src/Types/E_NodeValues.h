@@ -34,6 +34,9 @@ enum NodeValueTypes{
      */
     ,widget_state		=0x5
 
+    /*!\brief Returns a string which can be hashed to search a user session.*/
+    ,dynamic_storage	=0x6
+
     /*!\brief When read in from the datbase, file_values will attempt to open
      * a file at the listed location, and will read the contents of the file.
      */
@@ -42,9 +45,13 @@ enum NodeValueTypes{
     /*!\brief Reads a node from the database */
     ,node_value			=0x9
 
+    /*!\brief Read information from a widget's that's been registered. */
     ,registry_value		=0xA
 
+    /*!\brief Execute a redis command. */
     ,redis_command		=0xB
+
+    ,is_node_and		=0xF
 };
 
 enum TokenTestResult{
@@ -55,6 +62,7 @@ enum TokenTestResult{
 	,NXT_NODE	=0x4
 	,NXT_REG	=0x5
 	,NXT_CMD	=0x6
+	,NXT_DYN	=0x7
 	,CPL		=0x8
 };
 

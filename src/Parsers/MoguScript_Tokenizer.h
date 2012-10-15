@@ -28,6 +28,7 @@ public:
 		add_pair('$','$'); // For states
 		add_pair('!','!'); // For redis commands
 		add_pair('|','|'); // For registered widgets
+		add_pair('[',']'); // For dynamic storage nodes
 	}
 
 	/*!\brief If the first token is a string, the entire thing is treated

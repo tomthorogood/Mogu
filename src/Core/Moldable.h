@@ -79,6 +79,8 @@ private:
     /*!\brief Signal emitted if the widget is given a test which it passes. */
     Wt::Signal <> __succeeded_test;
 
+    Wt::Signal <> __onload;
+
     Wt::Signal <bool> __hidden_changed;
 
 
@@ -209,6 +211,8 @@ public:
 	{
     	return __failed_test;
 	}
+
+    inline Wt::Signal<>& onLoad() { return __onload;}
 
     /*!\brief Provides an accessor to the index changed signal. */
     inline Wt::Signal<>& stackIndexChanged()
