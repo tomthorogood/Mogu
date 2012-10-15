@@ -18,8 +18,7 @@ using Goo::Moldable;
 namespace Listeners = Enums::Family;
 namespace Action = Enums::SignalActions;
 namespace Labels = Enums::Labels;
-namespace SignalType = Enums::SignalTypes;
-namespace TypeBit = Enums::SignalTypes;
+
 
 BroadcastMessage::BroadcastMessage (
 		Goo::Moldable* _broadcaster,

@@ -9,6 +9,7 @@
 #include <Parsers/MoguScript_Tokenizer.h>
 #include <Redis/RedisCore.h>
 #include <Parsers/TokenTestPackage.h>
+#include <Sessions/Submission.h>
 #include <Parsers/Parsers.h>
 #include <Types/NodeValue.h>
 #include <Core/Moldable.h>
@@ -45,8 +46,7 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 		/* If it's storage, parse the actual node we need to look up. */
 		if (pkg.__val_type == dynamic_storage)
 		{
-			pkg.__val = Sessions
-					::SubmissionHandler::dynamicLookup(pkg.__val);
+			pkg.__val = Sessions::SubmissionHandler::dynamicLookup(pkg.__val);
 		}
 		/* Determine the type of the node we're dealing with */
 		app->redisCommand("type", pkg.__val);

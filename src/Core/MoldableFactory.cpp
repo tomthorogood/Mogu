@@ -33,7 +33,6 @@ namespace MoldableFactory{
 using namespace Parsers::StyleParser;
 using namespace Application;
 using namespace Enums::WidgetTypes;
-using namespace Enums::SignalTypes;
 using namespace Sculptory;
 
 

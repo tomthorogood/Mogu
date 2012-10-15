@@ -62,7 +62,7 @@ Moldable::~Moldable()
 }
 
 
-virtual void
+void
 Moldable::load()
 {
     /* Don't create content until the widget is loaded and visible. */
@@ -84,7 +84,7 @@ Moldable::load()
     }
 }
 
-virtual void Moldable::setHidden(
+void Moldable::setHidden(
 		bool hidden, const Wt::WAnimation& animation)
 {
 	Wt::WContainerWidget::setHidden(hidden,animation);

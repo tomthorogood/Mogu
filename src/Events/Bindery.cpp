@@ -78,40 +78,40 @@ EventBindery::EventBindery(Moldable* broadcaster)
             broadcaster->mouseWentOut().connect(this,
                     &EventBindery::mouseoutSlot);
             break;
-        case Triggers::fail:{
+        case Triggers::fail:
         	broadcaster->fail().connect(this, &EventBindery::failSlot);
-        	break;}
+        	break;
 
-        case Triggers::succeed:{
+        case Triggers::succeed:
         	broadcaster->succeed().connect(this, &EventBindery::succeedSlot);
-        	break;}
+        	break;
 
-        case Triggers::keyup:{
+        case Triggers::keyup:
         	broadcaster->keyWentUp().connect(this, &EventBindery::keyupSlot);
-        	break;}
+        	break;
 
-        case Triggers::enter_pressed:{
+        case Triggers::enter_pressed:
         	broadcaster->enterPressed().connect(
         			this, &EventBindery::enterSlot);
-        	break;}
+        	break;
 
-        case Triggers::index_changed:{
+        case Triggers::index_changed:
         	broadcaster->stackIndexChanged().connect(
         			this, &EventBindery::indexChangedSlot);
-        	break;}
+        	break;
 
-        case Triggers::hidden_changed:{
+        case Triggers::hidden_changed:
         	broadcaster->hiddenChanged().connect(
         			this, &EventBindery::hiddenChangedSlot);
-        	break;}
-        }
+        	break;
 
-        case Triggers::onload:{
+        case Triggers::onload:
         	broadcaster->onLoad().connect(
         			this, &EventBindery::onLoadSlot);
-        	break;}
+        	break;
 
         default:return;
+        }
     }
 
 }
@@ -132,6 +132,11 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 		BroadcastMessage msg(__broadcaster, p);
 		ActionCenter::submitBroadcast(msg);
 	}
+}
+
+void EventBindery::handleBoolSignal(Triggers::SignalTrigger trigger, bool commence)
+{
+	if (commence) handleVoidSignal(trigger);
 }
 
 EventBindery::~EventBindery()
