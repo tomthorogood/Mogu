@@ -89,6 +89,7 @@ public:
 	    enumMap["enter"] 		= Trigger::enter_pressed;
 	    enumMap["index_changed"]= Trigger::index_changed;
 	    enumMap["debug"]		= Trigger::debugged;
+	    enumMap["hidden_changed"] = Trigger::hidden_changed;
 	}
 };
 

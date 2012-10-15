@@ -27,6 +27,9 @@ class EventBindery : public Wt::WObject
     void handleVoidSignal(
             Enums::SignalTriggers::SignalTrigger trigger);
 
+    void handleBoolSignal(
+    		Enums::SignalTriggers::SignalTrigger triger, bool boolean);
+
 
     inline void clickSlot()
     {
@@ -76,6 +79,11 @@ class EventBindery : public Wt::WObject
     inline void debuggedSlot()
     {
     	handleVoidSignal(Enums::SignalTriggers::debugged);
+    }
+
+    inline void hiddenChangedSlot(bool boolean)
+    {
+    	handleBoolSignal(Enums::SignalTriggers::hidden_changed, boolean);
     }
 
 public:

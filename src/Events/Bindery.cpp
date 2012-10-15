@@ -98,6 +98,12 @@ EventBindery::EventBindery(Moldable* broadcaster)
         case Triggers::index_changed:{
         	broadcaster->stackIndexChanged().connect(
         			this, &EventBindery::indexChangedSlot);
+        	break;}
+
+        case Triggers::hidden_changed:{
+        	broadcaster->hiddenChanged().connect(
+        			this, &EventBindery::hiddenChangedSlot);
+        	break;}
         }
 
         default:return;
