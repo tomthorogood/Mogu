@@ -68,7 +68,7 @@ enum SignalTrigger{
     click			=0x1
     ,style_changed	=0x2
     ,hidden_changed	=0x3
-    ,onload			=0x4
+    ,onload			=0x5
     ,mouseover		=0x4
     ,mouseout		=0x8
     ,fail			=0x10

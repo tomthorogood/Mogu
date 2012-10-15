@@ -79,8 +79,8 @@ Moldable::load()
 		{
 			do_if_has_events();
 		}
-
 		__reload = false; //Don't allow this to be reloaded accidentally.
+		onLoad().emit(); // Activate any post-load callbacks.
     }
 }
 
