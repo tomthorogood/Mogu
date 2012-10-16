@@ -28,11 +28,15 @@ inline std::string valOrEmpty(const std::string& node, const char* field)
 EventPreprocessor::EventPreprocessor (const std::string& node)
 {
 	std::string trigger_str 	= valOrEmpty(node, "trigger");
+	std::string msg_str			= valOrEmpty(node, "message");
 	std::string action_str		= getWidgetProperty(node, "action");
-	std::string msg_str			= getWidgetProperty(node, "message");
-	std::string listener_str 	= getWidgetProperty(node, "listeners");
 	message.original = msg_str;
+
 	Nodes::NodeValue v;
+
+	std::string listener_str = widgetHasProperty(node, "listener") ?
+			getWidgetProperty(node, "listener")
+			: getWidgetProperty(node, "listeners");
 
 	if (widgetHasProperty(node, "degradation"))
 	{
