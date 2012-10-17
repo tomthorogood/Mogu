@@ -156,7 +156,7 @@ public:
      * in the database.
      * @return
      */
-    inline std::string getNode()
+    inline std::string& getNode()
     {
     	return __tmpl->node;
     }

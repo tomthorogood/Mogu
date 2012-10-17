@@ -90,20 +90,7 @@ void submitBroadcast(BroadcastMessage& broadcast)
 
         listenerMap[&broadcast] = listener;
     }
-#ifdef DEBUG
-    std::string action_str;
-    if (broadcast.properties->action == Enums::SignalActions::trickle)
-    	action_str = "trickle";
-    else if
-    	(broadcast.properties->action == Enums::SignalActions::bubble)
-    	action_str = "bubble";
-    else action_str = "ERROR";
-    if (broadcast.properties->degradation > 0)
-    {
-    	std::cout << "Degradation: " << broadcast.properties->degradation << " ";
-    	std::cout << "| Action: " << action_str << std::endl;
-    }
-#endif
+
     /* If this broadcast is getting repeated, determine who the next set
      * of listeners will be, and then start over
      */
@@ -271,17 +258,20 @@ void directListeners(BroadcastMessage& broadcast)
     bool registryListener = listenerIsRegistered(f_listener, broadcast);
 
 
-#ifdef DEBUG // Make sure  that all listeners are actual objects
+#ifdef DEBUG
+    assert(listeners!=0);
     if (broadcast.broadcaster!=0)
     {
 		std::cout << "Parsing Action " << action << " for ";
 		std::cout << listeners->size() << " listeners from ";
 		std::cout << broadcast.broadcaster->getNode() << std::endl;
 		std::cout << "Listeners: ";
-		for (size_t i = 0; i < listeners->size(); ++i)
+		size_t i;
+		for (i = 0; i < listeners->size(); ++i)
 		{
 			if (i != 0) std::cout << ", ";
-			std::cout << listeners->at(i)->getNode();
+			Goo::Moldable* w = (*listeners)[i];
+			std::cout << w->getNode();
 		}
 		std::cout << std::endl;
 		std::cout << "Message: ";

@@ -24,12 +24,13 @@
 #include <Parsers/StyleParser.h>
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
+#include <Wt/WOverlayLoadingIndicator>
 
 Mogu::Mogu(const Wt::WEnvironment& env)
 :   Wt::WApplication(env), widgetRegister()
 {
 	TurnLeft::Utils::RandomCharSet rchar;
-
+	setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
 	__session = GLOBAL_SESSION;
 	__auth_token = AUTH_TOKEN;
 	__instanceid = rchar.generate(4);

@@ -47,6 +47,9 @@ MoldableTemplate* conceptualize(const std::string& node)
 	__tmpl->type = getWidgetType(node);
 
 	__tmpl->node = node;
+#ifdef DEBUG
+	assert(__tmpl->node != "");
+#endif
 
 	if (widgetIsDynamic(node)) __tmpl->flags |= is_dynamic;
 	if (widgetHasProperty(node, "animation")) __tmpl->flags |= has_animation;

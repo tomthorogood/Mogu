@@ -19,16 +19,16 @@ using namespace Enums::SignalActions;
 using namespace Enums::SignalTriggers;
 using namespace Parsers::StyleParser;
 
-inline std::string valOrEmpty(const std::string& node, const char* field)
+inline std::string valOrEmpty(const std::string& node, const char* field, std::string alternate=EMPTY)
 {
 	return (widgetHasProperty(node, field)) ?
-				getWidgetProperty(node, field) : EMPTY;
+				getWidgetProperty(node, field) : alternate;
 }
 
 EventPreprocessor::EventPreprocessor (const std::string& node)
 {
 	std::string trigger_str 	= valOrEmpty(node, "trigger");
-	std::string msg_str			= valOrEmpty(node, "message");
+	std::string msg_str			= valOrEmpty(node, "message", " ");
 	std::string action_str		= getWidgetProperty(node, "action");
 	message.original = msg_str;
 
