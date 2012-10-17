@@ -23,7 +23,6 @@ enum _Family {
 } //namespace Family
 
 namespace SignalActions{
-	const byte NUM_ACTIONS = 19;
 enum SignalAction{
     NO_ACTION			=0x0
     ,rebroadcast		=0x1
@@ -76,7 +75,6 @@ enum SignalTrigger{
     ,keyup			=0x40
     ,enter_pressed	=0x80
     ,index_changed	=0x100
-    ,debugged		=0x200
 };
 } //namespace SignalTriggers
 
