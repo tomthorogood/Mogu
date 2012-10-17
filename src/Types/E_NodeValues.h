@@ -50,8 +50,6 @@ enum NodeValueTypes{
 
     /*!\brief Execute a redis command. */
     ,redis_command		=0xB
-
-    ,is_node_and		=0xF
 };
 
 enum TokenTestResult{
