@@ -76,11 +76,6 @@ class EventBindery : public Wt::WObject
     	handleVoidSignal(Enums::SignalTriggers::index_changed);
     }
 
-    inline void debuggedSlot()
-    {
-    	handleVoidSignal(Enums::SignalTriggers::debugged);
-    }
-
     inline void hiddenChangedSlot(bool boolean)
     {
     	handleBoolSignal(Enums::SignalTriggers::hidden_changed, boolean);

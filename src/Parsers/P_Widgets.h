@@ -13,18 +13,6 @@
 
 namespace Parsers{
 
-class BitMaskParser :
-	public TurnLeft::Utils::EnumParser <Enums::BitMasks::BitMasks>
-{
-public:
-	BitMaskParser()
-	{
-		namespace Mask = Enums::BitMasks;
-		enumMap["dynamic"]			= Mask::widget_is_dynamic;
-		enumMap["rw"]				= Mask::widget_write_permissions;
-	}
-};
-
 class WidgetTypeParser :
 	public TurnLeft::Utils::EnumParser <Enums::WidgetTypes::WidgetTypes>
 {

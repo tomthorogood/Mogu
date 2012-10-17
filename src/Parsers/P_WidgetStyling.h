@@ -10,27 +10,6 @@
 
 
 namespace Parsers{
-class StyleDirectiveParser :
-    public TurnLeft::Utils::EnumParser <Enums::StyleDirectives::StyleDirectives>
-{
-public:
-    StyleDirectiveParser()
-	{
-		namespace StyleDirectives = Enums::StyleDirectives;
-		enumMap["class"]                = StyleDirectives::css_class;
-		enumMap["children"]             = StyleDirectives::children;
-		enumMap["alignment"]            = StyleDirectives::content_alignment;
-		enumMap["content"]              = StyleDirectives::text_content;
-		enumMap["file"]                 = StyleDirectives::text_file;
-		enumMap["source"]               = StyleDirectives::source;
-		enumMap["location"]             = StyleDirectives::location;
-		enumMap["events"]               = StyleDirectives::events;
-		enumMap["type"]                 = StyleDirectives::widget_type;
-		enumMap["content node"]         = StyleDirectives::content_node;
-		enumMap["internal_path"]        = StyleDirectives::internal_path;
-		enumMap["internal path"]        = StyleDirectives::internal_path;
-	}
-};
 
 class WtAlignmentParser :
 	public TurnLeft::Utils::EnumParser <Wt::AlignmentFlag>

@@ -43,10 +43,15 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 	}
 	else // if (pkg.__val_type == node_value || pkg.__val_type = dynamic_storage)
 	{
-		/* If it's storage, parse the actual node we need to look up. */
 		if (pkg.__val_type == dynamic_storage)
 		{
 			pkg.__val = Sessions::SubmissionHandler::dynamicLookup(pkg.__val);
+			NodeValueParser recursive_parser(
+					pkg.__val
+					,pkg.__nval_final
+					,pkg.__broadcaster
+					,pkg.__callback);
+			return recursive_parser.getResult();
 		}
 		/* Determine the type of the node we're dealing with */
 		app->redisCommand("type", pkg.__val);
@@ -164,6 +169,9 @@ inline NodeValueTypes getMoguType(std::string token)
 	case '|' : ntype = (fchar == '|')? registry_value : string_value;
 		break;
 	case '!' : ntype = (fchar == '!')? redis_command : string_value;
+		break;
+	case'['  : ntype = (fchar == ']')? dynamic_storage : string_value;
+		break;
 	default:
 		ntype = string_value;
 	}

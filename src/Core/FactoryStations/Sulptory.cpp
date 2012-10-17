@@ -59,18 +59,10 @@ void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 {
 	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	if ( (__tmpl->flags & is_dynamic) &&
-			app->sessionID() != "global")
-
-	{
-		std::string content =
-				Sessions::SubmissionHandler::dynamicLookup(
-						remove_widget_prefix(__tmpl->node));
-		Nodes::NodeValue v;
-		Parsers::NodeValueParser p(content,&v,m);
-		__tmpl->content = v.getString();
-	}
-	Wt::WString txt(__tmpl->content);
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(__tmpl->content, &v, m);
+	std::string content = v.getString();
+	Wt::WString txt(content);
 
 	if (m->children().size() > 0)
 	{

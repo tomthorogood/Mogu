@@ -25,7 +25,6 @@ namespace Goo
 {
 using std::string;
 using namespace Enums::WidgetTypes;
-using namespace Enums::BitMasks;
 using Nodes::NodeValue;
 using std::cout;
 using std::endl;
@@ -50,7 +49,6 @@ Moldable::Moldable(MoldableTemplate* tpl)
 
     // Not all widgets will have a bindery. This may remain null.
     bindery =0;
-    __app = MoguApp;
 }
 
 Moldable::~Moldable()

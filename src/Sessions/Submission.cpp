@@ -281,7 +281,8 @@ std::string userNodeLookup(
 					node_session(sessionid,h_st_node),h_st_node);
 
 	/* Determine whether the data in that node was supposed to have been encrypted */
-	bool encrypted = requiresEncryption(storage_name);
+	bool is_global = node.find("global") != std::string::npos;
+	bool encrypted = requiresEncryption(storage_name) && !is_global;
 
 	/* Determine the type of node that we're dealing with */
 	mApp;

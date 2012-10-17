@@ -105,21 +105,27 @@ inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(__tmpl->content, &v, m);
 	Wt::WAnchor* anchor = new Wt::WAnchor(
-			__tmpl->location, __tmpl->content);
+			__tmpl->location, v.getString());
 	anchor->setTarget(Wt::TargetNewWindow);
 	m->addWidget(anchor);
 }
 inline void __sculpt_image(MoldableTemplate* __tmpl, Moldable* m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	Wt::WImage* img = new Wt::WImage(__tmpl->source, __tmpl->content);
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(__tmpl->content, &v, m);
+	Wt::WImage* img = new Wt::WImage(__tmpl->source, v.getString());
 	m->addWidget(img);
 }
 
 inline void __sculpt_image_link(MoldableTemplate* __tmpl, Moldable* m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(__tmpl->content, &v, m);
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, __tmpl->content);
 	Wt::WAnchor* a = new Wt::WAnchor(__tmpl->location, __tmpl->content);
 	a->setImage(img);
@@ -127,11 +133,12 @@ inline void __sculpt_image_link(MoldableTemplate* __tmpl, Moldable* m)
 	m->addWidget(a);
 }
 
-inline void __sculpt_button(MoldableTemplate* __tmpl,Moldable* m){}
 inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	Wt::WLineEdit* in = new Wt::WLineEdit(__tmpl->content);
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(__tmpl->content, &v, m);
+	Wt::WLineEdit* in = new Wt::WLineEdit(v.getString());
 	if (__tmpl->flags & is_validated)
 	{
 		std::string val_name = getWidgetProperty(__tmpl->node, "validator");
@@ -157,6 +164,7 @@ inline void __sculpt_dropdown(MoldableTemplate* __tmpl,Moldable* m){}
 inline void __sculpt_radio(MoldableTemplate* __tmpl,Moldable* m){}
 inline void __sculpt_checkbox(MoldableTemplate* __tmpl,Moldable* m){}
 inline void __sculpt_multi_select(MoldableTemplate* __tmpl,Moldable* m){}
+inline void __sculpt_button(MoldableTemplate* __tmpl,Moldable* m){}
 
 }//namespace Sculptory
 }//namespace MoldableFactory

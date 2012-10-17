@@ -14,7 +14,6 @@ namespace Enums{
 #include <Types/E_Submissions.h>
 #include <Types/E_NodeValues.h>
 #include <Types/E_Widgets.h>
-#include <Types/E_WidgetStyling.h>
 #include <Types/E_Validators.h>
 
 
