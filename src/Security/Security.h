@@ -36,7 +36,7 @@ inline std::string collision_proof (std::string estr)
 	return Security::encrypt ( Hash::toHash(estr) );
 }
 
-}
+}//namespace Security
 
 
 #endif /* SECURITY_H_ */
