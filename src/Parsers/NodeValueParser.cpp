@@ -14,6 +14,7 @@
 #include <Types/NodeValue.h>
 #include <Core/Moldable.h>
 #include <sstream>
+#include <Security/Security.h>
 
 #include <Wt/WApplication>
 #include <Mogu.h>
@@ -46,12 +47,23 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 		if (pkg.__val_type == dynamic_storage)
 		{
 			pkg.__val = Sessions::SubmissionHandler::dynamicLookup(pkg.__val, EMPTY, NO_TRANSLATION);
-			NodeValueParser recursive_parser(
-					pkg.__val
-					,pkg.__nval_final
-					,pkg.__broadcaster
-					,pkg.__callback);
-			return recursive_parser.getResult();
+			if (pkg.__val.substr(0,2) == "s.")
+			{
+				app->redisCommand("type", pkg.__val);
+				pkg.__r_node_type = Redis::toString(app->reply());
+			}
+			else pkg.__r_node_type = REDIS_STR;
+
+			if (pkg.__r_node_type == REDIS_STR)
+			{
+				NodeValueParser recursive_parser(
+						pkg.__val
+						,pkg.__nval_final
+						,pkg.__broadcaster
+						,pkg.__callback);
+				return recursive_parser.getResult();
+			}
+			else return NXT_NODE;
 		}
 		/* Determine the type of the node we're dealing with */
 		app->redisCommand("type", pkg.__val);
@@ -116,9 +128,9 @@ TokenTestResult __test_t2(TokenTestPackage& pkg)
 	if (pkg.__r_node_type == REDIS_HSH)
 	{
 		std::string _arg;
-		if (pkg.__val_type == string_value)
+		if (pkg.__nval_final->getType() == Nodes::string_value)
 		{
-			_arg = pkg.__args[0];
+			_arg = pkg.__nval_final->getString();
 		}
 		else
 		{
@@ -126,6 +138,11 @@ TokenTestResult __test_t2(TokenTestPackage& pkg)
 		}
 		app->redisCommand("hget", pkg.__val, _arg);
 		result = Redis::toString(app->reply());
+		if (result.substr(result.length()-2,2) == "0_")
+		{
+			result = Security::decrypt(result);
+			TurnLeft::Utils::trimchar(result, '_');
+		}
 	}
 
 	NodeValueParser recursive_parser(
@@ -170,7 +187,9 @@ inline NodeValueTypes getMoguType(std::string token)
 		break;
 	case '!' : ntype = (fchar == '!')? redis_command : string_value;
 		break;
-	case'['  : ntype = (fchar == ']')? dynamic_storage : string_value;
+	case '[' : ntype = (fchar == ']')? dynamic_storage : string_value;
+		break;
+	case '&' : ntype = (fchar == '&')? hashed_string : string_value;
 		break;
 	default:
 		ntype = string_value;

@@ -50,6 +50,9 @@ enum NodeValueTypes{
 
     /*!\brief Execute a redis command. */
     ,redis_command		=0xB
+
+    /*!\brief Hashed value */
+    ,hashed_string		=0xC
 };
 
 enum TokenTestResult{

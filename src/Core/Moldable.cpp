@@ -14,6 +14,7 @@
 #include <Events/Bindery.h>
 #include <Parsers/StyleParser.h>
 #include <Parsers/Parsers.h>
+#include <Parsers/MoguScript_Tokenizer.h>
 #include <Types/NodeValue.h>
 #include <Static.h>
 #include <Mogu.h>
@@ -25,6 +26,7 @@ namespace Goo
 {
 using std::string;
 using namespace Enums::WidgetTypes;
+using namespace Parsers::StyleParser;
 using Nodes::NodeValue;
 using std::cout;
 using std::endl;
@@ -132,6 +134,28 @@ void Moldable::getState(Enums::WidgetTypes::States state,
 	default:
 		val.setInt(0);
 	}
+}
+
+bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
+{
+	if (!widgetHasProperty(getNode(), "block")) return true;
+	std::string action_blocks = getWidgetProperty(getNode(), "block");
+	Parsers::MoguScript_Tokenizer t(action_blocks);
+	std::string b = t.next();
+	Nodes::NodeValue v;
+	while (b != EMPTY)
+	{
+		Parsers::NodeValueParser p(
+				b, &v,
+				this,
+				&Parsers::enum_callback <Parsers::SignalActionParser>);
+		Enums::SignalActions::SignalAction block = (Enums::SignalActions::SignalAction)
+				v.getInt();
+		if (block == action) return false;
+		b = t.next();
+	}
+	return true;
+
 }
 
 

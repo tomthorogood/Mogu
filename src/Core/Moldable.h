@@ -160,13 +160,7 @@ public:
      * @param action The action requested
      * @return Whether or not it is a valid action for this widget
      */
-    inline bool allowsAction(Enums::SignalActions::SignalAction action)
-    {
-    	return !(
-			(__tmpl->actionBlocking & action)
-			|| (__tmpl->actionBlocking == Enums::SignalActions::BLOCK));
-    }
-
+    bool allowsAction(Enums::SignalActions::SignalAction action);
     /*!\brief Allows another widget to remove a specific child from this
      * widget's family tree. The other widget must already have the child's
      * pointer handy

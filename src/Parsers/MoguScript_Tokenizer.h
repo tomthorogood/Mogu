@@ -29,6 +29,7 @@ public:
 		add_pair('!','!'); // For redis commands
 		add_pair('|','|'); // For registered widgets
 		add_pair('[',']'); // For dynamic storage nodes
+		add_pair('&','&'); // For string to be hashed
 	}
 
 	/*!\brief If the first token is a string, the entire thing is treated

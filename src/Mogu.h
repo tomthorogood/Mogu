@@ -124,9 +124,9 @@ public:
 	inline redisReply* reply() { return __reply;}
 	inline void freeReply() {freeReplyObject(__reply);}
 
-	inline std::string instanceID() { return __instanceid; }
-	inline std::string sessionID() { return __session;}
-	inline std::string authToken() { return __auth_token;}
+	inline std::string& instanceID() { return __instanceid; }
+	inline std::string& sessionID() { return __session;}
+	inline std::string& authToken() { return __auth_token;}
 	inline void setSessionID (const std::string& sid) { __session = sid;}
 	inline void setAuthToken (const std::string& ath) { __auth_token = ath;}
 };

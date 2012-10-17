@@ -39,13 +39,11 @@ inline bool session_widget_exists(std::string node)
 
 void absorb(std::string value_unenc, std::string snode)
 {
-
-
 	namespace Widget = Enums::WidgetTypes;
 	/* We will only continue if all authorization checks are passed.
 	 */
 	mApp;
-	std::string session_id = app->sessionID();
+	std::string& session_id = app->sessionID();
 
 	/* Determine the location of the node's template */
 	std::string storage_locker = Hash::toHash(snode);
@@ -166,7 +164,7 @@ void absorb(std::string value_unenc, std::string snode)
 
 	default: break;
 	}
-	std::string value = (encrypted) ? value_enc : value_unenc;
+	std::string& value = (encrypted) ? value_enc : value_unenc;
 
 	// "command" -> "command node"
 	redis_command = redis_command + " " + storageNode;
@@ -195,7 +193,9 @@ std::string storage_arg(std::string pt_node_name)
 	if (!hashkey_exists(node, "arg")) return EMPTY;
 	mApp;
 	app->redisCommand("hget", node, "arg");
-	return Redis::toString(app->reply());
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(Redis::toString(app->reply()), &v);
+	return v.getString();
 }
 
 bool requiresEncryption(const std::string& snode)
@@ -256,7 +256,10 @@ std::string getHashField(const std::string& snode)
 	std::string nodePolicy = "widgets."+snode+".policy";
 	mApp;
 	app->redisCommand("hget", nodePolicy, "field");
-	return Redis::toString(app->reply());
+	Nodes::NodeValue v;
+	Parsers::NodeValueParser p(
+			Redis::toString(app->reply()), &v);
+	return v.getString();
 }
 
 std::string getSlotName(const std::string& snode)
