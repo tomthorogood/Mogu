@@ -39,6 +39,8 @@ Moldable::Moldable(MoldableTemplate* tpl)
     ,__index_changed(this)
     ,__failed_test(this)
     ,__succeeded_test(this)
+    ,__hidden_changed(this)
+    ,__onload(this)
 {
 	__tmpl = tpl;
 #ifdef DEBUG
@@ -77,9 +79,10 @@ Moldable::load()
 
 		if (__tmpl->flags & Enums::WidgetTypes::has_events)
 		{
-			do_if_has_events();
+            bindery = new Events::EventBindery(this);
 		}
-		__reload = false; //Don't allow this to be reloaded accidentally.
+		
+        __reload = false; //Don't allow this to be reloaded accidentally.
 		onLoad().emit(); // Activate any post-load callbacks.
     }
 }

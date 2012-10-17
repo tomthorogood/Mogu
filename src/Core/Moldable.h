@@ -28,14 +28,11 @@
 #include <Wt/WLineEdit>
 #include <Core/MoldableTemplate.h>
 #include <Wt/WApplication>
-#include <Wt/WSignal> // Templated Type
+#include <Wt/WSignal>
 
 //!\brief The namespace in which the Mogu Core is located.
 namespace Goo
 {
-/////////////////////////////////////////////////////////////
-/* Begin Moldable Class */
-/////////////////////////////////////////////////////////////
 
 /*! \brief The semi-base class for widgets that automatically add their own
  * children. Upon instantiation, ModdableGoo widgets connect to their
@@ -51,9 +48,6 @@ private:
 	const char* __NODE_NAME; //easier to see in the Eclipse debug screen.
 #endif
 	MoldableTemplate* __tmpl;
-	std::string __node; //!< This widget's location in the database
-
-	Mogu* __app;
 
     Events::EventBindery* bindery; //!< The widget's personal event bindery
     bool __reload; //!< Allows the widget to be reloaded
@@ -79,20 +73,20 @@ private:
     /*!\brief Signal emitted if the widget is given a test which it passes. */
     Wt::Signal <> __succeeded_test;
 
+    /*!\brief Signal emitted when the widget is loaded. */
     Wt::Signal <> __onload;
 
+    /*!\brief Signal emitted after setHidden() is called.*/
     Wt::Signal <bool> __hidden_changed;
 
-
-    /*!\brief Parses the values in the events node and binds
-     * these events to user activity.
+    /*!\brief A late-bound callback that allows the value for this widget
+     * to be retrieved.
      */
-    inline void do_if_has_events()
-    {
-        bindery = new Events::EventBindery(this);
-    }
-
     std::string (*__value_callback)(Moldable&);
+
+    /*!\brief A late-bound callback that allows the value for this widget
+     * to be set.
+     */
     void (*__setvalue_callback)(Moldable&, std::string&);
 
 public:
@@ -248,8 +242,6 @@ public:
 
     /*!\brief Returns whether or not this widget may be reloaded */
     inline bool reload() { return __reload; }
-
-    inline Mogu* app() { return __app;}
 
     inline void setValueCallback(std::string(*cb)(Moldable&))
     {
