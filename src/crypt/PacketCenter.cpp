@@ -14,9 +14,6 @@ PacketCenter::PacketCenter (string input, PacketType inputType)
 {
 	/* By default the encryption key is set to null, for obvious reasons. */
 	_key = 0;
-#ifdef DEBUG
-	std::cout << input << std::endl;
-#endif
 	/* Initialize the vectors. */
 	packets[ENCRYPTED].resize(1);
 	packets[DECRYPTED].resize(1);
@@ -31,9 +28,6 @@ PacketCenter::PacketCenter (string input, PacketType inputType)
 		/* Alias the packet vector we're currently work with */
 		packet_vector = &packets[DECRYPTED];
 		unsigned int input_len = input.length();
-#ifdef DEBUG
-		std::cout << "length: " << input_len << std::endl;
-#endif
 
 		/* Pad the input to have a length evenly divisible by eight. */
 		while (input_len % Packet::SIZE != 0)
@@ -41,16 +35,10 @@ PacketCenter::PacketCenter (string input, PacketType inputType)
 			input.append(" ");
 			input_len++;
 		}
-#ifdef DEBUG
-		std::cout << "padded length: " << input.length() << std::endl;
-#endif
 		/* Determine the number of paackets that will be generated
 		 * from the input.
 		 */
 		unsigned int num_packets = input_len/Packet::SIZE;
-#ifdef DEBUG
-		std::cout <<"Packets: " << num_packets << std::endl;
-#endif
 
 		/*Split the input into chunks and place them into packets,
 		 * all of which go into the DECRYPTED packets vector.
@@ -156,7 +144,7 @@ Packet* PacketCenter::fill_packet (string input, int& start)
 	return new Packet(_sub);
 }
 
-string PacketCenter::process_encryption(PacketType type)
+string PacketCenter::process_encryption(PacketType type, PacketType translation)
 {
 	PacketType other_type = type == ENCRYPTED ? DECRYPTED : ENCRYPTED;
 	HungryVector<Packet*>* read = &packets[type];
@@ -192,7 +180,6 @@ string PacketCenter::process_encryption(PacketType type)
 	}
 	write->trim();
 	std::stringstream strm;
-	//string ret("");
 	int num_packets = write->size();
 	for (int i = 0; i < num_packets; i++)
 	{
@@ -211,26 +198,27 @@ string PacketCenter::process_encryption(PacketType type)
 			char ch = str.at(c);
 			if (ch == ' ')
 			{
-				strm << '_';
+				char o = (translation == DO_TRANSLATION) ? '_' : ' ';
+				strm << o;
 			}
+
 			else
 			{
 				strm << ch;
 			}
 		}
-		//ret.append(str);
 	}
 	return strm.str();
 }
 
-string PacketCenter::decrypt ()
+string PacketCenter::decrypt (PacketType translation)
 {
-	return process_encryption(ENCRYPTED);
+	return process_encryption(ENCRYPTED, translation);
 }
 
 string PacketCenter::encrypt ()
 {
-	return process_encryption(DECRYPTED);
+	return process_encryption(DECRYPTED, DO_TRANSLATION);
 }
 
 PacketCenter::~PacketCenter()

@@ -45,7 +45,7 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 	{
 		if (pkg.__val_type == dynamic_storage)
 		{
-			pkg.__val = Sessions::SubmissionHandler::dynamicLookup(pkg.__val);
+			pkg.__val = Sessions::SubmissionHandler::dynamicLookup(pkg.__val, EMPTY, NO_TRANSLATION);
 			NodeValueParser recursive_parser(
 					pkg.__val
 					,pkg.__nval_final

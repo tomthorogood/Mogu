@@ -28,7 +28,9 @@ using std::count;
 enum PacketType
 {
 	DECRYPTED	=0,
-	ENCRYPTED	=1
+	ENCRYPTED	=1,
+	DO_TRANSLATION =2,
+	NO_TRANSLATION =3
 };
 
 class PacketCenter
@@ -39,7 +41,7 @@ private:
 	BF_KEY* _key;
 	void get_8_bytes (string in, CharArray* out, int& strpos, short& out_len);
 	Packet* fill_packet (string in, int& start);
-	string process_encryption (PacketType type);
+	string process_encryption (PacketType type, PacketType translation=DO_TRANSLATION);
 
 public:
 	PacketCenter (string input, PacketType inputType);
@@ -50,7 +52,7 @@ public:
 		return *this;
 	}
 	string encrypt();
-	string decrypt();
+	string decrypt(PacketType translation=DO_TRANSLATION);
 };
 
 

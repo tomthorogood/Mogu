@@ -9,6 +9,8 @@
 #define SUBMISSION_H_
 
 #include <declarations.h>
+#include <crypt/PacketCenter.h>
+
 #include <hash.h>
 namespace Sessions{
 namespace SubmissionHandler{
@@ -50,8 +52,8 @@ std::string getHashField(const std::string& snode);
  */
 std::string getSlotName(const std::string& snode);
 
-std::string userNodeLookup(std::string sessionid, std::string storage, std::string arg=EMPTY);
-std::string dynamicLookup(std::string storage, std::string arg=EMPTY);
+std::string userNodeLookup(std::string sessionid, std::string storage, std::string arg=EMPTY, PacketType translation=DO_TRANSLATION);
+std::string dynamicLookup(std::string storage, std::string arg=EMPTY,  PacketType translation=DO_TRANSLATION);
 
 
 }//namespace Submission

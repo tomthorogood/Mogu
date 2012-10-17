@@ -270,7 +270,8 @@ std::string getSlotName(const std::string& snode)
 std::string userNodeLookup(
 		std::string sessionid,
 		std::string storage_name,
-		std::string arg)
+		std::string arg,
+		PacketType translation)
 {
 	using std::string;
 	using namespace Enums::NodeValueTypes::RedisTypes;
@@ -316,7 +317,7 @@ std::string userNodeLookup(
 	string raw_string = Redis::toString(app->reply());
 	if (encrypted)
 	{
-		std::string dec = Security::decrypt(raw_string);
+		std::string dec = Security::decrypt(raw_string, translation);
 		char padding = '_';
 		trimchar(dec,padding);
 		return dec;
@@ -324,14 +325,15 @@ std::string userNodeLookup(
 	return raw_string;
 }
 
-std::string dynamicLookup(std::string storage_name, std::string arg)
+std::string dynamicLookup(std::string storage_name, std::string arg,
+		PacketType translation)
 {
 	using namespace Application;
 	using namespace Enums::NodeValueTypes::RedisTypes;
 	using std::string;
 	mApp;
 	string sessionid = app->sessionID();
-	return userNodeLookup(sessionid, storage_name, arg);
+	return userNodeLookup(sessionid, storage_name, arg, translation);
 }
 
 }//namespace SubmissoinHandler

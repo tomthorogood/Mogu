@@ -6,7 +6,6 @@
  */
 
 #include <crypt/BlowfishKey.h>
-#include <crypt/PacketCenter.h>
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <TurnLeftLib/Utils/inlines.h>
 #include <Security/Security.h>
@@ -74,13 +73,13 @@ string encrypt(string dstr)
 	return e.encrypt();
 }
 
-string decrypt(string estr)
+string decrypt(string estr, PacketType translation)
 {
 	TurnLeft::Utils::sreplace(estr, '_', ' ');
 	BlowfishKeyCreator k;
 	PacketCenter d(estr, ENCRYPTED);
 	d.giveKey(k.getKey());
-	return d.decrypt();
+	return d.decrypt(translation);
 }
 
 }//namespace Security
