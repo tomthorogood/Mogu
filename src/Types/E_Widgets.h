@@ -10,18 +10,6 @@
 
 /*!\brief The types of widgets creatable with Goo. */
 
-namespace BitMasks{
-enum BitMasks{
-	widget_accepts_children		=0x1,
-	widget_has_content			=0x2,
-	widget_usually_clicked		=0x4,
-	widget_accepts_input		=0x8,
-	widget_write_permissions	=0x40,
-	widget_is_dynamic			=0x80
-};
-
-}
-
 namespace WidgetTypes{
 enum WidgetTypes {
     container			=0x0,
