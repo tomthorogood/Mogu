@@ -30,6 +30,7 @@ enum WidgetTypes {
     image				=0x3,
     link				=0x4,
     image_link			=0x5,
+    mediaplayer         =0x6,
     button				=0x7,
     input_text			=0x8,
     textarea			=0x9,
