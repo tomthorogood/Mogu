@@ -33,7 +33,6 @@ using std::endl;
 
 Moldable::Moldable() : Wt::WContainerWidget()
 {
-	__NODE_NAME = EMPTY;
 	__reload = true;
 	__setvalue_callback =0;
 	__value_callback =0;
@@ -53,8 +52,7 @@ Moldable::Moldable(MoldableTemplate* tpl)
 {
 	__tmpl = tpl;
 #ifdef DEBUG
-    __NODE_NAME = __tmpl->node.c_str();
-    std::cout << "CREATING " << __NODE_NAME << std::endl;
+    std::cout << "CREATING " << __tmpl->node << std::endl;
 #endif
 
     // Not all widgets will have a bindery. This may remain null.
@@ -83,7 +81,7 @@ Moldable::load()
     {
 
 #ifdef DEBUG
-    	std::cout << "Loading: " << __NODE_NAME << std::endl;
+    	std::cout << "Loading: " << __tmpl->node << std::endl;
 #endif
 
 		Wt::WContainerWidget::load();

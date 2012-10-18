@@ -44,9 +44,7 @@ namespace Goo
 class Moldable : public Wt::WContainerWidget
 {
 private:
-#ifdef DEBUG
-	const char* __NODE_NAME; //easier to see in the Eclipse debug screen.
-#endif
+
 	MoldableTemplate* __tmpl;
 
     Events::EventBindery* bindery; //!< The widget's personal event bindery
