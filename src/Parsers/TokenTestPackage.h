@@ -28,6 +28,7 @@ struct TokenTestPackage
 
 	TokenTestPackage(Nodes::NodeValue* nval) :
 		__args()
+		,__broadcaster(0)
 	{
 		using namespace Enums::NodeValueTypes;
 		__val = "";

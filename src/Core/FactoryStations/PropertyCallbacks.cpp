@@ -34,8 +34,8 @@ std::string __value_wlineedit(Moldable& widget)
 std::string __value_abstract(Moldable& widget)
 {
 	using namespace Parsers::StyleParser;
-	if (widgetHasProperty(widget.getNode(), "abstract"))
-		return getWidgetProperty(
+	if (widgetHasField(widget.getNode(), "abstract"))
+		return getWidgetField(
 				widget.getNode(), "abstract");
 	return EMPTY;
 }

@@ -31,7 +31,7 @@ Wt::WValidator* createValidator(std::string validatorName)
 	Wt::WValidator* validator =0;
 	string validator_node = "validators."+validatorName;
 	string vtype =
-	Parsers::StyleParser::getWidgetProperty(validator_node, "type");
+	Parsers::StyleParser::getWidgetField(validator_node, "type");
 	Nodes::NodeValue vval;
 	Parsers::NodeValueParser nparser (
 			vtype, &vval,NULL,
@@ -49,7 +49,7 @@ Wt::WRegExpValidator* createRegexValidator(const string& node)
 {
 	Wt::WRegExpValidator* validator =0;
 	string pattern =
-			Parsers::StyleParser::getWidgetProperty(node, "test");
+			Parsers::StyleParser::getWidgetField(node, "test");
 	Wt::WString wpattern(pattern);
 	validator = new Wt::WRegExpValidator(wpattern);
 	return validator;

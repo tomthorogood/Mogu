@@ -51,9 +51,10 @@ def export_widget(args,db):
     f.write("# Mogu Import File %s" % filename)
     f.write("\n\n")
     for widget in widgets:
-        widget = "widgets.%s" % (widget.replace("widgets.",""))
+        #widget = "widgets.%s" % (widget.replace("widgets.",""))
         output = []
         output.append( export_widget_dict(db,widget) )
+        output.append( export_widget_properties(db, widget) )
         output.append( export_widget_events(db, widget) )
         output.append( export_widget_children(db, widget) )
         output_str = "".join(output)
@@ -146,6 +147,15 @@ def export_widget_events(db,widget):
     output = "%s" * 2 % (title,body)
     return output
 
+
+def export_widget_properties(db, widget):
+    pattern = Pattern.Widget(widget)
+    property_node = "%s.properties" % pattern.node
+    title = dict_entry_line("properties", pattern.name)
+    data = db.smembers(property_node)
+    body = set_str(data)
+    output = "%s%s" % (title, body)
+    return output
 
 def export_perspective(db,perspective):
     pattern = Pattern.Perspective(perspective)

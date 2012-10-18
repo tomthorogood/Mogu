@@ -23,7 +23,7 @@ using Goo::Moldable;
 mapped getActionBlock(std::string nodeName)
 {
     uint8_t block   =0;
-    string block_str = getWidgetProperty(nodeName, "block");
+    string block_str = getWidgetField(nodeName, "block");
     string block_arr[32];
     TurnLeft::Utils::Explosion explosion(block_str);
     explosion.explode(' ',block_arr);

@@ -31,7 +31,15 @@ using Nodes::NodeValue;
 using std::cout;
 using std::endl;
 
-Moldable::Moldable() : Wt::WContainerWidget() {}
+Moldable::Moldable() : Wt::WContainerWidget()
+{
+	__NODE_NAME = EMPTY;
+	__reload = true;
+	__setvalue_callback =0;
+	__value_callback =0;
+	__tmpl =0;
+	bindery =0;
+}
 
 Moldable::Moldable(MoldableTemplate* tpl)
 : Wt::WContainerWidget ()
@@ -51,6 +59,9 @@ Moldable::Moldable(MoldableTemplate* tpl)
 
     // Not all widgets will have a bindery. This may remain null.
     bindery =0;
+    __reload = true;
+    __setvalue_callback =0;
+    __value_callback =0;
 }
 
 Moldable::~Moldable()
@@ -138,8 +149,8 @@ void Moldable::getState(Enums::WidgetTypes::States state,
 
 bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
 {
-	if (!widgetHasProperty(getNode(), "block")) return true;
-	std::string action_blocks = getWidgetProperty(getNode(), "block");
+	if (!widgetHasField(getNode(), "block")) return true;
+	std::string action_blocks = getWidgetField(getNode(), "block");
 	Parsers::MoguScript_Tokenizer t(action_blocks);
 	std::string b = t.next();
 	Nodes::NodeValue v;

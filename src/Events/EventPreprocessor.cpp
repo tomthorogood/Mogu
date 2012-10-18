@@ -21,34 +21,34 @@ using namespace Parsers::StyleParser;
 
 inline std::string valOrEmpty(const std::string& node, const char* field, std::string alternate=EMPTY)
 {
-	return (widgetHasProperty(node, field)) ?
-				getWidgetProperty(node, field) : alternate;
+	return (widgetHasField(node, field)) ?
+				getWidgetField(node, field) : alternate;
 }
 
 EventPreprocessor::EventPreprocessor (const std::string& node)
 {
 	std::string trigger_str 	= valOrEmpty(node, "trigger");
 	std::string msg_str			= valOrEmpty(node, "message", " ");
-	std::string action_str		= getWidgetProperty(node, "action");
+	std::string action_str		= getWidgetField(node, "action");
 	message.original = msg_str;
 
 	Nodes::NodeValue v;
 
-	std::string listener_str = widgetHasProperty(node, "listener") ?
-			getWidgetProperty(node, "listener")
-			: getWidgetProperty(node, "listeners");
+	std::string listener_str = widgetHasField(node, "listener") ?
+			getWidgetField(node, "listener")
+			: getWidgetField(node, "listeners");
 
-	if (widgetHasProperty(node, "degradation"))
+	if (widgetHasField(node, "degradation"))
 	{
-		std::string degrad_str = getWidgetProperty(node, "degradation");
+		std::string degrad_str = getWidgetField(node, "degradation");
 		Parsers::NodeValueParser degrad_p(
 				degrad_str
 				,&v
 				,NONE);
 		degradation = v.getInt();
-		if (widgetHasProperty(node, "nextAction"))
+		if (widgetHasField(node, "nextAction"))
 		{
-			std::string nxt_str = getWidgetProperty(node, "nextAction");
+			std::string nxt_str = getWidgetField(node, "nextAction");
 			Parsers::NodeValueParser nxt_p(
 					nxt_str
 					,&v

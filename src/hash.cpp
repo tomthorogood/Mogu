@@ -12,7 +12,7 @@ HashedString::~HashedString(){}
 
 HashedString64::HashedString64()
 :   HashedString()
-{}
+{ hashedValue = 0;}
 HashedString64::~HashedString64(){}
 
 inline HashedString64& HashedString64::set(uint64 _value)

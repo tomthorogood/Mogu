@@ -30,6 +30,8 @@ class Mogu : public Wt::WApplication
 	/*!\brief A map of named widgets. */
 	WidgetRegister widgetRegister;
 
+	void loadMoguStyles();
+
 	/*!\brief The widget that started it all... */
 	Goo::Moldable* __wrapper;
 

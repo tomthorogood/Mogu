@@ -85,6 +85,7 @@ class EventBindery : public Wt::WObject
     {
     	handleVoidSignal(Enums::SignalTriggers::onload);
     }
+
 public:
     EventBindery(Goo::Moldable* broadcaster);
     ~EventBindery();

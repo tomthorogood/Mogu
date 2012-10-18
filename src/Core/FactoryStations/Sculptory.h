@@ -92,7 +92,7 @@ inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 	{
 		MoldableTemplate* cpy = new MoldableTemplate(*__tmpl);
 		cpy->num_children =0;
-		std::string tpl_name = getWidgetProperty(__tmpl->node, "template");
+		std::string tpl_name = getWidgetField(__tmpl->node, "template");
 		std::string datanode = cpy->content.substr(1,cpy->content.length()-2);
 		mApp;
 		app->redisCommand("lindex", datanode, itoa(i));
@@ -119,6 +119,12 @@ inline void __sculpt_image(MoldableTemplate* __tmpl, Moldable* m)
 	Parsers::NodeValueParser p(__tmpl->content, &v, m);
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, v.getString());
 	m->addWidget(img);
+
+	/*By default, Mogu will scale the image to fit in the Moldable container.
+	 * \TODO make this optional!
+	 */
+	if (widgetHasProperty(m->getNode(), "scaled"))
+		img->addStyleClass("mogu_SCALED_IMAGE");
 }
 
 inline void __sculpt_image_link(MoldableTemplate* __tmpl, Moldable* m)
@@ -141,7 +147,7 @@ inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 	Wt::WLineEdit* in = new Wt::WLineEdit(v.getString());
 	if (__tmpl->flags & is_validated)
 	{
-		std::string val_name = getWidgetProperty(__tmpl->node, "validator");
+		std::string val_name = getWidgetField(__tmpl->node, "validator");
 		Wt::WValidator*  v= Validators::createValidator(val_name);
 		in->setValidator(v);
 		in->keyWentUp().connect(

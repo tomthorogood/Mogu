@@ -25,37 +25,61 @@ typedef Enums::WidgetTypes::WidgetTypes WidgetType;
 namespace StyleParser
 {
 
-/*!\brief Returns whether or not a widget has a given property.
+/*!\brief Returns whether or not a widget has a given field.
  *
  * @param nodeName The widget node in question
  * @param property The property sought
  * @return
  */
 
-inline std::string getWidgetProperty(const std::string&,const char*);
+inline std::string getWidgetField(const std::string&,const char*);
 
-inline bool nodeHasProperty(const std::string& nodeName, const char* property)
+inline bool setHasMember(const std::string& set, const char* member)
+{
+	mApp;
+	app->redisCommand("sismember", set, member);
+	return (bool) Redis::getInt(app->reply());
+}
+
+
+inline bool nodeHasField(const std::string& nodeName, const char* property)
 {
 	mApp;
 	app->redisCommand("hexists", nodeName, property);
 	return (bool) Redis::getInt(app->reply());
 }
 
-inline bool widgetHasProperty(
+inline bool widgetHasField(
 		const std::string& nodeName, const char* property)
 {
-	if (!nodeHasProperty(nodeName, property)
-		&& nodeHasProperty(nodeName, "template"))
+	if (!nodeHasField(nodeName, property)
+		&& nodeHasField(nodeName, "template"))
 	{
 		std::string tpl = "templates."+
-				getWidgetProperty(nodeName, "template");
+				getWidgetField(nodeName, "template");
 
-		return nodeHasProperty(tpl, property);
+		return nodeHasField(tpl, property);
 	}
 	mApp;
 	app->redisCommand("hexists", nodeName, property);
 	return (bool) Redis::getInt(app->reply());
 }
+
+inline bool widgetHasProperty(const std::string& node, const char* prop)
+{
+	std::string widgetProperties = node+".properties";
+	if (setHasMember(widgetProperties, prop)) return true;
+	bool widgetHasTemplate = widgetHasField(node, "template");
+	if (widgetHasTemplate)
+	{
+		std::string tplname = getWidgetField(node, "template");
+		std::string templateProperties =
+				tplname=".properties";
+		return setHasMember(templateProperties, prop);
+	}
+	return false;
+}
+
 
 inline bool widgetHasEvents(
 		const std::string& nodeName)
@@ -66,7 +90,7 @@ inline bool widgetHasEvents(
 }
 
 /*!\brief Retrieves a property from a widget template. Essentially
- * the same as the getWidgetProperty field, but named differently
+ * the same as the getWidgetField field, but named differently
  * for readability and maintainability.
  * @param tpl_node The template node
  * @param tpl_field The property being retrieved
@@ -89,7 +113,7 @@ inline std::string getFromTemplate(
  * @param property The property being sought.
  * @return
  */
-inline std::string getWidgetProperty(
+inline std::string getWidgetField(
 		const std::string& nodeName, const char* property)
 {
 	/* If the widget node does not have the property in question,
@@ -99,10 +123,10 @@ inline std::string getWidgetProperty(
 	 * template node, meaning it is up to the CLI importer to assert
 	 * that things are clean from the user's mogu syntax.
 	 */
-	if (!nodeHasProperty(nodeName, property)
-		&& nodeHasProperty(nodeName, "template"))
+	if (!nodeHasField(nodeName, property)
+		&& nodeHasField(nodeName, "template"))
 	{
-		std::string tpl = getWidgetProperty(nodeName, "template");
+		std::string tpl = getWidgetField(nodeName, "template");
 		tpl = "templates."+tpl;
 		std::string prop = getFromTemplate(tpl,property);
 		return prop;
@@ -123,7 +147,7 @@ inline WidgetType getWidgetType(std::string nodeName)
 {
    WidgetType __type;
    Nodes::NodeValue val;
-   std::string reply_str = getWidgetProperty(
+   std::string reply_str = getWidgetField(
     		nodeName, "type");
    Parsers::NodeValueParser parser(reply_str, &val, NONE,
             Parsers::enum_callback <Parsers::WidgetTypeParser>);
@@ -139,7 +163,7 @@ inline WidgetType getWidgetType(std::string nodeName)
 inline Wt::WAnimation::AnimationEffect getWidgetAnimation(
         std::string nodeName)
 {
-	std::string animation_str = getWidgetProperty(nodeName,"animation");
+	std::string animation_str = getWidgetField(nodeName,"animation");
     Nodes::NodeValue val;
     NodeValueParser value(animation_str, &val, NONE,
             &Parsers::enum_callback<Parsers::WtAnimationParser>);
@@ -171,7 +195,7 @@ inline void getWidgetChildren(
  */
 inline bool widgetIsDynamic(std::string nodeName)
 {
-	std::string type_str = getWidgetProperty(nodeName,"type");
+	std::string type_str = getWidgetField(nodeName,"type");
 	size_t index = type_str.find("dynamic");
 #ifdef DEBUG
 	if (index != std::string::npos)

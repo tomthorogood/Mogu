@@ -339,3 +339,10 @@ class DataNode(Node):
     def _import(self,db, data, flags):
         self.node_type = type(data)
         super(DataNode, self)._import(db, data, flags)
+
+class PropertiesNode(Node):
+    def __init__(self):
+        super(PropertiesNode, self).__init__("widgets")
+        self.node_construction += ".%s.properties"
+        self.node_type = Set
+

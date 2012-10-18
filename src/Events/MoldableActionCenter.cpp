@@ -342,18 +342,27 @@ void directListeners(BroadcastMessage& broadcast)
      * given as the broadcast message.
      */
     case Action::set_style:{
+
         string new_style = message.getString();
         Wt::WString wNewStyle(new_style);
 
         for (int w = 0; w < num_listeners; w++)
         {
             Moldable* widget = listeners->at(w);
+#ifdef DEBUG
+    	std::cout << "Setting style of " << widget->getNode();
+    	std::cout << " to " << new_style << std::endl;
+#endif
             if (widget->allowsAction(Action::set_style))
             {
                 widget->setStyleClass(wNewStyle);
             }
         }
         break;}
+
+    case Action::emit:{
+    	Actions::emit(*listeners, message.getString());
+    	break;}
 
     /* Change the widget index of the listeners' stacked widgets. */
     case Action::set_index:
@@ -497,7 +506,7 @@ void directListeners(BroadcastMessage& broadcast)
     		if (widget->allowsAction(Action::store_abstract))
     		{
     			using namespace Parsers::StyleParser;
-    			std::string abstract = getWidgetProperty(
+    			std::string abstract = getWidgetField(
     					widget->getNode(), "abstract");
     			Sessions::SubmissionHandler::absorb(
     					abstract, message.getString());

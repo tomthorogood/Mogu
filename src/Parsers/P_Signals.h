@@ -38,6 +38,7 @@ public:
 
 	    namespace Action = Enums::SignalActions;
 	    enumMap["bubble"]       	= Action::bubble;
+	    enumMap["emit"]				= Action::emit;
 	    enumMap["trickle"]      	= Action::trickle;
 	    enumMap["rebroadcast"]  	= Action::rebroadcast;
 	    enumMap["set_style"]    	= Action::set_style;

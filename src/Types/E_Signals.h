@@ -31,6 +31,7 @@ enum SignalAction{
     ,set_style			=0x4
     ,add_class			=0x5
     ,remove_class		=0x6
+    ,emit				=0x7
     ,set_index			=0x8
     ,increment_index	=0x9
     ,decrement_index	=0xA

@@ -52,31 +52,31 @@ MoldableTemplate* conceptualize(const std::string& node)
 #endif
 
 	if (widgetIsDynamic(node)) __tmpl->flags |= is_dynamic;
-	if (widgetHasProperty(node, "animation")) __tmpl->flags |= has_animation;
+	if (widgetHasField(node, "animation")) __tmpl->flags |= has_animation;
 	if (widgetHasEvents(node)) __tmpl->flags |= has_events;
-	if (widgetHasProperty(node, "block")) __tmpl->flags |= blocks_actions;
-	if (widgetHasProperty(node, "validator")) __tmpl->flags |= is_validated;
-	if (widgetHasProperty(node, "name")) __tmpl->flags |= is_named;
-	if (widgetHasProperty(node, "tooltip")) __tmpl->flags |= has_tooltip;
+	if (widgetHasField(node, "block")) __tmpl->flags |= blocks_actions;
+	if (widgetHasField(node, "validator")) __tmpl->flags |= is_validated;
+	if (widgetHasField(node, "name")) __tmpl->flags |= is_named;
+	if (widgetHasField(node, "tooltip")) __tmpl->flags |= has_tooltip;
 
-	if (widgetHasProperty(node,"class"))
-		__tmpl->style = getWidgetProperty(node,"class");
+	if (widgetHasField(node,"class"))
+		__tmpl->style = getWidgetField(node,"class");
 
-	if (widgetHasProperty(node, "content"))
-		__tmpl->content = getWidgetProperty(node, "content");
+	if (widgetHasField(node, "content"))
+		__tmpl->content = getWidgetField(node, "content");
 
-	if (widgetHasProperty(node, "source"))
-		__tmpl->source = getWidgetProperty(node,"source");
+	if (widgetHasField(node, "source"))
+		__tmpl->source = getWidgetField(node,"source");
 
-	if (widgetHasProperty(node, "location"))
-		__tmpl->location = getWidgetProperty(node, "location");
+	if (widgetHasField(node, "location"))
+		__tmpl->location = getWidgetField(node, "location");
 
 	return __tmpl;
 }
 
 MoldableTemplate* conceptualize(const MoldableTemplate* __orig, size_t index)
 {
-	const std::string tpl_node = getWidgetProperty(__orig->node,"template");
+	const std::string tpl_node = getWidgetField(__orig->node,"template");
 	MoldableTemplate* t = conceptualize(tpl_node);
 	std::string concept_loc = __orig->content;
 	concept_loc += " " + itoa(index);
@@ -96,13 +96,13 @@ Moldable* sculpt(MoldableTemplate* __tmpl, Moldable* m)
 	{
 		std::string name = (__tmpl->name != EMPTY) ?
 					__tmpl->name
-				:	 getWidgetProperty(__tmpl->node, "name");
+				:	 getWidgetField(__tmpl->node, "name");
 
 		app->registerWidget(name, m);
 	}
 	if (__tmpl->flags&has_tooltip)
 	{
-		Wt::WString tooltip(getWidgetProperty(__tmpl->node, "tooltip"));
+		Wt::WString tooltip(getWidgetField(__tmpl->node, "tooltip"));
 		m->setToolTip(tooltip, Wt::XHTMLText);
 	}
 

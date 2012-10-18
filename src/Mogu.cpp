@@ -65,6 +65,7 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     {
     	loadAnalytics(Application::getMetaValue("analytics"));
     }
+    loadMoguStyles();
 }
 
 void Mogu::handlePathChange(std::string path)
