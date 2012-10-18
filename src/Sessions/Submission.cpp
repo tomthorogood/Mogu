@@ -17,6 +17,7 @@
 #include <Types/Enums.h>
 #include <Types/NodeValue.h>
 #include <Parsers/Parsers.h>
+#include <Parsers/StyleParser.h>
 #include <Mogu.h>
 #include <crypt/PacketCenter.h>
 #include <sstream>
@@ -46,7 +47,7 @@ void absorb(std::string value_unenc, std::string snode)
 	std::string& session_id = app->sessionID();
 
 	/* Determine the location of the node's template */
-	std::string storage_locker = Hash::toHash(snode);
+	std::string storage_locker = Hash::toHash(alternativeNodeName(snode));
 
 	/* The storage node will be a hashed version of the node template name,
 	 * within the current session namespace.
@@ -208,6 +209,16 @@ bool requiresEncryption(const std::string& snode)
 	Parsers::NodeValueParser parser(Redis::toString(app->reply()), &val);
 
 	return (bool) val.getInt();
+}
+
+std::string alternativeNodeName(const std::string& snode)
+{
+	std::string nodePolicy = "widgets."+snode+".policy";
+	if (Parsers::StyleParser::nodeHasField(nodePolicy, "node"))
+	{
+		return Parsers::StyleParser::getWidgetField(nodePolicy, "node");
+	}
+	return snode;
 }
 
 StorageMode getStorageMode(const std::string& snode)

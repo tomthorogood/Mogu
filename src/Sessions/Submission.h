@@ -41,6 +41,7 @@ Enums::SubmissionPolicies::StorageType getStorageType(
 /* Returns the data type of the widget data from its policy entry. */
 Enums::SubmissionPolicies::DataWrapping getDataWrapping(
 		const std::string& snode);
+std::string alternativeNodeName(const std::string& snode);
 
 /* Retrieves the name of the hash field for input storage, if the storage
  * is to take place in another node.
