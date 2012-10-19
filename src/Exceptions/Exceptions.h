@@ -71,5 +71,15 @@ public:
 	:	MoguException(a,b){}
 };
 
+class Err_CorruptedSessionList : public MoguException
+{
+	std::string session_id;
+public:
+	Err_CorruptedSessionList(std::string a, std::string b)
+	: MoguException(a,b){ session_id = b;}
+	inline std::string getSessionID() const { return session_id; }
+	virtual ~Err_CorruptedSessionList() throw(){}
+};
+
 }//namespace Exceptions
 #endif /* EXCEPTIONS_H_ */

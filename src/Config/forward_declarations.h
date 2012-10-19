@@ -21,6 +21,12 @@ namespace Exceptions
 	class MoguException;
 	class Err_UserNotFound;
 	class Err_PasswordNotMatch;
+	class Err_CorruptedSessionList;
+}
+
+namespace Redis
+{
+	class RedisStorageRequest;
 }
 
 namespace Hash

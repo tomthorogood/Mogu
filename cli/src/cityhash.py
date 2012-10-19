@@ -15,3 +15,4 @@ class Hash:
     session_lookup = to_city_hash("session_lookup")
     auth_lookup = to_city_hash("auth_lookup")
     salt_lookup = to_city_hash("salt")
+    all_auths = "4801973836335212534"

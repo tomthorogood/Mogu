@@ -40,7 +40,6 @@ struct SessionParams
 		auth_token 		= EMPTY;
 		e_userid 		= EMPTY;
 		token_cycles 	= 0;
-		session_cycles 	= 0; //currently unused. deprecate?
 	}
 };
 

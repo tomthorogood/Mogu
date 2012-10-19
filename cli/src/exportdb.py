@@ -151,6 +151,7 @@ def export_widget_events(db,widget):
 def export_widget_properties(db, widget):
     pattern = Pattern.Widget(widget)
     property_node = "%s.properties" % pattern.node
+    if not db.exists(property_node): return None
     title = dict_entry_line("properties", pattern.name)
     data = db.smembers(property_node)
     body = set_str(data)
@@ -269,6 +270,14 @@ def export(db, outInfo, toPackage):
         else:
             output += export_widget_dict(db,widget)
             
+    for widget in widgets:
+        temp = export_widget_properties(db, widget)
+        if temp is not None:
+            if toPackage:
+                filename = format_filename(widget)
+                write_content(outInfo+"/widgets/"+filename, temp)
+            else:
+                output += temp
 
     for widget in widgets:
         temp = export_widget_events(db,widget)
@@ -296,7 +305,7 @@ def export(db, outInfo, toPackage):
                 write_content(outInfo+"/widgets/"+filename, temp)
             else:
                 output += temp
-            
+
     perspective_events = db.keys("perspectives.*")
     perspectives = []
     for ev in perspective_events:

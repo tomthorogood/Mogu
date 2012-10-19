@@ -57,7 +57,6 @@ void addChildren(MoldableTemplate* __tmpl,
 
 void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 {
-	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Nodes::NodeValue v;
 	Parsers::NodeValueParser p(__tmpl->content, &v, m);

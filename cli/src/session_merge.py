@@ -52,7 +52,9 @@ def merge_all(args, db):
     node = "s.global.%s" % Hash.session_lookup
     session_list = db.hvals(node)
     for session in session_list:
+        print("Mergeing session with endpoint %s" %  session)
         merge_user_sessions(db, session)
+        print "Finished merging session with endpoint %s" % session
 
 def merge_user_sessions(db, endpoint):
     """
@@ -66,9 +68,12 @@ def merge_user_sessions(db, endpoint):
 
     # Assembles the linked list of all the user's sessions.
     while previous != "global":
+        thisone = previous
         linked_list.append(previous)
         metanode = "s.%s.%s" % (previous, Hash.meta)
         previous = db.hget(metanode, Hash.prev)
+        if previous == thisone:
+            db.hset(metanode, Hash.prev, "global")
 
     # Next, weed out all of the sessions that have only the 'meta'
     # data attached, meaning no data was recorded from the user. Those
@@ -139,7 +144,7 @@ def merge_user_sessions(db, endpoint):
                     for entry in data:
                         db.hset(write_to, entry, data[entry])
 
-                elif ndoe_type == "set":
+                elif node_type == "set":
                     data = Set(db.smembers(node_name))
                     for entry in data:
                         db.sadd(write_to, entry)
@@ -148,11 +153,22 @@ def merge_user_sessions(db, endpoint):
     # Great! Now get rid of absolutely everything that
     # is not the first or last nodes!
 
+
+    # Remove unsued auth tokens from the collision proofing set.
+    for node in linked_list[1:-1]:
+        key = "s.%s.%s" % (node, Hash.meta)
+        token = db.hget(key, Hash.auth)
+        db.srem("s.global.%s" % Hash.all_auths, token)
+
     for node in linked_list[1:-1]:
         keyspace = db.keys("s.%s.*" % node)
         for key in keyspace:
             db.delete(key)
 
+    # Lastly, we have to link the most recent session to the global session
+    ssn = linked_list[-1]
+    key = "s.%s.%s" % (ssn,Hash.meta)
+    db.hset(key, Hash.prev, "global")
     # The very last thing we need to do is make sure the linked list 
     # remains as such. This is involves setting the 'prev' metadata in 
     # the endpoint to link back to the first session:
