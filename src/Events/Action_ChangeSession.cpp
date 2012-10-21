@@ -39,6 +39,7 @@ struct SessionParams
 		auth_string 	= EMPTY;
 		auth_token 		= EMPTY;
 		e_userid 		= EMPTY;
+		session_cycles	= 0;
 		token_cycles 	= 0;
 	}
 };
@@ -78,10 +79,10 @@ namespace{
 
 		if (p->token_cycles > 0)
 		{
-			std::stringstream s;
-			s << p->token_cycles;
+			std::string s = itoa(p->token_cycles);
+
 			app->redisCommand("hset",
-					__NODE_COLLISION_TOK_LOOKUP, p->e_userid, s.str());
+					__NODE_COLLISION_TOK_LOOKUP, p->e_userid, s);
 			app->freeReply();
 
 		}

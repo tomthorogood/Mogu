@@ -131,6 +131,7 @@ public:
 	inline std::string& authToken() { return __auth_token;}
 	inline void setSessionID (const std::string& sid) { __session = sid;}
 	inline void setAuthToken (const std::string& ath) { __auth_token = ath;}
+	inline redisContext* DBConnection() { return __redis; }
 };
 
 

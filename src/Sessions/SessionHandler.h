@@ -46,7 +46,9 @@ public:
 	 */
 	bool store(Redis::RedisStorageRequest& request);
 
-	Nodes::NodeValue retrieve (const std::string& plaintext_storage_node);
+	Nodes::NodeValue retrieve (
+			const std::string& plaintext_storage_node
+			, const::std::string& arg = std::string(EMPTY));
 };
 
 }//namespace Sessions

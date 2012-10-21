@@ -81,5 +81,12 @@ public:
 	virtual ~Err_CorruptedSessionList() throw(){}
 };
 
+class Err_NoUserSet : public MoguException
+{
+public:
+	Err_NoUserSet(std::string b)
+	: MoguException ("No User Set! ",b) {}
+};
+
 }//namespace Exceptions
 #endif /* EXCEPTIONS_H_ */

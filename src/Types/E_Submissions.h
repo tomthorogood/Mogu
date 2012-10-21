@@ -17,7 +17,8 @@ enum StorageMode{
 enum StorageType{
 	list,
 	string,
-	hash
+	hash,
+	set
 };
 
 enum DataWrapping{

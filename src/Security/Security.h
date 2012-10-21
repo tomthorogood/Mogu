@@ -24,8 +24,8 @@ void proof_auth_string(TokenCycles* packet);
 
 void create_auth_token(
 		std::string sessionid
-		,std::string userid
-		,std::string userauth
+		,std::string p_userid
+		,std::string p_userauth
 		,TokenCycles* packet
 );
 

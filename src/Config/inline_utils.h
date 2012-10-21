@@ -17,13 +17,32 @@ inline std::string itoa (int i)
 	return s.str();
 }
 
-inline std::string remove_widget_prefix (const std::string& s)
+inline int stoi (std::string str)
 {
-	const std::string r = "widgets.";
-	const size_t len = r.length();
-	if (s.find(r) == std::string::npos) return s;
-	return s.substr(len,s.length()-len);
+	return atoi(str.c_str());
 }
 
+template <typename T, typename U>
+class create_map
+{
+private:
+    std::map<T, U> m_map;
+public:
+    create_map(const T& key, const U& val)
+    {
+        m_map[key] = val;
+    }
 
+    create_map<T, U>& operator()(const T& key, const U& val)
+    {
+        m_map[key] = val;
+        return *this;
+    }
+
+
+    operator std::map<T, U>()
+    {
+        return m_map;
+    }
+};
 #endif /* INLINE_UTILS_H_ */

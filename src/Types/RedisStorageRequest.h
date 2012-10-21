@@ -20,7 +20,7 @@ namespace Redis{
 class RedisStorageRequest
 {
 	/*!\brief The plaintext, unprocessed 'meat' of the node name. */
-	const std::string& node_body;
+	std::string node_body;
 
 	/*!\brief The session id where the data will be stored. */
 	std::string& session_id;
@@ -33,8 +33,34 @@ class RedisStorageRequest
 
 	/*!\brief The value to be stored. */
 	Nodes::NodeValue* value;
+
+	std::string field;
+
+	uint8_t ready_state;
+
+	Enums::SubmissionPolicies::StorageMode mode;
+	Enums::SubmissionPolicies::DataWrapping dtype;
+	Enums::SubmissionPolicies::StorageType nodetype;
+
+	inline bool ready() {
+		// In order for the last bit to by set, all others must be set.
+		if ( (ready_state | bit_ready_chk) == 0xFF)
+			ready_state |= 0xFF;
+		return ready_state == 0xFF;
+	}
+
+	enum statebits {
+		bit_node_body 	=0x1
+		,bit_session_id =0x2
+		,bit_nodetype	=0x4
+		,bit_in_value	=0x8
+		,bit_mode		=0x10
+		,bit_dtype		=0x20
+		,bit_command	=0x40
+		,bit_ready_chk	=0x80
+	};
 public:
-	RedisStorageRequest(const std::string& nodeBody);
+	RedisStorageRequest(std::string nodeBody);
 
 	/*!\brief One may set values manually, or one may give the object a
 	 * policy name to look up.
@@ -43,7 +69,19 @@ public:
 	 */
 	bool policyLookup(const std::string& policyName);
 
-	void setSessionID(std::string& session_id);
+	inline void setSessionID(std::string& sessionid)
+	{
+		session_id = sessionid;
+		ready_state |= bit_session_id;
+	}
+
+	inline void setInput(Nodes::NodeValue* v)
+	{
+		value = v;
+		ready_state |= bit_in_value;
+	}
+
+	void build_command();
 
 	/*!\brief Requests that the database accept the command. Returns whether
 	 * or not the command was successful.

@@ -71,11 +71,14 @@ private:
     /*!\brief Signal emitted if the widget is given a test which it passes. */
     Wt::Signal <> __succeeded_test;
 
+    /*!\brief Signal emitted after setHidden() is called.*/
+    Wt::Signal <bool> __hidden_changed;
+
+
     /*!\brief Signal emitted when the widget is loaded. */
     Wt::Signal <> __onload;
 
-    /*!\brief Signal emitted after setHidden() is called.*/
-    Wt::Signal <bool> __hidden_changed;
+
 
     /*!\brief A late-bound callback that allows the value for this widget
      * to be retrieved.

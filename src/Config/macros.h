@@ -30,6 +30,7 @@
 #define __AUTHSTR_HASH "12729235922454487927"
 #define __AUTHTOK_HASH "1031436179838087849"
 #define __ALL_AUTHS_HASH "4801973836335212534"
+#define __SET_HASH "10275542420063459543"
 
 //Pre-glued node values to speed up common queries:
 #define __NODE_GLOBAL_ "s.global."
@@ -37,6 +38,7 @@
 // encrypted_username -> last_session
 #define __NODE_SESSION_LOOKUP __NODE_GLOBAL_ __SESSION_LOOKUP_HASH
 #define __NODE_COLLISION_SES_LOOKUP __NODE_SESSION_LOOKUP"."__COLLISION_HASH
+#define __NODE_SESSION_SET __NODE_GLOBAL_ __SESSION_LOOKUP_HASH "." __SET_HASH
 
 // collisionproof(encrypted_authstring) -> collisionproof(last_authtoken)
 #define __NODE_AUTH_LOOKUP __NODE_GLOBAL_ __AUTH_LOOKUP_HASH
