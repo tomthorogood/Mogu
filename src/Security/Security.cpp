@@ -36,29 +36,6 @@ void proof_auth_string(TokenCycles* packet)
 	}
 }
 
-void create_auth_token(
-		string sessionid,
-		string userid,
-		string userauth,
-		TokenCycles* envelope)
-{
-	string ustr,hstr,estr;
-	ustr = sessionid+userid+userauth;
-	hstr = Hash::toHash(ustr);
-	estr = encrypt(hstr);
-	envelope->first = estr;
-	envelope->second = 0;
-
-	while (Sessions::Lookups::auth_token_exists(envelope->first))
-	{
-		envelope->first = collision_proof(envelope->first);
-		envelope->second++;
-	}
-	mApp;
-	app->redisCommand("sadd", __NODE_ALL_AUTHS, envelope->first);
-	app->freeReply();
-}
-
 string generate_salt()
 {
 	TurnLeft::Utils::RandomCharSet r;
