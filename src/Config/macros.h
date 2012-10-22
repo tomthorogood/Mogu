@@ -37,8 +37,14 @@
 
 // encrypted_username -> last_session
 #define __NODE_SESSION_LOOKUP __NODE_GLOBAL_ __SESSION_LOOKUP_HASH
+
 #define __NODE_COLLISION_SES_LOOKUP __NODE_SESSION_LOOKUP"."__COLLISION_HASH
+
+// { Session^1 ... Session^n }
 #define __NODE_SESSION_SET __NODE_GLOBAL_ __SESSION_LOOKUP_HASH "." __SET_HASH
+
+// { Token^1 ... Token^n }
+#define __NODE_AUTH_TOK_SET __NODE_GLOBAL_ __AUTHTOK_HASH "." __SET_HASH
 
 // collisionproof(encrypted_authstring) -> collisionproof(last_authtoken)
 #define __NODE_AUTH_LOOKUP __NODE_GLOBAL_ __AUTH_LOOKUP_HASH

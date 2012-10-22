@@ -522,7 +522,7 @@ void directListeners(BroadcastMessage& broadcast)
     		{
     			std::string slot_ = message.getString();
     			std::string value_ = widget->valueCallback();
-    			Application::slotStorage(slot_, value_);
+    			app->getSlots()[slot_] = value_;
     		}
     	}
     	break;}

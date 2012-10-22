@@ -25,9 +25,10 @@
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
 #include <Wt/WOverlayLoadingIndicator>
+#include <Types/ApplicationManager.h>
 
 Mogu::Mogu(const Wt::WEnvironment& env)
-:   Wt::WApplication(env), widgetRegister()
+:   Wt::WApplication(env), widgetRegister(), manager(*this)
 {
 	TurnLeft::Utils::RandomCharSet rchar;
 	setLoadingIndicator(new Wt::WOverlayLoadingIndicator());

@@ -96,123 +96,12 @@ namespace{
 
 bool change_session ()
 {
-	//___SETUP___//
-	using namespace Application;
-	using namespace Exceptions;
-	using namespace Sessions;
-	using namespace Sessions::SubmissionHandler;
-	using namespace Sessions::Lookups;
-	using namespace Redis;
-	using namespace Hash;
-	using Security::collision_proof;
-
-
-	if (!__init__) init();
 	mApp;
-	const string mogu_session	= app->sessionId();
-
-	string
-		p_userid
-		,p_userauth
-		,e_userid
-		,salt
-		,e_auth_string
-		,usr_last_session
-		,last_auth
-		,access_auth
-	;
-
-	//__BODY__//
-	try
-	{
-		p_userid = retrieveSlot(userid_key, mogu_session);
-		TurnLeft::Utils::stolower(p_userid);
-		p_userauth = retrieveSlot(userauth_key, mogu_session);
-	}
-	catch(const Err_SlotLookupFailed& e)
-	{
-		/* If there is no data stored in the slots when we look it up,
-		 * then we must notify programmer that the slot events are not
-		 * firing before calling this method.
-		 */
-		throw Err_EventOrderException(
-				"Widget unknown.",
-				"Attempted to retrieve slot data before "
-				"setting it. Are you sure you've called the slot directives?");
-	}
-
+	string p_userid,p_userauth;
+	p_userid = app->getSlots()[userid_key];
+	p_userauth = app->getSlots()[userauth_key];
 	TurnLeft::Utils::stolower(p_userid);
-	e_userid 	= Security::encrypt(p_userid);
-
-	// Make sure the user exists
-	if (!hashkey_exists(__NODE_SESSION_LOOKUP, e_userid)) return false;
-
-	// Next, get the user's salt and session, and construct their auth string.
-	salt = user_salt(e_userid);
-	usr_last_session = Lookups::last_session(p_userid);
-
-	e_auth_string = Security::create_raw_auth_string(
-			p_userid, salt, p_userauth);
-
-	/* Determine if this string was collision proofed upon creation,
-	 * and if so, get the number of collision proofing cycles and run them:
-	 */
-
-	std::string authstring_cycles = proofed_authstring(e_userid);
-	if (authstring_cycles != EMPTY)
-	{
-		int num_cycles = atoi(authstring_cycles.c_str());
-		for (int c = 0; c < num_cycles; c++)
-		{
-			e_auth_string = collision_proof(e_auth_string);
-		}
-	}
-
-	/* Now that we have their auth string, we can make sure that it exists
-	 * in the auth_lookup table:
-	 */
-	if (!hashkey_exists(__NODE_AUTH_LOOKUP, e_auth_string)) return false;
-
-	/* Now, we'll retrieve the auth token to make sure that it matches
-	 * the one stored in the user's last_session.
-	 */
-	std::string last_meta = prhshd_session_node(usr_last_session, __META_HASH);
-	last_auth = raw_last_authtoken(usr_last_session);
-
-	std::string authtok_cycles = proofed_last_authtoken(e_userid);
-	if (authtok_cycles != EMPTY)
-	{
-		int num_cycles = atoi(authtok_cycles.c_str());
-		for (int c = 0; c < num_cycles; c++)
-		{
-			last_auth = collision_proof(last_auth);
-		}
-	}
-
-	access_auth = access_token(e_auth_string);
-
-	TokenCycles session_packet;
-	Sessions::Generator::generate_id(&session_packet,salt);
-
-	TokenCycles token_packet;
-	Security::create_auth_token(
-			session_packet.first,
-			p_userid,
-			p_userauth,
-			&token_packet);
-
-	SessionParams sessionParams;
-	sessionParams.next_session 	= session_packet.first;
-	sessionParams.last_session 	= usr_last_session;
-	sessionParams.auth_string 	= e_auth_string;
-	sessionParams.auth_token 	= token_packet.first;
-	sessionParams.e_userid 		= e_userid;
-	sessionParams.token_cycles 	= token_packet.second;
-	sessionParams.session_cycles= session_packet.second;
-	add_session(&sessionParams);
-	app->setSessionID(session_packet.first);
-	app->setAuthToken(token_packet.first);
-	return true;
+	return app->getManager().userLogin(p_userid, p_userauth);
 }
 
 

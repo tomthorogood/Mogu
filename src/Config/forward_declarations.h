@@ -24,6 +24,12 @@ namespace Exceptions
 	class Err_CorruptedSessionList;
 }
 
+namespace Security
+{
+	struct AuthPackage;
+	class LoginAuthenticator;
+}
+
 namespace Redis
 {
 	class RedisStorageRequest;
@@ -106,6 +112,7 @@ class Mogu;
 class Parseable;
 class redisContext;
 class redisReply;
+class UniqueHashPackage;
 
 
 

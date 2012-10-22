@@ -41,6 +41,10 @@ class Mogu : public Wt::WApplication
 	redisContext* __redis;
 	redisReply* __reply;
 
+	ApplicationManager manager;
+
+	std::map <std::string, std::string> __slots;
+
 public:
 
 	Mogu(const Wt::WEnvironment& env);
@@ -132,6 +136,9 @@ public:
 	inline void setSessionID (const std::string& sid) { __session = sid;}
 	inline void setAuthToken (const std::string& ath) { __auth_token = ath;}
 	inline redisContext* DBConnection() { return __redis; }
+	inline ApplicationManager& getManager() { return manager; }
+
+	inline std::map<std::string,std::string>& getSlots() { return __slots; }
 };
 
 
