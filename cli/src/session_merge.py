@@ -39,8 +39,113 @@
 #
 from cityhash import Hash
 from collections import OrderedDict
+from sets import Set
+from redis_cheats import full_list
+
+def get_previous_session(db, session):
+    meta_node = "s.%s.%s" % (session, Hash.meta)
+    return db.hget(meta_node, Hash.prev)
+
+def get_user_linkedlist(db, endpoint):
+    # First, get a list of all the user's sessions, in order from 'endpoint' to 'global':
+    previous = endpoint
+    linkedlist = [endpoint]
+    while previous != "global":
+        current = previous
+        previous = get_previous_session(db,previous)
+
+        # If something has happened and we have a list that references itself, 
+        # Cut ties and move on.
+        if current == previous:
+            previous = "global"
+        linkedlist.append(previous)
+    return linkedlist
+
+def get_node_data(db, node):
+    nodetype = db.type(node)
+
+    if nodetype == "hash":
+        return db.hgetall(node)
+    elif nodetype == "set":
+        return Set(db.smembers(node))
+    elif nodetype == "list":
+        return full_list(db, node)
+    else:
+        return db.get(node)
+
+def get_session_node_data(db, session):
+    nodes = db.keys("s.%s.*" % session)
+    names = [node.replace("s.%s." % session ,"") for node in nodes]
+    data = {}
+    i = 0
+    while i < len(nodes):
+        data[names[i]] = get_node_data(db, nodes[i])        
+        i+= 1
+    return data
+
+def get_user_data(db, sessionlist):
+    alldata = []
+    for session in sessionlist:
+        alldata.append(get_session_node_data(db,session))
+
+    return alldata
+
+def merge_data(list_of_session_data_dicts):
+    data = list_of_session_data_dicts
+    FINAL = data[0]
+    for session in data[1:-1]:
+        for node in session:
+            if node not in FINAL:
+                FINAL[node] = session[node]
+
+def del_session(db, session):
+    keys = db.keys("s.%s.*" % session)
+    for key in keys:
+        db.delete(key)
+
+def write_hashkey(db, node, pydict):
+    for entry in pydict:
+        db.hset(node, entry, pydict[entry])
+
+def write_listkey(db, node, pylist):
+    for entry in pylist:
+        db.rpush(node, entry)
+
+def write_setkey(db, node, pyset):
+    for entry in pyset:
+        db.sadd(node, entry)
+
+def write_strkey(db, node, val):
+    db.set(node,val)
 
 
+def write_session(db, session, data):
+    print(data)
+    prefix = "s.%s." % session
+    func = None
+    for nodename in data:
+        node = "%s%s" % (prefix,nodename)
+        nodetype = db.type(node)
+        if isinstance(data[nodename],dict):
+            func = write_hashkey
+        elif isinstance(data[nodename], Set):
+            func = write_setkey
+        elif isinstance(data[nodename], list):
+            func = write_listkey
+        else:
+            func = write_strkey
+        func(db, node, data[nodename])
+
+
+def merge_user(db, endpoint):
+    linkedlist = get_user_linkedlist(db, endpoint)
+    userdata = get_user_data(db, linkedlist)
+    merge_data(userdata)
+    userdata[0][Hash.meta][Hash.prev] = "global"
+    redundant = linkedlist[1:-1]
+    write_session(db, linkedlist[0], userdata[0])
+    for session in redundant:
+        del_session(db,session)
 
 def merge_all(args, db):
     """
@@ -51,130 +156,27 @@ def merge_all(args, db):
     """
     node = "s.global.%s" % Hash.session_lookup
     session_list = db.hvals(node)
+    
     for session in session_list:
-        print("Mergeing session with endpoint %s" %  session)
-        merge_user_sessions(db, session)
+        print("Merging session with endpoint %s" %  session)
+        merge_user(db, session)
         print "Finished merging session with endpoint %s" % session
 
-def merge_user_sessions(db, endpoint):
-    """
-    'endpoint' is the user's most recent session. This is the main engine
-    the performs the session merge.
-    """
-    linked_list = []
-    pruned_sessions = []
-    previous = endpoint
-    session_data = OrderedDict()
+    SESSION_SET = "s.global.6250022396821446324.10275542420063459543"
+    for session in db.smembers(SESSION_SET):
+        if session not in session_list:
+            db.srem(SESSION_SET,session)
 
-    # Assembles the linked list of all the user's sessions.
-    while previous != "global":
-        thisone = previous
-        linked_list.append(previous)
-        metanode = "s.%s.%s" % (previous, Hash.meta)
-        previous = db.hget(metanode, Hash.prev)
-        if previous == thisone:
-            db.hset(metanode, Hash.prev, "global")
+    active_tokens =[]
+    AUTH_SET ="s.global.1031436179838087849.10275542420063459543" 
+    for session in session_list:
+        session_auth = db.hget("s.%s.%s" % (session, Hash.meta), Hash.auth)
+        active_tokens.append(session_auth)
 
-    # Next, weed out all of the sessions that have only the 'meta'
-    # data attached, meaning no data was recorded from the user. Those
-    # will be skipped in all subsequent steps, since they can be deleted harmlessly.
-    # The exception is, of course, the first session, which will never
-    # be deleted
+    for token in db.smembers(AUTH_SET):
+        if token not in active_tokens:
+            db.srem(AUTH_SET, token)
 
-    for node in linked_list:
-        if node in linked_list[1:-1]:
-            # A prunable session will have exactly 1 key in the database:
-            node_keys = db.keys("s.%s.*")
-            if len(node_keys) is 1:
-                pruned_sessions.append(node)
-            # If a node does not need to be pruned, we can add it to the 
-            # session data ordered dict, corresponding to each of the data
-            # points which are stored there. 
-            else:
-                session_data[node] = []
-                for key in node_keys:
-                    # By default, these will look like s.12345.67890
-                    # we only want to store '67890'
-                    hashed_widget = key.replace("s.%s." % node, "")
-                    session_data[node].append(hashed_widget)
-
-    # Now, we have an ordered dictionary (with the most recent session first)
-    # of each important node and the data stored there. The next task is to
-    # iterate through each of these and prune old data -- that is to say,
-    # if a hashed_widget exists in one node, we don't have to preserve that
-    # same data stored somewhere else.
-
-    # For each session containing data, beginning with the most recent:
-    for session in session_data:
-        # For each data point in that session:
-        for data_point in session:
-            # For all other sessions except this one:
-            for older_session in session_data:
-                if older_session is not session:
-                    # If the data point exists, remove it
-                    if data_point in session_data[older_session]:
-                        session_data[older_session].remove(data_point)
-
-    # Now, we have a dictionary of the most recent occurences of each 
-    # data point that exists for this user. The next task is to
-    # write all of these data points to the most recent session.
-    # We can obviously skip the first session, as it already contains
-    # that data.
-    for session in session_data:
-        if session != endpoint:
-            for data_point in session_data[session]:
-                # First, determine the type of data
-                # living at that particular node:
-                node_name = "s.%s.%s" % (session, data_point)
-                write_to = "s.%s.%s" % (endpoint, data_point)
-                node_type = db.type(node_name)
-                
-                if node_type == "string":
-                    data = db.get(node_name)
-                    db.set(write_to, data)
-
-                elif node_type == "list":
-                    listlen = db.llen(node_name)
-                    data = db.lrange(node_name, 0, listlen)
-                    for entry in data:
-                        db.rpush(write_to, entry)
-
-                elif node_type == "hash":
-                    data = db.hgetall(node_name)
-                    for entry in data:
-                        db.hset(write_to, entry, data[entry])
-
-                elif node_type == "set":
-                    data = Set(db.smembers(node_name))
-                    for entry in data:
-                        db.sadd(write_to, entry)
-                    
-
-    # Great! Now get rid of absolutely everything that
-    # is not the first or last nodes!
-
-
-    # Remove unsued auth tokens from the collision proofing set.
-    for node in linked_list[1:-1]:
-        key = "s.%s.%s" % (node, Hash.meta)
-        token = db.hget(key, Hash.auth)
-        db.srem("s.global.%s" % Hash.all_auths, token)
-
-    for node in linked_list[1:-1]:
-        keyspace = db.keys("s.%s.*" % node)
-        for key in keyspace:
-            db.delete(key)
-
-    # Lastly, we have to link the most recent session to the global session
-    ssn = linked_list[-1]
-    key = "s.%s.%s" % (ssn,Hash.meta)
-    db.hset(key, Hash.prev, "global")
-    # The very last thing we need to do is make sure the linked list 
-    # remains as such. This is involves setting the 'prev' metadata in 
-    # the endpoint to link back to the first session:
-    db.hset("s.%s.%s" % (endpoint, Hash.meta), Hash.prev, linked_list[-1])
-
-    # And we're done! 
 if __name__ == "__main__":
     from redis import Redis
     db = Redis()
