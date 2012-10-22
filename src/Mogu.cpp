@@ -28,7 +28,10 @@
 #include <Types/ApplicationManager.h>
 
 Mogu::Mogu(const Wt::WEnvironment& env)
-:   Wt::WApplication(env), widgetRegister(), manager(*this)
+:   Wt::WApplication(env)
+	, widgetRegister()
+	, manager(*this)
+	, userManager(*this)
 {
 	TurnLeft::Utils::RandomCharSet rchar;
 	setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
