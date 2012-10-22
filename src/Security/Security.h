@@ -35,7 +35,7 @@ std::string decrypt(std::string encrypted, PacketType translation=DO_TRANSLATION
 
 inline std::string collision_proof (std::string estr)
 {
-	return Security::encrypt ( Hash::toHash(estr) );
+	return encrypt ( Hash::toHash(estr) );
 }
 
 }//namespace Security

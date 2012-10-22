@@ -29,6 +29,12 @@ struct UniqueHashPackage
 };
 
 namespace Redis{
+inline bool isMemberOfSet(std::string& value, std::string& set_node)
+{
+	mApp;
+	app->redisCommand("sismember", set_node, value);
+	return (bool) Redis::getInt(app->reply());
+}
 
 void makeUniqueHash(UniqueHashPackage& pkg)
 {
@@ -37,13 +43,6 @@ void makeUniqueHash(UniqueHashPackage& pkg)
 		pkg.proofed_hash = Security::collision_proof(pkg.proofed_hash);
 		++ pkg.num_cycles;
 	}
-}
-
-inline bool isMemberOfSet(std::string& value, std::string& set_node)
-{
-	mApp;
-	app->redisCommand("sismember", set_node, value);
-	return (bool) Redis::getInt(app->reply());
 }
 
 }//namespace Redis

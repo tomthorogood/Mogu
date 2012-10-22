@@ -113,6 +113,7 @@ class Parseable;
 class redisContext;
 class redisReply;
 class UniqueHashPackage;
+class ApplicationManager;
 
 
 

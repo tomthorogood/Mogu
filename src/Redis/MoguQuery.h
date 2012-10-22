@@ -90,13 +90,6 @@ public:
 		return getSessionMetaValue(session, __AUTH_HASH);
 	}
 
-	bool matchesUserAuth(const std::string& userauth_in)
-	{
-		return Sessions::Lookups::hashkey_exists(
-				__NODE_AUTH_LOOKUP, userauth_in);
-	}
-
-
 private:
 	redisContext* redis;
 };

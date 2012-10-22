@@ -5,7 +5,7 @@
  *      Author: tom
  */
 
-#include <Security/LoginAuthenticator.cpp>
+#include <Security/LoginAuthenticator.h>
 #include <TurnLeftLib/Utils/inlines.h>
 #include <Security/Security.h>
 #include <Mogu.h>

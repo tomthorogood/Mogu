@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <Redis/RedisCore.h>
 #include <Core/Moldable.h>
+#include <Types/ApplicationManager.h>
 
 #ifndef AUTH_TOKEN
 #define AUTH_TOKEN "BendTheWeb"
