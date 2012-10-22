@@ -19,8 +19,8 @@ bool UserManager::createUser(
 		const std::string& plain_id, const std::string& plain_passwd)
 {
 	plain_userid = plain_id;
-	enc_userid = Security::encrypt(plain_userid);
 	TurnLeft::Utils::stolower(plain_userid);
+	enc_userid = Security::encrypt(plain_userid);
 
 	// Ensure that the user does not already exist
 	application.redisCommand("hexists", __NODE_SESSION_LOOKUP, enc_userid);
@@ -31,10 +31,10 @@ bool UserManager::createUser(
 	application.redisCommand("hset", __NODE_SALT_LOOKUP, enc_userid, salt);
 
 	// Create an auth string for the user
-	UniqueHashPackage hashPkg_auth;
-	hashPkg_auth.original_hash = create_raw_auth_string(
-			plain_userid, salt, plain_passwd);
-	hashPkg_auth.set_node = __NODE_AUTH_STR_SET;
+	UniqueHashPackage hashPkg_auth(
+			create_raw_auth_string(
+					plain_userid, salt, plain_passwd),
+					__NODE_AUTH_STR_SET);
 	Redis::makeUniqueHash(hashPkg_auth);
 
 	// Let Mogu know about any collisions that took place so they can be replicated
@@ -50,7 +50,7 @@ bool UserManager::createUser(
 
 	// Create an auth token for the session
 	UniqueHashPackage hashPkg_token(
-			plain_id + salt + "first_session", __NODE_AUTH_TOK_SET);
+			Hash::toHash(plain_id + salt + "first_session"), __NODE_AUTH_TOK_SET);
 	Redis::makeUniqueHash(hashPkg_token);
 	application.redisCommand(
 			"sadd", __NODE_AUTH_TOK_SET, hashPkg_token.proofed_hash);
