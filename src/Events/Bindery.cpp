@@ -55,7 +55,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
      * the trigger to the handler function.
      */
     PreprocessorMap::iterator iter;
-    for (iter = __map.begin(); iter != __map.end(); iter++)
+    for (iter = __map.begin(); iter != __map.end(); ++iter)
     {
         Triggers::SignalTrigger trigger = iter->first;
 

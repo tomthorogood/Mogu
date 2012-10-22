@@ -101,7 +101,6 @@ void LoginAuthenticator::proof_token(
 			--proof_cycles;
 		}
 	}
-
 }
 
 

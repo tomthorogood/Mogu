@@ -28,6 +28,7 @@ namespace Security
 {
 	struct AuthPackage;
 	class LoginAuthenticator;
+	class UserManager;
 }
 
 namespace Redis

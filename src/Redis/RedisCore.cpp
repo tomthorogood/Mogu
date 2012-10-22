@@ -21,13 +21,6 @@ namespace{
     static stringstream stream;
 } //unnamed namespace
 
-void done(redisReply* _reply, redisContext* _redis)
-{
-    freeReplyObject(_reply);
-    redisFree(_redis);
-
-}
-
 std::string join (
         string arg1, string arg2, string arg3, string arg4, string arg5)
 {
@@ -81,14 +74,6 @@ long long getInt(redisReply* reply)
     return ret_int;
 }
 
-float toFloat(redisReply* reply)
-{
-    string ret_str(reply->str);
-    const char* ret_c = ret_str.c_str();
-    freeReplyObject(reply);
-    return atof(ret_c);
-}
-
 void toVector(redisReply* reply, strvector& vec)
 {
     for (unsigned int i = 0; i < reply->elements; i++)
@@ -97,14 +82,6 @@ void toVector(redisReply* reply, strvector& vec)
         vec.push_back(str);
     }
     freeReplyObject(reply);
-}
-
-int toInt(redisReply* reply)
-{
-    string ret_str(reply->str);
-    const char* ret_c = ret_str.c_str();
-    freeReplyObject(reply);
-    return atoi(ret_c);
 }
 } //namespace Redis
 

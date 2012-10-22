@@ -18,6 +18,7 @@
 class ApplicationManager
 {
 private:
+	friend class ::Security::UserManager;
 	Mogu& application;
 	std::string newSessionID();
 	void createNewSession(Security::AuthPackage& pkg);

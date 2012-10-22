@@ -43,6 +43,8 @@
 // { Session^1 ... Session^n }
 #define __NODE_SESSION_SET __NODE_GLOBAL_ __SESSION_LOOKUP_HASH "." __SET_HASH
 
+#define __NODE_AUTH_STR_SET __NODE_GLOBAL_ __AUTHSTR_HASH "." __SET_HASH
+
 // { Token^1 ... Token^n }
 #define __NODE_AUTH_TOK_SET __NODE_GLOBAL_ __AUTHTOK_HASH "." __SET_HASH
 

@@ -25,7 +25,6 @@ ApplicationManager::ApplicationManager(Mogu& app) : application(app)
 
 std::string ApplicationManager::newSessionID()
 {
-	mApp;
 	RandomCharSet r;
 	std::string baseID = r.generate(8);
 	std::string hashedID = Hash::toHash(baseID);
@@ -84,9 +83,14 @@ void ApplicationManager::createNewSession(Security::AuthPackage& pkg)
 	//Add the new auth token to the auth token set, and remove the previous one. */
 	app->redisCommand("sadd", __NODE_AUTH_TOK_SET, new_auth_token.proofed_hash);
 	app->freeReply();
-	std::string prev_auth = q.getSessionMetaValue(pkg.last_session, __AUTH_HASH);
-	app->redisCommand("srem", __NODE_AUTH_TOK_SET, prev_auth);
-	app->freeReply();
+
+	// Do not attempt to remove the previous auth token if the previous session was "global"
+	if (pkg.last_session != "global")
+	{
+		std::string prev_auth = q.getSessionMetaValue(pkg.last_session, __AUTH_HASH);
+		app->redisCommand("srem", __NODE_AUTH_TOK_SET, prev_auth);
+		app->freeReply();
+	}
 
 	//Link the new auth token to the user's auth string
 	app->redisCommand("hset",

@@ -32,13 +32,6 @@ std::string encrypt(std::string unencrypted)
 	return encrypted;
 }
 
-
-
-void slotStorage(std::string name, std::string value)
-{
-	__storageSlots[name] = value;
-}
-
 std::string retrieveSlot(std::string name, std::string wtsession)
 {
 

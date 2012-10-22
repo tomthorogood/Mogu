@@ -313,7 +313,6 @@ void directListeners(BroadcastMessage& broadcast)
         	break;}
 
         case Action::reset_password:{
-        	std::string msg = message.getString();
         	std::string uid = Application::retrieveSlot(
         			"USERID", app->sessionId());
 

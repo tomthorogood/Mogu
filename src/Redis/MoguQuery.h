@@ -64,6 +64,16 @@ public:
 		return e;
 	}
 
+	inline bool field_exists(const std::string& node_name, const std::string& field)
+	{
+		void* vr = Redis::command(
+				redis, "hexists", node_name, field);
+		redisReply* r = (redisReply*) vr;
+		bool e = (bool) r->integer;
+		freeReplyObject(r);
+		return e;
+	}
+
 	inline bool session_exists (const std::string& sessionID)
 	{
 		void* vr = Redis::command(
@@ -78,6 +88,7 @@ public:
 			const std::string& session,const std::string& key)
 	{
 		std::string session_node = "s."+session+"."+__META_HASH;
+		if (!field_exists(session_node, key)) return EMPTY;
 		void* vr = Redis::command(redis, "hget", session_node, key);
 		redisReply* r = (redisReply*) vr;
 		std::string value = r->str;

@@ -79,7 +79,6 @@ bool reset_password(std::string username)
 {
 	using TurnLeft::Utils::RandomCharSet;
 	TurnLeft::Utils::stolower(username);
-	std::string e_userid = Security::encrypt(username);
 	RandomCharSet rchar;
 	std::string new_password = rchar.generate(8);
 #ifdef DEBUG

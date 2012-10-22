@@ -11,6 +11,7 @@
 #include <declarations.h>
 #include <Mogu.h>
 #include <Redis/RedisCore.h>
+#include <Security/Security.h>
 
 struct UniqueHashPackage
 {
@@ -36,7 +37,7 @@ inline bool isMemberOfSet(std::string& value, std::string& set_node)
 	return (bool) Redis::getInt(app->reply());
 }
 
-void makeUniqueHash(UniqueHashPackage& pkg)
+inline void makeUniqueHash(UniqueHashPackage& pkg)
 {
 	while (isMemberOfSet(pkg.proofed_hash, pkg.set_node))
 	{

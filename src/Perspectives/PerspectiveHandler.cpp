@@ -25,8 +25,6 @@ namespace Handler{
 void mold(std::string perspective)
 {
 	namespace Action = Enums::SignalActions;
-	std::string action_str;
-	std::string message_str;
 	size_t num_molds = 0;
 	Redis::strvector keyspace;
 

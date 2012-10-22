@@ -46,9 +46,6 @@ void absorb(std::string value_unenc, std::string snode)
 	mApp;
 	std::string& session_id = app->sessionID();
 
-	/* Determine the location of the node's template */
-	std::string storage_locker = Hash::toHash(alternativeNodeName(snode));
-
 	/* The storage node will be a hashed version of the node template name,
 	 * within the current session namespace.
 	 */
