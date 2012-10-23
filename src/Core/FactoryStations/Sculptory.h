@@ -120,9 +120,6 @@ inline void __sculpt_image(MoldableTemplate* __tmpl, Moldable* m)
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, v.getString());
 	m->addWidget(img);
 
-	/*By default, Mogu will scale the image to fit in the Moldable container.
-	 * \TODO make this optional!
-	 */
 	if (widgetHasProperty(m->getNode(), "scaled"))
 		img->addStyleClass("mogu_SCALED_IMAGE");
 }

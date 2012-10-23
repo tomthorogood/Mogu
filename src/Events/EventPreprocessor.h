@@ -21,12 +21,15 @@ struct PreprocessedEventListener
 
 	PreprocessedEventListener() {
 		r_listener = EMPTY;
+		type = family;
+		f_listener = Enums::Family::self;
 	}
 
 	PreprocessedEventListener(const std::string& listener)
 	{
 		type = registry;
 		r_listener = listener;
+		f_listener = Enums::Family::self;
 	}
 
 	PreprocessedEventListener(Enums::Family::_Family& listener)
@@ -42,7 +45,9 @@ struct PreprocessedMessage
 	Mtype status;
 	std::string original;
 	Nodes::NodeValue value;
-	PreprocessedMessage() : value() {}
+	PreprocessedMessage() : value() {
+		status = delayed;
+	}
 };
 
 struct EventPreprocessor
