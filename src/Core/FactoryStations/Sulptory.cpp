@@ -59,7 +59,7 @@ void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 {
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(__tmpl->content, &v, m);
+	Parsers::NodeValueParser p(__tmpl->content, v, m);
 	std::string content = v.getString();
 	Wt::WString txt(content);
 

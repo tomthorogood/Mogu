@@ -17,7 +17,6 @@ class NodeValueParser
 private:
 
 	MoguDeclaration declaration;
-	Nodes::NodeValue* parsedValue;
 	std::string orig_string;
 
 	inline std::string unwrap(std::string str)
@@ -28,10 +27,9 @@ private:
 public:
 	NodeValueParser(
 			std::string full_value,
-			Nodes::NodeValue* node_value,
+			Nodes::NodeValue& node_value,
 			Goo::Moldable* broadcaster =0,
 			int(*callback)(const std::string&) =0);
-	Nodes::NodeValue* getValue();
 	inline Enums::NodeValueTypes::TokenTestResult getResult()
 		{ return __last_rslt;}
 };

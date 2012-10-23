@@ -46,14 +46,14 @@ bool RedisStorageRequest::policyLookup(const std::string& storageName)
 		if (StyleParser::nodeHasField(policy, "encrypted"))
 		{
 			str = StyleParser::getWidgetField(policy, "encrypted");
-			Parsers::NodeValueParser p(str,&v);
+			Parsers::NodeValueParser p(str,v);
 			encrypted = (bool) v.getInt();
 		}
 
 		if (StyleParser::nodeHasField(policy, "mode"))
 		{
 			str = StyleParser::getWidgetField(policy, "mode");
-			Parsers::NodeValueParser p(str,&v, NULL,
+			Parsers::NodeValueParser p(str,v, NULL,
 					&Parsers::enum_callback <Parsers::StorageModeParser>);
 			mode = (Enums::SubmissionPolicies::StorageMode) v.getInt();
 		}
@@ -62,7 +62,7 @@ bool RedisStorageRequest::policyLookup(const std::string& storageName)
 		if (StyleParser::nodeHasField(policy, "data_type"))
 		{
 			str = StyleParser::getWidgetField(policy, "data_type");
-			Parsers::NodeValueParser p(str, &v, NULL,
+			Parsers::NodeValueParser p(str, v, NULL,
 					&Parsers::enum_callback <Parsers::StorageWrappingParser>);
 			dtype = (Enums::SubmissionPolicies::DataWrapping) v.getInt();
 		}
@@ -71,7 +71,7 @@ bool RedisStorageRequest::policyLookup(const std::string& storageName)
 		if (StyleParser::nodeHasField(policy, "storage_type"))
 		{
 			str = StyleParser::getWidgetField(policy, "storage_type");
-			Parsers::NodeValueParser p(str, &v, NULL,
+			Parsers::NodeValueParser p(str, v, NULL,
 					&Parsers::enum_callback <Parsers::StorageTypeParser>);
 			nodetype = (Enums::SubmissionPolicies::StorageType) v.getInt();
 		}
@@ -80,14 +80,14 @@ bool RedisStorageRequest::policyLookup(const std::string& storageName)
 		if (StyleParser::nodeHasField(policy, "node"))
 		{
 			str = StyleParser::getWidgetField(policy, "node");
-			Parsers::NodeValueParser p(str, &v);
+			Parsers::NodeValueParser p(str, v);
 			node_body = v.getString();
 		}
 
 		if (StyleParser::nodeHasField(policy, "field"))
 		{
 			str = StyleParser::getWidgetField(policy, "field");
-			Parsers::NodeValueParser p(str,&v);
+			Parsers::NodeValueParser p(str,v);
 			field = v.getString();
 		}
 
@@ -101,7 +101,7 @@ void RedisStorageRequest::build_command()
 	using namespace Enums::SubmissionPolicies;
 
 	//All other entities must first have been set.
-	if (ready_state | bit_command == 0x7F)
+	if ( (ready_state | bit_command) == 0x7F)
 	{
 		std::string command = "";
 		switch(nodetype)

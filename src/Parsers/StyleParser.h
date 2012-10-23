@@ -149,7 +149,7 @@ inline WidgetType getWidgetType(std::string nodeName)
    Nodes::NodeValue val;
    std::string reply_str = getWidgetField(
     		nodeName, "type");
-   Parsers::NodeValueParser parser(reply_str, &val, NONE,
+   Parsers::NodeValueParser parser(reply_str, val, NONE,
             Parsers::enum_callback <Parsers::WidgetTypeParser>);
    __type = (WidgetType) val.getInt();
     return __type;
@@ -165,7 +165,7 @@ inline Wt::WAnimation::AnimationEffect getWidgetAnimation(
 {
 	std::string animation_str = getWidgetField(nodeName,"animation");
     Nodes::NodeValue val;
-    NodeValueParser value(animation_str, &val, NONE,
+    NodeValueParser value(animation_str, val, NONE,
             &Parsers::enum_callback<Parsers::WtAnimationParser>);
     return (Wt::WAnimation::AnimationEffect) val.getInt();
 }

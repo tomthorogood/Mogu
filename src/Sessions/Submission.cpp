@@ -192,7 +192,7 @@ std::string storage_arg(std::string pt_node_name)
 	mApp;
 	app->redisCommand("hget", node, "arg");
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(Redis::toString(app->reply()), &v);
+	Parsers::NodeValueParser p(Redis::toString(app->reply()), v);
 	return v.getString();
 }
 
@@ -203,7 +203,7 @@ bool requiresEncryption(const std::string& snode)
 	mApp;
 	app->redisCommand("hget", nodePolicy, "encrypted");
 	Nodes::NodeValue val;
-	Parsers::NodeValueParser parser(Redis::toString(app->reply()), &val);
+	Parsers::NodeValueParser parser(Redis::toString(app->reply()), val);
 
 	return (bool) val.getInt();
 }
@@ -226,7 +226,7 @@ StorageMode getStorageMode(const std::string& snode)
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
 			Redis::toString(app->reply())
-			,&val, 0x0 //No need to pass in a widget
+			,val, 0x0 //No need to pass in a widget
 			,&Parsers::enum_callback <Parsers::StorageModeParser>);
 	return (StorageMode) val.getInt();
 }
@@ -239,7 +239,7 @@ StorageType getStorageType(const std::string& snode)
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
 			Redis::toString(app->reply())
-			,&val
+			,val
 			,0x0 // No need to pass in a widget
 			,&Parsers::enum_callback <Parsers::StorageTypeParser>);
 	return (StorageType) val.getInt();
@@ -253,7 +253,7 @@ DataWrapping getDataWrapping(const std::string& snode)
 	Nodes::NodeValue val;
 	Parsers::NodeValueParser parser(
 			Redis::toString(app->reply()),
-			&val,
+			val,
 			0x0,
 			&Parsers::enum_callback <Parsers::StorageWrappingParser>);
 	return (DataWrapping) val.getInt();
@@ -266,7 +266,7 @@ std::string getHashField(const std::string& snode)
 	app->redisCommand("hget", nodePolicy, "field");
 	Nodes::NodeValue v;
 	Parsers::NodeValueParser p(
-			Redis::toString(app->reply()), &v);
+			Redis::toString(app->reply()), v);
 	return v.getString();
 }
 

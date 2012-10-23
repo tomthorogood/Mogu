@@ -120,7 +120,7 @@ TokenTestResult __test_t2(TokenTestPackage& pkg)
 
 	if (pkg.__r_node_type == REDIS_LST)
 	{
-		std::string _arg = itoa(pkg.__nval_final->getInt());
+		std::string _arg = itoa(pkg.__nval_final.getInt());
 		app->redisCommand("lindex", pkg.__val, _arg);
 		result = Redis::toString(app->reply());
 	}
@@ -128,13 +128,13 @@ TokenTestResult __test_t2(TokenTestPackage& pkg)
 	if (pkg.__r_node_type == REDIS_HSH)
 	{
 		std::string _arg;
-		if (pkg.__nval_final->getType() == Nodes::string_value)
+		if (pkg.__nval_final.getType() == Nodes::string_value)
 		{
-			_arg = pkg.__nval_final->getString();
+			_arg = pkg.__nval_final.getString();
 		}
 		else
 		{
-			_arg = itoa(pkg.__nval_final->getInt());
+			_arg = itoa(pkg.__nval_final.getInt());
 		}
 		app->redisCommand("hget", pkg.__val, _arg);
 		result = Redis::toString(app->reply());
@@ -162,7 +162,7 @@ TokenTestResult __test_tReg(TokenTestPackage& pkg)
 	s = p.parse(pkg.__args[0]);
 	mApp;
 	Moldable* w = app->registeredWidget(pkg.__val);
-	w->getState(s, *(pkg.__nval_final));
+	w->getState(s, pkg.__nval_final);
 	return CPL;
 }
 
@@ -199,7 +199,7 @@ inline NodeValueTypes getMoguType(std::string token)
 
 NodeValueParser::NodeValueParser(
 		std::string full_value,
-		NodeValue* nval,
+		NodeValue& nval,
 		Moldable* broadcaster,
 		int(*callback)(const std::string&))
 	:	declaration()
@@ -209,7 +209,6 @@ NodeValueParser::NodeValueParser(
 			&__test_t1,
 			&__test_t2
 	};
-	parsedValue = nval;
 	MoguScript_Tokenizer tokenizer(full_value);
 
 	std::string token = EMPTY;

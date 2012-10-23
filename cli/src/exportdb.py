@@ -220,7 +220,8 @@ def export_session(db,session):
     _session_nodes = db.keys("%s.*" % pattern.node)
     session_nodes = []
     for n in _session_nodes:
-        session_nodes.append(n.split(".")[2])
+        innernode = n.split(".")[2:]
+        session_nodes.append(".".join(innernode))
 
     for node in session_nodes:
         body = ""

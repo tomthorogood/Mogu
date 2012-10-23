@@ -43,7 +43,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 		std::string degrad_str = getWidgetField(node, "degradation");
 		Parsers::NodeValueParser degrad_p(
 				degrad_str
-				,&v
+				,v
 				,NONE);
 		degradation = v.getInt();
 		if (widgetHasField(node, "nextAction"))
@@ -51,7 +51,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 			std::string nxt_str = getWidgetField(node, "nextAction");
 			Parsers::NodeValueParser nxt_p(
 					nxt_str
-					,&v
+					,v
 					,NONE
 					,&Parsers::enum_callback
 						<Parsers::SignalActionParser>);
@@ -70,7 +70,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	{
 		Parsers::NodeValueParser trigger_p(
 				trigger_str,
-				&v,
+				v,
 				NONE
 				,&Parsers::enum_callback <Parsers::SignalTriggerParser>);
 		trigger = (SignalTrigger) v.getInt();
@@ -82,7 +82,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	 */
 	Parsers::NodeValueParser action_p(
 			action_str
-			,&v
+			,v
 			,NONE
 			,&Parsers::enum_callback <Parsers::SignalActionParser>);
 	action = (SignalAction) v.getInt();
@@ -95,7 +95,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	 */
 	Parsers::NodeValueParser listener_p(
 			listener_str
-			,&v
+			,v
 			,NONE
 			,&Parsers::enum_callback <Parsers::FamilyMemberParser>);
 

@@ -427,7 +427,7 @@ void directListeners(BroadcastMessage& broadcast)
     		Moldable* widget = listeners->at(w);
     		Nodes::NodeValue v;
     		Parsers::NodeValueParser p(
-    				message.getString(), &v);
+    				message.getString(), v);
     		if (widget->allowsAction(Action::add_widget))
 			{
     			MoldableTemplate* tpl =

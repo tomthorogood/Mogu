@@ -155,7 +155,7 @@ bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
 	while (b != EMPTY)
 	{
 		Parsers::NodeValueParser p(
-				b, &v,
+				b, v,
 				this,
 				&Parsers::enum_callback <Parsers::SignalActionParser>);
 		Enums::SignalActions::SignalAction block = (Enums::SignalActions::SignalAction)

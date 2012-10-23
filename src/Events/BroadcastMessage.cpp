@@ -37,7 +37,7 @@ BroadcastMessage::BroadcastMessage (
 #endif
 		Parsers::NodeValueParser p(
 				preproc->message.original
-				,&preproc->message.value
+				,preproc->message.value
 				,broadcaster);
 	}
 }

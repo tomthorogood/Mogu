@@ -81,7 +81,7 @@ MoldableTemplate* conceptualize(const MoldableTemplate* __orig, size_t index)
 	std::string concept_loc = __orig->content;
 	concept_loc += " " + itoa(index);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser parser(concept_loc,&v);
+	Parsers::NodeValueParser parser(concept_loc,v);
 	t->content = v.getString();
 	return t;
 }

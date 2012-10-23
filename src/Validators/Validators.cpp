@@ -34,7 +34,7 @@ Wt::WValidator* createValidator(std::string validatorName)
 	Parsers::StyleParser::getWidgetField(validator_node, "type");
 	Nodes::NodeValue vval;
 	Parsers::NodeValueParser nparser (
-			vtype, &vval,NULL,
+			vtype, vval,NULL,
 			Parsers::enum_callback <Parsers::ValidatorTypeParser>);
 	switch (vval.getInt())
 	{

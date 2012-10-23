@@ -22,13 +22,13 @@ void TokenTestPackage::interpret(
 		switch(__val_type)
 		{
 			case integer_value:
-				__nval_final->setInt(atoi(ival.c_str()));
+				__nval_final.setInt(atoi(ival.c_str()));
 				break;
 			case enum_value:
-				__nval_final->setInt( (int) __callback(ival));
+				__nval_final.setInt( (int) __callback(ival));
 				break;
 			case float_value:
-				__nval_final->setFloat(atof( ival.c_str()));
+				__nval_final.setFloat(atof( ival.c_str()));
 				break;
 			case widget_state:{
 				WidgetStateParser parser;
@@ -37,9 +37,9 @@ void TokenTestPackage::interpret(
 				__broadcaster->getState(st, state_val);
 				Nodes::ReadType type = state_val.getType();
 				if (type == Nodes::int_value)
-					__nval_final->setInt(state_val.getInt());
+					__nval_final.setInt(state_val.getInt());
 				else if (type == Nodes::string_value)
-					__nval_final->setString(state_val.getString());
+					__nval_final.setString(state_val.getString());
 				break;}
 
 			// Both of these are technically just going to contain strings.
@@ -50,10 +50,10 @@ void TokenTestPackage::interpret(
 			case hashed_string:{
 				Parsers::NodeValueParser rescursive(
 						ival,__nval_final);
-				__nval_final->setString(Hash::toHash(__nval_final->getString()));
+				__nval_final.setString(Hash::toHash(__nval_final.getString()));
 				break;}
 			default:
-				__nval_final->setString(ival);
+				__nval_final.setString(ival);
 		}
 	}
 }

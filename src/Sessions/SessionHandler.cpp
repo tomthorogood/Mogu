@@ -135,7 +135,7 @@ Nodes::NodeValue SessionHandler::retrieve(
 	}
 	node_val = Redis::toString(app->reply());
 
-	Parsers::NodeValueParser p(node_val, &v);
+	Parsers::NodeValueParser p(node_val, v);
 	return v;
 }
 
