@@ -5,13 +5,14 @@
  *      Author: tom
  */
 
-
+#include <Types/Listener.h>
 #include <Events/MoldableActionCenter.h>
 #include <Events/BroadcastMessage.h>
 #include <Events/EventPreprocessor.h>
 #include <Parsers/Parsers.h>
 #include <Parsers/StyleParser.h>
 #include <Parsers/NodeValueParser.h>
+#include <Parsers/TokenGenerator.h>
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
 #include <Core/Moldable.h>
@@ -70,7 +71,7 @@ void submitBroadcast(BroadcastMessage& broadcast)
     ListenerMap::iterator iter = listenerMap.find(&broadcast);
     if (iter == listenerMap.end())
     {
-        Listeners* listener = new Listeners();
+        Listeners* listeners = new Listeners();
         /* If the listener is a registered listener, we can get a pointer
          * to the listener directly by name.
          */
@@ -79,16 +80,16 @@ void submitBroadcast(BroadcastMessage& broadcast)
         	std::string name = broadcast.properties->listener.r_listener;
         	if (app->widgetIsRegistered(name))
         	{
-        		listener->push_back(app->registeredWidget(name));
+        		listeners->push_back(new Listener(app->registeredWidget(name)));
         	}
         }
 
         else // Otherwise, provide a default value of the broadcaster.
         {
-        	listener->push_back(broadcast.broadcaster);
+        	listeners->push_back(new Listener(broadcast.broadcaster));
         }
 
-        listenerMap[&broadcast] = listener;
+        listenerMap[&broadcast] = listeners;
     }
 
     /* If this broadcast is getting repeated, determine who the next set
@@ -114,9 +115,9 @@ void submitBroadcast(BroadcastMessage& broadcast)
     	size_t num_listeners = listeners->size();
     	for (size_t listener = 0; listener < num_listeners; ++listener)
     	{
-    		Moldable* __listener = listeners->at(listener);
+    		Moldable& __listener = listeners->at(listener)->getWidget();
     		EventPreprocessor preproc(nodeName);
-    		BroadcastMessage newmsg(__listener, &preproc);
+    		BroadcastMessage newmsg(&__listener, &preproc);
     		submitBroadcast(newmsg);
     	}
 
@@ -153,37 +154,37 @@ void getNuclearFamily(BroadcastMessage& broadcast)
 #endif
     for (unsigned int c = 0; c < num_current; c++)
     {
-        Moldable* listener = current_listeners->at(c);
+        Moldable& listener = current_listeners->at(c)->getWidget();
         switch(familyMembers)
         {
         case Family::children:{
-            unsigned int num_children = listener->countMoldableChildren();
+            unsigned int num_children = listener.countMoldableChildren();
             for (unsigned int k = 0; k < num_children; k++)
             {
-                Moldable* child = listener->child(k);
-                new_listeners->push_back(child);
+                Moldable* child = listener.child(k);
+                new_listeners->push_back(new Listener(child));
             }
             break;}
 
         case Family::parent:{
-            Moldable* parent = (Moldable*) listener->parent();
-            new_listeners->push_back(parent);
+            Moldable* parent = (Moldable*) listener.parent();
+            new_listeners->push_back(new Listener(parent));
             break;}
 
         case Family::siblings:{
-            Moldable* parent = (Moldable*) listener->parent();
+            Moldable* parent = (Moldable*) listener.parent();
             unsigned int num_siblings = parent->countMoldableChildren();
             for (unsigned int k = 0;  k < num_siblings; k++)
             {
                 Moldable* sibling = parent->child(k);
-                if (sibling != listener)
+                if (sibling != &listener)
                 {
-                    new_listeners->push_back(sibling);
+                    new_listeners->push_back(new Listener(sibling));
                 }
             }
             break;}
         default:
-            new_listeners->push_back(listener);
+            new_listeners->push_back(new Listener(&listener));
         }
     }
 
@@ -206,23 +207,23 @@ void updateListeners(BroadcastMessage& broadcast)
     size_t num_current = current_listeners->size();
     for (size_t c = 0; c < num_current; c++)
     {
-        Moldable* listener = current_listeners->at(c);
+        Moldable& listener = current_listeners->at(c)->getWidget();
         switch(direction)
         {
 
         // Add the parent of each of the current listeners.
         case Action::bubble:{
-            Moldable* parent = (Moldable*) listener->parent();
-            new_listeners->push_back(parent);
+            Moldable* parent = (Moldable*) listener.parent();
+            new_listeners->push_back(new Listener(parent));
             break;}
 
         // Add the children of each of the current listeners.
         case Action::trickle:{
-            int num_children = listener->countMoldableChildren();
+            int num_children = listener.countMoldableChildren();
             for (int k = 0; k < num_children; k++)
             {
-                Moldable* child = listener->child(k);
-                new_listeners->push_back(child);
+                Moldable* child = listener.child(k);
+                new_listeners->push_back(new Listener(child));
             }
             break;}
 
@@ -270,8 +271,8 @@ void directListeners(BroadcastMessage& broadcast)
 		for (i = 0; i < listeners->size(); ++i)
 		{
 			if (i != 0) std::cout << ", ";
-			Goo::Moldable* w = (*listeners)[i];
-			std::cout << w->getNode();
+			Goo::Moldable& w = (*listeners)[i]->getWidget();
+			std::cout << w.getNode();
 		}
 		std::cout << std::endl;
 		std::cout << "Message: ";
@@ -347,14 +348,14 @@ void directListeners(BroadcastMessage& broadcast)
 
         for (int w = 0; w < num_listeners; w++)
         {
-            Moldable* widget = listeners->at(w);
+            Moldable& widget = listeners->at(w)->getWidget();
 #ifdef DEBUG
-    	std::cout << "Setting style of " << widget->getNode();
+    	std::cout << "Setting style of " << widget.getNode();
     	std::cout << " to " << new_style << std::endl;
 #endif
-            if (widget->allowsAction(Action::set_style))
+            if (widget.allowsAction(Action::set_style))
             {
-                widget->setStyleClass(wNewStyle);
+                widget.setStyleClass(wNewStyle);
             }
         }
         break;}
@@ -365,21 +366,21 @@ void directListeners(BroadcastMessage& broadcast)
 
     /* Change the widget index of the listeners' stacked widgets. */
     case Action::set_index:
-    	Actions::set_index(listeners, message.getInt());
+    	Actions::set_index(*listeners, message.getInt());
     	break;
 
     /* Append a new CSS class to the current widget style. */
     case Action::add_class:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::add_class))
+    		Moldable& widget = listeners->at(w)->getWidget();
+    		if (widget.allowsAction(Action::add_class))
     		{
-    			std::string current_style = widget->styleClass().toUTF8();
+    			std::string current_style = widget.styleClass().toUTF8();
     			std::string addl_style = message.getString();
     			current_style.append(" "+addl_style);
     			Wt::WString wNewStyle(current_style);
-    			widget->setStyleClass(wNewStyle);
+    			widget.setStyleClass(wNewStyle);
     		}
     	}
         break;}
@@ -388,51 +389,36 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::remove_class:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::remove_class))
+    		Moldable& widget = listeners->at(w)->getWidget();
+    		if (widget.allowsAction(Action::remove_class))
     		{
-    			uint8_t start = 0;
-    			uint8_t end = 1;
-    			std::string current_style = widget->styleClass().toUTF8();
-    			std::string remove_style = message.getString();
-    			std::string new_style;
-    			int slice[2];
-    			slice[start] = current_style.find(remove_style);
-    			slice[end] = slice[start] + remove_style.length();
-
-    			new_style = current_style.substr(0,slice[start]);
-    			new_style
-					.append(current_style
-						.substr(
-							slice[end],
-							(current_style.length()-slice[end])));
-    			Wt::WString wNewStyle(new_style);
-    			widget->setStyleClass(wNewStyle);
+    			Wt::WString msg = message.getString();
+    			widget.removeStyleClass(msg);
     		}
     	}
     	break;}
 
     /* Advance the stack's widget index. */
-    case Action::increment_index: Actions::increment_index(listeners);
+    case Action::increment_index: Actions::increment_index(*listeners);
     	break;
 
     /* Rewind the stack's widget index. */
-    case Action::decrement_index: Actions::decrement_index(listeners);
+    case Action::decrement_index: Actions::decrement_index(*listeners);
     	break;
 
     /* Adds a new widget to the tree. */
     case Action::add_widget:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Moldable* widget = listeners->at(w);
+    		Moldable& widget = listeners->at(w)->getWidget();
     		Nodes::NodeValue v;
     		Parsers::NodeValueParser p(
     				message.getString(), v);
-    		if (widget->allowsAction(Action::add_widget))
+    		if (widget.allowsAction(Action::add_widget))
 			{
     			MoldableTemplate* tpl =
     					MoldableFactory::conceptualize(v.getString());
-    			widget->addWidget(MoldableFactory::sculpt(tpl));
+    			widget.addWidget(MoldableFactory::sculpt(tpl));
 			}
     	}
     	break;}
@@ -442,8 +428,8 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::remove_child:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::remove_child))
+    		Moldable& widget = listeners->at(w)->getWidget();
+    		if (widget.allowsAction(Action::remove_child))
     		{
     			Moldable* child = NULL;
     			Nodes::ReadType msg_type;
@@ -459,11 +445,11 @@ void directListeners(BroadcastMessage& broadcast)
     			else
     			{
     				int msg =message.getInt();
-    				child = (Moldable*) widget->widget(msg);
+    				child = (Moldable*) widget.widget(msg);
     			}
     			if (child != NULL)
     			{
-    				widget->requestRemoval(child);
+    				widget.requestRemoval(child);
     			}
     		}
 
@@ -473,30 +459,21 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::clear:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::clear))
+    		Moldable& widget = listeners->at(w)->getWidget();
+    		if (widget.allowsAction(Action::clear))
     		{
-    			widget->clear();
+    			widget.clear();
     		}
     	}
     	break;}
 
-
-    case Action::store_value:{
-    	for (int w = 0; w < num_listeners; w++)
-    	{
-    		Moldable* widget = (Moldable*) listeners->at(w);
-    		if (widget->allowsAction(Action::store_value))
-    		{
-    			std::string val = widget->valueCallback();
-    			std::string snode 	= message.getString();
-    			if (widget->allowsAction(Action::store_value))
-    			{
-    				Sessions::SubmissionHandler::absorb(val, snode);
-    			}
-    		}
-    	}
-    	break;}
+    /* 'listeners' here are the policy names and additional field arugments.
+     * The message is the data to be stored. If 'listeners' contains only a
+     * single argument, the data cannot be given to a hash node.
+     */
+    case Action::store_value:
+    	Actions::store(*listeners, message);
+    	break;
 
     case Action::store_abstract:{
     	for (int w = 0; w < num_listeners; w++)
@@ -528,7 +505,7 @@ void directListeners(BroadcastMessage& broadcast)
 
     case Action::match:
     case Action::test_text:
-    	Actions::test(*(listeners->at(0)), message) ?
+    	Actions::test( listeners->at(0)->getWidget(), message) ?
     				broadcast.broadcaster->succeed().emit()
     			: 	broadcast.broadcaster->fail().emit();
     	break;
@@ -536,10 +513,10 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::set_text:{
     	for (int w = 0; w < num_listeners; w++)
     	{
-    		Moldable* widget = listeners->at(w);
-    		if (widget->allowsAction(Action::set_text))
+    		Moldable& widget = listeners->at(w)->getWidget();
+    		if (widget.allowsAction(Action::set_text))
 			{
-    			widget->setValueCallback(message.getString());
+    			widget.setValueCallback(message.getString());
 			}
     	}
     	break;}

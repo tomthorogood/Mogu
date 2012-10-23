@@ -8,6 +8,7 @@
 #include <Events/MoldableActionCenter.h>
 #include <Wt/WEvent>
 #include <Core/Moldable.h>
+#include <Types/Listener.h>
 
 namespace Events
 {
@@ -20,14 +21,15 @@ bool emit(Listeners& listeners, std::string& sig)
 	size_t sz = listeners.size();
 	for (size_t i = 0; i < sz; i++)
 	{
-		Goo::Moldable* widget = listeners.at(i);
-		if (!widget->allowsAction(Enums::SignalActions::emit)) continue;
-		if (widget == NULL) return false;
+		Listener& listener = *(listeners.at(i));
+		if (listener.getType() != listener.widget) return false;
+		Goo::Moldable& widget = listeners.at(i)->getWidget();
+		if (!widget.allowsAction(Enums::SignalActions::emit)) continue;
 
 		if (sig == "click")
 		{
 			Wt::WMouseEvent m;
-			widget->clicked().emit(m);
+			widget.clicked().emit(m);
 		}
 	}
 	return true;

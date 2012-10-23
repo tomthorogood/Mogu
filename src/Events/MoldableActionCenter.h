@@ -12,6 +12,7 @@
 #include <Core/Moldable.h>
 #include <Events/BroadcastMessage.h>
 
+
 namespace Events
 {
 
@@ -21,7 +22,7 @@ namespace Events
 namespace ActionCenter
 {
 
-typedef std::vector <Goo::Moldable*> Listeners;
+typedef std::vector <Listener*> Listeners;
 typedef std::map <BroadcastMessage*, Listeners*> ListenerMap;
 
 /*!\brief Degrades the message signal, determining whether it needs to
@@ -77,9 +78,9 @@ struct EmailPacket
 bool change_session ();
 bool register_user ();
 
-void set_index(Listeners* listeners, int& index);
-void increment_index(Listeners* listeners);
-void decrement_index(Listeners* listeners);
+void set_index(Listeners& listeners, int& index);
+void increment_index(Listeners& listeners);
+void decrement_index(Listeners& listeners);
 std::string get_user_email(std::string username);
 int send_system_email(EmailPacket*);
 int email_current_user(EmailPacket*);
@@ -87,6 +88,7 @@ bool reset_password(std::string username);
 bool change_password(std::string username, std::string new_pass);
 bool test(Goo::Moldable&,Nodes::NodeValue&);
 bool emit(Listeners& listeners, std::string& sig);
+bool store(Listeners& listeners, Nodes::NodeValue& message);
 } //namespace Actions
 
 } //Namspace ActionCenter

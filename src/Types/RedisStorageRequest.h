@@ -19,8 +19,8 @@ namespace Redis{
 
 class RedisStorageRequest
 {
-	/*!\brief The plaintext, unprocessed 'meat' of the node name. */
-	std::string node_body;
+	/*!\brief The name of the storage policy */
+	std::string policy_name;
 
 	/*!\brief The session id where the data will be stored. */
 	std::string& session_id;
@@ -49,6 +49,8 @@ class RedisStorageRequest
 		return ready_state == 0xFF;
 	}
 
+	void __init__();
+
 	enum statebits {
 		bit_node_body 	=0x1
 		,bit_session_id =0x2
@@ -60,16 +62,20 @@ class RedisStorageRequest
 		,bit_ready_chk	=0x80
 	};
 public:
-	RedisStorageRequest(std::string nodeBody);
+	RedisStorageRequest(std::string policyName);
+	RedisStorageRequest(
+			std::string policyName,
+			const std::string& sessionID,
+			Nodes::NodeValue& value);
 
 	/*!\brief One may set values manually, or one may give the object a
 	 * policy name to look up.
 	 * @param policyName The name of the policy that is to be searched.
 	 * @return Whether or not the lookup was successful.
 	 */
-	bool policyLookup(const std::string& policyName);
+	bool policyLookup();
 
-	inline void setSessionID(std::string& sessionid)
+	inline void setSessionID(const std::string& sessionid)
 	{
 		session_id = sessionid;
 		ready_state |= bit_session_id;
@@ -80,6 +86,8 @@ public:
 		value = v;
 		ready_state |= bit_in_value;
 	}
+
+	inline void setField(const std::string& _field) {field = _field;}
 
 	void build_command();
 

@@ -20,24 +20,43 @@ namespace Redis
 
 static std::string global_session = "global";
 
-RedisStorageRequest::RedisStorageRequest(std::string nodeBody)
+RedisStorageRequest::RedisStorageRequest(std::string policyName)
 : session_id(global_session)
 {
-	node_body = nodeBody;
-	encrypted 	= false;
-	value 		= 0;
-	ready_state = bit_node_body;
-	mode 		= Enums::SubmissionPolicies::replace;
-	dtype 		= Enums::SubmissionPolicies::none;
-	nodetype	= Enums::SubmissionPolicies::string;
-	field		= EMPTY;
+	__init__();
+	policy_name = policyName;
 }
 
-bool RedisStorageRequest::policyLookup(const std::string& storageName)
+RedisStorageRequest::RedisStorageRequest(
+		std::string policyName
+		,const std::string& sessionID
+		,Nodes::NodeValue& input)
+: session_id(global_session)
+{
+	__init__();
+	setSessionID(sessionID);
+	setInput(&input);
+	build_command();
+
+}
+
+void RedisStorageRequest::__init__()
+{
+	encrypted = false;
+	value = 0;
+	ready_state = bit_node_body;
+	mode = Enums::SubmissionPolicies::replace;
+	dtype = Enums::SubmissionPolicies::none;
+	nodetype = Enums::SubmissionPolicies::string;
+	field = EMPTY;
+	policyLookup();
+
+}
+bool RedisStorageRequest::policyLookup()
 {
 	mApp;
 	using namespace Parsers;
-	std::string policy = build_policy_node(storageName);
+	std::string policy = build_policy_node(policy_name);
 	app->redisCommand("exists", policy);
 	if ((bool) Redis::getInt(app->reply()))
 	{
@@ -77,20 +96,6 @@ bool RedisStorageRequest::policyLookup(const std::string& storageName)
 		}
 		ready_state |= bit_nodetype;
 
-		if (StyleParser::nodeHasField(policy, "node"))
-		{
-			str = StyleParser::getWidgetField(policy, "node");
-			Parsers::NodeValueParser p(str, v);
-			node_body = v.getString();
-		}
-
-		if (StyleParser::nodeHasField(policy, "field"))
-		{
-			str = StyleParser::getWidgetField(policy, "field");
-			Parsers::NodeValueParser p(str,v);
-			field = v.getString();
-		}
-
 		return true;
 	}
 	else return false;
@@ -103,31 +108,37 @@ void RedisStorageRequest::build_command()
 	//All other entities must first have been set.
 	if ( (ready_state | bit_command) == 0x7F)
 	{
+		//TODO add ability to lpush or rpush
 		std::string command = "";
 		switch(nodetype)
 		{
-		case string:{
+		case string:
 			command += "set";
-			break;}
-		case list:{
+			break;
+		case list:
 			command += "rpush";
 			break;
-		}
-		case hash:{
+		case hash:
 			command += "hset";
 			break;
-		}
-		case set:{
+		case set:
 			command += "sadd";
 			break;
 		}
+
+		command += " s."+ session_id + "." + Hash::toHash(policy_name);
+		if (nodetype == hash) command += " " + field + " \"";
+
+		//TODO add support for floating-point-to-string
+		switch(value->getType())
+		{
+		case Nodes::int_value:
+			command += itoa(value->getInt());
+			break;
+		default:
+			command += value->getString();
 		}
-
-		command += " s."+ session_id + "." + Hash::toHash(node_body);
-		if (nodetype == hash) command += " " + field;
-
-		// Note: Should already have been parsed!
-		command += " " + value->getString();
+		command += "\"";
 
 		ready_state |= bit_command;
 	}
@@ -143,5 +154,4 @@ bool RedisStorageRequest::execute()
 }
 
 }//namespace Redis
-
 
