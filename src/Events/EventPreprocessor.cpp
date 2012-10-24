@@ -108,13 +108,13 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	 */
 	if (v.getType() == Nodes::string_value)
 	{
-		listener.r_listener = v.getString();
-		listener.type = listener.registry;
+		listener.s_listener = v.getString();
+		listener.type = listener.string;
 	}
 	else
 	{
 		listener.f_listener = (Enums::Family::_Family) v.getInt();
-		listener.type = listener.family;
+		listener.type = listener.widget;
 	}
 
 	Parsers::MoguScript_Tokenizer t(msg_str);

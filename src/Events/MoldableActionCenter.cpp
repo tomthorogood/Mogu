@@ -40,12 +40,12 @@ namespace {
     static ListenerMap listenerMap;
 }
 
-inline bool listenerIsRegistered(
+inline bool listenerIsString(
 		Family::_Family& fenum, BroadcastMessage& msg)
 {
 	fenum = msg.properties->listener.f_listener;
 	return
-			msg.properties->listener.r_listener != EMPTY;
+			msg.properties->listener.s_listener != EMPTY;
 }
 
 inline void handleBoolAction(
@@ -58,54 +58,43 @@ inline void handleBoolAction(
 	else message.broadcaster->fail().emit();
 }
 
-void submitBroadcast(BroadcastMessage& broadcast)
+inline Listeners* getListenerVector(BroadcastMessage& broadcast)
+{
+	ListenerMap::iterator iter = listenerMap.find(&broadcast);
+	if (iter == listenerMap.end())
+	{
+		listenerMap[&broadcast] = new Listeners();
+	}
+	return listenerMap[&broadcast];
+}
+
+inline void resolveListeners(Listeners* listeners, const std::string& name)
 {
 	mApp;
-    Family::_Family f_listener;
-    bool registryListener = listenerIsRegistered(f_listener, broadcast);
+	if (app->widgetIsRegistered(name))
+	{
+		listeners->push_back(new Listener( app->registeredWidget(name) ));
+	}
+}
 
-
-    /* If this is the first time we're transmitting this broadcast,
-     * determine who should be listening to it.
-     */
-    ListenerMap::iterator iter = listenerMap.find(&broadcast);
-    if (iter == listenerMap.end())
-    {
-        Listeners* listeners = new Listeners();
-        /* If the listener is a registered listener, we can get a pointer
-         * to the listener directly by name.
-         */
-        if (registryListener)
-        {
-        	std::string name = broadcast.properties->listener.r_listener;
-        	if (app->widgetIsRegistered(name))
-        	{
-        		listeners->push_back(new Listener(app->registeredWidget(name)));
-        	}
-        }
-
-        else // Otherwise, provide a default value of the broadcaster.
-        {
-        	listeners->push_back(new Listener(broadcast.broadcaster));
-        }
-
-        listenerMap[&broadcast] = listeners;
-    }
-
+inline void resolveListeners(Listeners* listeners, BroadcastMessage& broadcast)
+{
+	int degradation = broadcast.properties->degradation;
+	Family::_Family f = broadcast.properties->listener.f_listener;
     /* If this broadcast is getting repeated, determine who the next set
      * of listeners will be, and then start over
      */
-    int degradation = broadcast.properties->degradation;
 
     while (--degradation>=0)
     {
     	updateListeners(broadcast);
     }
+
     broadcast.updateAction();
 
     if (broadcast.properties->action == Action::rebroadcast)
     {
-    	if (!registryListener && (f_listener != Family::application))
+    	if (f != Family::application)
     	{
     		getNuclearFamily(broadcast);
     	}
@@ -128,11 +117,36 @@ void submitBroadcast(BroadcastMessage& broadcast)
     /* If this is a nuclear event, we lastly have to do one more
      * calculation of listeners.
      */
-    if (!registryListener && (f_listener != Family::application))
-    {
-        getNuclearFamily(broadcast);
-    }
+    if (f != Family::application) getNuclearFamily(broadcast);
+}
 
+inline void resolveListeners(BroadcastMessage& broadcast)
+{
+	mApp;
+	Family::_Family f_listener;
+	bool isString = listenerIsString(f_listener, broadcast);
+	Listeners* listeners = getListenerVector(broadcast);
+
+	switch(broadcast.properties->action)
+	{
+	/* Determine what sort of listener we have. */
+	case Enums::SignalActions::store_value:{
+		listeners->push_back(new Listener(broadcast.properties->listener.s_listener));
+		break;}
+	default:
+		if (isString) resolveListeners(
+				listeners, broadcast.properties->listener.s_listener);
+		else
+			resolveListeners(listeners, broadcast);
+	}
+}
+
+void submitBroadcast(BroadcastMessage& broadcast)
+{
+	mApp;
+    Family::_Family f_listener;
+    bool registryListener = listenerIsString(f_listener, broadcast);
+    resolveListeners(broadcast);
     directListeners(broadcast);
     cleanupBroadcast(broadcast);
 }
@@ -252,11 +266,10 @@ void directListeners(BroadcastMessage& broadcast)
     namespace Action = Enums::SignalActions;
     BroadcastMessage* bptr 		= &broadcast;
     Listeners* listeners 		= listenerMap[bptr];
+    size_t num_listeners = listeners->size();
     Nodes::NodeValue& message 	= broadcast.properties->message.value;
-
     Action::SignalAction action = broadcast.properties->action;
     Family::_Family f_listener;
-    bool registryListener = listenerIsRegistered(f_listener, broadcast);
 
 
 #ifdef DEBUG
@@ -282,63 +295,50 @@ void directListeners(BroadcastMessage& broadcast)
     }
 #endif
 
-    if (!registryListener && (f_listener == Enums::Family::application))
-    {
-    	switch(action)
-    	{
-    	case Action::set_internal_path:{
-    		std::string path = message.getString();
-    		app->setInternalPath(path);
-    		break;}
 
-    	case Action::register_user:{
-    		handleBoolAction(broadcast, &Actions::register_user);
-    		break;}
+	switch(action)
+	{
+	case Action::set_internal_path:{
+		std::string path = message.getString();
+		app->setInternalPath(path);
+		break;}
 
-        case Action::change_session:{
-        	handleBoolAction(broadcast, &Actions::change_session);
-        	break;}
+	case Action::register_user:{
+		handleBoolAction(broadcast, &Actions::register_user);
+		break;}
 
-        case Action::javascript:{
-        	std::string script = message.getString();
-        	app->doJavaScript(script);
-        	break;}
+	case Action::change_session:{
+		handleBoolAction(broadcast, &Actions::change_session);
+		break;}
 
-        case Action::email_user:{
-        	std::string emailmsg = message.getString();
-        	Actions::EmailPacket pkt;
-        	std::string URL = app->bookmarkUrl();
-        	pkt.subject = "New eMail from " + URL;
-        	pkt.message = emailmsg;
-        	Actions::email_current_user(&pkt);
-        	break;}
+	case Action::javascript:{
+		std::string script = message.getString();
+		app->doJavaScript(script);
+		break;}
 
-        case Action::reset_password:{
-        	std::string uid = Application::retrieveSlot(
-        			"USERID", app->sessionId());
+	case Action::email_user:{
+		std::string emailmsg = message.getString();
+		Actions::EmailPacket pkt;
+		std::string URL = app->bookmarkUrl();
+		pkt.subject = "New eMail from " + URL;
+		pkt.message = emailmsg;
+		Actions::email_current_user(&pkt);
+		break;}
 
+	case Action::reset_password:{
+		std::string uid = Application::retrieveSlot(
+				"USERID", app->sessionId());
+		if (!Actions::reset_password(uid))
+		{
+			broadcast.broadcaster->fail().emit();
+		}
+		else
+		{
+			broadcast.broadcaster->succeed().emit();
+		}
+	}
 
-        	if (!Actions::reset_password(uid))
-        	{
-        		broadcast.broadcaster->fail().emit();
-        	}
-        	else
-        	{
-        		broadcast.broadcaster->succeed().emit();
-        	}
-        }
-
-    	default:
-    		return; // Don't do anything unexpected to application state.
-    	}
-    	return; // Avoid side effects with non-existent Moldable listener.
-    }
-
-    int num_listeners = listeners->size();
-    switch(action)
-    {
-
-    /* Change the CSS style class of all listeners to the style
+	/* Change the CSS style class of all listeners to the style
      * given as the broadcast message.
      */
     case Action::set_style:{
@@ -349,14 +349,8 @@ void directListeners(BroadcastMessage& broadcast)
         for (int w = 0; w < num_listeners; w++)
         {
             Moldable& widget = listeners->at(w)->getWidget();
-#ifdef DEBUG
-    	std::cout << "Setting style of " << widget.getNode();
-    	std::cout << " to " << new_style << std::endl;
-#endif
             if (widget.allowsAction(Action::set_style))
-            {
                 widget.setStyleClass(wNewStyle);
-            }
         }
         break;}
 
@@ -376,11 +370,8 @@ void directListeners(BroadcastMessage& broadcast)
     		Moldable& widget = listeners->at(w)->getWidget();
     		if (widget.allowsAction(Action::add_class))
     		{
-    			std::string current_style = widget.styleClass().toUTF8();
-    			std::string addl_style = message.getString();
-    			current_style.append(" "+addl_style);
-    			Wt::WString wNewStyle(current_style);
-    			widget.setStyleClass(wNewStyle);
+    			Wt::WString addl_style = message.getString();
+    			widget.addStyleClass(addl_style);
     		}
     	}
         break;}

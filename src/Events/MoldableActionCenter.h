@@ -22,9 +22,6 @@ namespace Events
 namespace ActionCenter
 {
 
-typedef std::vector <Listener*> Listeners;
-typedef std::map <BroadcastMessage*, Listeners*> ListenerMap;
-
 /*!\brief Degrades the message signal, determining whether it needs to
  * be repeated to another set of listeners, or if it's reached its final
  * destination.
@@ -77,7 +74,6 @@ struct EmailPacket
 
 bool change_session ();
 bool register_user ();
-
 void set_index(Listeners& listeners, int& index);
 void increment_index(Listeners& listeners);
 void decrement_index(Listeners& listeners);

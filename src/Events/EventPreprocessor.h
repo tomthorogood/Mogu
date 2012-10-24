@@ -14,27 +14,31 @@
 namespace Events{
 struct PreprocessedEventListener
 {
-	enum Ltype { registry, family };
+	enum Ltype {
+		string,
+		widget,
+
+	};
 	Enums::Family::_Family f_listener;
-	std::string r_listener;
+	std::string s_listener;
 	Ltype type;
 
 	PreprocessedEventListener() {
-		r_listener = EMPTY;
-		type = family;
+		s_listener = EMPTY;
+		type = widget;
 		f_listener = Enums::Family::self;
 	}
 
 	PreprocessedEventListener(const std::string& listener)
 	{
-		type = registry;
-		r_listener = listener;
+		type = string;
+		s_listener = listener;
 		f_listener = Enums::Family::self;
 	}
 
 	PreprocessedEventListener(Enums::Family::_Family& listener)
 	{
-		type = family;
+		type = widget;
 		f_listener = listener;
 	}
 };

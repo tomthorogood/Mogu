@@ -22,6 +22,12 @@ namespace Maps
 	typedef std::map <std::string,std::string> Strings;
 }
 
+namespace Events
+{
+	typedef std::vector <Listener*> Listeners;
+	typedef std::map <BroadcastMessage*, Listeners*> ListenerMap;
+}
+
 typedef TurnLeft::Utils::HungryVector <char> CharVector;
 typedef std::map <std::string, Goo::Moldable*> WidgetRegister;
 

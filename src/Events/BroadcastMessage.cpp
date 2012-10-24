@@ -15,7 +15,6 @@ namespace Events{
 using std::string;
 using Goo::Moldable;
 
-namespace Listeners = Enums::Family;
 namespace Action = Enums::SignalActions;
 namespace Labels = Enums::Labels;
 
