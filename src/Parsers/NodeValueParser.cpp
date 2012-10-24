@@ -56,7 +56,17 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 	{
 		if (pkg.__val_type == dynamic_storage)
 		{
-			pkg.__val = Sessions::SubmissionHandler::dynamicLookup(pkg.__val, EMPTY, NO_TRANSLATION);
+			if (pkg.__args.size() > 0)
+			{
+				pkg.__val =
+						Sessions::SubmissionHandler::dynamicLookup(
+								pkg.__val, pkg.__args[0], NO_TRANSLATION);
+			}
+			else
+			{
+				pkg.__val = Sessions::SubmissionHandler::dynamicLookup(
+						pkg.__val, EMPTY, NO_TRANSLATION);
+			}
 			if (pkg.__val.substr(0,2) == "s.")
 			{
 				app->redisCommand("type", pkg.__val);
@@ -186,8 +196,6 @@ TokenTestResult __test_self_state(TokenTestPackage& pkg)
 	return CPL;
 }
 
-
-
 NodeValueParser::NodeValueParser(
 		std::string full_value,
 		NodeValue& nval,
@@ -240,8 +248,12 @@ NodeValueParser::NodeValueParser(
 	/* The first test is required, and will set the stage for future
 	 * tests.
 	 */
-	pkg.__last_result = t_tests[0](pkg);
 	size_t nargs =1;
+	for (size_t i = 1; i < declaration.size(); i++)
+	{
+		pkg.__args.push_back(declaration[i].first);
+	}
+	pkg.__last_result = t_tests[0](pkg);
 
 	/* Thereafter, we continue to parse the information in the package using
 	 * test(x), where x is dynamically bound based on how many tests we've
@@ -249,13 +261,11 @@ NodeValueParser::NodeValueParser(
 	 */
 	if (pkg.__last_result == NXT_NODE)
 	{
-		pkg.__args.push_back(declaration[nargs].first);
 		pkg.__val_type = declaration[nargs].second;
 		pkg.__last_result = t_tests[nargs](pkg);
 	}
 	else if (pkg.__last_result == NXT_REG)
 	{
-		pkg.__args.push_back(declaration[nargs].first);
 		pkg.__val_type = declaration[nargs].second;
 		pkg.__last_result = __test_tReg(pkg);
 	}
@@ -263,7 +273,6 @@ NodeValueParser::NodeValueParser(
 	{
 		if (declaration[nargs].second == widget_state)
 		{
-			pkg.__args.push_back(declaration[nargs].first);
 			pkg.__val_type = declaration[nargs].second;
 			if ( (Enums::Family::_Family) pkg.__nval_final.getInt()
 					== Enums::Family::self)
