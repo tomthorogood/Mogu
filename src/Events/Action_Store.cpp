@@ -13,6 +13,7 @@
 #include <Sessions/SessionHandler.h>
 #include <Parsers/TokenGenerator.h>
 #include <Parsers/NodeValueParser.h>
+#include <Parsers/MoguScript_Tokenizer.h>
 #include <Types/Listener.h>
 #include <Mogu.h>
 
@@ -26,21 +27,22 @@ bool store(Listeners& listeners, Nodes::NodeValue& message)
 	size_t num_listeners = listeners.size();
 	for (size_t w = 0; w < num_listeners; w++)
 	{
-		Parsers::TokenGenerator t(listeners.at(w)->getString());
-		std::string policy = t.next();
-		std::string args = EMPTY;
-		std::string nxt;
-		do {
-			nxt = t.next();
-			args += nxt;
-		} while (nxt != EMPTY);
 		Nodes::NodeValue v;
-		Parsers::NodeValueParser(args,v);
+		Parsers::MoguScript_Tokenizer t(listeners.at(w)->getString());
+		std::string policy_name = t.next();
+		Parsers::NodeValueParser p(policy_name, v);
+
+		std::string policy = v.getString();
+
+		std::string arg = EMPTY;
+
+
 		Redis::RedisStorageRequest r(
 				policy
 				,app->sessionID()
-				,v);
-		r.setField(args);
+				,message);
+
+
 		if (!r.execute()) return false;
 	}
 	return true;

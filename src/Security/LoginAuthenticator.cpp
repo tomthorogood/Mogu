@@ -77,6 +77,9 @@ bool LoginAuthenticator::authtoken_matches()
 {
 	mApp;
 	std::string session_node = "s."+last_session_id+"."+__META_HASH;
+	app->redisCommand("hexists", session_node, __AUTH_HASH);
+	if (! (bool) Redis::getInt(app->reply())) return false;
+
 	app->redisCommand("hget", session_node, __AUTH_HASH);
 	last_auth_token = Redis::toString(app->reply());
 	std::string tmp_prf_auth_token = last_auth_token;

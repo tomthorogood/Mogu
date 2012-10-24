@@ -33,9 +33,8 @@ class NodePatterns:
     class WidgetPolicy(NodeName):
         def __init__(self, string):
             super(NodePatterns.WidgetPolicy, self).__init__(
-                    string, NodeNameParams(
-                        begin="widgets.",
-                        end=".policy"))
+                    string, NodeNameParams( begin="policies."))
+
     class Validator(NodeName):
         def __init__(self,string):
             super(NodePatterns.Validator, self).__init__(

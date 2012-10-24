@@ -9,6 +9,7 @@
 #include <Core/Moldable.h>
 #include <Events/EventPreprocessor.h>
 #include <Parsers/NodeValueParser.h>
+#include <Parsers/Parsers.h>
 #include <stdio.h>
 
 namespace Events{
@@ -37,7 +38,8 @@ BroadcastMessage::BroadcastMessage (
 		Parsers::NodeValueParser p(
 				preproc->message.original
 				,preproc->message.value
-				,broadcaster);
+				,broadcaster
+				);
 	}
 }
 

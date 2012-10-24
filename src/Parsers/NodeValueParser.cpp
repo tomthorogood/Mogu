@@ -15,7 +15,7 @@
 #include <Core/Moldable.h>
 #include <sstream>
 #include <Security/Security.h>
-
+#include <Exceptions/Exceptions.h>
 #include <Wt/WApplication>
 #include <Mogu.h>
 
@@ -37,9 +37,19 @@ TokenTestResult __test_t1(TokenTestPackage& pkg)
 			pkg.__val_type != node_value
 			&&pkg.__val_type != dynamic_storage)
 	{
-		pkg.interpret(VAL);
+		try
+		{
+			pkg.interpret(VAL);
+		}
+		catch (const Exceptions::Err_NoCallbackGiven& e)
+		{
+			pkg.__val_type = string_value;
+			pkg.__nval_final.setString(pkg.__val);
+		}
+
 		if (pkg.__val_type <= float_value) return CPL;
 		else if (pkg.__val_type == registry_value) return NXT_REG;
+		else if (pkg.__val_type == enum_value) return ICPL_CMD;
 		else return NXT_CMD;
 	}
 	else // if (pkg.__val_type == node_value || pkg.__val_type = dynamic_storage)
@@ -166,36 +176,17 @@ TokenTestResult __test_tReg(TokenTestPackage& pkg)
 	return CPL;
 }
 
-inline NodeValueTypes getMoguType(std::string token)
+TokenTestResult __test_self_state(TokenTestPackage& pkg)
 {
-	char char0 = token.at(0);
-	char fchar = token.at(token.length()-1);
-	NodeValueTypes ntype;
-	switch(char0)
-	{
-	case '{' : ntype = (fchar == '}')? enum_value : string_value;
-		break;
-	case '^' : ntype = (fchar == '^')? integer_value : string_value;
-		break;
-	case '@' : ntype = (fchar == '@')? node_value : string_value;
-		break;
-	case '~' : ntype = (fchar == '~')? float_value : string_value;
-		break;
-	case '$' : ntype = (fchar == '$')? widget_state : string_value;
-		break;
-	case '|' : ntype = (fchar == '|')? registry_value : string_value;
-		break;
-	case '!' : ntype = (fchar == '!')? redis_command : string_value;
-		break;
-	case '[' : ntype = (fchar == ']')? dynamic_storage : string_value;
-		break;
-	case '&' : ntype = (fchar == '&')? hashed_string : string_value;
-		break;
-	default:
-		ntype = string_value;
-	}
-	return ntype;
+	using namespace Enums::WidgetTypes;
+	Enums::WidgetTypes::States s;
+	WidgetStateParser p;
+	s = p.parse(pkg.__args[0]);
+	pkg.__broadcaster->getState(s, pkg.__nval_final);
+	return CPL;
 }
+
+
 
 NodeValueParser::NodeValueParser(
 		std::string full_value,
@@ -267,6 +258,19 @@ NodeValueParser::NodeValueParser(
 		pkg.__args.push_back(declaration[nargs].first);
 		pkg.__val_type = declaration[nargs].second;
 		pkg.__last_result = __test_tReg(pkg);
+	}
+	else if (pkg.__last_result == ICPL_CMD && declaration.size() > 1)
+	{
+		if (declaration[nargs].second == widget_state)
+		{
+			pkg.__args.push_back(declaration[nargs].first);
+			pkg.__val_type = declaration[nargs].second;
+			if ( (Enums::Family::_Family) pkg.__nval_final.getInt()
+					== Enums::Family::self)
+			{
+				pkg.__last_result = __test_self_state(pkg);
+			}
+		}
 	}
 }
 

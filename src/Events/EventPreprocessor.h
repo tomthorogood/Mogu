@@ -61,9 +61,11 @@ struct EventPreprocessor
 	Enums::SignalActions::SignalAction next_action;
 	PreprocessedEventListener listener;
 	PreprocessedMessage message;
+	Enums::NodeValueTypes::NodeValueTypes getListenerType(std::string& str);
 	int degradation;
 
 	EventPreprocessor (const std::string& node);
+
 };
 
 }//namespace Events

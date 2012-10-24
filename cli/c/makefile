@@ -1,8 +1,8 @@
 MAIN_SRC := $(CURDIR)/../../src
-EXES := clihash
+EXES := clihash clidec
 dbg = NODEBUG
 
-dec_deps := hash.cpp Security/Security.cpp crypt/BlowfishKey.cpp crypt/PacketCenter.cpp Redis/RedisCore.cpp crypt/Packet.cpp
+dec_deps := hash.cpp crypt/BlowfishKey.cpp crypt/PacketCenter.cpp crypt/Packet.cpp Security/Encryption.cpp
 dec_deps_r := $(patsubst %, $(MAIN_SRC)/%, $(dec_deps))
 
 libs = -lturnleft -lcityhash -lhiredis -lcrypto

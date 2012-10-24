@@ -17,7 +17,9 @@ namespace Events{
 
 using namespace Enums::SignalActions;
 using namespace Enums::SignalTriggers;
+using namespace Enums::NodeValueTypes;
 using namespace Parsers::StyleParser;
+
 
 inline std::string valOrEmpty(const std::string& node, const char* field, std::string alternate=EMPTY)
 {
@@ -93,28 +95,39 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	 * fields in the preprocessor to avoid having to make this determination
 	 * at event firing.
 	 */
-	Parsers::NodeValueParser listener_p(
-			listener_str
-			,v
-			,NONE
-			,&Parsers::enum_callback <Parsers::FamilyMemberParser>);
 
-	/* The message is highly variable. However, if it is just a string, we
-	 * will not have to do any further processing on it when the event fires.
-	 * Because the MoguScript_Tokenizer will return the full string as next() if
-	 * the first value is not a parseable Mogu type, we can thus easily
-	 * determine whether this message is a string, or whether it will
-	 * require processing once the event fires.
-	 */
-	if (v.getType() == Nodes::string_value)
+	if (getListenerType(listener_str) == dynamic_storage)
 	{
-		listener.s_listener = v.getString();
+		listener.s_listener = listener_str;
 		listener.type = listener.string;
 	}
 	else
 	{
-		listener.f_listener = (Enums::Family::_Family) v.getInt();
-		listener.type = listener.widget;
+		Parsers::NodeValueParser listener_p(
+				listener_str
+				,v
+				,NONE
+				,Parsers::enum_callback <Parsers::FamilyMemberParser>
+		);
+
+		/* The message is highly variable. However, if it is just a string, we
+		 * will not have to do any further processing on it when the event fires.
+		 * Because the MoguScript_Tokenizer will return the full string as next() if
+		 * the first value is not a parseable Mogu type, we can thus easily
+		 * determine whether this message is a string, or whether it will
+		 * require processing once the event fires.
+		 */
+		if (v.getType() == Nodes::string_value)
+		{
+			listener.s_listener = v.getString();
+			listener.type = listener.string;
+		}
+		else
+		{
+			listener.f_listener = (Enums::Family::_Family) v.getInt();
+			listener.type = listener.widget;
+		}
+
 	}
 
 	Parsers::MoguScript_Tokenizer t(msg_str);
@@ -127,5 +140,11 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 		message.status = message.delayed;
 	}
 	message.value.setString(msg_str);
+}
+
+NodeValueTypes EventPreprocessor::getListenerType(std::string& str)
+{
+	Parsers::MoguScript_Tokenizer t(str);
+	return Parsers::getMoguType(t.next());
 }
 }//namespace Events

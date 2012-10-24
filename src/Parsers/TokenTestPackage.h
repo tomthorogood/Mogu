@@ -29,7 +29,6 @@ struct TokenTestPackage
 	TokenTestPackage(Nodes::NodeValue& nval) :
 		__args()
 		, __nval_final(nval)
-		,__broadcaster(0)
 
 	{
 		using namespace Enums::NodeValueTypes;
@@ -38,6 +37,7 @@ struct TokenTestPackage
 		__val_type = string_value;
 		__callback =NULL;
 		__r_node_type ="";
+		__broadcaster = 0;
 	}
 
 	void interpret(

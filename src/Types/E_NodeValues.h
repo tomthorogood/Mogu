@@ -16,20 +16,20 @@ enum NodeValueTypes{
      */
     string_value		=0x0
 
-    /*!\brief When readin from the database, the value from another node
-     * in the database is read in.
-     */
-    ,enum_value			=0x1
     /*!\brief When read in from the database, integer values are transformed
      * into integers.
      */
-    ,integer_value		=0x2
+    ,integer_value		=0x1
 
     /*!\brief When read in from the database, enum values are parsed with a
      * callback that returns an integer representation of the enumerated type.
      */
-    ,float_value		=0x3
+    ,float_value		=0x2
 
+    /*!\brief When readin from the database, the value from another node
+     * in the database is read in.
+     */
+    ,enum_value			=0x3
     /*!\brief Returns a string or integer based on a widget's state
      */
     ,widget_state		=0x5

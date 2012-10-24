@@ -130,7 +130,6 @@ Packet* PacketCenter::fill_packet (string input, int& start)
 	}
 	/* Extract only eight bytes of ciphertext. */
 	string sub = input.substr(start, advance);
-	std::cout << sub << std::endl;
 
 	/* Create a CharArray out of the string, padding it with one extra
 	 * byte to avoid a segfault when handing to the Blowfish methods.

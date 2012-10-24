@@ -88,5 +88,14 @@ public:
 	: MoguException ("No User Set! ",b) {}
 };
 
+class Err_NoCallbackGiven : public MoguException
+{
+public:
+	Err_NoCallbackGiven(std::string b)
+	: MoguException(
+			"Attempted to use a callback without"
+			" telling me what callback you intended to use at: ", b){}
+};
+
 }//namespace Exceptions
 #endif /* EXCEPTIONS_H_ */

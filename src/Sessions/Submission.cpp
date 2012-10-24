@@ -31,6 +31,11 @@ using namespace Enums::SubmissionPolicies;
 using namespace Sessions::Lookups;
 using TurnLeft::Utils::trimchar;
 
+inline std::string policy_node(const std::string& name)
+{
+	return "policies."+name;
+}
+
 inline bool session_widget_exists(std::string node)
 {
 	mApp;
@@ -185,20 +190,9 @@ std::string node_session(std::string session, std::string ph_node)
 	return node_session(linked_session(session),ph_node);
 }
 
-std::string storage_arg(std::string pt_node_name)
-{
-	std::string node = "widgets."+pt_node_name+".policy";
-	if (!hashkey_exists(node, "arg")) return EMPTY;
-	mApp;
-	app->redisCommand("hget", node, "arg");
-	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(Redis::toString(app->reply()), v);
-	return v.getString();
-}
-
 bool requiresEncryption(const std::string& snode)
 {
-	std::string nodePolicy = "widgets."+snode+".policy";
+	std::string nodePolicy = "policies."+snode;
 	if (!hashkey_exists( nodePolicy, "encrypted")) return false;
 	mApp;
 	app->redisCommand("hget", nodePolicy, "encrypted");
@@ -210,7 +204,7 @@ bool requiresEncryption(const std::string& snode)
 
 std::string alternativeNodeName(const std::string& snode)
 {
-	std::string nodePolicy = "widgets."+snode+".policy";
+	std::string nodePolicy = policy_node(snode);
 	if (Parsers::StyleParser::nodeHasField(nodePolicy, "node"))
 	{
 		return Parsers::StyleParser::getWidgetField(nodePolicy, "node");
@@ -220,7 +214,7 @@ std::string alternativeNodeName(const std::string& snode)
 
 StorageMode getStorageMode(const std::string& snode)
 {
-	std::string nodePolicy = "widgets."+snode+".policy";
+	std::string nodePolicy = policy_node(snode);
 	mApp;
 		app->redisCommand("hget", nodePolicy,"mode");
 	Nodes::NodeValue val;
@@ -233,7 +227,7 @@ StorageMode getStorageMode(const std::string& snode)
 
 StorageType getStorageType(const std::string& snode)
 {
-	std::string nodePolicy = "widgets."+snode+".policy";
+	std::string nodePolicy = policy_node(snode);
 	mApp;
 	app->redisCommand("hget", nodePolicy, "storage_type");
 	Nodes::NodeValue val;
@@ -247,7 +241,7 @@ StorageType getStorageType(const std::string& snode)
 
 DataWrapping getDataWrapping(const std::string& snode)
 {
-	std::string nodePolicy = "widgets."+snode+".policy";
+	std::string nodePolicy = policy_node(snode);
 	mApp;
 	app->redisCommand("hget", nodePolicy, "data_type");
 	Nodes::NodeValue val;
@@ -261,7 +255,7 @@ DataWrapping getDataWrapping(const std::string& snode)
 
 std::string getHashField(const std::string& snode)
 {
-	std::string nodePolicy = "widgets."+snode+".policy";
+	std::string nodePolicy = policy_node(snode);
 	mApp;
 	app->redisCommand("hget", nodePolicy, "field");
 	Nodes::NodeValue v;
@@ -272,7 +266,7 @@ std::string getHashField(const std::string& snode)
 
 std::string getSlotName(const std::string& snode)
 {
-	std::string nodePolicy = "widgets."+snode+".policy";
+	std::string nodePolicy = policy_node(snode);
 	mApp;
 	app->redisCommand("hget", nodePolicy, "slot");
 	return Redis::toString(app->reply());
@@ -294,7 +288,7 @@ std::string userNodeLookup(
 
 	/* Determine whether the data in that node was supposed to have been encrypted */
 	bool is_global = node.find("global") != std::string::npos;
-	bool encrypted = requiresEncryption(storage_name) && !is_global;
+	bool encrypted = requiresEncryption(storage_name);
 
 	/* Determine the type of node that we're dealing with */
 	mApp;
@@ -307,14 +301,14 @@ std::string userNodeLookup(
 	if (node_type == REDIS_HSH)
 	{
 		// If we can't parse down to the final value, return the node itself
-		if (arg == EMPTY) return node;
+		if (arg == EMPTY) return policy_node(storage_name);
 		mApp;
 		app->redisCommand("hget",node,arg);
 	}
 	else if (node_type == REDIS_LST)
 	{
 		// If we can't parse down to the final value, return the node itself
-		if (arg == EMPTY) return node;
+		if (arg == EMPTY) return policy_node(storage_name);
 		mApp;
 		app->redisCommand("lindex",node,arg);
 	}

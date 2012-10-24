@@ -9,6 +9,7 @@
 #define SECURITY_H_
 
 #include <declarations.h>
+#include <Security/Encryption.h>
 #include <crypt/PacketCenter.h>
 
 #include <hash.h>
@@ -30,8 +31,7 @@ void create_auth_token(
 );
 
 std::string generate_salt();
-std::string encrypt(std::string decrypted);
-std::string decrypt(std::string encrypted, PacketType translation=DO_TRANSLATION);
+
 
 inline std::string collision_proof (std::string estr)
 {

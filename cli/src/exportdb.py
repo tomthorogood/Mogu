@@ -115,7 +115,7 @@ def export_widget_dict(db,widget):
             db.hgetall(pattern.node)
             )
 
-def export_widget_policy(db,policy):
+def export_policy(db,policy):
     pattern = Pattern.WidgetPolicy(policy)
     if db.exists(pattern.node):
         return dict_to_string(
@@ -297,15 +297,6 @@ def export(db, outInfo, toPackage):
                 write_content(outInfo+"/widgets/"+filename, temp)
             else:
                 output += temp
-   
-    for widget in widgets:
-        temp = export_widget_policy(db,widget)
-        if temp:
-            if toPackage:
-                filename = format_filename(widget)
-                write_content(outInfo+"/widgets/"+filename, temp)
-            else:
-                output += temp
 
     perspective_events = db.keys("perspectives.*")
     perspectives = []
@@ -329,6 +320,17 @@ def export(db, outInfo, toPackage):
             if toPackage:
                 filename = format_filename(validator)
                 write_content(outInfo+"/validators/"+filename, temp)
+            else:
+                output += temp
+    
+    policy_nodes = db.keys("policies.*")
+    os.mkdir(outInfo+"/policies")
+    for policy in policy_nodes:
+        temp = export_policy(db, policy)
+        if "\"" in temp:
+            if toPackage:
+                filename = format_filename(policy)
+                write_content(outInfo+"/policies/"+filename, temp)
             else:
                 output += temp
         

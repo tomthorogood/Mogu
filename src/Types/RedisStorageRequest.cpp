@@ -23,8 +23,8 @@ static std::string global_session = "global";
 RedisStorageRequest::RedisStorageRequest(std::string policyName)
 : session_id(global_session)
 {
-	__init__();
 	policy_name = policyName;
+	__init__();
 }
 
 RedisStorageRequest::RedisStorageRequest(
@@ -33,6 +33,7 @@ RedisStorageRequest::RedisStorageRequest(
 		,Nodes::NodeValue& input)
 : session_id(global_session)
 {
+	policy_name = policyName;
 	__init__();
 	setSessionID(sessionID);
 	setInput(&input);

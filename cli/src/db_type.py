@@ -3,6 +3,7 @@ import sys
 import subprocess
 import bytemaps
 import mimport as todb
+import encryption
 from snippets import confirm
 from snippets import clrln
 from exceptions import *
@@ -20,6 +21,7 @@ class Node(object):
         CARATS = ('^','^')
         TILDES = ('~','~')
         BACKTICKS = ('`','`')
+        AMPERSANDS = ('&','&')
         NONE = None
 
         lookup = {
@@ -34,7 +36,8 @@ class Node(object):
                 '%' :   PERCENT_SYMBOLS,
                 '^' :   CARATS,
                 '~' :   TILDES,
-                '`' :   BACKTICKS
+                '`' :   BACKTICKS,
+                '&' :   AMPERSANDS
                 }
 
         required_wraps = {
@@ -50,13 +53,18 @@ class Node(object):
         }
 
     def unwrap(self,val):
+        if self.is_wrapped(val):
+            return val[1:-1]
+    
+    def is_wrapped(self, val):
         if val[0] in Node.Wrappers.lookup and val[-1] in Node.Wrappers.lookup:
             if Node.Wrappers.lookup[val[0]] is Node.Wrappers.lookup[val[-1]]:
                 wrappers = Node.Wrappers.lookup[val[0]]
                 if val[0] == wrappers[0] and val[-1] == wrappers[1]:
-                    return val[1:-1]
-        return val
-
+                    return val[0]
+        return False
+    
+        
     def wrap(self, key, val):
         rerr = False
         if key in Node.Wrappers.required_wraps:
@@ -239,14 +247,40 @@ class DynamicDefault(Node):
         self.node_construction += ".%s"
         self.node_type = stype
 
+    def _import(self, db,data,flags, encrypted=False):
+        if (type(data) is dict):
+            if encrypted:
+                for entry in data:
+                    data[entry] = encryption.encrypt(data[entry])
+            cpy = data.copy()
+            for entry in data:
+                if self.is_wrapped(entry) == '&':
+                   cpy[cityhash.to_city_hash(self.unwrap(entry))] = data[entry]
+                   del cpy[entry]
+        elif (type(data) is str):
+            if encrypted:
+                cpy = encryption.encrypt(data)
+            else:
+                cpy = data
+        elif (type(data) is list):
+            if encrypted:
+                lst = []
+                for entry in data:
+                    lst.append(encryption.encrypt(entry))
+                cpy = lst
+            else:
+                cpy = data
+        super(DynamicDefault, self)._import(db,cpy,flags)
+
     def build(self, arg):
         val = cityhash.to_city_hash(arg)
         super(DynamicDefault, self).build(val)
 
-class WidgetPolicy(Widget):
+
+class WidgetPolicy(DictNode):
     def __init__(self):
-        super(WidgetPolicy, self).__init__()
-        self.node_construction += ".policy"
+        super(WidgetPolicy, self).__init__("policies")
+        self.node_construction += ".%s"
         self.keystone_reqs = None
         self.keystone = None
 
@@ -256,16 +290,15 @@ class WidgetPolicy(Widget):
 
     def _import(self, db, data, flags):
         if "default" in data:
-            stype_str = data["data_type"]
-            stype_str = self.unwrap(stype_str)
-            if stype_str == "list":
-                dyndef = DynamicDefault(list)
-            elif stype_str == "hash":
-                dyndef = DynamicDefault(dict)
-            else:
-                dyndef = DynamicDefault(str)
+            default_type = type(data["default"])
+            dyndef = DynamicDefault(default_type)
             dyndef.build(self.widget_name)
-            dyndef._import(db, data["default"], flags)
+            encrypt_defaults = False
+            if "encrypted" in data:
+                if data["encrypted"] == "^1^":
+                    encrypt_defaults = True
+            dyndef._import(db, data["default"], flags,encrypt_defaults)
+            del data["default"]
         super(WidgetPolicy, self)._import(db, data, flags)
 
 class WidgetChildren(Node):

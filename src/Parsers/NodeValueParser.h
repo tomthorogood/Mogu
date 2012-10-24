@@ -12,6 +12,39 @@
 
 namespace Parsers{
 
+inline Enums::NodeValueTypes::NodeValueTypes getMoguType(std::string token)
+{
+	using namespace Enums::NodeValueTypes;
+	char char0 = token.at(0);
+	char fchar = token.at(token.length()-1);
+	NodeValueTypes ntype;
+	switch(char0)
+	{
+	case '{' : ntype = (fchar == '}')? enum_value : string_value;
+		break;
+	case '^' : ntype = (fchar == '^')? integer_value : string_value;
+		break;
+	case '@' : ntype = (fchar == '@')? node_value : string_value;
+		break;
+	case '~' : ntype = (fchar == '~')? float_value : string_value;
+		break;
+	case '$' : ntype = (fchar == '$')? widget_state : string_value;
+		break;
+	case '|' : ntype = (fchar == '|')? registry_value : string_value;
+		break;
+	case '!' : ntype = (fchar == '!')? redis_command : string_value;
+		break;
+	case '[' : ntype = (fchar == ']')? dynamic_storage : string_value;
+		break;
+	case '&' : ntype = (fchar == '&')? hashed_string : string_value;
+		break;
+	default:
+		ntype = string_value;
+	}
+	return ntype;
+}
+
+
 class NodeValueParser
 {
 private:

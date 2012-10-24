@@ -42,21 +42,6 @@ string generate_salt()
 	return r.generate(3);
 }
 
-string encrypt(string dstr)
-{
-	BlowfishKeyCreator k;
-	PacketCenter e(dstr, DECRYPTED);
-	e.giveKey(k.getKey());
-	return e.encrypt();
-}
 
-string decrypt(string estr, PacketType translation)
-{
-	TurnLeft::Utils::sreplace(estr, '_', ' ');
-	BlowfishKeyCreator k;
-	PacketCenter d(estr, ENCRYPTED);
-	d.giveKey(k.getKey());
-	return d.decrypt(translation);
-}
 
 }//namespace Security

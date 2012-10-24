@@ -10,8 +10,10 @@
 #include <Core/Moldable.h>
 #include <hash.h>
 #include <Parsers/NodeValueParser.h>
+#include <Exceptions/Exceptions.h>
 namespace Parsers
 {
+using Exceptions::Err_NoCallbackGiven;
 void TokenTestPackage::interpret(
 			Enums::NodeValueTypes::InterpretationMode _mode,
 			size_t arg)
@@ -25,6 +27,8 @@ void TokenTestPackage::interpret(
 				__nval_final.setInt(atoi(ival.c_str()));
 				break;
 			case enum_value:
+				if (__callback ==0) throw (
+						Err_NoCallbackGiven("TokentestPackage::interpret"));
 				__nval_final.setInt( (int) __callback(ival));
 				break;
 			case float_value:
