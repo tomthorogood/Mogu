@@ -40,12 +40,9 @@ namespace {
     static ListenerMap listenerMap;
 }
 
-inline bool listenerIsString(
-		Family::_Family& fenum, BroadcastMessage& msg)
+inline bool listenerIsString(BroadcastMessage& msg)
 {
-	fenum = msg.properties->listener.f_listener;
-	return
-			msg.properties->listener.s_listener != EMPTY;
+	return	msg.properties->listener.s_listener != EMPTY;
 }
 
 inline void handleBoolAction(
@@ -81,6 +78,7 @@ inline void resolveListeners(Listeners* listeners, BroadcastMessage& broadcast)
 {
 	int degradation = broadcast.properties->degradation;
 	Family::_Family f = broadcast.properties->listener.f_listener;
+	listeners->push_back(new Listener(broadcast.broadcaster));
     /* If this broadcast is getting repeated, determine who the next set
      * of listeners will be, and then start over
      */
@@ -123,8 +121,7 @@ inline void resolveListeners(Listeners* listeners, BroadcastMessage& broadcast)
 inline void resolveListeners(BroadcastMessage& broadcast)
 {
 	mApp;
-	Family::_Family f_listener;
-	bool isString = listenerIsString(f_listener, broadcast);
+	bool isString = listenerIsString(broadcast);
 	Listeners* listeners = getListenerVector(broadcast);
 
 	switch(broadcast.properties->action)
@@ -144,8 +141,6 @@ inline void resolveListeners(BroadcastMessage& broadcast)
 void submitBroadcast(BroadcastMessage& broadcast)
 {
 	mApp;
-    Family::_Family f_listener;
-    bool registryListener = listenerIsString(f_listener, broadcast);
     resolveListeners(broadcast);
     directListeners(broadcast);
     cleanupBroadcast(broadcast);
