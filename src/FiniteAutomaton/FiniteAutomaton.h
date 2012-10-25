@@ -58,10 +58,10 @@ public:
 template <class T, class U=T, class V=std::string>
 class FiniteAutomatonTmpl : public FiniteAutomaton
 {
-	std::map <V, AbstractState*> __states;
 protected:
 	Status __status;
 	AbstractState* __starting_state;
+	std::map <V, AbstractState*> __states;
 
 public:
 	FiniteAutomatonTmpl() : FiniteAutomaton()
@@ -70,7 +70,7 @@ public:
 		__starting_state =0;
 	}
 
-	virtual ~FiniteAutomatonTmpl(){};
+	virtual ~FiniteAutomatonTmpl(){}
 	virtual bool hasNextToken() =0;
 	virtual U giveInput(const T& input) =0;
 
@@ -134,7 +134,7 @@ public:
 	{
 		output_type = (T) parse(input);
 
-		if (!output_type & __valid_outputs)
+		if (!(output_type & __valid_outputs)	)
 			return FiniteAutomaton::ERR_INVALID;
 
 		/* If this is an intermediate node that must continue */
@@ -161,25 +161,25 @@ public:
 				return FiniteAutomaton::OK_CPL;
 		}
 	}
-	inline AbstractState* destination (const T& type)
+	inline AbstractState* destination (T type)
 	{
 		return __destinations[type];
 	}
 
-	inline State<T,U,E,V>& registerDestination(const T& type, AbstractState* other)
+	inline State<T,U,E,V>& registerDestination(T type, AbstractState* other)
 	{
 		__destinations[type] = other;
 		return *this;
 	}
 
-	inline const E& getID() { return __name; }
+	inline E getID() { return __name; }
 	inline const T& getOutputType () { return output_type; }
 	T (*parse)(const U& reagent);
 
 private:
 	T output_type;
 	const V& __valid_outputs;
-	const E& __name;
+	E __name;
 	std::map  <T,AbstractState*> __destinations;
 };
 

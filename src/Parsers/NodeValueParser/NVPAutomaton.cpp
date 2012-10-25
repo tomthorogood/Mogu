@@ -192,12 +192,14 @@ Nodes::NodeValue NodeValueParser::giveInput(const std::string& input)
 		{
 			tokens.push_back(next_token);
 			tokenTypes.push_back(state.getOutputType());
+			token_type = state.getOutputType();
+			NVP_State* next_state = (NVP_State*) state.destination(token_type);
+			current_state = next_state->getID();
+
 		}
 		if (__status == OK_ICPL)
 		{
 			token_type = state.getOutputType();
-			NVP_State* next_state = (NVP_State*) state.destination(token_type);
-			current_state = next_state->getID();
 		}
 	} while (hasNextToken() && ( __status == OK_ICPL));
 
@@ -210,16 +212,16 @@ Nodes::NodeValue NodeValueParser::giveInput(const std::string& input)
 	switch(current_state)
 	{
 	case NVP_ABCL_F:
+	case NVP_E_TF:
 		parse_single_static_token(
 				final_output
 				, tokens[0]
-				, token_type
+				, tokenTypes[0]
 				, __broadcaster
 				, __enumcallback);
 		break;
 
 	case NVP_D_F: //cascades on purpose!
-	case NVP_E_TF:
 		parse_widget_state(
 				final_output
 				,tokens[0]
@@ -238,9 +240,9 @@ Nodes::NodeValue NodeValueParser::giveInput(const std::string& input)
 		break;
 	case NVP_GHI_F:
 		if (tokens[0].at(0) == '@')
-			parse_data_node(final_output, tokens[0], tokens[1]);
+			parse_data_node(final_output, tokens[0], tokens[1], tokenTypes[1]);
 		else if (tokens[0].at(0) == '[')
-			parse_session_node(final_output, tokens[0], tokens[1]);
+			parse_session_node(final_output, tokens[0], tokens[1],tokenTypes[1]);
 		break;
 	default:
 		/*TODO throw error.*/

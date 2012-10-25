@@ -54,6 +54,17 @@ public:
 
 	Nodes::NodeValue giveInput (const std::string& input);
 
+	~NodeValueParser()
+	{
+		std::map<NVP_States,Automaton::AbstractState*>::iterator iter
+			= __states.begin();
+		while (iter != __states.end())
+		{
+			delete iter->second;
+			++iter;
+		}
+	}
+
 	inline bool hasNextToken()
 	{
 		return __tokenizer.hasNext();
