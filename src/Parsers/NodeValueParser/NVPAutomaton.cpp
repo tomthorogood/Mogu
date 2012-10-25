@@ -34,7 +34,7 @@ NodeValueParser::Outputs getMoguType(const std::string& token)
 			NodeValueParser::widget_state :  NodeValueParser::string_value;
 		break;
 	case '|' : ntype = (fchar == '|')?
-			NodeValueParser::registered_node : NodeValueParser::string_value;
+			NodeValueParser::registered_widget : NodeValueParser::string_value;
 		break;
 	case '[' : ntype = (fchar == ']')?
 			NodeValueParser::dynamic_storage : NodeValueParser::string_value;
@@ -146,7 +146,7 @@ void NodeValueParser::__init__()
 		.registerDestination(integer_value, getState(NVP_ABCL_F))
 		.registerDestination(float_value, getState(NVP_ABCL_F))
 		.registerDestination(hashed_string, getState(NVP_ABCL_F))
-		.registerDestination(widget_state,getState(NVP_K_T))
+		.registerDestination(registered_widget, getState(NVP_K_T))
 		.registerDestination(enum_value,getState(NVP_E_TF))
 		.registerDestination(dynamic_storage,getState(NVP_F_TF))
 		.registerDestination(data_node, getState(NVP_J_TF))
