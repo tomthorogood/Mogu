@@ -10,6 +10,7 @@
 
 #include <declarations.h>
 #include <Types/NodeValue.h>
+#include <Parsers/NodeValueParser.h>
 
 namespace Events{
 struct PreprocessedEventListener
@@ -61,7 +62,7 @@ struct EventPreprocessor
 	Enums::SignalActions::SignalAction next_action;
 	PreprocessedEventListener listener;
 	PreprocessedMessage message;
-	Enums::NodeValueTypes::NodeValueTypes getListenerType(std::string& str);
+	Parsers::NodeValueParser::Outputs getListenerType(std::string& str);
 	int degradation;
 
 	EventPreprocessor (const std::string& node);

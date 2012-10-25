@@ -48,6 +48,11 @@ public:
 		return starts_with_string;
 	}
 
+	inline bool hasNext()
+	{
+		return epsilon() != EMPTY;
+	}
+
 };
 
 }//namespace Parsers

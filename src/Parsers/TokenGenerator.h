@@ -9,6 +9,7 @@
 #define TOKENGENERATOR_H_
 
 #include <declarations.h>
+#include <TurnLeftLib/Utils/inlines.h>
 
 namespace Parsers{
 
@@ -56,8 +57,6 @@ protected:
 
 	CharCouplets* getWrappers() { return &__chars;}
 	void setCurrentPosition(size_t i) { __cpos = i;}
-
-
 
 public:
 
@@ -112,6 +111,13 @@ public:
         return __cpos;
     }
 
+	inline std::string getRemaining()
+	{
+		std::string remaining = __orig.substr(__cpos);
+		TurnLeft::Utils::trimchar(remaining);
+		return remaining;
+	}
+
 
 	/*!\brief Constructor takes an optional string. Defaults  to the empty
 	 * string.
@@ -129,6 +135,14 @@ public:
 	 * @return The next token in the string
 	 */
 	virtual std::string next(char delineator = ' ');
+
+	inline virtual std::string epsilon(char delineator = ' ')
+	{
+		unsigned int __opos = __cpos;
+		std::string str = next();
+		__cpos = __opos;
+		return str;
+	}
 
 	virtual inline bool isWrapped(const std::string& token) const
 	{

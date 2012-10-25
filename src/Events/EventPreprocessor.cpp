@@ -17,7 +17,7 @@ namespace Events{
 
 using namespace Enums::SignalActions;
 using namespace Enums::SignalTriggers;
-using namespace Enums::NodeValueTypes;
+using Parsers::NodeValueParser;
 using namespace Parsers::StyleParser;
 
 
@@ -96,7 +96,7 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	 * at event firing.
 	 */
 
-	if (getListenerType(listener_str) == dynamic_storage)
+	if (getListenerType(listener_str) == NodeValueParser::dynamic_storage)
 	{
 		listener.s_listener = listener_str;
 		listener.type = listener.string;
@@ -142,7 +142,8 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	message.value.setString(msg_str);
 }
 
-NodeValueTypes EventPreprocessor::getListenerType(std::string& str)
+Parsers::NodeValueParser::Outputs
+EventPreprocessor::getListenerType(std::string& str)
 {
 	Parsers::MoguScript_Tokenizer t(str);
 	return Parsers::getMoguType(t.next());

@@ -61,6 +61,11 @@ public:
     /*!\brief Copies the value of another node value into this one. */
     NodeValue(NodeValue*);
 
+    inline void operator=(NodeValue& v)
+    {
+    	copy(&v);
+    }
+
     /*!\brief deletes the pointer to the NumericUnion*/
     virtual ~NodeValue();
 
