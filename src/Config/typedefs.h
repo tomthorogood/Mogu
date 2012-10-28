@@ -25,7 +25,6 @@ namespace Maps
 namespace Events
 {
 	typedef std::vector <Listener*> Listeners;
-	typedef std::map <BroadcastMessage*, Listeners*> ListenerMap;
 }
 
 typedef TurnLeft::Utils::HungryVector <char> CharVector;

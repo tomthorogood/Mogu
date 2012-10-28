@@ -36,15 +36,6 @@ namespace Family = Enums::Family;
 
 using namespace Goo;
 
-namespace {
-    static ListenerMap listenerMap;
-}
-
-inline bool listenerIsString(BroadcastMessage& msg)
-{
-	return	msg.properties->listener.s_listener != EMPTY;
-}
-
 inline void handleBoolAction(
 		BroadcastMessage& message, bool (*callback)())
 {
@@ -55,207 +46,21 @@ inline void handleBoolAction(
 	else message.broadcaster->fail().emit();
 }
 
-inline Listeners* getListenerVector(BroadcastMessage& broadcast)
-{
-	ListenerMap::iterator iter = listenerMap.find(&broadcast);
-	if (iter == listenerMap.end())
-	{
-		listenerMap[&broadcast] = new Listeners();
-	}
-	return listenerMap[&broadcast];
-}
-
-inline void resolveListeners(Listeners* listeners, const std::string& name)
-{
-	mApp;
-	if (app->widgetIsRegistered(name))
-	{
-		listeners->push_back(new Listener( app->registeredWidget(name) ));
-	}
-}
-
-inline void resolveListeners(Listeners* listeners, BroadcastMessage& broadcast)
-{
-	int degradation = broadcast.properties->degradation;
-	Family::_Family f = broadcast.properties->listener.f_listener;
-	listeners->push_back(new Listener(broadcast.broadcaster));
-
-
-    while (--degradation>=0)
-    {
-    	updateListeners(broadcast);
-    }
-
-    broadcast.updateAction();
-
-    if (broadcast.properties->action == Action::rebroadcast)
-    {
-    	if (f != Family::application)
-    	{
-    		getNuclearFamily(broadcast);
-    	}
-    	string nodeName =
-    			"events."+broadcast.properties->message.value.getString();
-    	Listeners* listeners = listenerMap[&broadcast];
-    	size_t num_listeners = listeners->size();
-    	for (size_t listener = 0; listener < num_listeners; ++listener)
-    	{
-    		Moldable& __listener = listeners->at(listener)->getWidget();
-    		EventPreprocessor preproc(nodeName);
-    		BroadcastMessage newmsg(&__listener, &preproc);
-    		submitBroadcast(newmsg);
-    	}
-
-    	cleanupBroadcast(broadcast);
-        return; // Avoid side effects with recursion!
-    }
-
-    if (f != Family::application) getNuclearFamily(broadcast);
-}
-
-inline void resolveListeners(BroadcastMessage& broadcast)
-{
-	bool isString = listenerIsString(broadcast);
-	Listeners* listeners = getListenerVector(broadcast);
-
-	switch(broadcast.properties->action)
-	{
-	/* Determine what sort of listener we have. */
-	case Enums::SignalActions::store_value:{
-		listeners->push_back(new Listener(broadcast.properties->listener.s_listener));
-		break;}
-	default:
-		if (isString) resolveListeners(
-				listeners, broadcast.properties->listener.s_listener);
-		else
-			resolveListeners(listeners, broadcast);
-	}
-}
 
 void submitBroadcast(BroadcastMessage& broadcast)
 {
-    resolveListeners(broadcast);
+	broadcast.resolveListeners();
     directListeners(broadcast);
-    cleanupBroadcast(broadcast);
+    broadcast.updateAction();
 }
 
-void getNuclearFamily(BroadcastMessage& broadcast)
-{
-    namespace Family = Enums::Family;
-    Family::_Family familyMembers = broadcast.properties->listener.f_listener;
-    if (familyMembers == Family::self) return;
-
-    Listeners* current_listeners = listenerMap[&broadcast];
-    Listeners* new_listeners = new Listeners();
-
-    unsigned int num_current = current_listeners->size();
-
-    for (unsigned int c = 0; c < num_current; c++)
-    {
-        Moldable& listener = current_listeners->at(c)->getWidget();
-        switch(familyMembers)
-        {
-        case Family::children:{
-            unsigned int num_children = listener.countMoldableChildren();
-            for (unsigned int k = 0; k < num_children; k++)
-            {
-                Moldable* child = listener.child(k);
-                new_listeners->push_back(new Listener(child));
-            }
-            break;}
-
-        case Family::parent:{
-            Moldable* parent = (Moldable*) listener.parent();
-            new_listeners->push_back(new Listener(parent));
-            break;}
-
-        case Family::siblings:{
-            Moldable* parent = (Moldable*) listener.parent();
-            unsigned int num_siblings = parent->countMoldableChildren();
-            for (unsigned int k = 0;  k < num_siblings; k++)
-            {
-                Moldable* sibling = parent->child(k);
-                if (sibling != &listener)
-                {
-                    new_listeners->push_back(new Listener(sibling));
-                }
-            }
-            break;}
-        default:
-            new_listeners->push_back(new Listener(&listener));
-        }
-    }
-
-    listenerMap[&broadcast] = new_listeners;
-#ifdef DEBUG // Make sure  that all listeners are actual objects
-    for (unsigned int i = 0; i < new_listeners->size(); i++)
-    {
-    	assert (new_listeners->at(i) != 0);
-    }
-#endif
-    delete current_listeners;
-}
-
-void updateListeners(BroadcastMessage& broadcast)
-{
-    Action::SignalAction direction = broadcast.properties->action;
-    Listeners* current_listeners = listenerMap[&broadcast];
-    Listeners* new_listeners = new Listeners();
-
-    size_t num_current = current_listeners->size();
-    for (size_t c = 0; c < num_current; c++)
-    {
-        Moldable& listener = current_listeners->at(c)->getWidget();
-        switch(direction)
-        {
-
-        // Add the parent of each of the current listeners.
-        case Action::bubble:{
-            Moldable* parent = (Moldable*) listener.parent();
-            new_listeners->push_back(new Listener(parent));
-            break;}
-
-        // Add the children of each of the current listeners.
-        case Action::trickle:{
-            int num_children = listener.countMoldableChildren();
-            for (int k = 0; k < num_children; k++)
-            {
-                Moldable* child = listener.child(k);
-                new_listeners->push_back(new Listener(child));
-            }
-            break;}
-
-        default: // Something is very wrong
-#ifdef DEBUG
-        	assert(1==0); // Force assertion error on debug
-#endif
-        	return;// Don't do anything more if the direction is unclear.
-        }
-        listenerMap[&broadcast] = new_listeners;
-
-        // Free the memory the current_listener list is using.
-        for (size_t  i = 0; i < num_current; i++)
-        {
-        	delete current_listeners->at(i);
-        }
-        delete current_listeners;
-    }
-#ifdef DEBUG // Make sure  that all listeners are actual objects
-    for (unsigned int i = 0; i < new_listeners->size(); i++)
-    {
-    	assert (new_listeners->at(i) != 0);
-    }
-#endif
-}
 
 void directListeners(BroadcastMessage& broadcast)
 {
+	if (broadcast.listeners.size() <=0) return;
 	mApp;
     namespace Action = Enums::SignalActions;
-    BroadcastMessage* bptr 		= &broadcast;
-    Listeners* listeners 		= listenerMap[bptr];
-    assert(listeners !=0);
-    size_t num_listeners = listeners->size();
+    size_t num_listeners = broadcast.listeners.size();
     Nodes::NodeValue& message 	= broadcast.properties->message.value;
     Action::SignalAction action = broadcast.properties->action;
 
@@ -263,7 +68,7 @@ void directListeners(BroadcastMessage& broadcast)
     if (broadcast.broadcaster!=0)
     {
 		std::cout << "Parsing Action " << action << " for ";
-		std::cout << listeners->size() << " listeners from ";
+		std::cout << num_listeners << " listeners from ";
 		std::cout << broadcast.broadcaster->getNode() << std::endl;
 		std::cout << "Message: ";
 		if (message.getType() == Nodes::string_value) std::cout << message.getString();
@@ -271,15 +76,15 @@ void directListeners(BroadcastMessage& broadcast)
 
 		std::cout << std::endl;
 		std::cout << "Listeners: ";
-		for (size_t i = 0; i < listeners->size(); ++i)
+		for (size_t i = 0; i < num_listeners; ++i)
 		{
-			if (&(listeners->at(i)->getWidget()) != NULL)
+			if (&(broadcast.listeners[i]->getWidget()) != NULL)
 			{
-				std::cout << listeners->at(i)->getWidget().getNode();
+				std::cout << broadcast.listeners[i]->getWidget().getNode();
 			}
 			else
 			{
-				std::cout << listeners->at(i)->getString();
+				std::cout << broadcast.listeners[i]->getString();
 			}
 			std::cout << " ";
 		}
@@ -340,26 +145,26 @@ void directListeners(BroadcastMessage& broadcast)
 
         for (size_t w = 0; w < num_listeners; w++)
         {
-            Moldable& widget = listeners->at(w)->getWidget();
+            Moldable& widget = broadcast.listeners[w]->getWidget();
             if (widget.allowsAction(Action::set_style))
                 widget.setStyleClass(wNewStyle);
         }
         break;}
 
     case Action::emit:{
-    	Actions::emit(*listeners, message.getString());
+    	Actions::emit(broadcast.listeners, message.getString());
     	break;}
 
     /* Change the widget index of the listeners' stacked widgets. */
     case Action::set_index:
-    	Actions::set_index(*listeners, message.getInt());
+    	Actions::set_index(broadcast.listeners, message.getInt());
     	break;
 
     /* Append a new CSS class to the current widget style. */
     case Action::add_class:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		if (widget.allowsAction(Action::add_class))
     		{
     			Wt::WString addl_style = message.getString();
@@ -372,7 +177,7 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::remove_class:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		if (widget.allowsAction(Action::remove_class))
     		{
     			Wt::WString msg = message.getString();
@@ -382,18 +187,18 @@ void directListeners(BroadcastMessage& broadcast)
     	break;}
 
     /* Advance the stack's widget index. */
-    case Action::increment_index: Actions::increment_index(*listeners);
+    case Action::increment_index: Actions::increment_index(broadcast.listeners);
     	break;
 
     /* Rewind the stack's widget index. */
-    case Action::decrement_index: Actions::decrement_index(*listeners);
+    case Action::decrement_index: Actions::decrement_index(broadcast.listeners);
     	break;
 
     /* Adds a new widget to the tree. */
     case Action::add_widget:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		Nodes::NodeValue v;
     		app->interpreter().giveInput(
     				message.getString(), v);
@@ -412,7 +217,7 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::remove_child:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		if (widget.allowsAction(Action::remove_child))
     		{
     			Moldable* child = NULL;
@@ -443,7 +248,7 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::clear:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		if (widget.allowsAction(Action::clear))
     		{
     			widget.clear();
@@ -456,13 +261,13 @@ void directListeners(BroadcastMessage& broadcast)
      * single argument, the data cannot be given to a hash node.
      */
     case Action::store_value:
-    	Actions::store(*listeners, message);
+    	Actions::store(broadcast.listeners, message);
     	break;
 
     case Action::store_abstract:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		if (widget.allowsAction(Action::store_abstract))
     		{
     			using namespace Parsers::StyleParser;
@@ -478,7 +283,7 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::slot:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		if (widget.allowsAction(Action::slot))
     		{
     			std::string slot_ = message.getString();
@@ -490,7 +295,7 @@ void directListeners(BroadcastMessage& broadcast)
 
     case Action::match:
     case Action::test_text:
-    	Actions::test( listeners->at(0)->getWidget(), message) ?
+    	Actions::test(broadcast.listeners[0]->getWidget(), message) ?
     				broadcast.broadcaster->succeed().emit()
     			: 	broadcast.broadcaster->fail().emit();
     	break;
@@ -498,7 +303,7 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::set_text:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		if (widget.allowsAction(Action::set_text))
 			{
     			widget.setValueCallback(message.getString());
@@ -509,7 +314,7 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::reload:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		MoldableFactory::sculpt(widget.getProperties(), &widget);
     	}
     	break;}
@@ -517,7 +322,7 @@ void directListeners(BroadcastMessage& broadcast)
     case Action::STDOUT:{
     	for (size_t w = 0; w < num_listeners; w++)
     	{
-    		Moldable& widget = listeners->at(w)->getWidget();
+    		Moldable& widget = broadcast.listeners[w]->getWidget();
     		std::cout << widget.getNode() << " says: ";
     		std::cout << message.getString() << std::endl;
     	}
@@ -525,19 +330,8 @@ void directListeners(BroadcastMessage& broadcast)
 
     default:return; // Don't do anything unexpected!
     }
-#ifdef DEBUG
-    std::cout << "DONE. Cleaning Up." << std::endl;
-#endif
 }
 
-
-void cleanupBroadcast(BroadcastMessage& broadcast)
-{
-    /* First, delete all Listener objects associated with the broadcast */
-    delete listenerMap[&broadcast];
-    listenerMap.erase(&broadcast);
-    broadcast.updateAction();
-}
 
 } //Namespace ActionCenter
 } //Namespace Events

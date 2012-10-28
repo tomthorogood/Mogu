@@ -20,10 +20,13 @@ typedef Nodes::NodeValue NodeValue;
 
 struct BroadcastMessage
 {
-	Goo::Moldable* 		broadcaster;
+	Goo::Moldable* broadcaster;
+	Listeners listeners;
 	EventPreprocessor* 	properties;
 	BroadcastMessage(Goo::Moldable*, EventPreprocessor*);
 	void updateAction();
+	~BroadcastMessage();
+	void resolveListeners();
 };
 
 

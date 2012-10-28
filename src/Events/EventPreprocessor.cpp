@@ -42,6 +42,7 @@ EventPreprocessor::EventPreprocessor (std::string& node)
 
 	std::string listener_str = getHashEntry(node, "listener");
 	if (listener_str == EMPTY) listener_str = getHashEntry(node, "listeners");
+
 	std::string degrad_str = getHashEntry(node, "degradation");
 
 	if (degrad_str != EMPTY)
@@ -65,7 +66,7 @@ EventPreprocessor::EventPreprocessor (std::string& node)
 	else
 	{
 		degradation = 0;
-		next_action = (Enums::SignalActions::SignalAction) 0;
+		next_action = Enums::SignalActions::NO_ACTION;
 	}
 
 	/*The trigger string will always be parseable to an enumerated type,

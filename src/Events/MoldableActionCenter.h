@@ -48,12 +48,6 @@ void directListeners(BroadcastMessage& broadcast);
  */
 void getNuclearFamily(BroadcastMessage& broadcast);
 
-/*!\brief Deletes the broadcast signal and removes its entry fro the
- * ListenerMap.
- * @param broadcast The dying broadcast message.
- */
-void cleanupBroadcast(BroadcastMessage& broadcast);
-
 //_______ACTION RESOLUTIONS ________//
 namespace Actions{
 
