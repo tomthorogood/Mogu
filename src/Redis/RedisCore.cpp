@@ -11,54 +11,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <cassert>
+#include <Exceptions/Exceptions.h>
 
 namespace Redis{
 
 using std::stringstream;
 using std::string;
-
-namespace{
-    static stringstream stream;
-} //unnamed namespace
-
-std::string join (
-        string arg1, string arg2, string arg3, string arg4, string arg5)
-{
-    stream << arg1;
-    if (arg2 != "")
-    {
-        stream << " " << arg2;
-        if (arg3 != "")
-        {
-            stream << " " << arg3;
-            if (arg4 != "")
-            {
-                stream << " " << arg4;
-                if (arg5 != "")
-                {
-                    stream << " " << arg5;
-                }
-            }
-        }
-    }
-    string buff_out = stream.str();
-    return buff_out;
-}
-
-void* command (
-		redisContext* c,
-        string arg1, string arg2, string arg3, string arg4, string arg5)
-{
-    std::string buff = join (arg1, arg2, arg3, arg4, arg5);
-    const char* __command = buff.c_str();
-    void* vr = redisCommand(c, __command);
-    if (c->err)
-	{
-		std::cout << c->errstr << std::endl;
-	}
-	stream.str("");
-	return vr;
-}
 
 string toString(redisReply* reply)
 {

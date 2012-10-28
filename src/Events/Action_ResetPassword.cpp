@@ -7,7 +7,6 @@
 
 #include <declarations.h>
 #include <Security/Security.h>
-#include <Sessions/Submission.h>
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <TurnLeftLib/Utils/inlines.h>
 #include <Sessions/Lookups.h>
@@ -23,7 +22,6 @@ namespace Actions{
 
 bool change_password(std::string username, std::string new_password)
 {
-	using namespace Sessions::SubmissionHandler;
 	using namespace Sessions::Lookups;
 	using std::find;
 
@@ -55,21 +53,26 @@ bool change_password(std::string username, std::string new_password)
 	Security::proof_auth_string(&new_auth_str);
 
 	mApp;
+	const char* cauth_str = new_auth_str.first.c_str();
+	const char* cauth_tok = auth_token.c_str();
+	const char* cenc_id = e_userid.c_str();
 
 	//Set the new auth string to the current auth token
-	app->redisCommand("hset", __NODE_AUTH_LOOKUP, new_auth_str.first, auth_token);
+	app->redisCommand("hset %s %s %s",
+			__NODE_AUTH_LOOKUP, cauth_str, cauth_tok);
+
 	app->freeReply();
 	if (new_auth_str.second > 0)
 	{//set the colission table if necessary
-		std::string s = itoa(new_auth_str.second);
-		app->redisCommand(
-				"hset", __NODE_COLLISION_STR_LOOKUP,e_userid,s);
+		app->redisCommand("hset %s %s %d",
+				__NODE_COLLISION_STR_LOOKUP,cenc_id,new_auth_str.second);
 		app->freeReply();
 	}
 	else if (hashkey_exists(__NODE_COLLISION_STR_LOOKUP, e_userid))
 	{//if the new auth string had no collisions, delete the entry from
 		//the database node
-		app->redisCommand("hdel", __NODE_COLLISION_STR_LOOKUP, e_userid);
+		app->redisCommand("hdel % %s",
+				__NODE_COLLISION_STR_LOOKUP, cenc_id);
 		app->freeReply();
 	}
 	return true;

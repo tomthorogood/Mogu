@@ -10,12 +10,13 @@
 
 #include <Parsers/NodeValueParser/NVPAutomaton.h>
 #include <hash.h>
-#include <Sessions/Submission.h>
 #include <Exceptions/Exceptions.h>
 #include <Sessions/Lookups.h>
 #include <Redis/RedisCore.h>
 #include <Mogu.h>
 #include <Parsers/Parsers.h>
+
+#include <Redis/SessionValueRequest.h>
 
 namespace Parsers
 {
@@ -88,7 +89,11 @@ void parse_session_node (
 		arg = convert_nv_to_string(varg);
 	}
 	std::string uw_base = base.substr(1,base.length()-2);
-	std::string value = Sessions::SubmissionHandler::dynamicLookup(uw_base, arg);
+
+	Redis::SessionValueRequest lookup(base, arg);
+	std::string value = lookup.getValue();
+
+	//When recursing, we cannot use the same NVP instance as before!
 	NodeValueParser p(value,v);
 }
 
@@ -101,7 +106,9 @@ void parse_data_node(
 	using namespace Enums::NodeValueTypes::RedisTypes;
 	mApp;
 	std::string uw_base = base.substr(1, base.length()-2);
-	app->redisCommand("type", uw_base);
+	const char* cbase = uw_base.c_str();
+	const char* carg = arg.c_str();
+	app->redisCommand("type %s", cbase);
 	std::string node_type = Redis::toString(app->reply());
 
 	if (arg != EMPTY)
@@ -113,19 +120,20 @@ void parse_data_node(
 
 	if (node_type == REDIS_STR)
 	{
-		app->redisCommand("get", uw_base);
+		app->redisCommand("get %s", cbase);
 	}
 	else if (node_type == REDIS_HSH)
 	{
-		app->redisCommand("hget", uw_base, arg);
+		app->redisCommand("hget %s %s", cbase, carg);
 	}
 	else //(node_type == REDIS_LST)
 	{
-		app->redisCommand("lindex", uw_base, arg);
+		app->redisCommand("lindex %s %s", cbase, carg);
 	}
 
 	std::string response = Redis::toString(app->reply());
-	NodeValueParser(response,v);
+	//When recursing, we cannot use the same NVP instance as before!
+	NodeValueParser p(response,v);
 }
 
 void parse_widget_state (

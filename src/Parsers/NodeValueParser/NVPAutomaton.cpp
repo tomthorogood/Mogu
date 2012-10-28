@@ -6,6 +6,7 @@
  */
 
 #include <Parsers/NodeValueParser/NVPAutomaton.h>
+#include <Exceptions/Exceptions.h>
 #include <Core/Moldable.h>
 
 namespace Parsers
@@ -48,20 +49,34 @@ NodeValueParser::Outputs getMoguType(const std::string& token)
 	return ntype;
 }
 
+NodeValueParser::NodeValueParser()
+	: FiniteAutomatonTmpl <std::string, void, NVP_States>()
+{
+	__init__();
+}
+
 NodeValueParser::NodeValueParser(
 		std::string input
 		, Nodes::NodeValue& v
 		, Goo::Moldable* broadcaster
 		, int(*enumcallback)(const std::string& str)) :
-	FiniteAutomatonTmpl <std::string,Nodes::NodeValue,NVP_States>()
-	,__iovalue(v)
+	FiniteAutomatonTmpl <std::string,void,NVP_States>()
 {
 	__init__();
+	giveInput(input, v, broadcaster, enumcallback);
+}
+
+void NodeValueParser::giveInput(
+		std::string input
+		, Nodes::NodeValue& v
+		, Goo::Moldable* broadcaster
+		, int (*enumcallback)(const std::string& str)
+		)
+{
+	__iovalue = &v;
 	__broadcaster = broadcaster;
 	__enumcallback = enumcallback;
-	Nodes::NodeValue cpy = giveInput(input);
-	__iovalue.copy(&cpy);
-
+	giveInput(input);
 }
 
 void NodeValueParser::__init__()
@@ -173,18 +188,24 @@ void NodeValueParser::__init__()
 	;
 }
 
-Nodes::NodeValue NodeValueParser::giveInput(const std::string& input)
+
+
+void NodeValueParser::giveInput(std::string input)
 {
-	__tokenizer.newString(input).reset();
+	if (tokens.size() != 0 || tokenTypes.size() != 0)
+		throw Exceptions::Err_RecursionError(
+				"NodeValueParser::giveInput()::"+__LINE__);
+
+	__tokenizer.reset().newString(input);
 	NVP_States current_state = NVP_START;
-	Nodes::NodeValue final_output;
 	Outputs token_type;
 	do {
 		std::string next_token = __tokenizer.next();
 		if ((current_state == NVP_START) && (next_token == "!DNP!"))
 		{
-			final_output.setString(__tokenizer.getRemaining());
-			return final_output;
+			__iovalue->setString(__tokenizer.getRemaining());
+			reset();
+			return;
 		}
 		NVP_State& state = getState <NVP_State>(current_state);
 		__status = state.input(next_token);
@@ -195,18 +216,12 @@ Nodes::NodeValue NodeValueParser::giveInput(const std::string& input)
 			token_type = state.getOutputType();
 			NVP_State* next_state = (NVP_State*) state.destination(token_type);
 			current_state = next_state->getID();
-
-		}
-		if (__status == OK_ICPL)
-		{
-			token_type = state.getOutputType();
 		}
 	} while (hasNextToken() && ( __status == OK_ICPL));
 
 	if (__status <= ERR_ECPL)
 	{
 		/*TODO handle error! */
-		return final_output;
 	}
 
 	switch(current_state)
@@ -214,7 +229,7 @@ Nodes::NodeValue NodeValueParser::giveInput(const std::string& input)
 	case NVP_ABCL_F:
 	case NVP_E_TF:
 		parse_single_static_token(
-				final_output
+				*__iovalue
 				, tokens[0]
 				, tokenTypes[0]
 				, __broadcaster
@@ -223,33 +238,32 @@ Nodes::NodeValue NodeValueParser::giveInput(const std::string& input)
 
 	case NVP_D_F: //cascades on purpose!
 		parse_widget_state(
-				final_output
+				*__iovalue
 				,tokens[0]
 				,tokens[1]
 				,__broadcaster);
 		break;
 	case NVP_F_TF:
 		parse_session_node(
-				final_output
+				*__iovalue
 				,tokens[0]);
 		break;
 	case NVP_J_TF:
 		parse_data_node(
-				final_output
+				*__iovalue
 				,tokens[0]);
 		break;
 	case NVP_GHI_F:
 		if (tokens[0].at(0) == '@')
-			parse_data_node(final_output, tokens[0], tokens[1], tokenTypes[1]);
+			parse_data_node(*__iovalue, tokens[0], tokens[1], tokenTypes[1]);
 		else if (tokens[0].at(0) == '[')
-			parse_session_node(final_output, tokens[0], tokens[1],tokenTypes[1]);
+			parse_session_node(*__iovalue, tokens[0], tokens[1],tokenTypes[1]);
 		break;
 	default:
 		/*TODO throw error.*/
 		break;
 	}
-
-	return final_output;
+	reset();
 }
 
 

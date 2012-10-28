@@ -15,11 +15,11 @@ ListNodeGenerator::ListNodeGenerator(
 {
 	__node 		= node;
 	__current 	= 0;
-
+	const char* cnode = node.c_str();
 	if (!max)
 	{
 		mApp;
-		app->redisCommand("llen", node);
+		app->redisCommand("llen %s", cnode);
 		__max = Redis::getInt(app->reply());
 	}
 	else
@@ -34,8 +34,9 @@ std::string ListNodeGenerator::next()
 {
 	if (__current < __max)
 	{
+		const char* cnode = __node.c_str();
 		mApp;
-		app->redisCommand("lindex", __node, itoa(__current));
+		app->redisCommand("lindex %s %d", cnode, __current);
 		++__current;
 		return Redis::toString(app->reply());
 	}

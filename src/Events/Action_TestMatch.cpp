@@ -7,8 +7,7 @@
 
 #include <Events/MoldableActionCenter.h>
 #include <Types/NodeValue.h>
-#include <Parsers/NodeValueParser.h>
-#include <Events/BroadcastMessage.h>
+#include <Mogu.h>
 
 namespace Events
 {
@@ -20,10 +19,14 @@ using Goo::Moldable;
 
 bool test(Moldable& widget, Nodes::NodeValue& val)
 {
+	mApp;
+	app->interpreter().giveInput(val.getString(), val);
+
 	if (widget.allowsAction(Enums::SignalActions::match))
 	{
 		return val.getString().find(widget.valueCallback()) != std::string::npos;
 	}
+
 	return false;
 }
 

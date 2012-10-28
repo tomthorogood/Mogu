@@ -22,7 +22,6 @@
 #include <Mogu.h>
 
 #include <Parsers/StyleParser.h>
-#include <Parsers/NodeValueParser.h>
 #include <Validators/Validators.h>
 #include <Types/Enums.h>
 #include <Core/Moldable.h>
@@ -51,37 +50,35 @@ MoldableTemplate* conceptualize(const std::string& node)
 	assert(__tmpl->node != "");
 #endif
 
-	if (widgetIsDynamic(node)) __tmpl->flags |= is_dynamic;
-	if (widgetHasField(node, "animation")) __tmpl->flags |= has_animation;
+	if (widgetHasProperty(node, "animation")) __tmpl->flags |= has_animation;
 	if (widgetHasEvents(node)) __tmpl->flags |= has_events;
-	if (widgetHasField(node, "block")) __tmpl->flags |= blocks_actions;
-	if (widgetHasField(node, "validator")) __tmpl->flags |= is_validated;
-	if (widgetHasField(node, "name")) __tmpl->flags |= is_named;
-	if (widgetHasField(node, "tooltip")) __tmpl->flags |= has_tooltip;
+	if (widgetHasProperty(node, "block")) __tmpl->flags |= blocks_actions;
+	if (widgetHasProperty(node, "validator")) __tmpl->flags |= is_validated;
+	if (widgetHasProperty(node, "name")) __tmpl->flags |= is_named;
+	if (widgetHasProperty(node, "tooltip")) __tmpl->flags |= has_tooltip;
 
-	if (widgetHasField(node,"class"))
-		__tmpl->style = getWidgetField(node,"class");
+	__tmpl->style = getWidgetProperty(node,"class");
 
-	if (widgetHasField(node, "content"))
-		__tmpl->content = getWidgetField(node, "content");
+	__tmpl->content = getWidgetProperty(node, "content");
 
-	if (widgetHasField(node, "source"))
-		__tmpl->source = getWidgetField(node,"source");
+	if (widgetHasProperty(node, "source"))
+		__tmpl->source = getWidgetProperty(node,"source");
 
-	if (widgetHasField(node, "location"))
-		__tmpl->location = getWidgetField(node, "location");
+	if (widgetHasProperty(node, "location"))
+		__tmpl->location = getWidgetProperty(node, "location");
 
 	return __tmpl;
 }
 
 MoldableTemplate* conceptualize(const MoldableTemplate* __orig, size_t index)
 {
-	const std::string tpl_node = getWidgetField(__orig->node,"template");
+	mApp;
+	const std::string tpl_node = getWidgetProperty(__orig->node,"template");
 	MoldableTemplate* t = conceptualize(tpl_node);
 	std::string concept_loc = __orig->content;
 	concept_loc += " " + itoa(index);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser parser(concept_loc,v);
+	app->interpreter().giveInput(concept_loc,v);
 	t->content = v.getString();
 	return t;
 }
@@ -96,13 +93,13 @@ Moldable* sculpt(MoldableTemplate* __tmpl, Moldable* m)
 	{
 		std::string name = (__tmpl->name != EMPTY) ?
 					__tmpl->name
-				:	 getWidgetField(__tmpl->node, "name");
+				:	 getWidgetProperty(__tmpl->node, "name");
 
 		app->registerWidget(name, m);
 	}
 	if (__tmpl->flags&has_tooltip)
 	{
-		Wt::WString tooltip(getWidgetField(__tmpl->node, "tooltip"));
+		Wt::WString tooltip(getWidgetProperty(__tmpl->node, "tooltip"));
 		m->setToolTip(tooltip, Wt::XHTMLText);
 	}
 

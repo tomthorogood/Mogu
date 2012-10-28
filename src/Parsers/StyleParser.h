@@ -13,7 +13,6 @@
 #include <Types/NodeValue.h>
 #include <Parsers/Parsers.h>
 #include <Mogu.h>
-#include <Parsers/NodeValueParser.h>
 
 #include <Wt/WAnimation> //For AnimationEffect enum.
 
@@ -22,86 +21,128 @@ namespace Parsers
 
 typedef Enums::WidgetTypes::WidgetTypes WidgetType;
 
+class WidgetPropertyAddress
+{
+	bool base_field_exists;
+	bool base_has_template;
+	bool tpl_field_exists;
+
+	std::string tpl_name;
+
+	enum Result {
+		DOES_NOT_EXIST	=0x0
+		,EXISTS_AT_NODE	=0x1
+		,EXISTS_AT_TPL	=0x2
+	};
+	Mogu* __app;
+
+
+public:
+	WidgetPropertyAddress(std::string base, const char* field)
+	{
+		//If the "widgts." prefix was passed in, remove it!
+		if (base.find("widgets.") == 0) base = base.substr(8);
+		mApp;__app = app;
+		address = EMPTY;
+		tpl_name = EMPTY;
+		result = DOES_NOT_EXIST;
+		if (exists_at_node(base,field))
+		{
+			address = "widgets."+base;
+			result = EXISTS_AT_NODE;
+		}
+		else if (exists_at_template(base, field))
+		{
+			address = "templates."+tpl_name;
+			result = EXISTS_AT_TPL;
+		}
+		else
+			result = DOES_NOT_EXIST;
+	}
+
+	inline bool exists_at(std::string prefix, std::string base, const char* field)
+	{
+		std::string saddress = prefix+"."+base;
+		const char* address = saddress.c_str();
+		__app->redisCommand("hexists %s %s", address, field);
+		return (bool) Redis::getInt(__app->reply());
+	}
+
+	inline bool exists_at_node(std::string base, const char* field)
+	{
+		return exists_at("widgets", base, field);
+	}
+
+	inline bool exists_at_template(std::string base, const char* field)
+	{
+
+		/* If this node has no template */
+		std::string saddress = "widgets."+base;
+		const char* caddress = saddress.c_str();
+		if (!exists_at("widgets", base, "template")) return false;
+		__app->redisCommand("hget %s %s", caddress, "template");
+		tpl_name = Redis::toString(__app->reply());;
+		if (!exists_at("templates", tpl_name, field)) return false;
+		return true;
+	}
+	std::string address;
+	Result result;
+
+};
+
 namespace StyleParser
 {
 
-/*!\brief Returns whether or not a widget has a given field.
- *
- * @param nodeName The widget node in question
- * @param property The property sought
- * @return
- */
-
-inline std::string getWidgetField(const std::string&,const char*);
-
-inline bool setHasMember(const std::string& set, const char* member)
+inline bool nodeExists(const std::string& nodeName)
 {
 	mApp;
-	app->redisCommand("sismember", set, member);
+	const char* cnodename = nodeName.c_str();
+	app->redisCommand("exists %s", cnodename);
 	return (bool) Redis::getInt(app->reply());
 }
-
 
 inline bool nodeHasField(const std::string& nodeName, const char* property)
 {
 	mApp;
-	app->redisCommand("hexists", nodeName, property);
+	const char* cnodename = nodeName.c_str();
+	app->redisCommand("hexists %s %s", cnodename, property);
 	return (bool) Redis::getInt(app->reply());
 }
 
-inline bool widgetHasField(
-		const std::string& nodeName, const char* property)
+inline bool setHasMember(const std::string& set, const char* member)
 {
-	if (!nodeHasField(nodeName, property)
-		&& nodeHasField(nodeName, "template"))
-	{
-		std::string tpl = "templates."+
-				getWidgetField(nodeName, "template");
-
-		return nodeHasField(tpl, property);
-	}
 	mApp;
-	app->redisCommand("hexists", nodeName, property);
+	const char* cset = set.c_str();
+	app->redisCommand("sismember %s %s", cset, member);
 	return (bool) Redis::getInt(app->reply());
 }
 
 inline bool widgetHasProperty(const std::string& node, const char* prop)
 {
-	std::string widgetProperties = node+".properties";
-	if (setHasMember(widgetProperties, prop)) return true;
-	bool widgetHasTemplate = widgetHasField(node, "template");
-	if (widgetHasTemplate)
-	{
-		std::string tplname = getWidgetField(node, "template");
-		std::string templateProperties =
-				tplname=".properties";
-		return setHasMember(templateProperties, prop);
-	}
-	return false;
+	WidgetPropertyAddress lookup(node, prop);
+	return (int) lookup.result > 0;
 }
-
 
 inline bool widgetHasEvents(
 		const std::string& nodeName)
 {
 	mApp;
-	app->redisCommand("exists", nodeName+".events.1");
+	std::string snodename = nodeName+".events.1";
+	const char* cnodename = snodename.c_str();
+	app->redisCommand("exists %s", cnodename);
 	return (bool) Redis::getInt(app->reply());
 }
 
-/*!\brief Retrieves a property from a widget template. Essentially
- * the same as the getWidgetField field, but named differently
- * for readability and maintainability.
- * @param tpl_node The template node
- * @param tpl_field The property being retrieved
- * @return the value stored at the template node
- */
-inline std::string getFromTemplate(
-		std::string& tpl_node,
-		const char* tpl_field)
+inline std::string getHashEntry(
+		std::string& hash_node
+		,const char* hash_field
+		,std::string alt=EMPTY)
 {
 	mApp;
-	app->redisCommand("hget", tpl_node, tpl_field);
+	const char* chashnode = hash_node.c_str();
+	app->redisCommand("hexists %s %s", chashnode, hash_field);
+	if (! (bool) Redis::getInt(app->reply())) return alt;
+	app->redisCommand("hget %s %s", chashnode, hash_field);
 	return Redis::toString(app->reply());
 }
 
@@ -113,26 +154,14 @@ inline std::string getFromTemplate(
  * @param property The property being sought.
  * @return
  */
-inline std::string getWidgetField(
+inline std::string getWidgetProperty(
 		const std::string& nodeName, const char* property)
 {
-	/* If the widget node does not have the property in question,
-	 * but does have the 'template' property, we'll build the template
-	 * node name and then get that property from the template.
-	 * An error will occur if the property does not exist at the
-	 * template node, meaning it is up to the CLI importer to assert
-	 * that things are clean from the user's mogu syntax.
-	 */
-	if (!nodeHasField(nodeName, property)
-		&& nodeHasField(nodeName, "template"))
-	{
-		std::string tpl = getWidgetField(nodeName, "template");
-		tpl = "templates."+tpl;
-		std::string prop = getFromTemplate(tpl,property);
-		return prop;
-	}
+	WidgetPropertyAddress lookup(nodeName, property);
+	if (lookup.address == EMPTY) return EMPTY;
 	mApp;
-	app->redisCommand("hget", nodeName, property);
+	const char* caddress = lookup.address.c_str();
+	app->redisCommand("hget %s %s", caddress, property);
 	return Redis::toString(app->reply());
 }
 
@@ -145,29 +174,15 @@ inline std::string getWidgetField(
  */
 inline WidgetType getWidgetType(std::string nodeName)
 {
-   WidgetType __type;
-   Nodes::NodeValue val;
-   std::string reply_str = getWidgetField(
-    		nodeName, "type");
-   Parsers::NodeValueParser parser(reply_str, val, NONE,
-            Parsers::enum_callback <Parsers::WidgetTypeParser>);
-   __type = (WidgetType) val.getInt();
-    return __type;
-}
-
-/*!\brief Retrieves an animation effect for a Wt::WStackedWidget, converting
- * it from a string into its native enumerative type.
- * @param nodeName The widget node in question
- * @return The enumerated Wt::WAnimation value
- */
-inline Wt::WAnimation::AnimationEffect getWidgetAnimation(
-        std::string nodeName)
-{
-	std::string animation_str = getWidgetField(nodeName,"animation");
-    Nodes::NodeValue val;
-    NodeValueParser value(animation_str, val, NONE,
-            &Parsers::enum_callback<Parsers::WtAnimationParser>);
-    return (Wt::WAnimation::AnimationEffect) val.getInt();
+	mApp;
+	WidgetType __type;
+	Nodes::NodeValue val;
+	std::string reply_str = getWidgetProperty(
+			nodeName, "type");
+	app->interpreter().giveInput(reply_str, val, NONE,
+			Parsers::enum_callback <Parsers::WidgetTypeParser>);
+	__type = (WidgetType) val.getInt();
+	return __type;
 }
 
 /*!\brief Retrieves a list of children from the widget's .children node,
@@ -181,29 +196,11 @@ inline void getWidgetChildren(
     nodeName.append(".children");
     int num_children =0;
     mApp;
-    app->redisCommand("llen", nodeName);
+    const char* cnodename = nodeName.c_str();
+    app->redisCommand("llen %s", cnodename);
     num_children = Redis::getInt(app->reply());
-    std::string _num_children = itoa(num_children);
-    app->redisCommand("lrange", nodeName, "0", _num_children);
+    app->redisCommand("lrange %s 0 %d", cnodename, num_children);
     Redis::toVector(app->reply(), children);
-}
-
-/*!\brief Returns whether or not the widget is considered dynamic for
- * reading purposes.
- * @param nodeName The widget in question
- * @return
- */
-inline bool widgetIsDynamic(std::string nodeName)
-{
-	std::string type_str = getWidgetField(nodeName,"type");
-	size_t index = type_str.find("dynamic");
-#ifdef DEBUG
-	if (index != std::string::npos)
-	{
-		std::cout << nodeName << " IS DYNAMIC" << std::endl;
-	}
-#endif
-	return index != std::string::npos;
 }
 
 /*!\brief Returns a masked byte that contains encoded information about

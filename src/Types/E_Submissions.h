@@ -10,14 +10,14 @@
 
 namespace SubmissionPolicies{
 enum StorageMode{
-	append,
-	replace
+	replace = 0x0
+	,append =0x1,
 };
 
 enum StorageType{
-	list,
 	string,
 	hash,
+	list,
 	set
 };
 

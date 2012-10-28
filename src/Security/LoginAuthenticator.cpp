@@ -33,10 +33,13 @@ LoginAuthenticator::LoginAuthenticator
 bool LoginAuthenticator::user_exists()
 {
 	mApp;
-	app->redisCommand("hexists", __NODE_SESSION_LOOKUP, enc_userid);
+	const char* cenc_id = enc_userid.c_str();
+	app->redisCommand("hexists %s %s"
+			, __NODE_SESSION_LOOKUP, cenc_id);
 	if ( (bool) Redis::getInt(app->reply()))
 	{
-		app->redisCommand("hget", __NODE_SESSION_LOOKUP, enc_userid);
+		app->redisCommand("hget %s %s"
+				, __NODE_SESSION_LOOKUP, cenc_id);
 		last_session_id = Redis::toString(app->reply());
 		return true;
 	}
@@ -46,10 +49,13 @@ bool LoginAuthenticator::user_exists()
 bool LoginAuthenticator::user_salted()
 {
 	mApp;
-	app->redisCommand("hexists", __NODE_SALT_LOOKUP, enc_userid);
+	const char* cenc_id = enc_userid.c_str();
+	app->redisCommand("hexists %s %s",
+			__NODE_SALT_LOOKUP, cenc_id);
 	if ( (bool) Redis::getInt(app->reply()))
 	{
-		app->redisCommand("hget", __NODE_SALT_LOOKUP, enc_userid);
+		app->redisCommand("hget %s %s",
+				__NODE_SALT_LOOKUP, cenc_id);
 		salt = Redis::toString(app->reply());
 		return true;
 	}
@@ -62,11 +68,14 @@ bool LoginAuthenticator::authstring_exists()
 	raw_auth_string = 	Security::create_raw_auth_string(
 			plain_userid, salt, plain_passwd);
 	prf_auth_string = raw_auth_string;
+	const char* cprauth_str = prf_auth_string.c_str();
 	proof_token(prf_auth_string, __NODE_COLLISION_STR_LOOKUP, enc_userid);
-	app->redisCommand("hexists", __NODE_AUTH_LOOKUP,  prf_auth_string);
+	app->redisCommand("hexists %s %s"
+			, __NODE_AUTH_LOOKUP,  cprauth_str);
 	if ( (bool) Redis::getInt(app->reply()))
 	{
-		app->redisCommand("hget", __NODE_AUTH_LOOKUP, prf_auth_string);
+		app->redisCommand("hget %s %s"
+				, __NODE_AUTH_LOOKUP, cprauth_str);
 		prf_auth_token = Redis::toString(app->reply());
 		return true;
 	}
@@ -75,12 +84,16 @@ bool LoginAuthenticator::authstring_exists()
 
 bool LoginAuthenticator::authtoken_matches()
 {
+	if (last_session_id == EMPTY) return false;
 	mApp;
 	std::string session_node = "s."+last_session_id+"."+__META_HASH;
-	app->redisCommand("hexists", session_node, __AUTH_HASH);
+	const char* csession = session_node.c_str();
+	app->redisCommand("hexists %s %s"
+			, csession, __AUTH_HASH);
 	if (! (bool) Redis::getInt(app->reply())) return false;
 
-	app->redisCommand("hget", session_node, __AUTH_HASH);
+	app->redisCommand("hget %s %s"
+			, csession, __AUTH_HASH);
 	last_auth_token = Redis::toString(app->reply());
 	std::string tmp_prf_auth_token = last_auth_token;
 	proof_token(tmp_prf_auth_token, __NODE_COLLISION_TOK_LOOKUP, enc_userid);
@@ -93,10 +106,14 @@ void LoginAuthenticator::proof_token(
 		std::string& token, std::string proof_table, const std::string& key)
 {
 	mApp;
-	app->redisCommand("hexists", proof_table, key);
+	const char* cproof = proof_table.c_str();
+	const char* ckey = key.c_str();
+	app->redisCommand("hexists %s %s"
+			, cproof, ckey);
 	if ((bool) Redis::getInt(app->reply()))
 	{
-		app->redisCommand("hget", proof_table, key);
+		app->redisCommand("hget %s %s"
+				, cproof, ckey);
 		int proof_cycles = stoi(Redis::toString(app->reply()));
 		while (proof_cycles > 0)
 		{

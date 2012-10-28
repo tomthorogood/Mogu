@@ -18,8 +18,8 @@ struct PreprocessedEventListener
 	enum Ltype {
 		string,
 		widget,
-
 	};
+
 	Enums::Family::_Family f_listener;
 	std::string s_listener;
 	Ltype type;
@@ -30,7 +30,7 @@ struct PreprocessedEventListener
 		f_listener = Enums::Family::self;
 	}
 
-	PreprocessedEventListener(const std::string& listener)
+	PreprocessedEventListener(std::string& listener)
 	{
 		type = string;
 		s_listener = listener;
@@ -65,7 +65,7 @@ struct EventPreprocessor
 	Parsers::NodeValueParser::Outputs getListenerType(std::string& str);
 	int degradation;
 
-	EventPreprocessor (const std::string& node);
+	EventPreprocessor (std::string& node);
 
 };
 

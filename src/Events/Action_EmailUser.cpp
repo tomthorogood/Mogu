@@ -9,9 +9,9 @@
 #include <Static.h>
 #include <Redis/RedisCore.h>
 #include <hash.h>
-#include <Sessions/Submission.h>
 #include <Events/MoldableActionCenter.h>
 #include <Sessions/Lookups.h>
+#include <Redis/SessionValueRequest.h>
 
 namespace Events
 {
@@ -35,19 +35,19 @@ int send_system_email(EmailPacket* email)
 
 std::string get_user_email(std::string username)
 {
-	using namespace Sessions::SubmissionHandler;
 	//const std::string contact_storage = Hash::toHash("contact");
 	const std::string email_hash = Hash::toHash("contact_email");
 	std::string usr_session = Sessions::Lookups::last_session(username);
-	return userNodeLookup(usr_session, "contact", email_hash);
+	Redis::SessionValueRequest lookup("contact", email_hash);
+	return lookup.getValue();
 }
 
 int email_current_user(EmailPacket* email)
 {
-	using namespace Sessions::SubmissionHandler;
-	const std::string contact_storage = "contact";
-	const std::string email_hash = Hash::toHash("contact_email");
-	email->to_address = dynamicLookup(contact_storage,email_hash);
+	std::string email_lookup_cmd = "[contact] email";
+	Nodes::NodeValue v;
+	mApp; app->interpreter().giveInput(email_lookup_cmd, v);
+	email->to_address = v.getString();
 	return send_system_email(email);
 }
 

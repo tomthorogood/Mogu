@@ -97,5 +97,29 @@ public:
 			" telling me what callback you intended to use at: ", b){}
 };
 
+class Err_EmptySession: public MoguException
+{
+public: Err_EmptySession (std::string b)
+	: MoguException(
+		"Somehow the application has no session id. This is terrible.", b)
+		{}
+};
+
+class Err_MissingProperty: public MoguException
+{
+public:
+	Err_MissingProperty(std::string node, std::string property)
+	: MoguException("Missing " + property + " at ", node)
+	{}
+};
+
+class Err_RecursionError : public MoguException
+{
+public:
+	Err_RecursionError(std::string func)
+	: MoguException (func, ": Recursion error. Object properties changing during recursive strategies!")
+	{}
+};
+
 }//namespace Exceptions
 #endif /* EXCEPTIONS_H_ */

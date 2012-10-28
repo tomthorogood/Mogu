@@ -21,6 +21,7 @@ using namespace Enums::WidgetTypes;
 
 void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
 {
+	mApp;
 	Wt::WStackedWidget* stack = new Wt::WStackedWidget();
 	if (__tmpl->style != EMPTY)
 	{
@@ -28,7 +29,12 @@ void __sculpt_stack(MoldableTemplate* __tmpl, Moldable* m)
 	}
 	if (__tmpl->flags & has_animation)
 	{
-		Wt::WAnimation::AnimationEffect e = getWidgetAnimation(__tmpl->node);
+		std::string anim_str = getWidgetProperty(__tmpl->node, "animation");
+		Nodes::NodeValue v;
+		app->interpreter().giveInput(anim_str, v, NONE,
+				Parsers::enum_callback <Parsers::WtAnimationParser>);
+		Wt::WAnimation::AnimationEffect e = (Wt::WAnimation::AnimationEffect)
+				v.getInt();
 		Wt::WAnimation transition(e);
 		stack->setTransitionAnimation(transition,true);
 	}
@@ -57,9 +63,10 @@ void addChildren(MoldableTemplate* __tmpl,
 
 void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m)
 {
+	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(__tmpl->content, v, m);
+	app->interpreter().giveInput(__tmpl->content, v, m);
 	std::string content = v.getString();
 	Wt::WString txt(content);
 

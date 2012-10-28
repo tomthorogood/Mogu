@@ -15,6 +15,7 @@
 #include <Core/Moldable.h>
 #include <Types/ApplicationManager.h>
 #include <Security/UserManager.h>
+#include <Parsers/NodeValueParser.h>
 
 #ifndef AUTH_TOKEN
 #define AUTH_TOKEN "BendTheWeb"
@@ -36,6 +37,8 @@ class Mogu : public Wt::WApplication
 
 	/*!\brief The widget that started it all... */
 	Goo::Moldable* __wrapper;
+
+	Parsers::NodeValueParser __interpreter;
 
 	std::string __session;
 	std::string __auth_token;
@@ -78,6 +81,8 @@ public:
 		widgetRegister[name] = &widget;
 	}
 
+	inline Parsers::NodeValueParser& interpreter() { return __interpreter; }
+
 	/*!\brief Returns a widget from the registry based on its name. */
 	inline Goo::Moldable* registeredWidget(std::string name)
 	{
@@ -119,30 +124,23 @@ public:
 		doJavaScript(final);
 	}
 
-	inline void redisCommand(
-			std::string arg1="",
-			std::string arg2="",
-			std::string arg3="",
-			std::string arg4="",
-			std::string arg5="")
+	inline void redisCommand(const char* cmd, ...)
 	{
-		__reply = (redisReply*)
-				Redis::command(__redis,arg1,arg2,arg3,arg4,arg5);
+		va_list ap;
+		va_start(ap,cmd);
+		__reply = (redisReply*) redisvCommand(__redis,cmd,ap);
 	}
 
 	inline redisReply* reply() { return __reply;}
 	inline void freeReply() {freeReplyObject(__reply);}
-
 	inline std::string& instanceID() { return __instanceid; }
 	inline std::string& sessionID() { return __session;}
 	inline std::string& authToken() { return __auth_token;}
 	inline void setSessionID (const std::string& sid) { __session = sid;}
 	inline void setAuthToken (const std::string& ath) { __auth_token = ath;}
 	inline redisContext* DBConnection() { return __redis; }
-
 	inline ApplicationManager& getManager() { return manager; }
 	inline Security::UserManager& getUserManager() { return userManager; }
-
 	inline std::map<std::string,std::string>& getSlots() { return __slots; }
 };
 

@@ -11,7 +11,6 @@
 #include <Events/EventPreprocessor.h>
 #include <Parsers/Parsers.h>
 #include <Parsers/StyleParser.h>
-#include <Parsers/NodeValueParser.h>
 #include <Parsers/TokenGenerator.h>
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
@@ -21,7 +20,6 @@
 #include <Static.h>
 #include <Mogu.h>
 #include <Wt/WString>
-#include <Sessions/Submission.h>
 #include <stdlib.h>
 #include <signal.h>
 
@@ -79,9 +77,7 @@ inline void resolveListeners(Listeners* listeners, BroadcastMessage& broadcast)
 	int degradation = broadcast.properties->degradation;
 	Family::_Family f = broadcast.properties->listener.f_listener;
 	listeners->push_back(new Listener(broadcast.broadcaster));
-    /* If this broadcast is getting repeated, determine who the next set
-     * of listeners will be, and then start over
-     */
+
 
     while (--degradation>=0)
     {
@@ -112,9 +108,6 @@ inline void resolveListeners(Listeners* listeners, BroadcastMessage& broadcast)
         return; // Avoid side effects with recursion!
     }
 
-    /* If this is a nuclear event, we lastly have to do one more
-     * calculation of listeners.
-     */
     if (f != Family::application) getNuclearFamily(broadcast);
 }
 
@@ -139,17 +132,6 @@ inline void resolveListeners(BroadcastMessage& broadcast)
 
 void submitBroadcast(BroadcastMessage& broadcast)
 {
-#ifdef DEBUG
-
-	switch(broadcast.properties->action)
-	{
-	case Enums::SignalActions::slot:
-		{bool i = true;
-		break;}
-	default: break;
-	}
-
-#endif
     resolveListeners(broadcast);
     directListeners(broadcast);
     cleanupBroadcast(broadcast);
@@ -159,17 +141,13 @@ void getNuclearFamily(BroadcastMessage& broadcast)
 {
     namespace Family = Enums::Family;
     Family::_Family familyMembers = broadcast.properties->listener.f_listener;
+    if (familyMembers == Family::self) return;
+
     Listeners* current_listeners = listenerMap[&broadcast];
     Listeners* new_listeners = new Listeners();
 
     unsigned int num_current = current_listeners->size();
-#ifdef DEBUG
-    assert(num_current != 0);
-    for (unsigned int i = 0; i < num_current; i++)
-    {
-    	assert (current_listeners->at(i) != 0);
-    }
-#endif
+
     for (unsigned int c = 0; c < num_current; c++)
     {
         Moldable& listener = current_listeners->at(c)->getWidget();
@@ -288,6 +266,21 @@ void directListeners(BroadcastMessage& broadcast)
 		std::cout << "Message: ";
 		if (message.getType() == Nodes::string_value) std::cout << message.getString();
 		else std::cout << message.getInt();
+
+		std::cout << std::endl;
+		std::cout << "Listeners: ";
+		for (size_t i = 0; i < listeners->size(); ++i)
+		{
+			if (&(listeners->at(i)->getWidget()) != NULL)
+			{
+				std::cout << listeners->at(i)->getWidget().getNode();
+			}
+			else
+			{
+				std::cout << listeners->at(i)->getString();
+			}
+			std::cout << " ";
+		}
 		std::cout << std::endl;
     }
 #endif
@@ -323,8 +316,7 @@ void directListeners(BroadcastMessage& broadcast)
 		break;}
 
 	case Action::reset_password:{
-		std::string uid = Application::retrieveSlot(
-				"USERID", app->sessionId());
+		std::string uid = app->getSlots()["USERID"];
 		if (!Actions::reset_password(uid))
 		{
 			broadcast.broadcaster->fail().emit();
@@ -401,8 +393,9 @@ void directListeners(BroadcastMessage& broadcast)
     	{
     		Moldable& widget = listeners->at(w)->getWidget();
     		Nodes::NodeValue v;
-    		Parsers::NodeValueParser p(
+    		app->interpreter().giveInput(
     				message.getString(), v);
+
     		if (widget.allowsAction(Action::add_widget))
 			{
     			MoldableTemplate* tpl =
@@ -471,10 +464,9 @@ void directListeners(BroadcastMessage& broadcast)
     		if (widget.allowsAction(Action::store_abstract))
     		{
     			using namespace Parsers::StyleParser;
-    			std::string abstract = getWidgetField(
+    			std::string abstract = getWidgetProperty(
     					widget.getNode(), "abstract");
-    			Sessions::SubmissionHandler::absorb(
-    					abstract, message.getString());
+    			//TODO REPLACE WITH REDIS STORAGE REQUEST!
     		}
     	}
     	break;}

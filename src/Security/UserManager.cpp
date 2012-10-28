@@ -21,14 +21,18 @@ bool UserManager::createUser(
 	plain_userid = plain_id;
 	TurnLeft::Utils::stolower(plain_userid);
 	enc_userid = Security::encrypt(plain_userid);
+	const char* cenc_id = enc_userid.c_str();
 
 	// Ensure that the user does not already exist
-	application.redisCommand("hexists", __NODE_SESSION_LOOKUP, enc_userid);
+	application.redisCommand("hexists %s %s"
+			, __NODE_SESSION_LOOKUP, cenc_id);
 	if ( (bool) Redis::getInt(application.reply())) return false;
 
 	// Generate salt and add it to the database
 	salt = generate_salt();
-	application.redisCommand("hset", __NODE_SALT_LOOKUP, enc_userid, salt);
+	const char* csalt = salt.c_str();
+	application.redisCommand("hset %s %s"
+			, __NODE_SALT_LOOKUP, cenc_id, csalt);
 
 	// Create an auth string for the user
 	UniqueHashPackage hashPkg_auth(
@@ -40,28 +44,27 @@ bool UserManager::createUser(
 	// Let Mogu know about any collisions that took place so they can be replicated
 	if (hashPkg_auth.num_cycles > 0)
 	{
-		std::string cycles_str = itoa(hashPkg_auth.num_cycles);
-		application.redisCommand(
-				"hset"
+		application.redisCommand("hset %s %s %d"
 				, __NODE_COLLISION_STR_LOOKUP
-				, enc_userid
-				, cycles_str);
+				, cenc_id
+				, hashPkg_auth.num_cycles);
 	}
+	const char* cprhash_auth = hashPkg_auth.proofed_hash.c_str();
 
 	// Create an auth token for the session
 	UniqueHashPackage hashPkg_token(
 			Hash::toHash(plain_id + salt + "first_session"), __NODE_AUTH_TOK_SET);
 	Redis::makeUniqueHash(hashPkg_token);
-	application.redisCommand(
-			"sadd", __NODE_AUTH_TOK_SET, hashPkg_token.proofed_hash);
+	const char* cprhash_tok = hashPkg_token.proofed_hash.c_str();
+	application.redisCommand("sadd %s %s",
+			__NODE_AUTH_TOK_SET, cprhash_tok);
 	application.freeReply();
 
 	// Associate the auth string and the auth token:
-	application.redisCommand(
-			"hset"
+	application.redisCommand("hset %s %s %s"
 			, __NODE_AUTH_LOOKUP
-			, hashPkg_auth.proofed_hash
-			, hashPkg_token.proofed_hash);
+			, cprhash_auth
+			, cprhash_tok);
 	application.freeReply();
 
 	Security::AuthPackage authPkg;

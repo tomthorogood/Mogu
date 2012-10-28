@@ -6,60 +6,63 @@
  */
 
 #include <Events/EventPreprocessor.h>
-#include <Parsers/NodeValueParser.h>
 #include <Parsers/StyleParser.h>
 #include <Parsers/Parsers.h>
 #include <Redis/RedisCore.h>
 #include <Types/NodeValue.h>
 #include <Parsers/MoguScript_Tokenizer.h>
+#include <Exceptions/Exceptions.h>
 
 namespace Events{
 
 using namespace Enums::SignalActions;
 using namespace Enums::SignalTriggers;
-using Parsers::NodeValueParser;
 using namespace Parsers::StyleParser;
+using Exceptions::Err_MissingProperty;
 
-
-inline std::string valOrEmpty(const std::string& node, const char* field, std::string alternate=EMPTY)
+inline std::string valOrEmpty(
+		const std::string& node
+		, const char* field
+		, std::string alternate=EMPTY)
 {
-	return (widgetHasField(node, field)) ?
-				getWidgetField(node, field) : alternate;
+	return (widgetHasProperty(node, field)) ?
+				getWidgetProperty(node, field) : alternate;
+
 }
 
-EventPreprocessor::EventPreprocessor (const std::string& node)
+EventPreprocessor::EventPreprocessor (std::string& node)
 {
-	std::string trigger_str 	= valOrEmpty(node, "trigger");
-	std::string msg_str			= valOrEmpty(node, "message", " ");
-	std::string action_str		= getWidgetField(node, "action");
-	message.original = msg_str;
-
+	mApp;
 	Nodes::NodeValue v;
 
-	std::string listener_str = widgetHasField(node, "listener") ?
-			getWidgetField(node, "listener")
-			: getWidgetField(node, "listeners");
+	std::string trigger_str		= getHashEntry(node, "trigger");
+	std::string msg_str			= getHashEntry(node, "message", " ");
+	std::string action_str		= getHashEntry(node, "action");
+	message.original = msg_str;
 
-	if (widgetHasField(node, "degradation"))
+	std::string listener_str = getHashEntry(node, "listener");
+	if (listener_str == EMPTY) listener_str = getHashEntry(node, "listeners");
+	std::string degrad_str = getHashEntry(node, "degradation");
+
+	if (degrad_str != EMPTY)
 	{
-		std::string degrad_str = getWidgetField(node, "degradation");
-		Parsers::NodeValueParser degrad_p(
-				degrad_str
-				,v
-				,NONE);
+		app->interpreter().giveInput(degrad_str, v);
 		degradation = v.getInt();
-		if (widgetHasField(node, "nextAction"))
+		std::string nxt_str = getHashEntry(node, "nextAction");
+
+		if (nxt_str != EMPTY)
 		{
-			std::string nxt_str = getWidgetField(node, "nextAction");
-			Parsers::NodeValueParser nxt_p(
+			app->interpreter().giveInput(
 					nxt_str
 					,v
 					,NONE
 					,&Parsers::enum_callback
 						<Parsers::SignalActionParser>);
 			next_action = (SignalAction) v.getInt();
-		} else next_action = (Enums::SignalActions::SignalAction) 0;
-	} else
+		}
+		else next_action = (Enums::SignalActions::SignalAction) 0;
+	}
+	else
 	{
 		degradation = 0;
 		next_action = (Enums::SignalActions::SignalAction) 0;
@@ -68,21 +71,16 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	/*The trigger string will always be parseable to an enumerated type,
 	 * so we can do that now.
 	 */
-	if (trigger_str != EMPTY)
-	{
-		Parsers::NodeValueParser trigger_p(
-				trigger_str,
-				v,
-				NONE
-				,&Parsers::enum_callback <Parsers::SignalTriggerParser>);
-		trigger = (SignalTrigger) v.getInt();
-	}
+	if (trigger_str == EMPTY) trigger_str = "{click}";
+	app->interpreter().giveInput(
+			trigger_str,
+			v,
+			NONE
+			,&Parsers::enum_callback <Parsers::SignalTriggerParser>);
+	trigger = (SignalTrigger) v.getInt();
 
-
-	/*The action string will always be parseable to an enumerated type,
-	 * so we can do that now.
-	 */
-	Parsers::NodeValueParser action_p(
+	if (action_str == EMPTY) throw Err_MissingProperty(node, "action");
+	app->interpreter().giveInput(
 			action_str
 			,v
 			,NONE
@@ -95,39 +93,22 @@ EventPreprocessor::EventPreprocessor (const std::string& node)
 	 * fields in the preprocessor to avoid having to make this determination
 	 * at event firing.
 	 */
+	if (listener_str == EMPTY) listener_str = "{self}";
+	app->interpreter().giveInput(
+			listener_str
+			,v
+			,NONE
+			,Parsers::enum_callback <Parsers::FamilyMemberParser>);
 
-	if (getListenerType(listener_str) == NodeValueParser::dynamic_storage)
+	if (v.getType() == Nodes::string_value)
 	{
-		listener.s_listener = listener_str;
+		listener.s_listener = v.getString();
 		listener.type = listener.string;
 	}
 	else
 	{
-		Parsers::NodeValueParser listener_p(
-				listener_str
-				,v
-				,NONE
-				,Parsers::enum_callback <Parsers::FamilyMemberParser>
-		);
-
-		/* The message is highly variable. However, if it is just a string, we
-		 * will not have to do any further processing on it when the event fires.
-		 * Because the MoguScript_Tokenizer will return the full string as next() if
-		 * the first value is not a parseable Mogu type, we can thus easily
-		 * determine whether this message is a string, or whether it will
-		 * require processing once the event fires.
-		 */
-		if (v.getType() == Nodes::string_value)
-		{
-			listener.s_listener = v.getString();
-			listener.type = listener.string;
-		}
-		else
-		{
-			listener.f_listener = (Enums::Family::_Family) v.getInt();
-			listener.type = listener.widget;
-		}
-
+		listener.f_listener = (Enums::Family::_Family) v.getInt();
+		listener.type = listener.widget;
 	}
 
 	Parsers::MoguScript_Tokenizer t(msg_str);

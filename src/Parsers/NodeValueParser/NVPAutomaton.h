@@ -12,6 +12,7 @@
 #include <FiniteAutomaton/FiniteAutomaton.h>
 #include <Parsers/MoguScript_Tokenizer.h>
 #include <Types/NodeValue.h>
+#include <cassert>
 
 
 namespace Parsers{
@@ -41,7 +42,7 @@ enum NVP_States
  * go through this machine.
  */
 class NodeValueParser: public Automaton::FiniteAutomatonTmpl
-  <std::string, Nodes::NodeValue, NVP_States>
+  <std::string, void , NVP_States>
 {
 
 public:
@@ -101,6 +102,7 @@ public:
 		,registered_widget=0x100	//256
 	};
 
+	NodeValueParser();
 	NodeValueParser(
 			std::string input
 			,Nodes::NodeValue& v
@@ -108,7 +110,25 @@ public:
 			,int (*enumparser)(const std::string&) =0);
 
 	/*!\brief Implemented from FiniteAutomatonTmpl */
-	Nodes::NodeValue giveInput (const std::string& input);
+	void giveInput (std::string input);
+
+	/*!\brief Allows the automaton to remain live for multiple uses. */
+	void giveInput (
+			std::string input
+			,Nodes::NodeValue& v
+			,Goo::Moldable* broadcaster =0
+			,int (*enumparser)(const std::string&) =0
+			);
+
+	inline void reset()
+	{
+		__broadcaster =0;
+		__enumcallback =0;
+		__iovalue =0;
+		tokens.clear();
+		tokenTypes.clear();
+		__tokenizer.reset();
+	}
 
 	/*!\brief Upon deletion, will delete all states as well. */
 	~NodeValueParser()
@@ -117,7 +137,8 @@ public:
 			= __states.begin();
 		while (iter != __states.end())
 		{
-			delete iter->second;
+			if (iter->second != NULL)
+				delete iter->second;
 			++iter;
 		}
 	}
@@ -165,7 +186,7 @@ private:
 	std::vector <NodeValueParser::Outputs> tokenTypes;
 
 	/*!\brief A reference to the value passed into the machine. */
-	Nodes::NodeValue& __iovalue;
+	Nodes::NodeValue* __iovalue;
 
 	/*!\brief Enables reuse of initializers. */
 	void __init__();

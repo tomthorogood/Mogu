@@ -42,6 +42,8 @@ public:
 	AbstractState(FiniteAutomaton* automaton) : __automaton(automaton)
 	{ __type = UNDEFINED;}
 
+	virtual ~AbstractState(){}
+
 	/*!\brief Provides an accessor to this state's type. Note that the type
 	 * will not necessarily be one of the defined types above, but because
 	 * of the bit masking can be a combination of them, which is why it
@@ -136,7 +138,7 @@ public:
 	 * @param input The initial data to be sent through the machine.
 	 * @return The final output.
 	 */
-	virtual U giveInput(const T& input) =0;
+	virtual U giveInput(T input) =0;
 
 	/*!\brief provides an accessor for the machine's status. */
 	inline Status getStatus() { return __status; }
@@ -257,9 +259,16 @@ public:
 		/* If this is an intermediate node that must continue */
 		if (__type == INTER)
 		{
-
 			if (__automaton->hasNextToken()) return FiniteAutomaton::OK_ICPL;
-			else return FiniteAutomaton::ERR_ICPL;
+			else
+			{
+				AbstractState* v = destination(output_type);
+				if (v->getType() & FINAL)
+				{
+					return FiniteAutomaton::OK_CPL;
+				}
+				return FiniteAutomaton::ERR_ICPL;
+			}
 		}
 
 		/* If this is a final node that may not continue */

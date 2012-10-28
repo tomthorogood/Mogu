@@ -147,14 +147,15 @@ void Moldable::getState(Enums::WidgetTypes::States state,
 
 bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
 {
-	if (!widgetHasField(getNode(), "block")) return true;
-	std::string action_blocks = getWidgetField(getNode(), "block");
+	mApp;
+	if (!widgetHasProperty(getNode(), "block")) return true;
+	std::string action_blocks = getWidgetProperty(getNode(), "block");
 	Parsers::MoguScript_Tokenizer t(action_blocks);
 	std::string b = t.next();
 	Nodes::NodeValue v;
 	while (b != EMPTY)
 	{
-		Parsers::NodeValueParser p(
+		app->interpreter().giveInput(
 				b, v,
 				this,
 				&Parsers::enum_callback <Parsers::SignalActionParser>);

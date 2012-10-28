@@ -33,7 +33,9 @@ namespace Redis{
 inline bool isMemberOfSet(std::string& value, std::string& set_node)
 {
 	mApp;
-	app->redisCommand("sismember", set_node, value);
+	const char* cval = value.c_str();
+	const char* cnode = set_node.c_str();
+	app->redisCommand("sismember %s %s", cval, cnode);
 	return (bool) Redis::getInt(app->reply());
 }
 

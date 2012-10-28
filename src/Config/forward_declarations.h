@@ -34,6 +34,8 @@ namespace Security
 namespace Redis
 {
 	class RedisStorageRequest;
+	class StoragePolicyLookup;
+	class SessionValueRequest;
 }
 
 namespace Hash

@@ -22,6 +22,7 @@ string encrypt(string dstr)
 string decrypt(string estr, PacketType translation)
 {
 	TurnLeft::Utils::sreplace(estr, '_', ' ');
+	TurnLeft::Utils::trimchar(estr);
 	BlowfishKeyCreator k;
 	PacketCenter d(estr, ENCRYPTED);
 	d.giveKey(k.getKey());

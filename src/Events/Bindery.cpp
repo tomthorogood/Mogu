@@ -8,7 +8,6 @@
 #include <Events/Bindery.h>
 #include <Redis/RedisCore.h>
 
-#include <Parsers/NodeValueParser.h>
 #include <Parsers/Parsers.h>
 #include <Events/MoldableActionCenter.h>
 #include <Events/EventPreprocessor.h>
@@ -24,7 +23,6 @@ namespace Events
 
 using Goo::Moldable;
 using std::string;
-using Parsers::NodeValueParser;
 using Redis::strvector;
 namespace Labels = Enums::Labels;
 namespace Triggers = Enums::SignalTriggers;
@@ -36,9 +34,10 @@ EventBindery::EventBindery(Moldable* broadcaster)
     __broadcaster = broadcaster;
     string eventNamespace = broadcaster->getNode();
     eventNamespace.append(".events.*");
+    const char* cnamespace = eventNamespace.c_str();
     strvector eventNodes;
     mApp;
-    app->redisCommand("keys", eventNamespace);
+    app->redisCommand("keys %s", cnamespace);
     /* This returns a list of all events for the widget in question. */
     Redis::toVector(app->reply(),eventNodes);
 

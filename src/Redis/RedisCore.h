@@ -23,30 +23,13 @@
 namespace Redis
 {
 
-void done(redisReply* reply, redisContext* redis);
-
-std::string join (
-        std::string arg1,
-        std::string arg2 ="",
-        std::string arg3 ="",
-        std::string arg4 ="",
-        std::string arg5 =""
-        );
-
-void* command (
-		redisContext* c,
-        std::string arg1,
-        std::string arg2 ="",
-        std::string arg3 ="",
-        std::string arg4 ="",
-        std::string arg5 ="");
-
 void toVector(redisReply* r, strvector& vec);
 std::string toString(redisReply* r);
 int toInt(redisReply* r);
 long long getInt(redisReply* r);
 float toFloat(redisReply* r);
 void clear(redisReply* r);
+inline bool getBool(redisReply* r) { return (bool) getInt(r);}
 
 } //namespace Redis
 

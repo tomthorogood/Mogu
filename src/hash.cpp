@@ -70,6 +70,9 @@ string toHash(const string& str)
 {
     HashedString* hash = hashedString(str);
     string ret = hash->as_string();
+#ifdef DEBUG
+    std::cout << "Hashed: " << str << " => " << ret << std::endl;
+#endif
     delete hash;
     return ret;
 }

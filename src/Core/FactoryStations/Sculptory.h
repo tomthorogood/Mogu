@@ -25,7 +25,6 @@
 #include <Wt/WText>
 #include <Core/Moldable.h>
 #include <Sessions/Lookups.h>
-#include <Sessions/Submission.h>
 
 namespace Goo{
 namespace MoldableFactory{
@@ -43,8 +42,9 @@ void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m);
 
 inline void setStyle(const std::string& _style, Wt::WWidget* m)
 {
+	mApp;
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(_style,v);
+	app->interpreter().giveInput(_style,v);
 	Wt::WString style(v.getString());
 	m->setStyleClass(style);
 }
@@ -64,8 +64,9 @@ inline void getNumChildren(MoldableTemplate* __tmpl)
 	{
 		node = __tmpl->node+".children";
 	}
+	const char* cnode = node.c_str();
 	mApp;
-	app->redisCommand("llen",node);
+	app->redisCommand("llen %s",cnode);
 	__tmpl->num_children = Redis::getInt(app->reply());
 }
 
@@ -92,10 +93,11 @@ inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 	{
 		MoldableTemplate* cpy = new MoldableTemplate(*__tmpl);
 		cpy->num_children =0;
-		std::string tpl_name = getWidgetField(__tmpl->node, "template");
+		std::string tpl_name = getWidgetProperty(__tmpl->node, "template");
 		std::string datanode = cpy->content.substr(1,cpy->content.length()-2);
+		const char* cdnode = datanode.c_str();
 		mApp;
-		app->redisCommand("lindex", datanode, itoa(i));
+		app->redisCommand("lindex %s %d", cdnode, i);
 		cpy->content = Redis::toString(app->reply());
 		cpy->type = getWidgetType("templates."+tpl_name);
 		bearer->addWidget(sculpt(cpy));
@@ -104,9 +106,10 @@ inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 }
 inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)
 {
+	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(__tmpl->content, v, m);
+	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WAnchor* anchor = new Wt::WAnchor(
 			__tmpl->location, v.getString());
 	anchor->setTarget(Wt::TargetNewWindow);
@@ -114,9 +117,10 @@ inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)
 }
 inline void __sculpt_image(MoldableTemplate* __tmpl, Moldable* m)
 {
+	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(__tmpl->content, v, m);
+	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, v.getString());
 	m->addWidget(img);
 
@@ -126,9 +130,10 @@ inline void __sculpt_image(MoldableTemplate* __tmpl, Moldable* m)
 
 inline void __sculpt_image_link(MoldableTemplate* __tmpl, Moldable* m)
 {
+	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(__tmpl->content, v, m);
+	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, __tmpl->content);
 	Wt::WAnchor* a = new Wt::WAnchor(__tmpl->location, __tmpl->content);
 	a->setImage(img);
@@ -138,13 +143,14 @@ inline void __sculpt_image_link(MoldableTemplate* __tmpl, Moldable* m)
 
 inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 {
+	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	Nodes::NodeValue v;
-	Parsers::NodeValueParser p(__tmpl->content, v, m);
+	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WLineEdit* in = new Wt::WLineEdit(v.getString());
 	if (__tmpl->flags & is_validated)
 	{
-		std::string val_name = getWidgetField(__tmpl->node, "validator");
+		std::string val_name = getWidgetProperty(__tmpl->node, "validator");
 		Wt::WValidator*  v= Validators::createValidator(val_name);
 		in->setValidator(v);
 		in->keyWentUp().connect(

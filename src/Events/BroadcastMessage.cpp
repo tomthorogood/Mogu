@@ -8,9 +8,9 @@
 #include <Events/BroadcastMessage.h>
 #include <Core/Moldable.h>
 #include <Events/EventPreprocessor.h>
-#include <Parsers/NodeValueParser.h>
 #include <Parsers/Parsers.h>
 #include <stdio.h>
+#include <Mogu.h>
 
 namespace Events{
 using std::string;
@@ -24,6 +24,7 @@ BroadcastMessage::BroadcastMessage (
 		Goo::Moldable* _broadcaster,
 		EventPreprocessor* preproc)
 {
+	mApp;
 	properties = preproc;
 	broadcaster = _broadcaster;
 
@@ -35,11 +36,10 @@ BroadcastMessage::BroadcastMessage (
 #ifdef DEBUG
 		std::cout << "Parsing delayed message: " << preproc->message.original << std::endl;
 #endif
-		Parsers::NodeValueParser p(
+		app->interpreter().giveInput(
 				preproc->message.original
 				,preproc->message.value
-				,broadcaster
-				);
+				,broadcaster);
 	}
 }
 

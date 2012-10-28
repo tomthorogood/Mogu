@@ -12,7 +12,7 @@
 namespace Validators{
 
 Wt::WValidator* createValidator(std::string validator);
-Wt::WRegExpValidator* createRegexValidator(const std::string& node);
+Wt::WRegExpValidator* createRegexValidator(std::string node);
 
 }//namespace Validators
 

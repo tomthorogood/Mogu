@@ -17,6 +17,7 @@ class UserManager
 	std::string plain_userid;
 	std::string enc_userid;
 	std::string salt;
+	std::vector <std::string> previous_sessions;
 public:
 	UserManager(Mogu& app) : application(app) {};
 

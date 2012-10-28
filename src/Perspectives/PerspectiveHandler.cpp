@@ -7,16 +7,10 @@
 
 #include <Perspectives/PerspectiveHandler.h>
 #include <Redis/RedisCore.h>
-#include <TurnLeftLib/Utils/HungryVector.h>
-#include <Static.h>
-#include <Mogu.h>
-#include <Core/Moldable.h>
-#include <Parsers/NodeValueParser.h>
-#include <Parsers/Parsers.h>
-#include <Types/NodeValue.h>
-#include <Wt/WStackedWidget>
-#include <Events/MoldableActionCenter.h>
 #include <Events/EventPreprocessor.h>
+#include <Events/BroadcastMessage.h>
+#include <Events/MoldableActionCenter.h>
+#include <Mogu.h>
 
 namespace Perspective{
 namespace Handler{
@@ -29,7 +23,9 @@ void mold(std::string perspective)
 	Redis::strvector keyspace;
 
 	mApp;
-	app->redisCommand("keys","perspectives."+perspective+".*");
+	std::string spersp = "perspectives."+perspective+".*";
+	const char* cpersp = spersp.c_str();
+	app->redisCommand("keys %s",cpersp);
 	Redis::toVector(app->reply(),keyspace);
 	num_molds = keyspace.size();
 

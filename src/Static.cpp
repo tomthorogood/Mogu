@@ -16,51 +16,21 @@
 
 namespace Application
 {
-namespace {
-	std::map <std::string, std::string> __storageSlots;
-}
-
-
-std::string encrypt(std::string unencrypted)
-{
-	BlowfishKeyCreator* keygen = new BlowfishKeyCreator();
-	BF_KEY* key = keygen->getKey();
-	PacketCenter encryption(unencrypted, DECRYPTED);
-	encryption.giveKey(key);
-	std::string encrypted = encryption.encrypt();
-	delete keygen;
-	return encrypted;
-}
-
-std::string retrieveSlot(std::string name, std::string wtsession)
-{
-
-	std::map <std::string, std::string>::iterator iter =
-			__storageSlots.find(name);
-	if (iter != __storageSlots.end())
-	{
-		std::string ret = __storageSlots[name];
-		__storageSlots.erase(name);
-		return ret;
-	}
-	else
-	{
-		throw Exceptions::Err_SlotLookupFailed(name,
-				"No information exists at that slot ID.");
-	}
-}
-
 bool metaKeyConfigured(std::string key)
 {
 	mApp;
-	app->redisCommand("exists meta."+key);
+	std::string k = "meta."+key;
+	const char* ck = k.c_str();
+	app->redisCommand("exists %s", ck);
 	return (bool) Redis::getInt(app->reply());
 }
 
 std::string getMetaValue(std::string key)
 {
 	mApp;
-	app->redisCommand("get meta."+key);
+	std::string k = "meta."+key;
+	const char* ck = k.c_str();
+	app->redisCommand("get %s",ck);
 	return Redis::toString(app->reply());
 }
 }//namespace Application
