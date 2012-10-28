@@ -33,6 +33,7 @@ enum NVP_States
 	,NVP_F_TF  //!< NVP_F_TF
 	,NVP_J_TF  //!< NVP_J_TF
 	,NVP_GHI_F //!< NVP_GHI_F
+	,NVP_M_F   //!< NVP_M_F
 };
 
 /*!\brief The node value parser is the logic unit for handling Mogu syntax.
@@ -174,6 +175,7 @@ private:
 	/*!\brief Valid outputs from state GHI */
 	uint16_t __vo_GHI;
 
+
 	/*!\brief Instantiationi of the MoguScript_Tokenizer which splits any
 	 * mogu syntax string into its requisite parts.
 	 */
@@ -284,8 +286,8 @@ void parse_data_node (
 		,std::string& base
 		,std::string arg=EMPTY
 		,NodeValueParser::Outputs arg_type = NodeValueParser::string_value
+		,Goo::Moldable* broadcaster=NULL
 		);
-
 
 /*!\brief Resolves information about a widget currently displayed on the
  * user's screen.
@@ -298,7 +300,7 @@ void parse_data_node (
  */
 void parse_widget_state (
 		Nodes::NodeValue& v
-		,std::string& widget_identifier
+		,std::string widget_identifier
 		,std::string& state
 		,Goo::Moldable* broadcaster=0
 		);

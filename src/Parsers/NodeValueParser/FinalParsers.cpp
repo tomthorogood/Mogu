@@ -101,22 +101,37 @@ void parse_data_node(
 		Nodes::NodeValue& v
 		,std::string& base
 		,std::string arg
-		,NodeValueParser::Outputs arg_type)
+		,NodeValueParser::Outputs arg_type
+		,Goo::Moldable* broadcaster
+)
 {
 	using namespace Enums::NodeValueTypes::RedisTypes;
 	mApp;
 	std::string uw_base = base.substr(1, base.length()-2);
 	const char* cbase = uw_base.c_str();
-	const char* carg = arg.c_str();
 	app->redisCommand("type %s", cbase);
 	std::string node_type = Redis::toString(app->reply());
 
 	if (arg != EMPTY)
 	{
-		Nodes::NodeValue varg;
-		parse_single_static_token(varg,arg,arg_type);
+        Nodes::NodeValue varg;
+        if (arg_type == NodeValueParser::widget_state)
+        {
+            parse_widget_state(
+                    varg
+                    ,"{self}"
+                    ,arg
+                    ,broadcaster);
+        }
+        else
+        {
+            Nodes::NodeValue varg;
+            parse_single_static_token(varg,arg,arg_type);
+        }
 		arg = convert_nv_to_string(varg);
 	}
+
+	const char* carg = arg.c_str();
 
 	if (node_type == REDIS_STR)
 	{
@@ -136,9 +151,10 @@ void parse_data_node(
 	NodeValueParser p(response,v);
 }
 
+
 void parse_widget_state (
 		Nodes::NodeValue& v
-		,std::string& widget_identifier
+		,std::string widget_identifier
 		,std::string& state
 		,Goo::Moldable* broadcaster
 		)

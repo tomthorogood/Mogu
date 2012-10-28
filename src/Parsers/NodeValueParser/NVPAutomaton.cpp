@@ -84,14 +84,14 @@ void NodeValueParser::__init__()
 	__broadcaster =0;
 	__enumcallback =0;
 
-	 __vo_Start	= 0xFFFF;
-	 __vo_ABCL 	= 0xF;
-	 __vo_K 	= 0x20;
-	 __vo_E 	= 0x30;
-	 __vo_D 	= 0xF;
-	 __vo_F 	= 0xF;
-	 __vo_J 	= 0xF;
-	 __vo_GHI 	= 0xF;
+	__vo_Start	= 0xFFFF;
+	__vo_ABCL 	= 0xF;
+	__vo_K 		= 0x20;
+	__vo_E 		= 0x30;
+	__vo_D 		= 0xF;
+	__vo_F 		= 0xF;
+	__vo_J 		= 0x2F;
+	__vo_GHI 	= 0xF;
 
 	 uint8_t __t_start =
 			 Automaton::AbstractState::START | Automaton::AbstractState::INTER;
@@ -156,6 +156,13 @@ void NodeValueParser::__init__()
 			 ,__vo_GHI
 			 ,&getMoguType));
 
+	 registerState(NVP_M_F, new NVP_State(
+			 this
+			 ,__t_final
+			 ,NVP_M_F
+			 ,0
+			 ,&getMoguType));
+
 	 getState <NVP_State> (NVP_START)
 		.registerDestination(string_value, getState(NVP_ABCL_F))
 		.registerDestination(integer_value, getState(NVP_ABCL_F))
@@ -185,6 +192,7 @@ void NodeValueParser::__init__()
 		.registerDestination(string_value, getState(NVP_GHI_F))
 		.registerDestination(integer_value, getState(NVP_GHI_F))
 		.registerDestination(hashed_string, getState(NVP_GHI_F))
+		.registerDestination(widget_state, getState(NVP_M_F))
 	;
 }
 
@@ -236,7 +244,7 @@ void NodeValueParser::giveInput(std::string input)
 				, __enumcallback);
 		break;
 
-	case NVP_D_F: //cascades on purpose!
+	case NVP_D_F:
 		parse_widget_state(
 				*__iovalue
 				,tokens[0]
@@ -251,13 +259,22 @@ void NodeValueParser::giveInput(std::string input)
 	case NVP_J_TF:
 		parse_data_node(
 				*__iovalue
-				,tokens[0]);
+				,tokens[0]
+				);
 		break;
 	case NVP_GHI_F:
 		if (tokens[0].at(0) == '@')
 			parse_data_node(*__iovalue, tokens[0], tokens[1], tokenTypes[1]);
 		else if (tokens[0].at(0) == '[')
 			parse_session_node(*__iovalue, tokens[0], tokens[1],tokenTypes[1]);
+		break;
+	case NVP_M_F:
+		parse_data_node(
+				*__iovalue
+				,tokens[0]
+				,tokens[1]
+				,tokenTypes[1]
+				,__broadcaster);
 		break;
 	default:
 		/*TODO throw error.*/
