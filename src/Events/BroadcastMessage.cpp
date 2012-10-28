@@ -94,7 +94,11 @@ void BroadcastMessage::resolveListeners()
 			iter_widget = app->registeredWidget(str);
 			if (iter_widget == NULL) return;
 		}
-		else listeners.push_back(new Listener(str));
+		else
+		{
+			listeners.push_back(new Listener(str));
+			return;
+		}
 	}
 
 	updateAction();
