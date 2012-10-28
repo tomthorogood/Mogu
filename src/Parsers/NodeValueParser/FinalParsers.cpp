@@ -90,7 +90,7 @@ void parse_session_node (
 	}
 	std::string uw_base = base.substr(1,base.length()-2);
 
-	Redis::SessionValueRequest lookup(base, arg);
+	Redis::SessionValueRequest lookup(uw_base, arg);
 	std::string value = lookup.getValue();
 
 	//When recursing, we cannot use the same NVP instance as before!

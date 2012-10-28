@@ -32,9 +32,6 @@ class StorageRequest
 	/*!\brief The session id where the data will be stored. */
 	std::string session_id;
 
-	/*!\brief Whether or not the data should first be encrypted. */
-	bool encrypted;
-
 	/*!\brief The command to be executed against the database.*/
 	std::string command;
 	std::string node_body;
@@ -54,9 +51,7 @@ public:
 	StorageRequest(
 			std::string& destination
 			,Nodes::NodeValue& value);
-
-	~StorageRequest  () { delete lookup;}
-
+	~StorageRequest();
 	/*!\brief One may set values manually, or one may give the object a
 	 * policy name to look up.
 	 * @param policyName The name of the policy that is to be searched.

@@ -129,6 +129,11 @@ public:
 		va_list ap;
 		va_start(ap,cmd);
 		__reply = (redisReply*) redisvCommand(__redis,cmd,ap);
+#ifdef DEBUG
+		va_start(ap,cmd);
+		vprintf(cmd,ap);
+#endif
+		va_end(ap);
 	}
 
 	inline redisReply* reply() { return __reply;}

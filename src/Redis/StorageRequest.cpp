@@ -33,10 +33,10 @@ StorageRequest::StorageRequest(
 	build_command();
 
 }
+StorageRequest::~StorageRequest  () { delete lookup;}
 
 void StorageRequest::__init__()
 {
-	encrypted = false;
 	if (!policyLookup())
 	{
 		//TODO THROW ERROR -- policy does not exist!
@@ -46,7 +46,8 @@ void StorageRequest::__init__()
 bool StorageRequest::policyLookup()
 {
 	using namespace Parsers;
-	policy_token = tokenizer.next().substr(1,policy_token.length()-2);
+	policy_token = tokenizer.next();
+	policy_token = policy_token.substr(1,policy_token.length()-2);
 
 	lookup = new StoragePolicyLookup(policy_token);
 	return (lookup->policyExists());
@@ -98,7 +99,8 @@ void StorageRequest::build_command()
 	default:
 		f_value = value.getString();
 	}
-	if (encrypted) f_value = Security::encrypt(f_value);
+
+	if (lookup->isEncrypted()) f_value = Security::encrypt(f_value);
 }
 
 bool StorageRequest::execute()

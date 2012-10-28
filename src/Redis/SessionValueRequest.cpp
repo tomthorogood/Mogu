@@ -11,6 +11,7 @@
 #include <hash.h>
 #include <Redis/StoragePolicyLookup.h>
 #include <Security/Encryption.h>
+#include <crypt/PacketCenter.h>
 
 #include <Redis/SessionValueRequest.h>
 
@@ -64,7 +65,7 @@ SessionValueRequest::SessionValueRequest (
 		session_ids.push_back(session_iter);
 	}
 
-	process_request(session_ids, key, arg);
+	process_request(session_ids, keyhash, arg);
 }
 
 void SessionValueRequest::process_request(
@@ -130,7 +131,8 @@ void SessionValueRequest::process_request(
 	}
 	retrieved_value = Redis::toString(app->reply());
 	if (lookup.isEncrypted())
-		retrieved_value = Security::decrypt(retrieved_value);
+		retrieved_value = Security::decrypt(
+				retrieved_value, NO_TRANSLATION);
 
 }
 

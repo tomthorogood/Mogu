@@ -31,7 +31,7 @@ bool UserManager::createUser(
 	// Generate salt and add it to the database
 	salt = generate_salt();
 	const char* csalt = salt.c_str();
-	application.redisCommand("hset %s %s"
+	application.redisCommand("hset %s %s %s"
 			, __NODE_SALT_LOOKUP, cenc_id, csalt);
 
 	// Create an auth string for the user

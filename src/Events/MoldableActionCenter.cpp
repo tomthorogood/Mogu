@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <signal.h>
 
+#include <Redis/StorageRequest.h>
+
 namespace Events
 {
 namespace ActionCenter
@@ -252,12 +254,12 @@ void directListeners(BroadcastMessage& broadcast)
     namespace Action = Enums::SignalActions;
     BroadcastMessage* bptr 		= &broadcast;
     Listeners* listeners 		= listenerMap[bptr];
+    assert(listeners !=0);
     size_t num_listeners = listeners->size();
     Nodes::NodeValue& message 	= broadcast.properties->message.value;
     Action::SignalAction action = broadcast.properties->action;
 
 #ifdef DEBUG
-    assert(listeners!=0);
     if (broadcast.broadcaster!=0)
     {
 		std::cout << "Parsing Action " << action << " for ";
@@ -464,8 +466,10 @@ void directListeners(BroadcastMessage& broadcast)
     		if (widget.allowsAction(Action::store_abstract))
     		{
     			using namespace Parsers::StyleParser;
-    			std::string abstract = getWidgetProperty(
-    					widget.getNode(), "abstract");
+    			Nodes::NodeValue v;
+    			v.setString(getWidgetProperty(widget.getNode(),"abstract"));
+    			Redis::StorageRequest r(message.getString(), v);
+    			r.execute();
     			//TODO REPLACE WITH REDIS STORAGE REQUEST!
     		}
     	}

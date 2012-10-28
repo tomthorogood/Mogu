@@ -37,7 +37,6 @@ std::string get_user_email(std::string username)
 {
 	//const std::string contact_storage = Hash::toHash("contact");
 	const std::string email_hash = Hash::toHash("contact_email");
-	std::string usr_session = Sessions::Lookups::last_session(username);
 	Redis::SessionValueRequest lookup("contact", email_hash);
 	return lookup.getValue();
 }

@@ -141,7 +141,7 @@ inline std::string getHashEntry(
 	mApp;
 	const char* chashnode = hash_node.c_str();
 	app->redisCommand("hexists %s %s", chashnode, hash_field);
-	if (! (bool) Redis::getInt(app->reply())) return alt;
+	if (!Redis::getBool(app->reply())) return alt;
 	app->redisCommand("hget %s %s", chashnode, hash_field);
 	return Redis::toString(app->reply());
 }

@@ -33,7 +33,7 @@ namespace Security
 
 namespace Redis
 {
-	class RedisStorageRequest;
+	class StorageRequeset;
 	class StoragePolicyLookup;
 	class SessionValueRequest;
 }
@@ -102,14 +102,6 @@ namespace Wt
     class WImage;
     class WRegExpValidator;
 }
-
-namespace Bayes{
-	class Network;
-	class Node;
-	class Edge;
-	class Manipulation;
-}
-
 
 class Mogu;
 class Parseable;

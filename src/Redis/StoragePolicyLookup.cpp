@@ -24,18 +24,19 @@ StoragePolicyLookup::StoragePolicyLookup(const std::string& policyName)
 	Nodes::NodeValue v;
 	app->redisCommand("exists %s", cnode);
 	if ( (bool) Redis::getInt(app->reply()) ) __flags |= exists;
+	else return;
 
 	std::string str = getHashEntry(node, "encrypted");
 	if (str != EMPTY)
 	{
-		app->interpreter().giveInput(str,v);
+		Parsers::NodeValueParser p(str,v);
 		if (v.getInt() > 0) __flags |= encrypted;
 	}
 
 	str = getHashEntry(node, "mode");
 	if (str != EMPTY)
 	{
-		app->interpreter().giveInput(str,v, NULL,
+		Parsers::NodeValueParser p(str,v, NULL,
 				&Parsers::enum_callback <Parsers::StorageModeParser>);
 		if (v.getInt() > 0) __flags |= set_append;
 	}
@@ -45,7 +46,7 @@ StoragePolicyLookup::StoragePolicyLookup(const std::string& policyName)
 	str = getHashEntry(node, "data_type");
 	if (str != EMPTY)
 	{
-		app->interpreter().giveInput(str,v, NULL,
+		Parsers::NodeValueParser p(str,v, NULL,
 				&Parsers::enum_callback <Parsers::StorageWrappingParser>);
 		temp |= (uint8_t) v.getInt();
 		temp <<= 3;
@@ -56,7 +57,7 @@ StoragePolicyLookup::StoragePolicyLookup(const std::string& policyName)
 	str = getHashEntry(node, "storage_type");
 	if (str != EMPTY)
 	{
-		app->interpreter().giveInput(str,v, NULL,
+		Parsers::NodeValueParser p(str,v, NULL,
 				&Parsers::enum_callback <Parsers::StorageTypeParser>);
 		temp |= (uint8_t) v.getInt();
 		temp <<= 6;
