@@ -176,7 +176,7 @@ inline WidgetType getWidgetType(std::string nodeName)
 {
 	mApp;
 	WidgetType __type;
-	Nodes::NodeValue val;
+	NodeValue val;
 	std::string reply_str = getWidgetProperty(
 			nodeName, "type");
 	app->interpreter().giveInput(reply_str, val, NONE,

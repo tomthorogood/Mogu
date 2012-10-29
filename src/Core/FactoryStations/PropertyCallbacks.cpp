@@ -42,7 +42,7 @@ std::string __value_abstract(Moldable& widget)
 
 std::string __value_container(Moldable& widget)
 {
-	Nodes::NodeValue v;
+	NodeValue v;
 	widget.getState(Enums::WidgetTypes::currentstyle, v);
 	return v.getString();
 }

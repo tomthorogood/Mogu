@@ -22,7 +22,7 @@ namespace Redis
 
 StorageRequest::StorageRequest(
 		std::string& __destination
-		,Nodes::NodeValue& input)
+		,NodeValue& input)
 : destination(__destination)
 , tokenizer(destination)
 , value(input)
@@ -81,9 +81,9 @@ void StorageRequest::build_command()
 
 	if (tokenizer.hasNext())
 	{
-		Nodes::NodeValue varg;
+		NodeValue varg;
 		app->interpreter().giveInput(tokenizer.next(), varg);
-		if (varg.getType() == Nodes::int_value)
+		if (varg.getType() == int_value)
 		{
 			varg.setString(itoa(varg.getInt()));
 		}
@@ -93,7 +93,7 @@ void StorageRequest::build_command()
 	//TODO add support for floating-point-to-string
 	switch(value.getType())
 	{
-	case Nodes::int_value:
+	case int_value:
 		f_value = itoa(value.getInt());
 		break;
 	default:

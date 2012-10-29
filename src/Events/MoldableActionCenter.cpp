@@ -61,7 +61,7 @@ void directListeners(BroadcastMessage& broadcast)
 	mApp;
     namespace Action = Enums::SignalActions;
     size_t num_listeners = broadcast.listeners.size();
-    Nodes::NodeValue& message 	= broadcast.properties->message.value;
+    NodeValue& message 	= broadcast.properties->message.value;
     Action::SignalAction action = broadcast.properties->action;
 
 #ifdef DEBUG
@@ -71,7 +71,7 @@ void directListeners(BroadcastMessage& broadcast)
 		std::cout << num_listeners << " listeners from ";
 		std::cout << broadcast.broadcaster->getNode() << std::endl;
 		std::cout << "Message: ";
-		if (message.getType() == Nodes::string_value) std::cout << message.getString();
+		if (message.getType() == string_value) std::cout << message.getString();
 		else std::cout << message.getInt();
 
 		std::cout << std::endl;
@@ -199,7 +199,7 @@ void directListeners(BroadcastMessage& broadcast)
     	for (size_t w = 0; w < num_listeners; w++)
     	{
     		Moldable& widget = broadcast.listeners[w]->getWidget();
-    		Nodes::NodeValue v;
+    		NodeValue v;
     		app->interpreter().giveInput(
     				message.getString(), v);
 
@@ -221,9 +221,9 @@ void directListeners(BroadcastMessage& broadcast)
     		if (widget.allowsAction(Action::remove_child))
     		{
     			Moldable* child = NULL;
-    			Nodes::ReadType msg_type;
+    			ReadType msg_type;
     			msg_type = message.getType();
-    			if (msg_type == Nodes::string_value)
+    			if (msg_type == string_value)
     			{
     				std::string msg = message.getString();
     				if (app->widgetIsRegistered(msg))
@@ -271,7 +271,7 @@ void directListeners(BroadcastMessage& broadcast)
     		if (widget.allowsAction(Action::store_abstract))
     		{
     			using namespace Parsers::StyleParser;
-    			Nodes::NodeValue v;
+    			NodeValue v;
     			v.setString(getWidgetProperty(widget.getNode(),"abstract"));
     			Redis::StorageRequest r(message.getString(), v);
     			r.execute();

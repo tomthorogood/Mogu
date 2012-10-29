@@ -16,7 +16,7 @@ namespace Events{
 namespace ActionCenter{
 namespace Actions{
 
-bool store(Listeners& listeners, Nodes::NodeValue& message)
+bool store(Listeners& listeners, NodeValue& message)
 {
 	size_t num_listeners = listeners.size();
 	for (size_t w = 0; w < num_listeners; w++)

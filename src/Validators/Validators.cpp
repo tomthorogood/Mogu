@@ -33,7 +33,7 @@ Wt::WValidator* createValidator(std::string validatorName)
 	string vtype =
 	Parsers::StyleParser::getHashEntry(validator_node, "type");
 	if (vtype == EMPTY) throw Exceptions::Err_MissingProperty(vtype, "type");
-	Nodes::NodeValue vval;
+	NodeValue vval;
 	app->interpreter().giveInput(
 			vtype, vval,NULL,
 			Parsers::enum_callback <Parsers::ValidatorTypeParser>);

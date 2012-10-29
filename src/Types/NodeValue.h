@@ -15,8 +15,6 @@
 #include <float.h>
 #include <limits.h>
 
-namespace Nodes
-{
 enum ReadType
 {
 	NO_VALUE		=0x0,
@@ -116,8 +114,6 @@ public:
 
     void copy(NodeValue*);
 }; // end NodeValue
-
-} // namespace nodes
 
 
 #endif /* NODEVALUE_H_ */

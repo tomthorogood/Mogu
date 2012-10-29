@@ -57,7 +57,7 @@ NodeValueParser::NodeValueParser()
 
 NodeValueParser::NodeValueParser(
 		std::string input
-		, Nodes::NodeValue& v
+		, NodeValue& v
 		, Goo::Moldable* broadcaster
 		, int(*enumcallback)(const std::string& str)) :
 	FiniteAutomatonTmpl <std::string,void,NVP_States>()
@@ -68,7 +68,7 @@ NodeValueParser::NodeValueParser(
 
 void NodeValueParser::giveInput(
 		std::string input
-		, Nodes::NodeValue& v
+		, NodeValue& v
 		, Goo::Moldable* broadcaster
 		, int (*enumcallback)(const std::string& str)
 		)

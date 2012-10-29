@@ -106,7 +106,7 @@ public:
 	NodeValueParser();
 	NodeValueParser(
 			std::string input
-			,Nodes::NodeValue& v
+			,NodeValue& v
 			,Goo::Moldable* broadcaster =0
 			,int (*enumparser)(const std::string&) =0);
 
@@ -116,7 +116,7 @@ public:
 	/*!\brief Allows the automaton to remain live for multiple uses. */
 	void giveInput (
 			std::string input
-			,Nodes::NodeValue& v
+			,NodeValue& v
 			,Goo::Moldable* broadcaster =0
 			,int (*enumparser)(const std::string&) =0
 			);
@@ -188,7 +188,7 @@ private:
 	std::vector <NodeValueParser::Outputs> tokenTypes;
 
 	/*!\brief A reference to the value passed into the machine. */
-	Nodes::NodeValue* __iovalue;
+	NodeValue* __iovalue;
 
 	/*!\brief Enables reuse of initializers. */
 	void __init__();
@@ -253,7 +253,7 @@ NodeValueParser::Outputs getMoguType(const std::string& token);
  * @param enumcallback (optional) A callback to resolve numerated types
  */
 void parse_single_static_token (
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string& input
 		,NodeValueParser::Outputs tokentype
 		,Goo::Moldable* broadcaster =0
@@ -268,7 +268,7 @@ void parse_single_static_token (
  * @param arg_type (optional, used if node is a lsit or hash)
  */
 void parse_session_node (
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string& base
 		,std::string arg=EMPTY
 		,NodeValueParser::Outputs arg_type = NodeValueParser::string_value
@@ -282,7 +282,7 @@ void parse_session_node (
  * @param arg_type (optional, used if node is a list or hash)
  */
 void parse_data_node (
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string& base
 		,std::string arg=EMPTY
 		,NodeValueParser::Outputs arg_type = NodeValueParser::string_value
@@ -299,7 +299,7 @@ void parse_data_node (
  * the identifier is {self}.
  */
 void parse_widget_state (
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string widget_identifier
 		,std::string& state
 		,Goo::Moldable* broadcaster=0

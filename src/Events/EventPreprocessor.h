@@ -49,7 +49,7 @@ struct PreprocessedMessage
 	enum Mtype { processed, delayed };
 	Mtype status;
 	std::string original;
-	Nodes::NodeValue value;
+	NodeValue value;
 	PreprocessedMessage() : value() {
 		status = delayed;
 	}

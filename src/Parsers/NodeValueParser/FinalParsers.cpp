@@ -22,11 +22,11 @@ namespace Parsers
 {
 
 
-inline std::string convert_nv_to_string(Nodes::NodeValue& v)
+inline std::string convert_nv_to_string(NodeValue& v)
 {
 	switch(v.getType())
 	{
-	case Nodes::int_value:
+	case int_value:
 		return itoa(v.getInt());
 	default:
 		return v.getString();
@@ -34,7 +34,7 @@ inline std::string convert_nv_to_string(Nodes::NodeValue& v)
 }
 
 void parse_single_static_token (
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string& input
 		,NodeValueParser::Outputs tokentype
 		,Goo::Moldable* broadcaster,
@@ -76,7 +76,7 @@ void parse_single_static_token (
 }
 
 void parse_session_node (
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string& base
 		,std::string arg
 		,NodeValueParser::Outputs arg_type
@@ -84,7 +84,7 @@ void parse_session_node (
 {
 	if (arg != EMPTY)
 	{
-		Nodes::NodeValue varg;
+		NodeValue varg;
 		parse_single_static_token(varg,arg,arg_type);
 		arg = convert_nv_to_string(varg);
 	}
@@ -98,7 +98,7 @@ void parse_session_node (
 }
 
 void parse_data_node(
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string& base
 		,std::string arg
 		,NodeValueParser::Outputs arg_type
@@ -114,7 +114,7 @@ void parse_data_node(
 
 	if (arg != EMPTY)
 	{
-        Nodes::NodeValue varg;
+        NodeValue varg;
         if (arg_type == NodeValueParser::widget_state)
         {
             parse_widget_state(
@@ -125,7 +125,7 @@ void parse_data_node(
         }
         else
         {
-            Nodes::NodeValue varg;
+            NodeValue varg;
             parse_single_static_token(varg,arg,arg_type);
         }
 		arg = convert_nv_to_string(varg);
@@ -153,7 +153,7 @@ void parse_data_node(
 
 
 void parse_widget_state (
-		Nodes::NodeValue& v
+		NodeValue& v
 		,std::string widget_identifier
 		,std::string& state
 		,Goo::Moldable* broadcaster

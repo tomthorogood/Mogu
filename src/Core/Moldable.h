@@ -29,7 +29,7 @@
 #include <Core/MoldableTemplate.h>
 #include <Wt/WApplication>
 #include <Wt/WSignal>
-
+#include <Types/NodeValue.h>
 //!\brief The namespace in which the Mogu Core is located.
 namespace Goo
 {
@@ -258,8 +258,7 @@ public:
     	__setvalue_callback(*this, newtxt);
     }
 
-
-    void getState(	Enums::WidgetTypes::States state, Nodes::NodeValue& val);
+    void getState(	Enums::WidgetTypes::States state, NodeValue& val);
 
 };
 

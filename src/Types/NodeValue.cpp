@@ -3,7 +3,6 @@
 #include <iostream>
 #include <assert.h>
 
-namespace Nodes{
 
 using std::string;
 NodeValue::NodeValue()
@@ -43,5 +42,3 @@ NodeValue::~NodeValue()
 {
 		delete __numerics;
 }
-
-}//namespace Nodes

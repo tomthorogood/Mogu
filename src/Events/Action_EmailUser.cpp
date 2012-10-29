@@ -44,7 +44,7 @@ std::string get_user_email(std::string username)
 int email_current_user(EmailPacket* email)
 {
 	std::string email_lookup_cmd = "[contact] email";
-	Nodes::NodeValue v;
+	NodeValue v;
 	mApp; app->interpreter().giveInput(email_lookup_cmd, v);
 	email->to_address = v.getString();
 	return send_system_email(email);

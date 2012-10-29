@@ -10,6 +10,7 @@
 
 #include <declarations.h>
 #include <Parsers/MoguScript_Tokenizer.h>
+#include <Types/NodeValue.h>
 
 /*!\brief This struct holds information about how a value is to be
  * stored in the database. All writes to the database should use this in order
@@ -39,7 +40,7 @@ class StorageRequest
 	std::string f_value;
 
 	/*!\brief The value to be stored. */
-	Nodes::NodeValue& value;
+	NodeValue& value;
 
 	void __init__();
 
@@ -50,7 +51,7 @@ public:
 
 	StorageRequest(
 			std::string& destination
-			,Nodes::NodeValue& value);
+			,NodeValue& value);
 	~StorageRequest();
 	/*!\brief One may set values manually, or one may give the object a
 	 * policy name to look up.

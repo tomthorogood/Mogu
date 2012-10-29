@@ -17,7 +17,7 @@ namespace Actions
 {
 using Goo::Moldable;
 
-bool test(Moldable& widget, Nodes::NodeValue& val)
+bool test(Moldable& widget, NodeValue& val)
 {
 	mApp;
 	app->interpreter().giveInput(val.getString(), val);

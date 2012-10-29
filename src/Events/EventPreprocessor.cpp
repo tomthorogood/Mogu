@@ -33,7 +33,7 @@ inline std::string valOrEmpty(
 EventPreprocessor::EventPreprocessor (std::string& node)
 {
 	mApp;
-	Nodes::NodeValue v;
+	NodeValue v;
 
 	std::string trigger_str		= getHashEntry(node, "trigger");
 	std::string msg_str			= getHashEntry(node, "message", " ");
@@ -101,7 +101,7 @@ EventPreprocessor::EventPreprocessor (std::string& node)
 			,NONE
 			,Parsers::enum_callback <Parsers::FamilyMemberParser>);
 
-	if (v.getType() == Nodes::string_value)
+	if (v.getType() == string_value)
 	{
 		listener.s_listener = v.getString();
 		listener.type = listener.string;

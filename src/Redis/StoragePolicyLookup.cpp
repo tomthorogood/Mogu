@@ -21,7 +21,7 @@ StoragePolicyLookup::StoragePolicyLookup(const std::string& policyName)
 	std::string node = buildPolicyNode(policyName);
 	const char* cnode = node.c_str();
 	mApp;
-	Nodes::NodeValue v;
+	NodeValue v;
 	app->redisCommand("exists %s", cnode);
 	if ( (bool) Redis::getInt(app->reply()) ) __flags |= exists;
 	else return;

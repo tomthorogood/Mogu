@@ -76,9 +76,9 @@ int send_system_email(EmailPacket*);
 int email_current_user(EmailPacket*);
 bool reset_password(std::string username);
 bool change_password(std::string username, std::string new_pass);
-bool test(Goo::Moldable&,Nodes::NodeValue&);
+bool test(Goo::Moldable&,NodeValue&);
 bool emit(Listeners& listeners, std::string& sig);
-bool store(Listeners& listeners, Nodes::NodeValue& message);
+bool store(Listeners& listeners, NodeValue& message);
 } //namespace Actions
 
 } //Namspace ActionCenter

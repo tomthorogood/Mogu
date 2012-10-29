@@ -27,7 +27,6 @@ namespace Goo
 using std::string;
 using namespace Enums::WidgetTypes;
 using namespace Parsers::StyleParser;
-using Nodes::NodeValue;
 using std::cout;
 using std::endl;
 
@@ -116,7 +115,7 @@ void Moldable::__validate()
 } // validate
 
 void Moldable::getState(Enums::WidgetTypes::States state,
-		Nodes::NodeValue& val)
+		NodeValue& val)
 {
 	using namespace Enums::WidgetTypes;
 	switch(state)
@@ -152,7 +151,7 @@ bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
 	std::string action_blocks = getWidgetProperty(getNode(), "block");
 	Parsers::MoguScript_Tokenizer t(action_blocks);
 	std::string b = t.next();
-	Nodes::NodeValue v;
+	NodeValue v;
 	while (b != EMPTY)
 	{
 		app->interpreter().giveInput(

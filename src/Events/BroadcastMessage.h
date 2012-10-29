@@ -16,7 +16,7 @@ namespace Events{
 #define INTERRUPT_CHAIN 0x1
 #define CLEAR_INTERRUPT 0x2
 
-typedef Nodes::NodeValue NodeValue;
+typedef NodeValue NodeValue;
 
 struct BroadcastMessage
 {

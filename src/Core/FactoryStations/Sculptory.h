@@ -43,7 +43,7 @@ void __sculpt_text(MoldableTemplate* __tmpl, Moldable *m);
 inline void setStyle(const std::string& _style, Wt::WWidget* m)
 {
 	mApp;
-	Nodes::NodeValue v;
+	NodeValue v;
 	app->interpreter().giveInput(_style,v);
 	Wt::WString style(v.getString());
 	m->setStyleClass(style);
@@ -108,7 +108,7 @@ inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)
 {
 	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	Nodes::NodeValue v;
+	NodeValue v;
 	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WAnchor* anchor = new Wt::WAnchor(
 			__tmpl->location, v.getString());
@@ -119,7 +119,7 @@ inline void __sculpt_image(MoldableTemplate* __tmpl, Moldable* m)
 {
 	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	Nodes::NodeValue v;
+	NodeValue v;
 	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, v.getString());
 	m->addWidget(img);
@@ -132,7 +132,7 @@ inline void __sculpt_image_link(MoldableTemplate* __tmpl, Moldable* m)
 {
 	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	Nodes::NodeValue v;
+	NodeValue v;
 	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, __tmpl->content);
 	Wt::WAnchor* a = new Wt::WAnchor(__tmpl->location, __tmpl->content);
@@ -145,7 +145,7 @@ inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 {
 	mApp;
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
-	Nodes::NodeValue v;
+	NodeValue v;
 	app->interpreter().giveInput(__tmpl->content, v, m);
 	Wt::WLineEdit* in = new Wt::WLineEdit(v.getString());
 	if (__tmpl->flags & is_validated)
