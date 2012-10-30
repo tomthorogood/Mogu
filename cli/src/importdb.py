@@ -115,11 +115,11 @@ def evaluate_files(filenames):
     templates = {}
     properties = {}
 
+
     for filename in filenames:
         
-        f = open(filename,'r')
-        execfile(filename)
-        f.close()
+    #    f = open(filename,'r')
+        execfile(filename,locals(),globals())
     
     packages.append(ImportPackage(
         widgets, 

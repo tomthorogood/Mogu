@@ -11,7 +11,7 @@ def not_attr_node(node):
     EXTRA_ATTRS = (
             "events",
             "children",
-            "policy"
+            "properties"
             )
     for attr in EXTRA_ATTRS:
         if attr in node:

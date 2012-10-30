@@ -111,6 +111,4 @@ class UniqueHashPackage;
 class ApplicationManager;
 class Listener;
 
-
-
 #endif /* FORWARD_DECLARATIONS_H_ */

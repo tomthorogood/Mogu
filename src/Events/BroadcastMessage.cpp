@@ -37,7 +37,7 @@ BroadcastMessage::BroadcastMessage (
 	if (preproc->message.status == preproc->message.delayed)
 	{
 #ifdef DEBUG
-		assert(_broadcaster != NULL);
+//		assert(_broadcaster != NULL);
 		std::cout << "Parsing delayed message: " << preproc->message.original << std::endl;
 #endif
 		app->interpreter().giveInput(

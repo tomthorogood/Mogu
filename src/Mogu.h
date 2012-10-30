@@ -132,6 +132,7 @@ public:
 #ifdef DEBUG
 		va_start(ap,cmd);
 		vprintf(cmd,ap);
+		std::cout << std::endl;
 #endif
 		va_end(ap);
 	}
