@@ -147,7 +147,9 @@ inline void __sculpt_input_txt(MoldableTemplate* __tmpl, Moldable* m)
 	if (__tmpl->style != EMPTY) setStyle(__tmpl->style,m);
 	NodeValue v;
 	app->interpreter().giveInput(__tmpl->content, v, m);
-	Wt::WLineEdit* in = new Wt::WLineEdit(v.getString());
+	Wt::WLineEdit* in = new Wt::WLineEdit();
+	Wt::WString empty(v.getString());
+	in->setEmptyText(empty);
 	if (__tmpl->flags & is_validated)
 	{
 		std::string val_name = getWidgetProperty(__tmpl->node, "validator");
