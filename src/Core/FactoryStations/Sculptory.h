@@ -124,7 +124,7 @@ inline void __sculpt_image(MoldableTemplate* __tmpl, Moldable* m)
 	Wt::WImage* img = new Wt::WImage(__tmpl->source, v.getString());
 	m->addWidget(img);
 
-	if (widgetHasProperty(m->getNode(), "scaled"))
+	if (widgetHasBooleanProperty(m->getNode(), "scaled"))
 		img->addStyleClass("mogu_SCALED_IMAGE");
 }
 

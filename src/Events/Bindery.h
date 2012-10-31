@@ -22,6 +22,7 @@ class EventBindery : public Wt::WObject
 {
 
     Goo::Moldable* __broadcaster;
+
     PreprocessorMap __map;
 
     void handleVoidSignal(

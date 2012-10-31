@@ -123,6 +123,16 @@ inline bool widgetHasProperty(const std::string& node, const char* prop)
 	return (int) lookup.result > 0;
 }
 
+inline bool widgetHasBooleanProperty(const std::string& node, const char* prop)
+{
+	mApp;
+	std::string property_set = node+".properties";
+	const char* cpropset = property_set.c_str();
+	if (!nodeExists(property_set)) return false;
+	app->redisCommand("sismember %s %s", cpropset, prop);
+	return (bool) Redis::getInt(app->reply());
+}
+
 inline bool widgetHasEvents(
 		const std::string& nodeName)
 {

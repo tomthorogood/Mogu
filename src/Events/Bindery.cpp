@@ -32,6 +32,15 @@ EventBindery::EventBindery(Moldable* broadcaster)
 : __map()
 {
     __broadcaster = broadcaster;
+#ifdef DEBUG
+    //if (__broadcaster->getNode().find("assessment") != std::string::npos)
+    //	bool brk =1;
+	std::cout << __broadcaster->getNode() << std::endl;
+	if (__broadcaster->getNode().find("assessment") != std::string::npos)
+	{
+		bool brk=true;
+	}
+#endif
     string eventNamespace = broadcaster->getNode();
     eventNamespace.append(".events.*");
     const char* cnamespace = eventNamespace.c_str();
@@ -120,7 +129,9 @@ void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
 
 	PreprocessorVector& vec = __map[trigger];
 	size_t num_preprocs = vec.size();
-
+#ifdef DEBUG
+	std::cout << __broadcaster->getNode() << " is broadcasting a message!" << std::endl;
+#endif
 	for (size_t e = 0; e < num_preprocs; e++)
 	{
 		EventPreprocessor* p = vec[e];
