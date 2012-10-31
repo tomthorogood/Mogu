@@ -63,9 +63,6 @@ Moldable::Moldable(MoldableTemplate* tpl)
 
 Moldable::~Moldable()
 {
-#ifdef DEBUG
-	cout << "Deleting " << __tmpl->node << endl;
-#endif
 	if (bindery !=0) delete bindery;
 	__tmpl->disconnect();
 	if (__tmpl->deleteable) delete __tmpl;
