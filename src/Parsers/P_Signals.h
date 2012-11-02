@@ -94,28 +94,6 @@ public:
 	}
 };
 
-class NodeLabelParser
-:   public TurnLeft::Utils::EnumParser <Enums::Labels::Labels>
-{
-public:
-	NodeLabelParser()
-	: TurnLeft::Utils::EnumParser <Enums::Labels::Labels> ()
-	{
-		using namespace Enums::Labels;
-		enumMap["message"]      = message;
-		enumMap["trigger"]      = trigger;
-		enumMap["action"]       = action;
-		enumMap["nextAction"]   = nextAction;
-		enumMap["listeners"]    = listeners;
-		enumMap["listener"]     = listeners;
-		enumMap["degradation"]  = degradation;
-		enumMap["signal"]       = Enums::Labels::signal;
-		enumMap["animation"]    = animation;
-		enumMap["block"]        = block;
-		enumMap["interrupt"]	= interrupt;
-	}
-};
-
 }//namespace Parsers
 
 

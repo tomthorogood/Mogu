@@ -11,26 +11,6 @@
 
 namespace Parsers{
 
-class WtAlignmentParser :
-	public TurnLeft::Utils::EnumParser <Wt::AlignmentFlag>
-{
-public:
-	WtAlignmentParser()
-	{
-
-	    enumMap["bottom"]           = Wt::AlignBottom;
-	    enumMap["baseline"]         = Wt::AlignBaseline;
-	    enumMap["top"]              = Wt::AlignTop;
-	    enumMap["text top"]         = Wt::AlignTextTop;
-	    enumMap["text bottom"]      = Wt::AlignTextBottom;
-	    enumMap["left"]             = Wt::AlignLeft;
-	    enumMap["center"]           = Wt::AlignCenter;
-	    enumMap["middle"]           = Wt::AlignMiddle;
-	    enumMap["right"]            = Wt::AlignRight;
-	    enumMap["justify"]          = Wt::AlignJustify;
-	}
-};
-
 class WtAnimationParser:
 	public TurnLeft::Utils::EnumParser<Wt::WAnimation::AnimationEffect>
 {
