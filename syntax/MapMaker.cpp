@@ -33,6 +33,13 @@ inline void write_map_line(ofstream& out, std::string& token)
     out << ln << endl;
 }
 
+inline void write_reverse_map_line(ofstream& out, std::string& token)
+{
+	std::string ln = "\t(" + token + ")";
+	ln += "(\"" + token + "\")";
+	out << ln << endl;
+}
+
 inline bool is_valid(string& line)
 {
     try 
@@ -40,7 +47,10 @@ inline bool is_valid(string& line)
         char c = line.at(0);
         if (!isalpha(c)) return false;
     }
-    catch (const std::exception& e) return false;
+    catch (const std::exception& e)
+    {
+    	return false;
+    }
     return true;
 }
 
@@ -55,9 +65,15 @@ void read_lines(strvector& vec)
     {
         if (f.eof()) break;
         getline(f, line);
-        cout << line << endl;
-        trimchar(line);
-        if (!is_valid(line)) continue;
+        try
+        {
+        	trimchar(line);
+        	if (!is_valid(line)) continue;
+        }
+        catch (const std::exception& e)
+        {
+        	continue;
+        }
         vec.push_back(line);
     }
 }
@@ -75,9 +91,9 @@ void make_enum(ofstream& out, strvector& vec)
     out << "};" << endl;
 }
 
-void make_map(ofstream& out, strvector& vec)
+void make_str_map(ofstream& out, strvector& vec)
 {
-    std::string map_start = "static std::map<std::string,MoguToken> = create_map <std::string, MoguToken> ()";
+    std::string map_start = "static std::map<std::string,MoguToken> tokenParser = create_map <std::string, MoguToken> ()";
     out << map_start << endl;
     size_t vecsz = vec.size();
     for (size_t i = 0; i < vecsz; ++i)
@@ -87,16 +103,29 @@ void make_map(ofstream& out, strvector& vec)
     out << ";" << endl;
 }
 
+void make_enum_map(ofstream& out, strvector& vec)
+{
+	std::string map_start = "static std::map<MoguToken, std::string> reverseTokenParser = create_map <MoguToken,std::string> ()";
+	out << map_start << endl;
+	size_t vecsz = vec.size();
+	for (size_t i = 0; i < vecsz; ++i)
+	{
+		write_reverse_map_line(out, vec.at(i));
+	}
+	out << ";" << endl;
+}
+
 int main()
 {
     strvector tokens;
     read_lines(tokens);
     ofstream out;
-
     out.open("Tokens.h");
+    out << "#include <declarations.h>" << endl << endl;
     make_enum(out,tokens);
     out << endl << endl;
-    make_map(out,tokens);
+    make_str_map(out,tokens);
+    make_enum_map(out,tokens);
     out.close();
 
     return 0;
