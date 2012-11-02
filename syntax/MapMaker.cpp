@@ -16,12 +16,12 @@ using TurnLeft::Utils::trimchar;
 
 typedef std::vector <string> strvector;
 
-inline void write_enum_line(ofstream& out, std::string& token, bool first=false)
+inline void write_enum_line(ofstream& out, std::string& token, size_t& num)
 {
     std::string ln = "\t";
-    if (!first) ln += ',';
+    if (num!=0) ln += ',';
     ln += token;
-    out << ln << endl;
+    out << ln << "\t\t\t=0x" << std::hex << num << endl;
 }
 
 inline void write_map_line(ofstream& out, std::string& token)
@@ -85,8 +85,7 @@ void make_enum(ofstream& out, strvector& vec)
     size_t vecsz = vec.size();
     for (size_t i = 0; i < vecsz; ++i)
     {
-        bool first = i==0;
-        write_enum_line(out, vec.at(i), first); 
+        write_enum_line(out, vec.at(i), i); 
     }
     out << "};" << endl;
 }
