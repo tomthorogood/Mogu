@@ -14,7 +14,6 @@
 #include <Wt/WScrollArea>
 #include <Wt/WString>
 #include <Wt/WStackedWidget>
-#include <TurnLeftLib/Utils/explosion.h>
 #include <TurnLeftLib/Utils/randomcharset.h>
 
 #include <Mogu.h>
@@ -56,9 +55,6 @@ Mogu::Mogu(const Wt::WEnvironment& env)
     internalPathChanged().connect(this, &Mogu::handlePathChange);
 
     std::string entry_path = internalPath();
-#ifdef DEBUG
-    std::cout << "Entry Path: " << entry_path << std::endl;
-#endif
 
     if (entry_path != "/" && entry_path.length() > 0)
     {
@@ -75,18 +71,14 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 void Mogu::handlePathChange(std::string path)
 {
 	std::string perspective = path.substr(1,path.length()-1);
-#ifdef DEBUG
-	std::cout << "Perspective Chain: " << perspective << std::endl;
-#endif
-	TurnLeft::Utils::Explosion explosion(perspective);
-	std::string molds[16];
-	explosion.explode('/',molds);
-	int num_molds = explosion.getNumWords();
-	for (int m = 0; m < num_molds; m++)
+	Parsers::TokenGenerator t(perspective);
+	std::string mold = t.next('/');
+	while (mold != EMPTY)
 	{
-		std::string mold = molds[m];
 		Perspective::Handler::mold(mold);
+		mold = t.next('/');
 	}
+
 }
 
 Mogu::~Mogu()

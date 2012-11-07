@@ -14,10 +14,21 @@ namespace Security{
 class UserManager
 {
 	Mogu& application;
-	std::string plain_userid;
-	std::string enc_userid;
-	std::string salt;
-	std::vector <std::string> previous_sessions;
+	std::string __plain_userid;
+	std::string __enc_userid;
+	std::string __salt;
+
+	std::string __recent_session;
+
+	inline void __encid_nempty()
+	{
+		if (__enc_userid == EMPTY) return;
+		//TODO THROW ERRROR!
+	}
+
+	void __get_recent_session__();
+	bool __user_exists();
+	void __get_salt();
 public:
 	UserManager(Mogu& app) : application(app) {};
 
@@ -40,7 +51,12 @@ public:
 	 * + Link the session id to the authentication token
 	 *
 	 */
-	bool createUser(const std::string& plain_id, const std::string& plain_passwd);
+	bool createUser(
+			const std::string& plain_id, const std::string& plain_passwd);
+	bool resetPassword(
+			const std::string& plain_id);
+	bool changePassword(
+			const std::string& plain_id, const std::string& new_password);
 };
 
 }//namespace Security

@@ -77,7 +77,6 @@ void BroadcastMessage::resolveListeners()
 
 	while (--degradation >= 0)
 	{
-		std::vector <Goo::Moldable*> children;
 		if (properties->action == bubble)
 		{
 			iter_widget = (Goo::Moldable*) iter_widget->parent();

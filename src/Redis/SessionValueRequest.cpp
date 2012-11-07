@@ -46,7 +46,6 @@ SessionValueRequest::SessionValueRequest (
 	size_t num_iter = 0;
 
 	std::vector <std::string> session_ids;
-	std::string nodename;
 	session_ids.push_back(session_iter);
 	while (session_iter != "global" && num_iter < max_iterations)
 	{

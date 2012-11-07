@@ -27,14 +27,6 @@ inline std::string prhshd_session_node(std::string sessionid, std::string hsh)
 	return "s."+sessionid+"."+hsh;
 }
 
-inline bool auth_token_exists(std::string token)
-{
-	mApp;
-	const char* ctok = token.c_str();
-	app->redisCommand("sismember %s %s", __NODE_ALL_AUTHS, ctok);
-	return (bool) Redis::getInt(app->reply());
-}
-
 inline bool auth_string_exists(std::string str)
 {
 	mApp;
@@ -89,7 +81,7 @@ inline std::string linked_session(std::string sessionid)
 	return Redis::toString(app->reply());
 }
 
-inline std::string raw_last_authtoken(std::string session)
+inline std::string st(std::string session)
 {
 	std::string meta_node = session_node(session, "meta");
 	const char* cmeta = meta_node.c_str();
