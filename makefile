@@ -11,20 +11,20 @@ turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
 sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
-command := g++ -Wall -O$(o) 
-
+objects_no_exe := $(patsubst src/main.o, , $(objects))
+flags := -std=c++0x
+command := g++ $(flags) -Wall -O$(o) 
 
 
 all: $(objects) | $(turnleft) 
 ifeq ($(dbg),on)
-	g++ -Wall -DDEBUG -DTERM_ENABLED -g -pg -o $(executable) $(objects) $(devel_libs)
+	g++ $(flags) -Wall -DDEBUG -DTERM_ENABLED -g -pg -o $(executable) $(objects) $(devel_libs)
 else
-	g++ -Wall -DNDEBUG -o $(executable) $(objects) $(devel_libs)
+	g++ $(flags) -Wall -DNDEBUG -o $(executable) $(objects) $(devel_libs)
 endif
 
-
-production: $(objects) | $(turnleft)
-	$(command) -o mogu-server $(objects) $(production_libs)
+upgrade-database: db_upgrade.cpp $(objects) | $(turnleft)
+	g++ $(flags) -Wall $(includes) -o $@ $(objects_no_exe) db_upgrade.cpp $(devel_libs)
 
 install: mogu.conf
 	$(MAKE) uninstall

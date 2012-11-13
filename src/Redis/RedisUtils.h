@@ -12,6 +12,7 @@
 #include <Mogu.h>
 #include <Redis/RedisCore.h>
 #include <Security/Security.h>
+#include <TurnLeftLib/Utils/randomcharset.h>
 #include <Static.h>
 
 struct UniqueHashPackage
@@ -52,6 +53,17 @@ inline bool isMemberOfSet(std::string& value, std::string& set_node)
 	return isMemberOfSet(value, cnode);
 }
 
+inline bool isMemberOfSet(
+		redisContext* context,
+		std::string& value, const char* set_node)
+{
+	redisReply* r = (redisReply*)
+			redisCommand(context, "sismember %s %s", value.c_str(), set_node);
+	bool response = (bool) r->integer;
+	freeReplyObject(r);
+	return response;
+}
+
 
 
 inline void makeUniqueHash(UniqueHashPackage& pkg)
@@ -69,6 +81,19 @@ inline std::string makeUniqueRChar(const char* set_node)
 	TurnLeft::Utils::RandomCharSet rchar(Application::getRandomSeed());
 	std::string str = rchar.generate(sz);
 	while (Redis::isMemberOfSet(str, set_node))
+	{
+		++sz;
+		str = rchar.generate(sz);
+	}
+	return str;
+}
+
+inline std::string makeUniqueRChar(redisContext* context, const char* set_node)
+{
+	int sz =1;
+	TurnLeft::Utils::RandomCharSet rchar(Application::getRandomSeed());
+	std::string str = rchar.generate(sz);
+	while (Redis::isMemberOfSet(context, str, set_node))
 	{
 		++sz;
 		str = rchar.generate(sz);
