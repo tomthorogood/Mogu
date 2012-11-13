@@ -22,18 +22,6 @@ ApplicationManager::ApplicationManager(Mogu& app) : application(app)
 	application.setSessionID(INIT_SESSION);
 }
 
-bool ApplicationManager::userLogin(
-		const std::string& plain_userID, const std::string& userauth)
-{
-	Security::LoginAuthenticator auth(plain_userID, userauth);
-	if (!auth.authenticated()) return false;
-	Security::AuthPackage authPkg;
-	//Avoids having to re-retrieve data that we'll need again.
-	auth.fillAuthPackage(authPkg);
-	createNewSession(authPkg);
-	return true;
-}
-
 void ApplicationManager::createNewSession(Security::AuthPackage& pkg)
 {
 	mApp;

@@ -81,7 +81,7 @@ void SessionValueRequest::process_request(
 		nodename = build_session_node(session_iter, key);
 		const char* cnode = nodename.c_str();
 		app->redisCommand("exists %s", cnode);
-		if ( (bool) Redis::getInt(app->reply()) )
+		if ( redisReply_TRUE )
 		{
 			if (arg != EMPTY)
 			{
@@ -89,18 +89,18 @@ void SessionValueRequest::process_request(
 				if (lookup.getStorageType() == hash)
 				{
 					app->redisCommand("hexists %s %s", cnode, carg);
-					if ( Redis::getBool(app->reply()) ) break;
+					if ( redisReply_TRUE ) break;
 				}
 				else if (lookup.getStorageType() == list)
 				{
 					app->redisCommand("llen %s", cnode);
-					if ( Redis::getInt(app->reply()) > atoi(carg) )
+					if ( redisReply_INT > atoi(carg) )
 						break;
 				}
 				else if (lookup.getStorageType() == set)
 				{
 					app->redisCommand("sismember %s", cnode);
-					if (Redis::getBool(app->reply())) break;
+					if (redisReply_TRUE) break;
 				}
 			}
 			else if (lookup.getStorageType() != Enums::SubmissionPolicies::string)
@@ -128,7 +128,7 @@ void SessionValueRequest::process_request(
 		break;
 	default: break;
 	}
-	retrieved_value = Redis::toString(app->reply());
+	retrieved_value = redisReply_STRING;
 	if (lookup.isEncrypted())
 		retrieved_value = Security::decrypt(
 				retrieved_value, NO_TRANSLATION);

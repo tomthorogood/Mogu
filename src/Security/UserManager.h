@@ -66,11 +66,11 @@ public:
 	 *
 	 */
 	bool createUser(
-			const std::string& plain_id, const std::string& plain_passwd);
-	bool resetPassword(
-			const std::string& plain_id);
-	bool changePassword(
-			const std::string& plain_id, const std::string& new_password);
+			const std::string& plain_login, const std::string& plain_passwd);
+	bool userLogin(
+			const std::string& plain_login, const std::string& plain_passwd);
+	bool resetPassword(const std::string& plain_id);
+	bool changePassword(const std::string& new_password);
 	std::string getAuthToken(const std::string& sessionid);
 
 };

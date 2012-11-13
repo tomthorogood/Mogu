@@ -27,6 +27,7 @@ public:
 	{
 		__redis = redisConnect(REDIS_HOST,REDIS_PORT);
 		__current =0;
+		__reply =0;
 	}
 	virtual ~Generator()
 	{

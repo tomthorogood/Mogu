@@ -36,10 +36,6 @@ EventBindery::EventBindery(Moldable* broadcaster)
     //if (__broadcaster->getNode().find("assessment") != std::string::npos)
     //	bool brk =1;
 	std::cout << __broadcaster->getNode() << std::endl;
-	if (__broadcaster->getNode().find("assessment") != std::string::npos)
-	{
-		bool brk=true;
-	}
 #endif
     string eventNamespace = broadcaster->getNode();
     eventNamespace.append(".events.*");

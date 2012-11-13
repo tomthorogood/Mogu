@@ -19,12 +19,11 @@ namespace Events{
 namespace ActionCenter{
 namespace Actions{
 
-bool change_password(std::string username, std::string new_password)
+bool reset_password(std::string username)
 {
-	return true;
+	mApp;
+	return app->getUserManager().resetPassword(username);
 }
-
-bool reset_password(std::string username) { return true;}
 
 
 }//namespace Actions

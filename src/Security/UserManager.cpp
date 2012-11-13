@@ -14,6 +14,7 @@
 #include <Security/LoginAuthenticator.h>
 #include <Security/Security.h>
 #include <Redis/RedisUtils.h>
+#include <Types/EmailManager.h>
 
 namespace Security{
 
@@ -91,6 +92,19 @@ bool UserManager::createUser(
 	return true;
 }
 
+bool UserManager::userLogin(
+		const std::string& plain_userID, const std::string& userauth)
+{
+	mApp;
+	LoginAuthenticator auth(plain_userID, userauth);
+	if (!auth.authenticated()) return false;
+	AuthPackage authPkg;
+	//Avoids having to re-retrieve data that we'll need again.
+	auth.fillAuthPackage(authPkg);
+	app->getManager().createNewSession(authPkg);
+	return true;
+}
+
 void UserManager::__get_recent_session__()
 {
 	__userid_nempty();
@@ -133,16 +147,44 @@ std::string UserManager::getAuthToken(const std::string& sessionid)
 bool UserManager::resetPassword(const std::string& plain_userid)
 {
 	TurnLeft::Utils::RandomCharSet r;
+	const std::string EMAIL_LOOKUP = "[contact] &email&";
 	std::string plain_newpass = r.generate(4);
-	bool success = changePassword(plain_userid, plain_newpass);
+	__plain_userlogin = plain_userid;
+	__enc_userlogin = Security::encrypt(plain_userid);
+
+	application.redisExec(Mogu::Keep, "hexists %s %s"
+			,__NODE_USERID_LOOKUP, __enc_userlogin.c_str()
+	);
+	if (! (bool) Redis::getInt(application.reply())) return false;
+
+	application.redisExec(Mogu::Keep, "hget %s %s"
+			,__NODE_USERID_LOOKUP, __enc_userlogin.c_str());
+	__mogu_userid = Redis::toString(application.reply());
+	__get_recent_session__();
+
+	application.setSessionID(__recent_session);
+	NodeValue val;
+	application.interpreter().giveInput(__mogu_userid, val);
+	EmailManager email;
+	email.setRecipient(val.getString());
+	email.setSubject("Your FinancialFirsts.org Password Request");
+	email.setMessage(
+		"You recently requested that FinancialFirsts.org reset your password."
+		"Your new password is below, and you may start using it immediately."
+		"It is highly recommended that you change your password when you "
+		"next log in, and delete this email afterward."
+		"Your new password is: " + plain_newpass +"\n\n"
+		"Thanks,\n The Financial Firsts Team"
+	);
+
+	bool success = changePassword(plain_newpass);
+
+	if (success) email.send();
 	return success;
 }
 
-bool UserManager::changePassword(
-		const std::string& plain_userlogin, const std::string& plain_newpass)
+bool UserManager::changePassword(const std::string& plain_newpass)
 {
-	__plain_userlogin = plain_userlogin;
-	__enc_userlogin = Security::encrypt(__plain_userlogin);
 	__plain_password = plain_newpass;
 	if (!__user_exists()) return false;
 	__get_salt();

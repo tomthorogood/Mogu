@@ -109,7 +109,6 @@ bool LoginAuthenticator::authtoken_matches()
 	app->redisCommand("hget %s %s"
 			, csession, __AUTH_HASH);
 	last_auth_token = redisReply_STRING;
-	std::string tmp_prf_auth_token = last_auth_token;
 	return last_auth_token == prf_auth_token;
 
 }

@@ -31,9 +31,8 @@ bool change_session ()
 	p_userid = app->getSlots()[userid_key];
 	p_userauth = app->getSlots()[userauth_key];
 	TurnLeft::Utils::stolower(p_userid);
-	return app->getManager().userLogin(p_userid, p_userauth);
+	return app->getUserManager().userLogin(p_userid, p_userauth);
 }
-
 
 bool register_user()
 {
