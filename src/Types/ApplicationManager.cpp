@@ -22,16 +22,6 @@ ApplicationManager::ApplicationManager(Mogu& app) : application(app)
 	application.setSessionID(INIT_SESSION);
 }
 
-std::string ApplicationManager::newSessionID()
-{
-	RandomCharSet r;
-	std::string baseID = r.generate(8);
-	std::string hashedID = Hash::toHash(baseID);
-	UniqueHashPackage p(hashedID, __NODE_SESSION_SET);
-	Redis::makeUniqueHash(p);
-	return p.proofed_hash;
-}
-
 bool ApplicationManager::userLogin(
 		const std::string& plain_userID, const std::string& userauth)
 {
@@ -48,67 +38,54 @@ void ApplicationManager::createNewSession(Security::AuthPackage& pkg)
 {
 	mApp;
 	TokenCycles authtoken_info;
-
-	std::string new_session_id = newSessionID();
-	const char* cnewsession = new_session_id.c_str();
+	std::string new_session_id = Redis::makeUniqueRChar(__NODE_SESSION_SET);
 	std::string node = "s."+new_session_id+"."+__META_HASH;
+
+	const char* cauth_str = pkg.proofed_auth_string.c_str();
+	const char* cnewsession = new_session_id.c_str();
 	const char* cnode = node.c_str();
 	const char* clast_session = pkg.last_session.c_str();
-	const char* cenc_id = pkg.encrypted_id.c_str();
+	const char* cuserid = pkg.mogu_userid.c_str();
 
 	/* Link the new session to the previous session */
-	app->redisCommand("hset %s %s %s"
-			, cnode, __PREV_HASH, clast_session);
-	app->freeReply();
+	app->redisExec(Mogu::Discard, "hset %s %s %s",
+			 cnode, __PREV_HASH, clast_session);
 
 	/* Link the user id with the new session */
-	app->redisCommand("hset %s %s %s",
-			__NODE_SESSION_LOOKUP, cenc_id, cnewsession);
-	app->freeReply();
+	app->redisExec(Mogu::Discard,"hset %s %s %s",
+			__NODE_SESSION_LOOKUP, cuserid, cnewsession);
 
 	/* Add the new session to the session set for easy access */
-	app->redisCommand("sadd %s %s"
+	app->redisExec(Mogu::Discard, "sadd %s %s"
 			, __NODE_SESSION_SET, cnewsession);
-	app->freeReply();
 
-	std::string proto_auth_token = Hash::toHash(Security::encrypt(
-			pkg.encrypted_id
-			+ new_session_id
-			+ pkg.proofed_auth_string));
+	/* Create anew temporary auth token */
+	std::string new_auth_tok = Redis::makeUniqueRChar(__NODE_AUTH_TOK_SET);
+	const char* cnew_auth_tok = new_auth_tok.c_str();
 
-
-	UniqueHashPackage new_auth_token(proto_auth_token, __NODE_AUTH_TOK_SET);
-	Redis::makeUniqueHash(new_auth_token);
-	const char* cnew_auth_tok = new_auth_token.proofed_hash.c_str();
-	const char* cauth_str = pkg.proofed_auth_string.c_str();
-	//Since all auth tokens will be unique, we do not need to store the collision info.
-	app->redisCommand("hset %s %s %s"
+	app->redisExec(Mogu::Discard,"hset %s %s %s"
 			, cnode, __AUTH_HASH, cnew_auth_tok);
-	app->freeReply();
 
 	//Add the new auth token to the auth token set, and remove the previous one. */
-	app->redisCommand("sadd %s %s"
+	app->redisExec(Mogu::Discard,"sadd %s %s"
 			, __NODE_AUTH_TOK_SET, cnew_auth_tok);
-	app->freeReply();
 
 	// Do not attempt to remove the previous auth token if the previous session was "global"
 	if (pkg.last_session != "global")
 	{
 		std::string query = "s."+pkg.last_session+"."+__META_HASH;
 		const char* cquery = query.c_str();
-		app->redisCommand("hget %s %s", cquery, __AUTH_HASH);
-		std::string prev_auth = Redis::toString(app->reply());
+		app->redisExec(Mogu::Keep, "hget %s %s", cquery, __AUTH_HASH);
+		std::string prev_auth = redisReply_STRING;
 		const char* cauth = prev_auth.c_str();
-		app->redisCommand("srem %s %s"
+		app->redisExec(Mogu::Discard, "srem %s %s"
 				, __NODE_AUTH_TOK_SET, cauth);
-		app->freeReply();
 	}
 
 	//Link the new auth token to the user's auth string
-	app->redisCommand("hset %s %s %s",
-			__NODE_AUTH_LOOKUP
+	app->redisExec(Mogu::Discard, "hset %s %s %s"
+			,__NODE_AUTH_LOOKUP
 			, cauth_str
 			, cnew_auth_tok);
-	app->freeReply();
 	app->setSessionID(new_session_id);
 }

@@ -52,7 +52,10 @@ class Mogu : public Wt::WApplication
 	std::map <std::string, std::string> __slots;
 
 public:
-
+	enum KeepReply {
+		Discard
+		,Keep
+	};
 	Mogu(const Wt::WEnvironment& env);
 	virtual ~Mogu();
 
@@ -124,6 +127,20 @@ public:
 		doJavaScript(final);
 	}
 
+	inline void redisExec(KeepReply r, const char* cmd, ...)
+	{
+		va_list ap;
+		va_start(ap, cmd);
+		__reply = (redisReply*) redisvCommand(__redis, cmd, ap);
+#ifdef DEBUG
+		va_start(ap,cmd);
+		vprintf(cmd,ap);
+		std::cout << std::endl;
+#endif
+		va_end(ap);
+		if (r!=Keep) freeReply();
+	}
+
 	inline void redisCommand(const char* cmd, ...)
 	{
 		va_list ap;
@@ -136,6 +153,8 @@ public:
 #endif
 		va_end(ap);
 	}
+
+
 
 	inline redisReply* reply() { return __reply;}
 	inline void freeReply() {freeReplyObject(__reply);}

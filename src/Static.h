@@ -45,6 +45,13 @@ namespace Application
 
 	bool metaKeyConfigured(std::string key);
 	std::string getMetaValue(std::string key);
+
+inline int getRandomSeed()
+{
+	static int seed_salt = 1;
+	srand( time(NULL) + ++seed_salt);
+	return rand();
+}
 }
 
 

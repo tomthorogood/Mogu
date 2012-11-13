@@ -121,5 +121,19 @@ public:
 	{}
 };
 
+class Err_NonExistentField : public MoguException
+{
+public:
+	Err_NonExistentField(std::string node, std::string field, std::string func)
+	: MoguException(
+			"Attempt to create string from non-existent field "
+			+ node
+			+ "->"
+			+ field
+			+ " at "
+			,func)
+	{}
+};
+
 }//namespace Exceptions
 #endif /* EXCEPTIONS_H_ */

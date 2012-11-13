@@ -12,6 +12,7 @@
 #include <Mogu.h>
 #include <Redis/RedisCore.h>
 #include <Security/Security.h>
+#include <Static.h>
 
 struct UniqueHashPackage
 {
@@ -27,17 +28,31 @@ struct UniqueHashPackage
 		set_node = node;
 		num_cycles =0;
 	}
+
+	inline void lock() {
+		mApp;
+		app->redisExec(Mogu::Discard, "sadd %s %s",
+				set_node.c_str(), proofed_hash.c_str());
+	}
 };
 
 namespace Redis{
-inline bool isMemberOfSet(std::string& value, std::string& set_node)
+
+inline bool isMemberOfSet(std::string& value, const char* node)
 {
 	mApp;
 	const char* cval = value.c_str();
-	const char* cnode = set_node.c_str();
-	app->redisCommand("sismember %s %s", cval, cnode);
+	app->redisCommand("sismember %s %s", cval, node);
 	return (bool) Redis::getInt(app->reply());
 }
+
+inline bool isMemberOfSet(std::string& value, std::string& set_node)
+{
+	const char* cnode = set_node.c_str();
+	return isMemberOfSet(value, cnode);
+}
+
+
 
 inline void makeUniqueHash(UniqueHashPackage& pkg)
 {
@@ -46,6 +61,39 @@ inline void makeUniqueHash(UniqueHashPackage& pkg)
 		pkg.proofed_hash = Security::collision_proof(pkg.proofed_hash);
 		++ pkg.num_cycles;
 	}
+}
+
+inline std::string makeUniqueRChar(const char* set_node)
+{
+	int sz =1;
+	TurnLeft::Utils::RandomCharSet rchar(Application::getRandomSeed());
+	std::string str = rchar.generate(sz);
+	while (Redis::isMemberOfSet(str, set_node))
+	{
+		++sz;
+		str = rchar.generate(sz);
+	}
+	return str;
+}
+
+inline void getKeysAndVals(
+		Redis::strvector& keys, Redis::strvector& vals, const char* node)
+{
+	mApp;
+	app->redisExec(Mogu::Keep, "hkeys %s", node);
+	Redis::toVector(app->reply(), keys);
+	app->redisExec(Mogu::Keep, "hvals %s", node);
+	Redis::toVector(app->reply(), vals);
+}
+
+inline std::string reverseHashLookup(const std::string& value, const char* node)
+{
+	Redis::strvector keys;
+	Redis::strvector vals;
+	getKeysAndVals(keys,vals,node);
+	auto iter = std::find(vals.begin(), vals.end(), value);
+	int index = iter - vals.begin();
+	return keys[index];
 }
 
 }//namespace Redis

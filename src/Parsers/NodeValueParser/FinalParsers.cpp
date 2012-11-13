@@ -11,7 +11,6 @@
 #include <Parsers/NodeValueParser/NVPAutomaton.h>
 #include <hash.h>
 #include <Exceptions/Exceptions.h>
-#include <Sessions/Lookups.h>
 #include <Redis/RedisCore.h>
 #include <Mogu.h>
 #include <Parsers/Parsers.h>

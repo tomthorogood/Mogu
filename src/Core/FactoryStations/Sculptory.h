@@ -24,7 +24,6 @@
 #include <Wt/WImage>
 #include <Wt/WText>
 #include <Core/Moldable.h>
-#include <Sessions/Lookups.h>
 
 namespace Goo{
 namespace MoldableFactory{

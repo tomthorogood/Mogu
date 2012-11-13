@@ -34,7 +34,7 @@ namespace Security{
 
 struct AuthPackage
 {
-	std::string encrypted_id;
+	std::string mogu_userid;
 	std::string proofed_auth_string;
 	std::string salt;
 	std::string last_session;
@@ -51,9 +51,10 @@ class LoginAuthenticator
 		,END_STATE						=	0xFF
 	};
 
-	std::string plain_userid; 		// set in constructor
+	std::string plain_userlogin;	//set in constructor
+	std::string enc_userlogin;		//set in constructor
+	std::string mogu_userid;		//set in user_exists()
 	std::string plain_passwd; 		// set in constructor
-	std::string enc_userid;   		// set in constructor
 	std::string salt;				// set in user_salted()
 	std::string raw_auth_string;	// set in authstring_exists()
 	std::string prf_auth_string;	// set in authstring_exists()
@@ -77,7 +78,7 @@ public:
 	inline void fillAuthPackage(AuthPackage& pkg)
 	{
 		if (!authenticated()) return;
-		pkg.encrypted_id = enc_userid;
+		pkg.mogu_userid = mogu_userid;
 		pkg.last_session = last_session_id;
 		pkg.salt = salt;
 		pkg.proofed_auth_string = prf_auth_string;

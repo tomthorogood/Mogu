@@ -9,8 +9,8 @@
 #include <Static.h>
 #include <Redis/RedisCore.h>
 #include <hash.h>
+#include <Mogu.h>
 #include <Events/MoldableActionCenter.h>
-#include <Sessions/Lookups.h>
 #include <Redis/SessionValueRequest.h>
 
 namespace Events

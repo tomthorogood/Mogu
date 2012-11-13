@@ -10,7 +10,6 @@
 #include <crypt/PacketCenter.h>
 #include <assert.h>
 #include <Static.h>
-#include <Sessions/Lookups.h>
 #include <Mogu.h>
 #include <Exceptions/Exceptions.h>
 #include <Security/Security.h>

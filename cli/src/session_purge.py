@@ -18,6 +18,7 @@ This cannot be undone! Be very, very careful here!"), args.yes):
     to_be_deleted.extend([
         gnamespace % Hash.session_lookup,
         gnamespace % Hash.auth_lookup,
+        gnamespace % Hash.userid_lookup,
         gnamespace % Hash.salt_lookup])
     for key in to_be_deleted:
         db.delete(key)
