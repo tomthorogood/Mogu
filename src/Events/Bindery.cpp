@@ -31,26 +31,19 @@ namespace Triggers = Enums::SignalTriggers;
 EventBindery::EventBindery(Moldable* broadcaster)
 : __map()
 {
+	mApp;
     __broadcaster = broadcaster;
-#ifdef DEBUG
-    //if (__broadcaster->getNode().find("assessment") != std::string::npos)
-    //	bool brk =1;
-	std::cout << __broadcaster->getNode() << std::endl;
-#endif
-    string eventNamespace = broadcaster->getNode();
-    eventNamespace.append(".events.*");
-    const char* cnamespace = eventNamespace.c_str();
-    strvector eventNodes;
-    mApp;
-    app->redisCommand("keys %s", cnamespace);
-    /* This returns a list of all events for the widget in question. */
-    Redis::toVector(app->reply(),eventNodes);
 
-    size_t num_events = eventNodes.size();
+    std::string node = broadcaster->getNode();
+    node += ".events";
+    app->redisExec(Mogu::Keep, "get %s", node.c_str());
+    int num_events = atoi(redisReply_STRING.c_str());
+
     /* Then, we need to iterate through each of these events. */
-    for (size_t e = 0; e < num_events; e++)
+    for (int e = 0; e < num_events; e++)
     {
-        EventPreprocessor* pre = new EventPreprocessor(eventNodes[e]);
+
+        EventPreprocessor* pre = new EventPreprocessor(node, e+1);
         __map[pre->trigger].push_back(pre);
     }
 

@@ -30,26 +30,27 @@ inline std::string valOrEmpty(
 
 }
 
-EventPreprocessor::EventPreprocessor (std::string& node)
+EventPreprocessor::EventPreprocessor (std::string& node, int event_num)
 {
 	mApp;
 	NodeValue v;
 
-	std::string trigger_str		= getHashEntry(node, "trigger");
-	std::string msg_str			= getHashEntry(node, "message", " ");
-	std::string action_str		= getHashEntry(node, "action");
+	std::string trigger_str		= getHashEntry(node, event_num, "trigger");
+	std::string msg_str			= getHashEntry(node, event_num, "message", " ");
+	std::string action_str		= getHashEntry(node, event_num, "action");
 	message.original = msg_str;
 
-	std::string listener_str = getHashEntry(node, "listener");
-	if (listener_str == EMPTY) listener_str = getHashEntry(node, "listeners");
+	std::string listener_str = getHashEntry(node, event_num, "listener");
+	if (listener_str == EMPTY) listener_str = getHashEntry(
+			node, event_num, "listeners");
 
-	std::string degrad_str = getHashEntry(node, "degradation");
+	std::string degrad_str = getHashEntry(node, event_num, "degradation");
 
 	if (degrad_str != EMPTY)
 	{
 		app->interpreter().giveInput(degrad_str, v);
 		degradation = v.getInt();
-		std::string nxt_str = getHashEntry(node, "nextAction");
+		std::string nxt_str = getHashEntry(node, event_num, "nextAction");
 
 		if (nxt_str != EMPTY)
 		{

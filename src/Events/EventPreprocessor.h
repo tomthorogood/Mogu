@@ -65,7 +65,7 @@ struct EventPreprocessor
 	Parsers::NodeValueParser::Outputs getListenerType(std::string& str);
 	int degradation;
 
-	EventPreprocessor (std::string& node);
+	EventPreprocessor (std::string& node, int event_num);
 
 };
 

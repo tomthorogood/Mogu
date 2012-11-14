@@ -179,21 +179,22 @@ def import_files(db, args, moguFiles, pyFiles):
                 current_events = db.keys("*%s.events*" % widget)
                 for e in current_events:
                     db.delete(e)
+            if len(package.events[widget]) > 0:
+                db.set("widgets.%s.events" % widget, 0)
             for event in package.events[widget]:
+                db.incr("widgets.%s.events" % widget)
                 wevents += 1
                 e =  WidgetEvent()
                 e.build(widget, wevents)
                 e._import(db, event, dflags)
 
-        for event in package.global_events:
-            e = GlobalEvent()
-            e.build(event)
-            e._import(db, package.global_events[event], dflags)
-
         for view in package.perspectives:
             pmold = 0
+            if len(package.perspectives[view]) > 0:
+                db.set("perspectives.%s" % view, 0)
             for mold in package.perspectives[view]:
                 pmold += 1
+                db.incr("perspectives.%s" % view)
                 p = PerspectiveMold()
                 p.build(view, pmold)
                 p._import(db, mold, dflags)

@@ -18,20 +18,14 @@ namespace Handler{
 
 void mold(std::string perspective)
 {
-	namespace Action = Enums::SignalActions;
-	size_t num_molds = 0;
-	Redis::strvector keyspace;
-
 	mApp;
-	std::string spersp = "perspectives."+perspective+".*";
-	const char* cpersp = spersp.c_str();
-	app->redisCommand("keys %s",cpersp);
-	Redis::toVector(app->reply(),keyspace);
-	num_molds = keyspace.size();
+	std::string spersp = "perspectives."+perspective;
+	app->redisExec(Mogu::Keep, "get %s", spersp.c_str());
+	int num_molds = atoi(redisReply_STRING.c_str());
 
-	for (size_t w = 0; w < num_molds; w++)
+	for (int w = 0; w < num_molds; w++)
 	{
-		Events::EventPreprocessor preproc(keyspace[w]);
+		Events::EventPreprocessor preproc(spersp, w);
 		Events::BroadcastMessage msg(NULL, &preproc);
 		Events::ActionCenter::submitBroadcast(msg);
 	}

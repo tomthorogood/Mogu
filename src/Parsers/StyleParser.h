@@ -137,10 +137,10 @@ inline bool widgetHasEvents(
 		const std::string& nodeName)
 {
 	mApp;
-	std::string snodename = nodeName+".events.1";
+	std::string snodename = nodeName+".events";
 	const char* cnodename = snodename.c_str();
-	app->redisCommand("exists %s", cnodename);
-	return (bool) Redis::getInt(app->reply());
+	app->redisExec(Mogu::Keep, "exists %s", cnodename);
+	return redisReply_TRUE;
 }
 
 inline std::string getHashEntry(
@@ -154,6 +154,22 @@ inline std::string getHashEntry(
 	if (!Redis::getBool(app->reply())) return alt;
 	app->redisCommand("hget %s %s", chashnode, hash_field);
 	return Redis::toString(app->reply());
+}
+
+inline std::string getHashEntry(
+		std::string& hash_node
+		,int list_num
+		,const char* hash_field
+		,std::string alt=EMPTY)
+{
+	mApp;
+	const char* chashnode = hash_node.c_str();
+	app->redisExec(Mogu::Keep, "hexists %s.%d %s"
+			, chashnode, list_num, hash_field);
+	if (!redisReply_TRUE) return alt;
+	app->redisExec(Mogu::Keep, "hget %s.%d %s"
+			, chashnode, list_num, hash_field);
+	return redisReply_STRING;
 }
 
 /*!\brief Retrieves an arbirary property from a widget node. If the
