@@ -62,6 +62,6 @@
 #define __NODE_SALT_LOOKUP __NODE_GLOBAL_ __SALT_HASH
 
 // encrypted_username -> #collisions(encrypted_authstring)
-#define __NODE_COLLISION_STR_LOOKUP __NODE_GLOBAL_ __COLLISION_HASH"."__AUTHSTR_HASH
+#define __NODE_COLLISION_STR_LOOKUP __NODE_GLOBAL_ __COLLISION_HASH "." __AUTHSTR_HASH
 
 #endif /* MACROS_H_ */
