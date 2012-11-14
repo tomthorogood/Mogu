@@ -150,6 +150,7 @@ bool UserManager::resetPassword(const std::string& plain_userid)
 	const std::string EMAIL_LOOKUP = "[contact] &email&";
 	std::string plain_newpass = r.generate(4);
 	__plain_userlogin = plain_userid;
+	TurnLeft::Utils::stolower(__plain_userlogin);
 	__enc_userlogin = Security::encrypt(plain_userid);
 
 	application.redisExec(Mogu::Keep, "hexists %s %s"
@@ -164,7 +165,8 @@ bool UserManager::resetPassword(const std::string& plain_userid)
 
 	application.setSessionID(__recent_session);
 	NodeValue val;
-	application.interpreter().giveInput(__mogu_userid, val);
+	application.interpreter().giveInput(EMAIL_LOOKUP, val);
+	TurnLeft::Utils::trimchar(val.getString());
 	EmailManager email;
 	email.setRecipient(val.getString());
 	email.setSubject("Your FinancialFirsts.org Password Request");
