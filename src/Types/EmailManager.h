@@ -52,7 +52,7 @@ public:
 		__status =0x0; //Reset for future use
 
 		std::stringstream buffer;
-		buffer << "echo " << message;
+		buffer << "echo " << "\"" << message << "\"";
 		buffer << " |mail -s \" ";
 		buffer << subject << "\" ";
 		buffer << to_address;
