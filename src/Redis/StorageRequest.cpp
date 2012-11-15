@@ -90,11 +90,13 @@ void StorageRequest::build_command()
 		arg = varg.getString();
 	}
 
-	//TODO add support for floating-point-to-string
 	switch(value.getType())
 	{
 	case int_value:
 		f_value = itoa(value.getInt());
+		break;
+	case float_value:
+		f_value = ftoa(value.getFloat());
 		break;
 	default:
 		f_value = value.getString();
@@ -110,8 +112,7 @@ bool StorageRequest::execute()
 	const char* carg = arg.c_str();
 	const char* cval = f_value.c_str();
 
-	app->redisCommand(command.c_str(), cbody, carg, cval);
-	app->freeReply();
+	app->redisExec(Mogu::Discard, command.c_str(), cbody, carg, cval);
 	return true;
 }
 

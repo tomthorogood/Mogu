@@ -17,6 +17,13 @@ inline std::string itoa (int i)
 	return s.str();
 }
 
+inline std::string ftoa(double d)
+{
+	std::stringstream s;
+	s << d;
+	return s.str();
+}
+
 inline int stoi (std::string str)
 {
 	return atoi(str.c_str());
