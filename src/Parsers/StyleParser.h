@@ -188,7 +188,7 @@ inline std::string getWidgetProperty(
 	mApp;
 	const char* caddress = lookup.address.c_str();
 	app->redisCommand("hget %s %s", caddress, property);
-	return Redis::toString(app->reply());
+	return redisReply_STRING;
 }
 
 

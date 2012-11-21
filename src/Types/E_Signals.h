@@ -56,6 +56,7 @@ enum SignalAction{
     ,email_user			=0x41
     ,reset_password		=0x42
     ,onload				=0x43
+    ,activate_global	=0x44
     ,STDOUT				=0xFD
     ,TERM				=0xFE
     ,BLOCK				=0xFF

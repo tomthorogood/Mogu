@@ -1,0 +1,12 @@
+widgets["adminonly"] = \
+{
+    type    :   container,
+    access  :   "admininistrator",
+}
+
+widgets["adminonly:emails"] = \
+{
+    type    :   members,
+    template:   "txt",
+    access :   "|contact| &email&"
+}

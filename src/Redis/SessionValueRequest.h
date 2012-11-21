@@ -37,7 +37,7 @@ public:
 	 * the arg pre-hashed because we don't really know otherwise whether or not
 	 * it needs to be. The key will always be hashed within a user namespace.
 	 */
-	SessionValueRequest(const std::string& key, std::string arg=EMPTY);
+	SessionValueRequest(const std::string& key, std::string arg=EMPTY, std::string endpoint=EMPTY);
 	SessionValueRequest(
 			std::vector <std::string>& session_ids
 			,const std::string& key

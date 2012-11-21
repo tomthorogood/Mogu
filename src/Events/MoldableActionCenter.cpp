@@ -108,6 +108,11 @@ void directListeners(BroadcastMessage& broadcast)
 		handleBoolAction(broadcast, &Actions::change_session);
 		break;}
 
+	case Action::activate_global:{
+		mApp;
+		app->setSessionID("global");
+		break;}
+
 	case Action::javascript:{
 		std::string script = message.getString();
 		app->doJavaScript(script);
@@ -295,6 +300,7 @@ void directListeners(BroadcastMessage& broadcast)
 
     case Action::match:
     case Action::test_text:
+		if (broadcast.broadcaster->valueCallback() == EMPTY) break;
     	Actions::test(broadcast.listeners[0]->getWidget(), message) ?
     				broadcast.broadcaster->succeed().emit()
     			: 	broadcast.broadcaster->fail().emit();

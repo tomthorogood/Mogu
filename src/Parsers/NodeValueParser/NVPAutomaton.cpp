@@ -44,7 +44,9 @@ NodeValueParser::Outputs getMoguType(const std::string& token)
 			NodeValueParser::hashed_string : NodeValueParser::string_value;
 		break;
 	default:
-		ntype = NodeValueParser::string_value;
+		ntype =
+			(token == "->") ?
+				NodeValueParser::access_token : NodeValueParser::string_value;
 	}
 	return ntype;
 }

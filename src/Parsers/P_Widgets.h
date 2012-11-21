@@ -42,6 +42,7 @@ public:
 	    enumMap["stacked"]         = WidgetTypes::stack;
 	    enumMap["stack"]			= WidgetTypes::stack;
 	    enumMap["foreach"]			= WidgetTypes::foreach;
+	    enumMap["memberlist"]		= WidgetTypes::memberlist;
 	}
 
 	virtual Enums::WidgetTypes::WidgetTypes parse(const std::string& val)

@@ -72,6 +72,7 @@ public:
 	bool resetPassword(const std::string& plain_id);
 	bool changePassword(const std::string& new_password);
 	std::string getAuthToken(const std::string& sessionid);
+	inline const std::string& getMoguID() { return __mogu_userid; }
 
 };
 

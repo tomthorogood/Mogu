@@ -30,7 +30,7 @@ SessionValueRequest::SessionValueRequest(
 }
 
 SessionValueRequest::SessionValueRequest (
-		const std::string& key, std::string arg)
+		const std::string& key, std::string arg, std::string endpoint)
 	:lookup(key)
 {
 	mApp;
@@ -40,9 +40,9 @@ SessionValueRequest::SessionValueRequest (
 
 	size_t max_iterations;
 	app->redisCommand("dbsize");
-	max_iterations = (size_t) Redis::getInt(app->reply());
+	max_iterations = (size_t) redisReply_INT;
 
-	std::string session_iter = app->sessionID();
+	std::string session_iter = (endpoint == EMPTY) ? app->sessionID() : endpoint;
 	size_t num_iter = 0;
 
 	std::vector <std::string> session_ids;

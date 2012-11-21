@@ -18,6 +18,7 @@
 #include <Static.h>
 #include <Parsers/StyleParser.h>
 #include <Types/ListNodeGenerator.h>
+#include <Core/FactoryStations/ForEach.h>
 #include <Wt/WContainerWidget>
 #include <Validators/Validators.h>
 #include <Wt/WAnchor>
@@ -81,28 +82,14 @@ inline void __sculpt_container(MoldableTemplate* __tmpl, Moldable *m)
 
 inline void __sculpt_foreach(MoldableTemplate* __tmpl,Moldable*m)
 {
-	Wt::WContainerWidget* bearer =m;
-	if (__tmpl->flags & is_stacked)
-	{
-		__sculpt_stack(__tmpl,m);
-		bearer = (Wt::WContainerWidget*) m->widget(0);
-	}
-	getNumChildren(__tmpl);
-	for (int i = 0; i < __tmpl->num_children; i++)
-	{
-		MoldableTemplate* cpy = new MoldableTemplate(*__tmpl);
-		cpy->num_children =0;
-		std::string tpl_name = getWidgetProperty(__tmpl->node, "template");
-		std::string datanode = cpy->content.substr(1,cpy->content.length()-2);
-		const char* cdnode = datanode.c_str();
-		mApp;
-		app->redisCommand("lindex %s %d", cdnode, i);
-		cpy->content = Redis::toString(app->reply());
-		cpy->type = getWidgetType("templates."+tpl_name);
-		bearer->addWidget(sculpt(cpy));
-	}
-	m->setValueCallback(&Callbacks::__value_container);
+	ForEachData fed(*__tmpl,*m);
 }
+
+inline void __sculpt_memberlist(MoldableTemplate* __tmpl, Moldable* m)
+{
+	ForEachGroupMember fegm(*__tmpl,*m);
+}
+
 inline void __sculpt_link(MoldableTemplate* __tmpl,Moldable* m)
 {
 	mApp;

@@ -116,6 +116,9 @@ Moldable* sculpt(MoldableTemplate* __tmpl, Moldable* m)
 	case foreach:{
 		__sculpt_foreach(__tmpl,m);
 		break;}
+	case memberlist:{
+		__sculpt_memberlist(__tmpl,m);
+		break;}
 	case text:{
 		__sculpt_text(__tmpl,m);
 		break;}

@@ -36,6 +36,8 @@
 #define __ALL_AUTHS_HASH "4801973836335212534"
 #define __SET_HASH "10275542420063459543"
 #define __USERID_LOOKUP_HASH "4651336642905166632"
+#define __GROUPS_HASH "6785144517405584032"
+#define __MEMBERSHIP_HASH "630696924263564959"
 
 //Pre-glued node values to speed up common queries:
 #define __NODE_GLOBAL_ "s.global."

@@ -8,7 +8,7 @@
 #ifndef E_WIDGETS_H_
 #define E_WIDGETS_H_
 
-/*!\brief The types of widgets creatable with Goo. */
+/*!\brief The types of widgets creatable with Mogu. */
 
 namespace WidgetTypes{
 enum WidgetTypes {
@@ -28,7 +28,7 @@ enum WidgetTypes {
     multi_select		=0xD,
     password			=0xE,
     foreach				=0x10,
-
+    memberlist			=0x11
 };
 
 enum Properties

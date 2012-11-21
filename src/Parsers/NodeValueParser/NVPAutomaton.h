@@ -101,6 +101,10 @@ public:
 		 * application registry.
 		 */
 		,registered_widget=0x100	//256
+
+		/*!\brief This specific token indicates group access */
+		,access_token = 0x200
+
 	};
 
 	NodeValueParser();

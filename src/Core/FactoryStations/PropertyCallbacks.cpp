@@ -58,7 +58,8 @@ void __setvalue_wlineedit(Moldable& widget, std::string& newtext)
 {
 	Wt::WLineEdit* input = static_cast<Wt::WLineEdit*>(widget.widget(0));
 	Wt::WString wtxt(newtext);
-	input->setValueText(wtxt);
+	input->setText("");
+	input->setEmptyText(wtxt);
 }
 
 }//namespace Callbacks

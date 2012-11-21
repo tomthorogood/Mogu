@@ -128,7 +128,7 @@ void Moldable::getState(Enums::WidgetTypes::States state,
 		break;}
 	case is_hidden:{
 		bool v = isHidden();
-		val.setInt( (bool) v);
+		val.setInt( (int) v);
 		break;}
 	case value:{
 		val.setString(valueCallback());

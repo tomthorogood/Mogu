@@ -66,7 +66,17 @@ CONFIG_TEMPLATE = {
             (
                 "analytics_domain", 
                 NoDefault(), 
-                "If you have a Google Analytics you wish to use, please enter the domain for your application here.")
+                "If you have a Google Analytics you wish to use, please enter the domain for your application here."),
+            (
+                "user_levels",
+                "administrator, general",
+                "This is where you define your user levels. You can name them anything you like, separated by a comma. \n\
+                 List them in order of most to least permissions. Example: admin, pro, newb"),
+            (
+                "default_userlevel",
+                NoDefault(),
+                "This is the userlevel that new users will be defaulted to. If unlisted, it will be the lowest possible setting. \n\
+                If set, it must be one of the above userlevels."),
             )
         }
 

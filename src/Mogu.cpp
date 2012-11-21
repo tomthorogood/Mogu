@@ -36,6 +36,7 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 	setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
 	__session = GLOBAL_SESSION;
 	__auth_token = AUTH_TOKEN;
+	__group = EMPTY;
 	__instanceid = rchar.generate(4);
 
 	__reply = 0;

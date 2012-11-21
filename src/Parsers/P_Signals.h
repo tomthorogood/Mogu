@@ -67,6 +67,7 @@ public:
 	    enumMap["reset_password"] 	= Action::reset_password;
 	    enumMap["onload"]			= Action::onload;
 	    enumMap["reload"]			= Action::reload;
+	    enumMap["activate_global"]	= Action::activate_global;
 	    enumMap["stdout"]			= Action::STDOUT;
 #ifdef TERM_ENABLED
 	    enumMap["TERMINATE"]		= Action::TERM;
