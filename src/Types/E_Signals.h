@@ -57,6 +57,7 @@ enum SignalAction{
     ,reset_password		=0x42
     ,onload				=0x43
     ,activate_global	=0x44
+    ,change_group		=0x45
     ,STDOUT				=0xFD
     ,TERM				=0xFE
     ,BLOCK				=0xFF

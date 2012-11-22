@@ -83,6 +83,12 @@ bool UserManager::createUser(
 			, cprhash_auth
 			, cauth_token);
 
+	// Add user to the default group with no default rights:
+	application.redisExec(Mogu::Discard, "zadd %s %d %s"
+			, __NODE_DEFAULT_MEMBERSHIP
+			, 0
+			, __mogu_userid.c_str());
+
 	Security::AuthPackage authPkg;
 	authPkg.mogu_userid = __mogu_userid;
 	authPkg.last_session = "global";

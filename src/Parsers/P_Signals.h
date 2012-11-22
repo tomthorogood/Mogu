@@ -68,6 +68,7 @@ public:
 	    enumMap["onload"]			= Action::onload;
 	    enumMap["reload"]			= Action::reload;
 	    enumMap["activate_global"]	= Action::activate_global;
+	    enumMap["change_group"]		= Action::change_group;
 	    enumMap["stdout"]			= Action::STDOUT;
 #ifdef TERM_ENABLED
 	    enumMap["TERMINATE"]		= Action::TERM;

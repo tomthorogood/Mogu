@@ -8,10 +8,16 @@
 #ifndef MACROS_H_
 #define MACROS_H_
 
+#define DEFAULT_GROUP "mogu_users"
+
 #define WIDGET_HO_BITS 0x3f
 #define MAX_TOKENS 3
 #define EMPTY ""
 #define NONE 0
+
+#define __PREFIX_GROUP "g."
+#define __PREFIX_SESSION "s."
+#define __PREFIX_WIDGET "widgets."
 
 
 #define MoguApp (Mogu*) wApp
@@ -24,6 +30,7 @@
 #define redisReply_INT Redis::getInt(app->reply())
 
 //Pre-hashed values to speed up common queries -- DO NOT CHANGE:
+#define __DEFAULT_GROUP_HASH "1448036143964893002"
 #define __AUTH_HASH "8163637335359820509"
 #define __META_HASH "9532958398116805642"
 #define __PREV_HASH "653035263252793737"
@@ -65,5 +72,7 @@
 
 // encrypted_username -> #collisions(encrypted_authstring)
 #define __NODE_COLLISION_STR_LOOKUP __NODE_GLOBAL_ __COLLISION_HASH "." __AUTHSTR_HASH
+
+#define __NODE_DEFAULT_MEMBERSHIP "g." __DEFAULT_GROUP_HASH "." __MEMBERSHIP_HASH
 
 #endif /* MACROS_H_ */

@@ -160,6 +160,10 @@ void directListeners(BroadcastMessage& broadcast)
     	Actions::emit(broadcast.listeners, message.getString());
     	break;}
 
+    case Action::change_group:{
+    	app->setGroup(message.getString());
+    	break;}
+
     /* Change the widget index of the listeners' stacked widgets. */
     case Action::set_index:
     	Actions::set_index(broadcast.listeners, message.getInt());
