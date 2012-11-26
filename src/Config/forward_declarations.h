@@ -109,6 +109,7 @@ class redisContext;
 class redisReply;
 class UniqueHashPackage;
 class ApplicationManager;
+class GroupManager;
 class Listener;
 
 #endif /* FORWARD_DECLARATIONS_H_ */

@@ -7,4 +7,4 @@ used throughout the CLI
 
 CONFIG_FILE = "/etc/mogu/mogu.conf"
 
-META_KEYS = ("analytics",)
+META_KEYS = ("analytics", "user_levels")

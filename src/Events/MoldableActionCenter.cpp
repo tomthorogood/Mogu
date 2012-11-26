@@ -6,6 +6,7 @@
  */
 
 #include <Types/Listener.h>
+#include <Types/GroupManager.h>
 #include <Events/MoldableActionCenter.h>
 #include <Events/BroadcastMessage.h>
 #include <Events/EventPreprocessor.h>
@@ -162,6 +163,24 @@ void directListeners(BroadcastMessage& broadcast)
 
     case Action::change_group:{
     	app->setGroup(message.getString());
+    	break;}
+
+    case Action::add_self_to_group:{
+    	const std::string& moguid = app->getUserManager().getMoguID();
+    	std::string& groupid = broadcast.listeners[0]->getString();
+    	std::string& rank = message.getString();
+    	GroupManager g(groupid);
+    	std::string origin = app->getUserManager().getUserSessions()[0];
+    	g.addMember(moguid, rank, origin);
+    	break;}
+
+    case Action::add_other_to_group:{
+    	std::string moguid = app->getSlots()["USERID"];
+    	std::string& groupid = broadcast.listeners[0]->getString();
+    	std::string& rank = message.getString();
+    	GroupManager g(groupid);
+    	std::string origin = app->getUserManager().getUserSessions()[0];
+    	g.addMember(moguid, rank, origin);
     	break;}
 
     /* Change the widget index of the listeners' stacked widgets. */

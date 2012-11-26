@@ -33,6 +33,14 @@ class GroupManager
 		return membershipQuery;
 	}
 
+	inline std::vector <std::string>& __get_all_members()
+	{
+		membershipQuery.clear();
+		app->redisExec(Mogu::Keep, "zrangebyscore %s -inf +inf", MEMBERSHIP.c_str());
+		Redis::toVector(app->reply(), membershipQuery);
+		return membershipQuery;
+	}
+
 	void __init__();
 
 public:
@@ -64,10 +72,13 @@ public:
 			const std::string& max, const std::string& min);
 
 	/*!\brief Adds a user to the group by rank. */
-	void addMember(const std::string& mogu_userid, const int& rank);
+	void addMember(
+			const std::string& mogu_userid, const int& rank,
+			const std::string& user_orig_session);
 
 	/*!\brief Adds a user to the group by level. */
-	void addMember(const std::string& mogu_userid, const std::string& level);
+	void addMember(const std::string& mogu_userid, const std::string& level,
+			const std::string& user_orig_session);
 
 	int getMemberRank(const std::string& mogu_userid);
 };

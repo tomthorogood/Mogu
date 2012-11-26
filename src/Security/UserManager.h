@@ -15,6 +15,7 @@ class UserManager
 {
 	Mogu& application;
 	std::string __plain_userlogin;
+	std::vector <std::string> __sessions;
 	std::string __mogu_userid;
 	std::string __plain_password;
 	std::string __enc_userlogin;
@@ -43,6 +44,9 @@ class UserManager
 	std::string __create_auth_string();
 	bool __user_exists();
 	void __get_salt();
+
+	void __populate_sessions();
+
 public:
 	UserManager(Mogu& app) : application(app) {};
 
@@ -72,8 +76,15 @@ public:
 	bool resetPassword(const std::string& plain_id);
 	bool changePassword(const std::string& new_password);
 	std::string getAuthToken(const std::string& sessionid);
-	inline const std::string& getMoguID() { return __mogu_userid; }
 
+	inline const std::string& getMoguID()
+		{ return __mogu_userid; }
+
+	inline const std::vector <std::string>& getUserSessions()
+	{
+		if (__sessions.size() == 0) __populate_sessions();
+		return __sessions;
+	}
 };
 
 }//namespace Security

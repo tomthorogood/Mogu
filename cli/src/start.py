@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from mogupy_conf import META_KEYS
+from coloring import * 
 from os import system
 def start(args,db):
     global META_KEYS

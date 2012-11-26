@@ -26,8 +26,7 @@ void GroupManager::__init__()
 
 std::vector <std::string>& GroupManager::getMembership()
 {
-	const size_t& num_levels = Application::getNumLevels();
-	return __getMembership__(num_levels, 0);
+	return __get_all_members();
 }
 
 std::vector <std::string>& GroupManager::getMembership
@@ -44,16 +43,24 @@ std::vector <std::string>& GroupManager::getMembership
 	return __getMembership__(maxLevel,minLevel);
 }
 
-void GroupManager::addMember(const std::string& muid, const int& rank)
+void GroupManager::addMember(
+		const std::string& muid
+		, const int& rank
+		, const std::string& user_orig_session)
 {
 	app->redisExec(Mogu::Discard, "zadd %s %d %s",
 			MEMBERSHIP.c_str(), rank, muid.c_str());
+	std::string origin = ("s."+user_orig_session) + "." + __GROUPS_HASH;
+	app->redisExec(Mogu::Discard, "rpush %s %s", origin.c_str(), __id.c_str());
 }
 
-void GroupManager::addMember(const std::string& muid, const std::string& rank)
+void GroupManager::addMember(
+		const std::string& muid
+		, const std::string& rank
+		, const std::string& user_orig_session)
 {
 	int rankLevel = Application::getUserLevel(rank);
-	addMember(muid, rankLevel);
+	addMember(muid, rankLevel, user_orig_session);
 }
 
 int GroupManager::getMemberRank(const std::string& muid)

@@ -1,4 +1,8 @@
 #include <declarations.h>
+#include <Static.h>
+#include <Types/GroupManager.h>
+#include <Parsers/TokenGenerator.h>
+#include <TurnLeftLib/Utils/inlines.h>
 #include <Redis/RedisCore.h>
 #include <Redis/RedisUtils.h>
 
@@ -11,93 +15,56 @@ using std::endl;
 int main()
 {
     redisContext* redis = redisConnect("localhost", 6379);
+    const std::string GROUP = __NODE_DEFAULT_MEMBERSHIP;
+    const std::string RANK = "student";
     
     /* First, we need to get a list of all the users in the database */
     redisReply* reply = (redisReply*)
         redisCommand(redis, "hkeys %s", __NODE_SESSION_LOOKUP);
-    Redis::strvector enc_userlogins;
-    Redis::toVector(reply, enc_userlogins);
+    Redis::strvector vec_userlogins;
+    Redis::toVector(reply, vec_userlogins);
 
-    size_t num_users = enc_userlogins.size();
+    cout << "Retrieved logins." << endl;
 
-    cout << num_users << " users to fix." << endl;
-    for (size_t i = 0; i < num_users; ++i)
+    for (size_t i = 0; i < vec_userlogins.size(); ++i)
     {
-        /* Create a userid */
-        std::string userlogin = enc_userlogins[i];
-
-        cout << "Processing user " << i << endl;
-        std::string userid = Redis::makeUniqueRChar(redis, __NODE_USERID_SET);
-
-        cout << "Fixing " << userlogin << " -> " << userid << endl;
-
-        /* Assign userid to encrypted userlogin */
-        SREPLY    
-            redisCommand(redis, "sadd %s %s", __NODE_USERID_SET, userid.c_str());
-        FREPLY;
-
+        const char* muid = vec_userlogins[i].c_str();
         SREPLY
-            redisCommand(redis, "hset %s %s %s", __NODE_USERID_LOOKUP, userlogin.c_str(), userid.c_str());
+            redisCommand(redis, "zadd %s %d %s", 
+                    __NODE_DEFAULT_MEMBERSHIP, 0, muid);
         FREPLY;
 
-        /* Get the session id associated with the userlogin */
+        // Get the user's first session
         SREPLY
-            redisCommand(redis, "hget %s %s", __NODE_SESSION_LOOKUP, userlogin.c_str());
-            std::string last_session = reply->str;
+            redisCommand(redis, "hget %s %s", __NODE_SESSION_LOOKUP, muid);
+            std::string prev = reply->str;
         FREPLY;
-
-        /* Assign the session id to the new userid */
-        SREPLY
-            redisCommand(redis, "hset %s %s %s", __NODE_SESSION_LOOKUP, userid.c_str(), last_session.c_str());
-        FREPLY;
-
-        /* Remove the previous entry */
-        SREPLY
-            redisCommand(redis, "hdel %s %s", __NODE_SESSION_LOOKUP, userlogin.c_str());
-        FREPLY;
-        
-        /* Get the user salt associated with the userlogin */
-        SREPLY
-            redisCommand(redis, "hget %s %s", __NODE_SALT_LOOKUP, userlogin.c_str());
-        std::string salt = reply->str;
-        FREPLY;
-        
-        /* Assign the salt to thew new userid */
-        SREPLY
-            redisCommand(redis, "hset %s %s %s", __NODE_SALT_LOOKUP, userid.c_str(),salt.c_str());
-        FREPLY;
-
-        /* Remove the previous entry */
-        SREPLY
-            redisCommand(redis, "hdel %s %s", __NODE_SALT_LOOKUP, userlogin.c_str());
-        FREPLY;
-
-        /* Determine if there are auth string collisions for the userlogin */
-        SREPLY
-            redisCommand(redis, "hexists %s %s", __NODE_COLLISION_STR_LOOKUP, userlogin.c_str());
-            bool exists = (bool) reply->integer;
-        FREPLY;
-
-        if (exists)
+        std::string first = EMPTY;
+        std::string session_meta;
+        while (prev != "global")
         {
-            /* Get the collision */
+            first = prev;
+            session_meta = "s.";
+            session_meta += prev;
+            session_meta += ".";
+            session_meta += __META_HASH;
+            const char* ch_session_meta = session_meta.c_str();
             SREPLY
-                redisCommand(redis, "hget %s %s", __NODE_COLLISION_STR_LOOKUP, userlogin.c_str());
-                std::string collisions = reply->str;
-            FREPLY;
-
-            /* Assign the collision to the userid */
-            SREPLY
-                redisCommand(redis, "hset %s %s %s", __NODE_COLLISION_STR_LOOKUP, userid.c_str(), collisions.c_str());
-            FREPLY;
-
-            /* Remove the previous entry */
-            SREPLY
-                redisCommand(redis, "hdel %s %s", __NODE_COLLISION_STR_LOOKUP, userlogin.c_str());
+                redisCommand(redis, "hget %s %s", ch_session_meta, __PREV_HASH);
+                prev = reply->str;
             FREPLY;
         }
+        // Add the group to s.[session].&meta&.&groups&
+        std::string user_groups = session_meta + ".";
+        user_groups += __GROUPS_HASH;
+        SREPLY
+            redisCommand(redis, "rpush %s %s", user_groups.c_str(), __DEFAULT_GROUP_HASH);
+        FREPLY;
+    }
 
-    }    
+    
+
+
     redisFree(redis);
     return 0;
 }

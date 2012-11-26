@@ -25,17 +25,73 @@ enum _Family {
 namespace SignalActions{
 enum SignalAction{
     NO_ACTION			=0x0
+
+    /*!\deprecated */
     ,rebroadcast		=0x1
+
+    /*!\deprecated */
     ,trickle			=0x2
+
+    /*!\brief Send a signal upward
+     * listener: The final nuclear reaction (self,parent, etc...)
+     * message: The final message
+     * degradation: required
+     */
     ,bubble				=0x3
+
+    /*!\brief Change the style of the listener
+     * listener: A Moldable widget
+     * message: The css style list "foo bar baz"
+     */
     ,set_style			=0x4
+
+    /*!\brief Append a style class to the listener
+     * listener: A moldable widget
+     * message: The css style "foo"
+     */
     ,add_class			=0x5
+
+    /*!\brief Remove a style class from the listener
+     * listener: A moldable widget
+     * message: The css style "foo"
+     */
     ,remove_class		=0x6
+
+    /*!\brief Emit another signal
+     * listener: A moldable widget
+     * message: The signal (e.g. "click")
+     */
     ,emit				=0x7
+
+    /*!\brief Change the index of a stacked widget
+     * listener: A stacked widget
+     * message: The number to set it to.
+     */
     ,set_index			=0x8
+
+    /*!\brief Increase a stacked widget by 1.
+     * listener: A stacked widget
+     * message: NONE
+     */
     ,increment_index	=0x9
+
+    /*!\brief Decrease a stacked widget idnex by 1.
+     * listener: A stacked widget
+     * message: NONE
+     */
     ,decrement_index	=0xA
+
+    /*!\brief Creates and adds a new widget to the listener widget
+     * listener: A container widget
+     * message: The node contaning the template information
+     */
     ,add_widget			=0xB
+
+    /*!\brief Changes the internal path to be displayed in the users'
+     * browser bar.
+     * message: The path name
+     * listener: NONE
+     */
     ,set_internal_path	=0xC
     ,remove_child		=0xD
     ,delete_child		=0xE
@@ -58,6 +114,8 @@ enum SignalAction{
     ,onload				=0x43
     ,activate_global	=0x44
     ,change_group		=0x45
+    ,add_self_to_group	=0x46
+    ,add_other_to_group =0x47
     ,STDOUT				=0xFD
     ,TERM				=0xFE
     ,BLOCK				=0xFF

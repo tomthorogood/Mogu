@@ -32,6 +32,8 @@ inline int getRandomSeed()
 
 const size_t& getNumLevels();
 
+void configure();
+
 }//namespace Application
 
 

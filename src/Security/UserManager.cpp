@@ -15,6 +15,7 @@
 #include <Security/Security.h>
 #include <Redis/RedisUtils.h>
 #include <Types/EmailManager.h>
+#include <algorithm>
 
 namespace Security{
 
@@ -89,12 +90,20 @@ bool UserManager::createUser(
 			, 0
 			, __mogu_userid.c_str());
 
+
 	Security::AuthPackage authPkg;
 	authPkg.mogu_userid = __mogu_userid;
 	authPkg.last_session = "global";
 	authPkg.proofed_auth_string = auth_string;
 	authPkg.salt = __salt;
 	application.getManager().createNewSession(authPkg);
+
+	// Add the default group to the list of user groups
+	std::string user_memberships =
+			("s." + application.sessionID()) + "." + __GROUPS_HASH;
+	application.redisExec(Mogu::Discard, "rpush %s %s"
+			, user_memberships.c_str(), __DEFAULT_GROUP_HASH);
+
 	return true;
 }
 
@@ -108,6 +117,7 @@ bool UserManager::userLogin(
 	//Avoids having to re-retrieve data that we'll need again.
 	auth.fillAuthPackage(authPkg);
 	app->getManager().createNewSession(authPkg);
+	app->setGroup(__DEFAULT_GROUP_HASH);
 	return true;
 }
 
@@ -214,6 +224,25 @@ bool UserManager::changePassword(const std::string& plain_newpass)
 			, __NODE_AUTH_STR_SET, old_auth_string);
 
 	return true;
+}
+
+void UserManager::__populate_sessions()
+{
+	__sessions.clear();
+	std::string sessionid = EMPTY;
+	application.redisExec(Mogu::Keep, "hget %s %s"
+			, __NODE_SESSION_LOOKUP, __mogu_userid.c_str());
+	sessionid = Redis::toString(application.reply());
+	while (sessionid != "global")
+	{
+		__sessions.push_back(sessionid);
+		std::string session_meta = "s."+sessionid+".";
+		session_meta += __META_HASH;
+		application.redisExec(Mogu::Keep, "hget %s %s",
+				session_meta.c_str(), __PREV_HASH);
+		sessionid = Redis::toString(application.reply());
+	}
+	std::reverse(__sessions.begin(), __sessions.end());
 }
 
 }//namespace Security
