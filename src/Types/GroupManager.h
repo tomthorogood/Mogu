@@ -33,6 +33,8 @@ class GroupManager
 		return membershipQuery;
 	}
 
+	void __init__();
+
 public:
 	/*!\brief Standard constructor. Requires a groupid
 	 * @param groupid The groupid of the group.

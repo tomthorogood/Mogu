@@ -9,13 +9,19 @@
 #include <Redis/RedisCore.h>
 #include <Static.h>
 
+
 GroupManager::GroupManager(const std::string& groupid)
 : __id(groupid), membershipQuery()
 {
+	__init__();
+}
+
+void GroupManager::__init__()
+{
 	mApp;
-	GROUP_PREFIX = ("g."+__id) +".";
-	MEMBERSHIP = GROUP_PREFIX+"."__MEMBERSHIP_HASH;
 	this->app = app;
+	GROUP_PREFIX = ("g."+__id) + ".";
+	MEMBERSHIP = GROUP_PREFIX+"."__MEMBERSHIP_HASH;
 }
 
 std::vector <std::string>& GroupManager::getMembership()

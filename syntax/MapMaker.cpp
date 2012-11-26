@@ -1,131 +1,89 @@
+#include <declarations.h>
+#include <Parsers/TokenGenerator.h>
 #include <fstream>
-#include <vector>
-#include <string>
-#include <TurnLeftLib/Utils/inlines.h>
-#include <exception>
-#include <iostream>
+
+#define INFILE "syntax.pre"
+#define OUTFILE "Tokens.h"
+
+#define STATIC_START "namespace StaticTokens{\nenum Token{\n"
+#define STATIC_END "};//enum Token\n}//namespace StaticTokens"
+#define STATIC_LINE(TOK) "\t\t," TOK "\n"
+
+#define MAP_START \
+	"std::map <std::string,StaticTokens::Token> = " \
+	"create_map <std::string, StaticTokens::Token>\n"
+
+#define R_MAP_START \
+	"std::map <StaticTokens::Token, std::string> = " \
+	"create_map <StaticTokens::Token, std::string>\n"
+
+/* Returns a reference to a static vector whose first entry will either be
+ * the empty string, meaning the line is not parseable, or the enumerated token.
+ * Subsequent strings will be string aliases of the token.
+ */
+const std::vector <std::string>& parse_line(std::string& line)
+{
+	static std::vector <std::string> vec;
+	vec.clear();
+
+	if (line.at(0) == '#') return vec;
+
+	Parsers::TokenGenerator tgen(line);
+	std::string token = tgen.next(':');
+
+	if (token == EMPTY) return vec;
+
+	vec.push_back(token);
+
+	do {
+		token = tgen.next(',');
+		if (token != EMPTY) vec.push_back(token);
+	} while (token != EMPTY);
+
+	return vec;
+}
+
+bool line_is_parseable (const std::vector <std::string>& vec)
+{
+	return vec[0] != EMPTY && vec.size() > 1;
+}
+
+inline std::string map_line(
+		const std::string& alias, const std::string& token)
+{
+	return ("\t(\""+alias) + ("\")("+token) + ")\n";
+}
+
+inline std::string r_map_line(
+		const std::string& token, const std::string& alias)
+{
+	return ("\t("+token) + (")(\""+alias) + "\")\n";
+}
+
+inline void write_map(std::ofstream& out)
+{
+	out << MAP_START;
+	std::ifstream in;
+	in.open(INFILE);
+
+	while (!in.eof())
+	{
+		if (in.eof()) break;
+		std::string line;
+		getline(in,line);
+		const std::vector <std::string>& tokens
+			= parse_line(line);
+		if (!line_is_parseable(tokens)) break;
+		size_t len = tokens.size();
+		for (size_t t = 1; t < len; ++t)
+		{
+			std::string out_line = map_line(tokens[t], tokens[0]);
+			out << out_line << std::endl;
+		}
+	}
+	out << ";" << std::endl << std::endl;
+}
 
 using std::ifstream;
 using std::ofstream;
-using std::string;
-using std::endl;
-using std::cout;
-using TurnLeft::Utils::trimchar;
 
-#define FILENAME "syntax.pre"
-
-typedef std::vector <string> strvector;
-
-inline void write_enum_line(ofstream& out, std::string& token, size_t& num)
-{
-    std::string ln = "\t";
-    if (num!=0) ln += ',';
-    ln += token;
-    out << ln << "\t\t\t=0x" << std::hex << num << endl;
-}
-
-inline void write_map_line(ofstream& out, std::string& token)
-{
-    std::string ln = "\t(\"";
-    ln += token;
-    ln += "\")";
-    ln += "("+token+")";
-    out << ln << endl;
-}
-
-inline void write_reverse_map_line(ofstream& out, std::string& token)
-{
-	std::string ln = "\t(" + token + ")";
-	ln += "(\"" + token + "\")";
-	out << ln << endl;
-}
-
-inline bool is_valid(string& line)
-{
-    try 
-    {
-        char c = line.at(0);
-        if (!isalpha(c)) return false;
-    }
-    catch (const std::exception& e)
-    {
-    	return false;
-    }
-    return true;
-}
-
-void read_lines(strvector& vec)
-{
-    ifstream f;
-    f.open(FILENAME);
-    string line;
-
-    if (!f.is_open()) return;
-    while (!f.eof())
-    {
-        if (f.eof()) break;
-        getline(f, line);
-        try
-        {
-        	trimchar(line);
-        	if (!is_valid(line)) continue;
-        }
-        catch (const std::exception& e)
-        {
-        	continue;
-        }
-        vec.push_back(line);
-    }
-}
-
-void make_enum(ofstream& out, strvector& vec)
-{
-    std::string enum_start = "enum MoguToken {";
-    out << enum_start << endl;
-    size_t vecsz = vec.size();
-    for (size_t i = 0; i < vecsz; ++i)
-    {
-        write_enum_line(out, vec.at(i), i); 
-    }
-    out << "};" << endl;
-}
-
-void make_str_map(ofstream& out, strvector& vec)
-{
-    std::string map_start = "static std::map<std::string,MoguToken> tokenParser = create_map <std::string, MoguToken> ()";
-    out << map_start << endl;
-    size_t vecsz = vec.size();
-    for (size_t i = 0; i < vecsz; ++i)
-    {
-        write_map_line(out, vec.at(i));
-    }
-    out << ";" << endl;
-}
-
-void make_enum_map(ofstream& out, strvector& vec)
-{
-	std::string map_start = "static std::map<MoguToken, std::string> reverseTokenParser = create_map <MoguToken,std::string> ()";
-	out << map_start << endl;
-	size_t vecsz = vec.size();
-	for (size_t i = 0; i < vecsz; ++i)
-	{
-		write_reverse_map_line(out, vec.at(i));
-	}
-	out << ";" << endl;
-}
-
-int main()
-{
-    strvector tokens;
-    read_lines(tokens);
-    ofstream out;
-    out.open("Tokens.h");
-    out << "#include <declarations.h>" << endl << endl;
-    make_enum(out,tokens);
-    out << endl << endl;
-    make_str_map(out,tokens);
-    make_enum_map(out,tokens);
-    out.close();
-
-    return 0;
-}
