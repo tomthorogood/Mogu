@@ -147,10 +147,13 @@ def export_widget_events(db,widget):
     output = ""
     title = dict_entry_line("events", pattern.name)
     event_dicts = []
-    
+
     current = 1
     while current <= num_events:
-        event_dicts.append(dict_str(db.hgetall("%s.events.%d" % (pattern.node, current))))
+        enode = "%s.events.%d" % (pattern.node, current)
+        assert(db.exists(enode))
+        dct = db.hgetall(enode)
+        event_dicts.append(dict_str(dct))
         current += 1
     body = list_str(event_dicts,"")
     output = "%s" * 2 % (title,body)
