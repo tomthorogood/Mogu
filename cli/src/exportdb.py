@@ -133,16 +133,25 @@ def export_validator(db, validator):
             pattern.name,
             db.hgetall(pattern.node)
             )
+
 def export_widget_events(db,widget):
     pattern = Pattern.Widget(widget)
-    event_nodes = db.keys("%s.events.*" % pattern.node)
-    if (len(event_nodes) is 0):
+    
+    if not db.exists("%s.events" % pattern.node):
+        return ""
+
+    num_events = int(db.get("%s.events" % pattern.node))
+    
+    if num_events is 0:
         return ""
     output = ""
     title = dict_entry_line("events", pattern.name)
     event_dicts = []
-    for node in event_nodes:
-        event_dicts.append(dict_str(db.hgetall(node)))
+    
+    current = 1
+    while current <= num_events:
+        event_dicts.append(dict_str(db.hgetall("%s.events.%d" % (pattern.node, current))))
+        current += 1
     body = list_str(event_dicts,"")
     output = "%s" * 2 % (title,body)
     return output

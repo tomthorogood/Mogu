@@ -21,7 +21,7 @@ void GroupManager::__init__()
 	mApp;
 	this->app = app;
 	GROUP_PREFIX = ("g."+__id) + ".";
-	MEMBERSHIP = GROUP_PREFIX+"."__MEMBERSHIP_HASH;
+	MEMBERSHIP = GROUP_PREFIX+ "." __MEMBERSHIP_HASH;
 }
 
 std::vector <std::string>& GroupManager::getMembership()
