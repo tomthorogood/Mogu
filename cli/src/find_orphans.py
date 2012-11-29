@@ -23,6 +23,7 @@ def event_nodes(node):
 
 def filter_birthers(db,events):
     def event_adds_child(node):
+        if (db.type(node) != "hash"): return False
         e_dict = db.hgetall(node) #use the
         return e_dict["action"] == "{add_child}"
     return filter(event_adds_child,events)
