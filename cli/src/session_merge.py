@@ -47,6 +47,9 @@ def get_previous_session(db, session):
     return db.hget(meta_node, Hash.prev)
 
 def get_user_linkedlist(db, endpoint):
+    """
+    Traverses the user's sessions, generating a list of all the session ids.
+    """
     # First, get a list of all the user's sessions, in order from 'endpoint' to 'global':
     previous = endpoint
     linkedlist = [endpoint]
@@ -62,6 +65,10 @@ def get_user_linkedlist(db, endpoint):
     return linkedlist
 
 def get_node_data(db, node):
+    """
+    Based on the Redis type of a node, populates a Python
+    container with the requisite data
+    """
     nodetype = db.type(node)
 
     if nodetype == "hash":
@@ -74,6 +81,9 @@ def get_node_data(db, node):
         return db.get(node)
 
 def get_session_node_data(db, session):
+    """
+    Finds all of the data in a session
+    """
     nodes = db.keys("s.%s.*" % session)
     names = [node.replace("s.%s." % session ,"") for node in nodes]
     data = {}
@@ -84,6 +94,10 @@ def get_session_node_data(db, session):
     return data
 
 def get_user_data(db, sessionlist):
+    """
+    Returns a list where each entry is a dictionary of
+    all of the data in a user's session.
+    """
     alldata = []
     for session in sessionlist:
         alldata.append(get_session_node_data(db,session))
@@ -91,12 +105,29 @@ def get_user_data(db, sessionlist):
     return alldata
 
 def merge_data(list_of_session_data_dicts):
-    data = list_of_session_data_dicts
-    FINAL = data[0]
+    """
+    The most recent session will be the first dictionary in the list.
+    That is where all of the new data will be stored. However, we will
+    never overwrite data in the original node, which is the last session
+    in the list.
+    """
+    data = list_of_session_data_dicts[1:-1]
+    FINAL = list_of_session_data_dicts[0]
     for session in data[1:-1]:
         for node in session:
+            # If the data doesn't exist at all in the 
+            # most recent node, add it in.
             if node not in FINAL:
                 FINAL[node] = session[node]
+
+            # If the node does exist in the final node, 
+            # but it's a dictionary, check to see if each
+            # entry exists.
+            elif isinstance(session[node], dict):
+                for key in session[node]:
+                    if key not in FINAL[node]:
+                        FINAL[node][key] = session[node][key]
+
 
 def del_session(db, session):
     keys = db.keys("s.%s.*" % session)
