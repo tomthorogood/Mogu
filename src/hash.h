@@ -11,7 +11,7 @@
 #include <city.h>
 #include <declarations.h>
 
-namespace Hash{
+namespace Hash {
 
 /*!\brief Recommended by the City Hash developers. */
 #define MAX_64_HASH_LENGTH 2000
@@ -20,7 +20,7 @@ namespace Hash{
 class HashedString
 {
 public:
-    HashedString ();
+    HashedString();
     virtual ~HashedString();
 
     /*!\brief Returns the string representation of the hashed value. */
@@ -30,28 +30,30 @@ public:
 /*!\brief The 64-bit implementation of the HashedString base class,
  * deals with uint64 values.
  */
-class HashedString64 : public HashedString
+class HashedString64: public HashedString
 {
 private:
     uint64 hashedValue;
 public:
     HashedString64();
     virtual ~HashedString64();
-    HashedString64& set(uint64 _value);
+    HashedString64& set(
+        uint64 _value);
     std::string as_string();
 };
 
 /*!\brief The 128-bit implementation of the HashedString base class,
  * which deals with uint128 values.
  */
-class HashedString128 : public HashedString
+class HashedString128: public HashedString
 {
 private:
     uint128 hashedValue;
 public:
     HashedString128();
     virtual ~HashedString128();
-    HashedString128& set (uint128 _value);
+    HashedString128& set(
+        uint128 _value);
     std::string as_string();
 };
 
@@ -60,7 +62,8 @@ public:
  * @param str The string to be hashed.
  * @return A pointer to a HashedString object.
  */
-HashedString* hashedString(const std::string& str);
+HashedString* hashedString(
+    const std::string& str);
 
 /*!\brief hashes a string of any length! Utilizes the City Hash lib due to its
  * high performance rating and the fact that cryptography is not an issue for
@@ -70,9 +73,9 @@ HashedString* hashedString(const std::string& str);
  * @param str The string to be hashed.
  * @return The hashed value.
  */
-std::string toHash (const std::string& str);
+std::string toHash(
+    const std::string& str);
 
-
-} //<-- namespace hash
+}    //<-- namespace hash
 
 #endif /* HASH_H_ */

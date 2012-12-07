@@ -11,7 +11,7 @@
 #include <declarations.h>
 #include <TurnLeftLib/Utils/inlines.h>
 
-namespace Parsers{
+namespace Parsers {
 
 /*!\brief Yields tokens from a string. Tokens may be defined by a pair of
  * wrappers. A delineator may also be set for the space between tokns. If no
@@ -39,150 +39,164 @@ namespace Parsers{
  */
 class TokenGenerator
 {
-	/*!\brief The original string that should be parsed as
-	 * various types of tokens.
-	 */
-	std::string __orig;
+    /*!\brief The original string that should be parsed as
+     * various types of tokens.
+     */
+    std::string __orig;
 
-	/*!\brief This is the current index of the string's iterator. */
-	unsigned int __cpos;
+    /*!\brief This is the current index of the string's iterator. */
+    unsigned int __cpos;
 
-	/*!\brief This is a vector of possible pairs of characters that can
-	 * delineate tokens.
-	 * \sa add_pair
-	 */
-	CharCouplets __chars;
+    /*!\brief This is a vector of possible pairs of characters that can
+     * delineate tokens.
+     * \sa add_pair
+     */
+    CharCouplets __chars;
 
 protected:
 
-	CharCouplets* getWrappers() { return &__chars;}
-	void setCurrentPosition(size_t i) { __cpos = i;}
+    CharCouplets* getWrappers()
+    {
+        return &__chars;
+    }
+    void setCurrentPosition(
+        size_t i)
+    {
+        __cpos = i;
+    }
 
 public:
 
-	/*!\brief Registers a new pair of chars to be used when finding tokens.
-	 *
-	 * If the generator is iterating over the string "%foo% {bar}", and both
-	 * 'foo' and 'bar' are special tokens, the pairs '%','%' and '{','}' must
-	 * both be registered. By default the TokenGenerator uses whitespace as its
-	 * defacto delineator.
-	 *
-	 * @param a The opening char
-	 * @param b The closing char
-	 * @return A reference to the object for method chaining:
-	 * 	tgen
-	 * 		.add_pair('{','}')
-	 * 		.add_pair('$','$')
-	 * 		.add_pair('!','@')
-	 *
-	 */
-	inline TokenGenerator& add_pair(char a,char b)
-	{
-		__chars.push_back( std::make_pair(a,b) );
-		return *this;
-	}
+    /*!\brief Registers a new pair of chars to be used when finding tokens.
+     *
+     * If the generator is iterating over the string "%foo% {bar}", and both
+     * 'foo' and 'bar' are special tokens, the pairs '%','%' and '{','}' must
+     * both be registered. By default the TokenGenerator uses whitespace as its
+     * defacto delineator.
+     *
+     * @param a The opening char
+     * @param b The closing char
+     * @return A reference to the object for method chaining:
+     * 	tgen
+     * 		.add_pair('{','}')
+     * 		.add_pair('$','$')
+     * 		.add_pair('!','@')
+     *
+     */
+    inline TokenGenerator& add_pair(
+        char a, char b)
+    {
+        __chars.push_back(std::make_pair(a, b));
+        return *this;
+    }
 
-	/*!\brief Resets the iterator to position 0.
-	 *
-	 * @return A reference to the object
-	 */
-	inline TokenGenerator& reset()
-	{
-		__cpos = 0;
-		return *this;
-	}
+    /*!\brief Resets the iterator to position 0.
+     *
+     * @return A reference to the object
+     */
+    inline TokenGenerator& reset()
+    {
+        __cpos = 0;
+        return *this;
+    }
 
-	/*!\brief Defines a new string to be tokenized. Note that it does NOT
-	 * reset the iterator position. The Generator does not assume you want
-	 * to do this. However, it does make method chaining possible to make
-	 * this easy: `tgen.newString(foo).reset();` or `tgen.reset().newString(foo);`
-	 *
-	 * @param str the new string to be tokenized
-	 * @return A reference to the object
-	 */
-	inline TokenGenerator& newString(std::string str)
-	{
-		__orig = str;
-		return *this;
-	}
+    /*!\brief Defines a new string to be tokenized. Note that it does NOT
+     * reset the iterator position. The Generator does not assume you want
+     * to do this. However, it does make method chaining possible to make
+     * this easy: `tgen.newString(foo).reset();` or `tgen.reset().newString(foo);`
+     *
+     * @param str the new string to be tokenized
+     * @return A reference to the object
+     */
+    inline TokenGenerator& newString(
+        std::string str)
+    {
+        __orig = str;
+        return *this;
+    }
 
     inline int getCurrentPosition()
     {
         return __cpos;
     }
 
-	inline std::string getRemaining()
-	{
-		std::string remaining = __orig.substr(__cpos);
-		TurnLeft::Utils::trimchar(remaining);
-		return remaining;
-	}
+    inline std::string getRemaining()
+    {
+        std::string remaining = __orig.substr(__cpos);
+        TurnLeft::Utils::trimchar(remaining);
+        return remaining;
+    }
 
+    /*!\brief Constructor takes an optional string. Defaults  to the empty
+     * string.
+     * @param orig
+     */
+    TokenGenerator(
+        std::string orig = EMPTY);
 
-	/*!\brief Constructor takes an optional string. Defaults  to the empty
-	 * string.
-	 * @param orig
-	 */
-	TokenGenerator (std::string orig = EMPTY);
+    /*!\brief Finds the next token. If no wrapped delineators can be found, it
+     * will instead use only the char delineator given as a parameter (defaults
+     * to whitespace).
+     *
+     * If there are no more tokens, it will return "".
+     *
+     * @param delineator (optional) Delineator separating tokens
+     * @return The next token in the string
+     */
+    virtual std::string next(
+        char delineator = ' ');
 
-	/*!\brief Finds the next token. If no wrapped delineators can be found, it
-	 * will instead use only the char delineator given as a parameter (defaults
-	 * to whitespace).
-	 *
-	 * If there are no more tokens, it will return "".
-	 *
-	 * @param delineator (optional) Delineator separating tokens
-	 * @return The next token in the string
-	 */
-	virtual std::string next(char delineator = ' ');
+    inline virtual std::string epsilon(
+        char delineator = ' ')
+    {
+        unsigned int __opos = __cpos;
+        std::string str = next();
+        __cpos = __opos;
+        return str;
+    }
 
-	inline virtual std::string epsilon(char delineator = ' ')
-	{
-		unsigned int __opos = __cpos;
-		std::string str = next();
-		__cpos = __opos;
-		return str;
-	}
+    virtual inline bool isWrapped(
+        const std::string& token) const
+    {
+        char char0 = token.at(0);
+        char fchar = token.at(token.length() - 1);
+        if (starts_pair(char0) == fchar) return true;
+        return false;
 
-	virtual inline bool isWrapped(const std::string& token) const
-	{
-		char char0 = token.at(0);
-		char fchar = token.at(token.length()-1);
-		if (starts_pair(char0) == fchar) return true;
-		return false;
+    }
 
-	}
+    virtual inline char starts_pair(
+        const char& ch) const
+    {
+        size_t sz = __chars.size();
+        for (size_t c = 0; c < sz; c++) {
+            const std::pair<char, char>* pr = &__chars[c];
+            if (ch == pr->first) return pr->second;
+        }
+        return 0;
+    }
 
-	virtual inline char starts_pair(const char& ch) const
-	{
-		size_t sz = __chars.size();
-		for (size_t c = 0; c < sz; c++)
-		{
-			const std::pair<char,char>* pr = &__chars[c];
-			if (ch == pr->first) return pr->second;
-		}
-		return 0;
-	}
+    virtual inline char ends_pair(
+        const char& ch) const
+    {
+        size_t sz = __chars.size();
+        for (size_t c = 0; c < sz; c++) {
+            const std::pair<char, char>* pr = &__chars[c];
+            if (ch == pr->second) return pr->first;
+        }
+        return 0;
+    }
 
-	virtual inline char ends_pair(const char& ch) const
-	{
-		size_t sz = __chars.size();
-		for (size_t c = 0; c < sz; c++)
-		{
-			const std::pair <char,char>* pr = &__chars[c];
-			if (ch == pr->second) return pr->first;
-		}
-		return 0;
-	}
+    inline std::string getOriginal()
+    {
+        return __orig;
+    }
 
-	inline std::string getOriginal() { return __orig;}
-
-
-	virtual ~TokenGenerator(){}
+    virtual ~TokenGenerator()
+    {
+    }
 };
 
-
-} //namespace Parsers
-
+}    //namespace Parsers
 
 #endif /* TOKENGENERATOR_H_ */

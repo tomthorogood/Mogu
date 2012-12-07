@@ -14,31 +14,26 @@
 
 #include <hash.h>
 
-namespace Security{
+namespace Security {
 
 std::string create_raw_auth_string(
-		std::string userid
-		,std::string salt
-		,std::string userauth);
+    std::string userid, std::string salt, std::string userauth);
 
-void proof_auth_string(TokenCycles* packet);
+void proof_auth_string(
+    TokenCycles* packet);
 
 void create_auth_token(
-		std::string sessionid
-		,std::string p_userid
-		,std::string p_userauth
-		,TokenCycles* packet
-);
+    std::string sessionid, std::string p_userid, std::string p_userauth,
+    TokenCycles* packet);
 
 std::string generate_salt();
 
-
-inline std::string collision_proof (std::string estr)
+inline std::string collision_proof(
+    std::string estr)
 {
-	return encrypt ( Hash::toHash(estr) );
+    return encrypt(Hash::toHash(estr));
 }
 
-}//namespace Security
-
+}    //namespace Security
 
 #endif /* SECURITY_H_ */

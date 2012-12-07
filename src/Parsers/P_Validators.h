@@ -8,22 +8,20 @@
 #ifndef P_VALIDATORS_H_
 #define P_VALIDATORS_H_
 
-namespace Parsers{
+namespace Parsers {
 
-class ValidatorTypeParser:
-	public TurnLeft::Utils::EnumParser <Enums::Validators::ValidatorTypes>
+class ValidatorTypeParser: public TurnLeft::Utils::EnumParser<
+    Enums::Validators::ValidatorTypes>
 {
 public:
-	ValidatorTypeParser()
-	{
-		namespace Type = Enums::Validators;
-		enumMap["regex"]	= Type::regex;
-	}
+    ValidatorTypeParser()
+    {
+        namespace Type = Enums::Validators;
+        enumMap["regex"] = Type::regex;
+    }
 
 };
 
-
-}//namespace Parsers
-
+}    //namespace Parsers
 
 #endif /* P_VALIDATORS_H_ */

@@ -9,30 +9,25 @@
 #include <Types/NodeValue.h>
 #include <Mogu.h>
 
-namespace Events
-{
-namespace ActionCenter
-{
-namespace Actions
-{
+namespace Events {
+namespace ActionCenter {
+namespace Actions {
 using Goo::Moldable;
 
-bool test(Moldable& widget, NodeValue& val)
+bool test(
+    Moldable& widget, NodeValue& val)
 {
-	mApp;
-	app->interpreter().giveInput(val.getString(), val);
+    mApp;
+    app->interpreter().giveInput(val.getString(), val);
 
-	if (widget.allowsAction(Enums::SignalActions::match))
-	{
-		return val.getString().find(widget.valueCallback()) != std::string::npos;
-	}
+    if (widget.allowsAction(Enums::SignalActions::match)) {
+        return val.getString().find(widget.valueCallback()) != std::string::npos;
+    }
 
-	return false;
+    return false;
 }
 
-}//Actions
-}//ActionCenter
-}//Events
-
-
+}    //Actions
+}    //ActionCenter
+}    //Events
 

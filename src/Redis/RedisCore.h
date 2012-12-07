@@ -16,21 +16,29 @@
 
 #endif //REDIS_CONFIG
 
-
 #include <declarations.h>
 #include <hiredis/hiredis.h>
 
-namespace Redis
+namespace Redis {
+
+void toVector(
+    redisReply* r, strvector& vec);
+std::string toString(
+    redisReply* r);
+int toInt(
+    redisReply* r);
+long long getInt(
+    redisReply* r);
+float toFloat(
+    redisReply* r);
+void clear(
+    redisReply* r);
+inline bool getBool(
+    redisReply* r)
 {
+    return (bool) getInt(r);
+}
 
-void toVector(redisReply* r, strvector& vec);
-std::string toString(redisReply* r);
-int toInt(redisReply* r);
-long long getInt(redisReply* r);
-float toFloat(redisReply* r);
-void clear(redisReply* r);
-inline bool getBool(redisReply* r) { return (bool) getInt(r);}
-
-} //namespace Redis
+}    //namespace Redis
 
 #endif /* GOOREDIS_H_ */

@@ -8,13 +8,10 @@
 #ifndef MOGUDBDEFS_H_
 #define MOGUDBDEFS_H_
 
-namespace GoMogu{
+namespace GoMogu {
 
-std::string
-	events_keyspace		= ".events.*"
-;
+std::string events_keyspace = ".events.*";
 
 }
-
 
 #endif /* MOGUDBDEFS_H_ */

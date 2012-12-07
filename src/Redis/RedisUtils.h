@@ -17,110 +17,112 @@
 
 struct UniqueHashPackage
 {
-	std::string original_hash;
-	std::string proofed_hash;
-	std::string set_node;
-	size_t num_cycles;
+    std::string original_hash;
+    std::string proofed_hash;
+    std::string set_node;
+    size_t num_cycles;
 
-	UniqueHashPackage(std::string original=EMPTY, std::string node=EMPTY)
-	{
-		original_hash = original;
-		proofed_hash = original;
-		set_node = node;
-		num_cycles =0;
-	}
+    UniqueHashPackage(
+        std::string original = EMPTY, std::string node = EMPTY)
+    {
+        original_hash = original;
+        proofed_hash = original;
+        set_node = node;
+        num_cycles = 0;
+    }
 
-	inline void lock() {
-		mApp;
-		app->redisExec(Mogu::Discard, "sadd %s %s",
-				set_node.c_str(), proofed_hash.c_str());
-	}
+    inline void lock()
+    {
+        mApp;
+        app->redisExec(Mogu::Discard, "sadd %s %s", set_node.c_str(),
+            proofed_hash.c_str());
+    }
 };
 
-namespace Redis{
+namespace Redis {
 
-inline bool isMemberOfSet(std::string& value, const char* node)
+inline bool isMemberOfSet(
+    std::string& value, const char* node)
 {
-	mApp;
-	const char* cval = value.c_str();
-	app->redisCommand("sismember %s %s", cval, node);
-	return (bool) Redis::getInt(app->reply());
-}
-
-inline bool isMemberOfSet(std::string& value, std::string& set_node)
-{
-	const char* cnode = set_node.c_str();
-	return isMemberOfSet(value, cnode);
+    mApp;
+    const char* cval = value.c_str();
+    app->redisCommand("sismember %s %s", cval, node);
+    return (bool) Redis::getInt(app->reply());
 }
 
 inline bool isMemberOfSet(
-		redisContext* context,
-		std::string& value, const char* set_node)
+    std::string& value, std::string& set_node)
 {
-	redisReply* r = (redisReply*)
-			redisCommand(context, "sismember %s %s", value.c_str(), set_node);
-	bool response = (bool) r->integer;
-	freeReplyObject(r);
-	return response;
+    const char* cnode = set_node.c_str();
+    return isMemberOfSet(value, cnode);
 }
 
-
-
-inline void makeUniqueHash(UniqueHashPackage& pkg)
+inline bool isMemberOfSet(
+    redisContext* context, std::string& value, const char* set_node)
 {
-	while (isMemberOfSet(pkg.proofed_hash, pkg.set_node))
-	{
-		pkg.proofed_hash = Security::collision_proof(pkg.proofed_hash);
-		++ pkg.num_cycles;
-	}
+    redisReply* r = (redisReply*) redisCommand(context, "sismember %s %s",
+        value.c_str(), set_node);
+    bool response = (bool) r->integer;
+    freeReplyObject(r);
+    return response;
 }
 
-inline std::string makeUniqueRChar(const char* set_node)
+inline void makeUniqueHash(
+    UniqueHashPackage& pkg)
 {
-	int sz =1;
-	TurnLeft::Utils::RandomCharSet rchar(Application::getRandomSeed());
-	std::string str = rchar.generate(sz);
-	while (Redis::isMemberOfSet(str, set_node))
-	{
-		++sz;
-		str = rchar.generate(sz);
-	}
-	return str;
+    while (isMemberOfSet(pkg.proofed_hash, pkg.set_node)) {
+        pkg.proofed_hash = Security::collision_proof(pkg.proofed_hash);
+        ++pkg.num_cycles;
+    }
 }
 
-inline std::string makeUniqueRChar(redisContext* context, const char* set_node)
+inline std::string makeUniqueRChar(
+    const char* set_node)
 {
-	int sz =1;
-	TurnLeft::Utils::RandomCharSet rchar(Application::getRandomSeed());
-	std::string str = rchar.generate(sz);
-	while (Redis::isMemberOfSet(context, str, set_node))
-	{
-		++sz;
-		str = rchar.generate(sz);
-	}
-	return str;
+    int sz = 1;
+    TurnLeft::Utils::RandomCharSet rchar(Application::getRandomSeed());
+    std::string str = rchar.generate(sz);
+    while (Redis::isMemberOfSet(str, set_node)) {
+        ++sz;
+        str = rchar.generate(sz);
+    }
+    return str;
+}
+
+inline std::string makeUniqueRChar(
+    redisContext* context, const char* set_node)
+{
+    int sz = 1;
+    TurnLeft::Utils::RandomCharSet rchar(Application::getRandomSeed());
+    std::string str = rchar.generate(sz);
+    while (Redis::isMemberOfSet(context, str, set_node)) {
+        ++sz;
+        str = rchar.generate(sz);
+    }
+    return str;
 }
 
 inline void getKeysAndVals(
-		Redis::strvector& keys, Redis::strvector& vals, const char* node)
+    Redis::strvector& keys, Redis::strvector& vals, const char* node)
 {
-	mApp;
-	app->redisExec(Mogu::Keep, "hkeys %s", node);
-	Redis::toVector(app->reply(), keys);
-	app->redisExec(Mogu::Keep, "hvals %s", node);
-	Redis::toVector(app->reply(), vals);
+    mApp;
+    app->redisExec(Mogu::Keep, "hkeys %s", node);
+    Redis::toVector(app->reply(), keys);
+    app->redisExec(Mogu::Keep, "hvals %s", node);
+    Redis::toVector(app->reply(), vals);
 }
 
-inline std::string reverseHashLookup(const std::string& value, const char* node)
+inline std::string reverseHashLookup(
+    const std::string& value, const char* node)
 {
-	Redis::strvector keys;
-	Redis::strvector vals;
-	getKeysAndVals(keys,vals,node);
-	auto iter = std::find(vals.begin(), vals.end(), value);
-	int index = iter - vals.begin();
-	return keys[index];
+    Redis::strvector keys;
+    Redis::strvector vals;
+    getKeysAndVals(keys, vals, node);
+    auto iter = std::find(vals.begin(), vals.end(), value);
+    int index = iter - vals.begin();
+    return keys[index];
 }
 
-}//namespace Redis
+}    //namespace Redis
 
 #endif /* REDISUTILS_H_ */

@@ -10,20 +10,23 @@ typedef const char* c_str;
 class Packet
 {
 private:
-	CharArray data;
+    CharArray data;
 public:
-	const static char SIZE = 8;
+    const static char SIZE = 8;
 
-	Packet(CharArray input);
-	Packet(c_str input);
-	Packet(std::string input);
-	~Packet();
-	inline CharArray getData() const
-	{
-		return data;
-	}
-	std::string str() const;
-	std::string int_str() const;
+    Packet(
+        CharArray input);
+    Packet(
+        c_str input);
+    Packet(
+        std::string input);
+    ~Packet();
+    inline CharArray getData() const
+    {
+        return data;
+    }
+    std::string str() const;
+    std::string int_str() const;
 };
 
 #endif

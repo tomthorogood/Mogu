@@ -9,12 +9,13 @@
 #define VALIDATORPARSER_H_
 
 #include <declarations.h>
-namespace Validators{
+namespace Validators {
 
-Wt::WValidator* createValidator(std::string validator);
-Wt::WRegExpValidator* createRegexValidator(std::string node);
+Wt::WValidator* createValidator(
+    std::string validator);
+Wt::WRegExpValidator* createRegexValidator(
+    std::string node);
 
-}//namespace Validators
-
+}    //namespace Validators
 
 #endif /* VALIDATORPARSER_H_ */

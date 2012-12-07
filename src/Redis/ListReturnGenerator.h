@@ -10,20 +10,18 @@
 
 #include <Redis/Generator.h>
 
-namespace Redis
-{
+namespace Redis {
 
-class ListReturnGenerator : public Generator
+class ListReturnGenerator: public Generator
 {
 public:
-	ListReturnGenerator(const std::string& command)
-	{
-		__reply = (redisReply*) redisCommand(context(),command.c_str());
-	}
+    ListReturnGenerator(
+        const std::string& command)
+    {
+        __reply = (redisReply*) redisCommand(context(), command.c_str());
+    }
 };
 
-}//namespace Redis
-
-
+}    //namespace Redis
 
 #endif /* LISTRETURNGENERATOR_H_ */

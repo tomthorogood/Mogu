@@ -10,42 +10,46 @@
 
 #include <sstream>
 
-inline std::string itoa (int i)
+inline std::string itoa(
+    int i)
 {
-	std::stringstream s;
-	s << i;
-	return s.str();
+    std::stringstream s;
+    s << i;
+    return s.str();
 }
 
-inline std::string ftoa(double d)
+inline std::string ftoa(
+    double d)
 {
-	std::stringstream s;
-	s << d;
-	return s.str();
+    std::stringstream s;
+    s << d;
+    return s.str();
 }
 
-inline int stoi (std::string str)
+inline int stoi(
+    std::string str)
 {
-	return atoi(str.c_str());
+    return atoi(str.c_str());
 }
 
-template <typename T, typename U>
+template<typename T, typename U>
 class create_map
 {
 private:
     std::map<T, U> m_map;
 public:
-    create_map(const T& key, const U& val)
+    create_map(
+        const T& key, const U& val)
     {
         m_map[key] = val;
     }
 
-    create_map<T, U>& operator()(const T& key, const U& val)
+    create_map<T, U>& operator()(
+        const T& key, const U& val)
     {
         m_map[key] = val;
         return *this;
     }
-
 
     operator std::map<T, U>()
     {

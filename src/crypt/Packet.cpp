@@ -15,37 +15,39 @@ using TurnLeft::Utils::uchar_to_str;
 
 using std::string;
 
-Packet::Packet (CharArray input)
+Packet::Packet(
+    CharArray input)
 {
-	data = input;
+    data = input;
 }
 
-Packet::Packet(c_str input)
+Packet::Packet(
+    c_str input)
 {
-	string _input_(input);
-	data = str_to_uchar(_input_);
+    string _input_(input);
+    data = str_to_uchar(_input_);
 }
 
-Packet::Packet(string input)
+Packet::Packet(
+    string input)
 {
-	data = str_to_uchar(input);
+    data = str_to_uchar(input);
 }
 
 string Packet::str() const
 {
-	return uchar_to_str(data);
+    return uchar_to_str(data);
 }
 
 string Packet::int_str() const
 {
-	return uchar_to_int_str <SIZE+1> (data);
+    return uchar_to_int_str<SIZE + 1>(data);
 }
 
 Packet::~Packet()
 {
-	if (data != NULL)
-	{
-		free(data);
-	}
+    if (data != NULL) {
+        free(data);
+    }
 }
 

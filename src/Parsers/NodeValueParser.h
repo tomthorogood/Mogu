@@ -10,6 +10,4 @@
 
 #include "NodeValueParser/NVPAutomaton.h"
 
-
-
 #endif /* NODEVALUEPARSER_H_ */

@@ -11,11 +11,11 @@
 #include <declarations.h>
 #include <crypt/PacketCenter.h>
 
-namespace Security
-{
-std::string encrypt(std::string decrypted);
-std::string decrypt(std::string encrypted, PacketType translation=DO_TRANSLATION);
+namespace Security {
+std::string encrypt(
+    std::string decrypted);
+std::string decrypt(
+    std::string encrypted, PacketType translation = DO_TRANSLATION);
 }
-
 
 #endif /* ENCRYPTION_H_ */

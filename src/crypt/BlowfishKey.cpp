@@ -23,12 +23,11 @@
 #define _BF_RANDOM_BYTE_15 65
 #endif
 
-
-BlowfishKeyCreator::BlowfishKeyCreator ()
+BlowfishKeyCreator::BlowfishKeyCreator()
 {
-    key = (KeyArray) malloc (sizeof(KeyArray)*16);
+    key = (KeyArray) malloc(sizeof(KeyArray) * 16);
     bf_key = new BF_KEY();
-    
+
     key[0] = (unsigned char) _BF_RANDOM_BYTE_0;
     key[1] = (unsigned char) _BF_RANDOM_BYTE_1;
     key[2] = (unsigned char) _BF_RANDOM_BYTE_2;
@@ -49,16 +48,16 @@ BlowfishKeyCreator::BlowfishKeyCreator ()
     //KeyArray const_key =
     //		reinterpret_cast <KeyArray> (key);
 
-    BF_set_key (bf_key, 16, key);
+    BF_set_key(bf_key, 16, key);
 }
 
-BlowfishKeyCreator::~BlowfishKeyCreator ()
+BlowfishKeyCreator::~BlowfishKeyCreator()
 {
-    free (key);
+    free(key);
     delete bf_key;
 }
 
-BF_KEY* BlowfishKeyCreator::getKey () const
+BF_KEY* BlowfishKeyCreator::getKey() const
 {
     return bf_key;
 }

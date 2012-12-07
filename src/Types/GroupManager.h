@@ -18,70 +18,74 @@
 
 class GroupManager
 {
-	const std::string& __id;
-	std::vector <std::string> membershipQuery;
-	std::string GROUP_PREFIX;
-	std::string MEMBERSHIP;
-	Mogu* app;
+    const std::string& __id;
+    std::vector<std::string> membershipQuery;
+    std::string GROUP_PREFIX;
+    std::string MEMBERSHIP;
+    Mogu* app;
 
-	inline std::vector <std::string>& __getMembership__(int max, int min)
-	{
-		membershipQuery.clear();
-		app->redisExec(Mogu::Keep, "zrevrangebyscore %s %d %d",
-				MEMBERSHIP.c_str(), max, min);
-		Redis::toVector(app->reply(), membershipQuery);
-		return membershipQuery;
-	}
+    inline std::vector<std::string>& __getMembership__(
+        int max, int min)
+    {
+        membershipQuery.clear();
+        app->redisExec(Mogu::Keep, "zrevrangebyscore %s %d %d",
+            MEMBERSHIP.c_str(), max, min);
+        Redis::toVector(app->reply(), membershipQuery);
+        return membershipQuery;
+    }
 
-	inline std::vector <std::string>& __get_all_members()
-	{
-		membershipQuery.clear();
-		app->redisExec(Mogu::Keep, "zrangebyscore %s -inf +inf", MEMBERSHIP.c_str());
-		Redis::toVector(app->reply(), membershipQuery);
-		return membershipQuery;
-	}
+    inline std::vector<std::string>& __get_all_members()
+    {
+        membershipQuery.clear();
+        app->redisExec(Mogu::Keep, "zrangebyscore %s -inf +inf",
+            MEMBERSHIP.c_str());
+        Redis::toVector(app->reply(), membershipQuery);
+        return membershipQuery;
+    }
 
-	void __init__();
+    void __init__();
 
 public:
-	/*!\brief Standard constructor. Requires a groupid
-	 * @param groupid The groupid of the group.
-	 */
-	GroupManager (const std::string& groupid);
+    /*!\brief Standard constructor. Requires a groupid
+     * @param groupid The groupid of the group.
+     */
+    GroupManager(
+        const std::string& groupid);
 
-	/*!\brief Populates the membership query with a list of all members. */
-	std::vector <std::string>& getMembership();
+    /*!\brief Populates the membership query with a list of all members. */
+    std::vector<std::string>& getMembership();
 
-	/*!\brief Populates the membership query with a list of all members between
-	 * ranks [low] and ranks [high].
-	 * @param max The highest priveleged member to retrieve.
-	 * @param min The lowest priveleged member to retrieve.
-	 * @return A reference to the membership query vector.
-	 */
-	std::vector <std::string>& getMembership(
-			const int& max, const int& min);
+    /*!\brief Populates the membership query with a list of all members between
+     * ranks [low] and ranks [high].
+     * @param max The highest priveleged member to retrieve.
+     * @param min The lowest priveleged member to retrieve.
+     * @return A reference to the membership query vector.
+     */
+    std::vector<std::string>& getMembership(
+        const int& max, const int& min);
 
-	/*!\brief Populates the membership query with a list of all members between
-	 * ranks low] and ranks [high].
-	 *
-	 * @param max The highest priveleged member to retrieve.
-	 * @param min The lowest priveleged member to retrieve.
-	 * @return A reference to the membership query vector.
-	 */
-	std::vector <std::string>& getMembership(
-			const std::string& max, const std::string& min);
+    /*!\brief Populates the membership query with a list of all members between
+     * ranks low] and ranks [high].
+     *
+     * @param max The highest priveleged member to retrieve.
+     * @param min The lowest priveleged member to retrieve.
+     * @return A reference to the membership query vector.
+     */
+    std::vector<std::string>& getMembership(
+        const std::string& max, const std::string& min);
 
-	/*!\brief Adds a user to the group by rank. */
-	void addMember(
-			const std::string& mogu_userid, const int& rank,
-			const std::string& user_orig_session);
+    /*!\brief Adds a user to the group by rank. */
+    void addMember(
+        const std::string& mogu_userid, const int& rank,
+        const std::string& user_orig_session);
 
-	/*!\brief Adds a user to the group by level. */
-	void addMember(const std::string& mogu_userid, const std::string& level,
-			const std::string& user_orig_session);
+    /*!\brief Adds a user to the group by level. */
+    void addMember(
+        const std::string& mogu_userid, const std::string& level,
+        const std::string& user_orig_session);
 
-	int getMemberRank(const std::string& mogu_userid);
+    int getMemberRank(
+        const std::string& mogu_userid);
 };
-
 
 #endif /* GROUPMANAGER_H_ */

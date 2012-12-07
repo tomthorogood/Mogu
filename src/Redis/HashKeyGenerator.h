@@ -8,26 +8,25 @@
 #ifndef HASHKEYGENERATOR_H_
 #define HASHKEYGENERATOR_H_
 
-namespace Redis
-{
+namespace Redis {
 
-class HashKeyGenerator : public Generator
+class HashKeyGenerator: public Generator
 {
-	std::pair <std::string,std::string> __pr;
+    std::pair<std::string, std::string> __pr;
 public:
-	HashKeyGenerator(const std::string& keyName)
-	{
-		__reply = redisCommand(context(),"hgetall %s", keyName.c_str());
-	}
+    HashKeyGenerator(
+        const std::string& keyName)
+    {
+        __reply = redisCommand(context(), "hgetall %s", keyName.c_str());
+    }
 
-	inline std::pair <std::string,std::string>* getPair()
-	{
-		__pr = std::make_pair(next(),next());
-		return &__pr;
-	}
+    inline std::pair<std::string, std::string>* getPair()
+    {
+        __pr = std::make_pair(next(), next());
+        return &__pr;
+    }
 };
 
 }
-
 
 #endif /* HASHKEYGENERATOR_H_ */

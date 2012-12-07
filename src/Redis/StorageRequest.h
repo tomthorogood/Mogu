@@ -17,55 +17,54 @@
  * to keep the database integrity in tact.
  */
 
-namespace Redis{
+namespace Redis {
 
 class StorageRequest
 {
-	/*!\brief The message containing the string which will parse to the policy.*/
-	std::string& destination;
+    /*!\brief The message containing the string which will parse to the policy.*/
+    std::string& destination;
 
-	/*!\brief A tokenizer for the input destination. */
-	Parsers::MoguScript_Tokenizer tokenizer;
+    /*!\brief A tokenizer for the input destination. */
+    Parsers::MoguScript_Tokenizer tokenizer;
 
-	/*!\brief The bare bones name of the policy */
-	std::string policy_token;
+    /*!\brief The bare bones name of the policy */
+    std::string policy_token;
 
-	/*!\brief The session id where the data will be stored. */
-	std::string session_id;
+    /*!\brief The session id where the data will be stored. */
+    std::string session_id;
 
-	/*!\brief The command to be executed against the database.*/
-	std::string command;
-	std::string node_body;
-	std::string arg;
-	std::string f_value;
+    /*!\brief The command to be executed against the database.*/
+    std::string command;
+    std::string node_body;
+    std::string arg;
+    std::string f_value;
 
-	/*!\brief The value to be stored. */
-	NodeValue& value;
+    /*!\brief The value to be stored. */
+    NodeValue& value;
 
-	void __init__();
+    void __init__();
 
-	StoragePolicyLookup* lookup;
-	bool policyLookup();
+    StoragePolicyLookup* lookup;
+    bool policyLookup();
 
 public:
 
-	StorageRequest(
-			std::string& destination
-			,NodeValue& value);
-	~StorageRequest();
-	/*!\brief One may set values manually, or one may give the object a
-	 * policy name to look up.
-	 * @param policyName The name of the policy that is to be searched.
-	 * @return Whether or not the lookup was successful.
-	 */
+    StorageRequest(
+        std::string& destination, NodeValue& value);
+    ~StorageRequest();
+    /*!\brief One may set values manually, or one may give the object a
+     * policy name to look up.
+     * @param policyName The name of the policy that is to be searched.
+     * @return Whether or not the lookup was successful.
+     */
 
-	void build_command();
+    void build_command();
 
-	/*!\brief Requests that the database accept the command. Returns whether
-	 * or not the command was successful.
-	 */
-	bool execute();
+    /*!\brief Requests that the database accept the command. Returns whether
+     * or not the command was successful.
+     */
+    bool execute();
 
 };
-}//namespace Redis
+}    //namespace Redis
 #endif /* REDISSTORAGEREQUEST_H_ */

@@ -8,15 +8,13 @@
 #ifndef E_BAYES_H_
 #define E_BAYES_H_
 
-namespace Bayes{
+namespace Bayes {
 
-enum EdgeDirection{
-	undirected		=0
-	,inbound		=1
-	,outbound		=2
+enum EdgeDirection
+{
+    undirected = 0, inbound = 1, outbound = 2
 };
 
-}//namespace Bayes
-
+}    //namespace Bayes
 
 #endif /* E_BAYES_H_ */

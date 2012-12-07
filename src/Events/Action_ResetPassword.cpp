@@ -15,17 +15,17 @@
 #include <Mogu.h>
 #include <Events/MoldableActionCenter.h>
 
-namespace Events{
-namespace ActionCenter{
-namespace Actions{
+namespace Events {
+namespace ActionCenter {
+namespace Actions {
 
-bool reset_password(std::string username)
+bool reset_password(
+    std::string username)
 {
-	mApp;
-	return app->getUserManager().resetPassword(username);
+    mApp;
+    return app->getUserManager().resetPassword(username);
 }
 
-
-}//namespace Actions
-}//namespace ActionCenter
-}//namespace Events
+}    //namespace Actions
+}    //namespace ActionCenter
+}    //namespace Events

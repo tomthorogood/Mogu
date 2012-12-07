@@ -16,8 +16,7 @@
 
 void Mogu::loadMoguStyles()
 {
-	Wt::WCssStyleSheet& css = styleSheet();
-	css.addRule(".mogu_SCALED_IMAGE","width:100%;", "scaledImages");
+    Wt::WCssStyleSheet& css = styleSheet();
+    css.addRule(".mogu_SCALED_IMAGE", "width:100%;", "scaledImages");
 }
-
 

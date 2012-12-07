@@ -18,8 +18,7 @@
 
 #include <Core/Moldable.h>
 
-namespace Events
-{
+namespace Events {
 
 using Goo::Moldable;
 using std::string;
@@ -27,11 +26,11 @@ using Redis::strvector;
 namespace Labels = Enums::Labels;
 namespace Triggers = Enums::SignalTriggers;
 
-
-EventBindery::EventBindery(Moldable* broadcaster)
-: __map()
+EventBindery::EventBindery(
+    Moldable* broadcaster)
+    : __map()
 {
-	mApp;
+    mApp;
     __broadcaster = broadcaster;
 
     std::string node = broadcaster->getNode();
@@ -40,10 +39,9 @@ EventBindery::EventBindery(Moldable* broadcaster)
     int num_events = atoi(redisReply_STRING.c_str());
 
     /* Then, we need to iterate through each of these events. */
-    for (int e = 0; e < num_events; e++)
-    {
+    for (int e = 0; e < num_events; e++) {
 
-        EventPreprocessor* pre = new EventPreprocessor(node, e+1);
+        EventPreprocessor* pre = new EventPreprocessor(node, e + 1);
         __map[pre->trigger].push_back(pre);
     }
 
@@ -52,109 +50,104 @@ EventBindery::EventBindery(Moldable* broadcaster)
      * the trigger to the handler function.
      */
     PreprocessorMap::iterator iter;
-    for (iter = __map.begin(); iter != __map.end(); ++iter)
-    {
+    for (iter = __map.begin(); iter != __map.end(); ++iter) {
         Triggers::SignalTrigger trigger = iter->first;
 
-        switch(trigger)
-        {
+        switch (trigger) {
         case Triggers::click:
-            broadcaster->clicked().connect(this,
-                    &EventBindery::clickSlot);
+            broadcaster->clicked().connect(this, &EventBindery::clickSlot);
             break;
 
         case Triggers::style_changed:
             broadcaster->styleChanged().connect(this,
-                    &EventBindery::styleChangedSlot);
+                &EventBindery::styleChangedSlot);
             break;
         case Triggers::mouseover:
             broadcaster->mouseWentOver().connect(this,
-                    &EventBindery::mouseoverSlot);
+                &EventBindery::mouseoverSlot);
             break;
         case Triggers::mouseout:
             broadcaster->mouseWentOut().connect(this,
-                    &EventBindery::mouseoutSlot);
+                &EventBindery::mouseoutSlot);
             break;
         case Triggers::fail:
-        	broadcaster->fail().connect(this, &EventBindery::failSlot);
-        	break;
+            broadcaster->fail().connect(this, &EventBindery::failSlot);
+            break;
 
         case Triggers::succeed:
-        	broadcaster->succeed().connect(this, &EventBindery::succeedSlot);
-        	break;
+            broadcaster->succeed().connect(this, &EventBindery::succeedSlot);
+            break;
 
         case Triggers::keyup:
-        	broadcaster->keyWentUp().connect(this, &EventBindery::keyupSlot);
-        	break;
+            broadcaster->keyWentUp().connect(this, &EventBindery::keyupSlot);
+            break;
 
         case Triggers::enter_pressed:
-        	broadcaster->enterPressed().connect(
-        			this, &EventBindery::enterSlot);
-        	break;
+            broadcaster->enterPressed().connect(this, &EventBindery::enterSlot);
+            break;
 
         case Triggers::index_changed:
-        	broadcaster->stackIndexChanged().connect(
-        			this, &EventBindery::indexChangedSlot);
-        	break;
+            broadcaster->stackIndexChanged().connect(this,
+                &EventBindery::indexChangedSlot);
+            break;
 
         case Triggers::hidden_changed:
-        	broadcaster->hiddenChanged().connect(
-        			this, &EventBindery::hiddenChangedSlot);
-        	break;
+            broadcaster->hiddenChanged().connect(this,
+                &EventBindery::hiddenChangedSlot);
+            break;
 
         case Triggers::onload:
-        	broadcaster->onLoad().connect(
-        			this, &EventBindery::onLoadSlot);
-        	break;
+            broadcaster->onLoad().connect(this, &EventBindery::onLoadSlot);
+            break;
 
-        default:return;
+        default:
+            return;
         }
     }
 
 }
 
-void EventBindery::handleVoidSignal(Triggers::SignalTrigger trigger)
+void EventBindery::handleVoidSignal(
+    Triggers::SignalTrigger trigger)
 {
 
-	PreprocessorVector& vec = __map[trigger];
-	size_t num_preprocs = vec.size();
+    PreprocessorVector& vec = __map[trigger];
+    size_t num_preprocs = vec.size();
 #ifdef DEBUG
-	std::cout << __broadcaster->getNode() << " is broadcasting a message!" << std::endl;
+    std::cout << __broadcaster->getNode() << " is broadcasting a message!"
+        << std::endl;
 #endif
-	for (size_t e = 0; e < num_preprocs; e++)
-	{
-		EventPreprocessor* p = vec[e];
+    for (size_t e = 0; e < num_preprocs; e++) {
+        EventPreprocessor* p = vec[e];
 #ifdef DEBUG
-		std::cout << "Using preprocessor " << e;
-		std::cout << " for trigger {" << trigger << "}" << std::endl;
+        std::cout << "Using preprocessor " << e;
+        std::cout << " for trigger {" << trigger << "}" << std::endl;
 #endif
-		BroadcastMessage msg(__broadcaster, p);
-		ActionCenter::submitBroadcast(msg);
-	}
+        BroadcastMessage msg(__broadcaster, p);
+        ActionCenter::submitBroadcast(msg);
+    }
 }
 
-void EventBindery::handleBoolSignal(Triggers::SignalTrigger trigger, bool commence)
+void EventBindery::handleBoolSignal(
+    Triggers::SignalTrigger trigger, bool commence)
 {
-	if (commence) handleVoidSignal(trigger);
+    if (commence) handleVoidSignal(trigger);
 }
 
 EventBindery::~EventBindery()
 {
-	PreprocessorMap::iterator iter = __map.begin();
-	for (iter = __map.begin(); iter != __map.end(); ++iter)
-	{
-		PreprocessorVector& vec = iter->second;
-		size_t size = vec.size();
-		for (size_t p = 0; p < size; p++)
-		{
-			delete vec[p];
-		}
-	}
+    PreprocessorMap::iterator iter = __map.begin();
+    for (iter = __map.begin(); iter != __map.end(); ++iter) {
+        PreprocessorVector& vec = iter->second;
+        size_t size = vec.size();
+        for (size_t p = 0; p < size; p++) {
+            delete vec[p];
+        }
+    }
 #ifdef DEBUG
-	std::cout << "Deleting bindery for " <<
-			__broadcaster->getProperties()->node << std::endl;
+    std::cout << "Deleting bindery for " << __broadcaster->getProperties()->node
+        << std::endl;
 #endif
 }
 
-
-}//namespace events
+}    //namespace events

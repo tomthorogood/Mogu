@@ -6,30 +6,28 @@
  */
 
 #include <Parsers/MoguScript_Tokenizer.h>
-namespace Parsers{
+namespace Parsers {
 
 using std::string;
 
-string MoguScript_Tokenizer::next(char delimiter)
+string MoguScript_Tokenizer::next(
+    char delimiter)
 {
-	if (getCurrentPosition() == 0)
-	{
-		CharCouplets* w = getWrappers();
-		unsigned int s = w->size();
-		string orig = getOriginal();
-		char char0 = orig.at(0);
-		for (unsigned int i =0; i < s; i++)
-		{
-			if (w->at(i).first == char0)
-			{
-				return TokenGenerator::next();
-			}
-		}
-		setCurrentPosition(orig.length());
-		starts_with_string = true;
-		return orig;
-	}
-	return TokenGenerator::next();
+    if (getCurrentPosition() == 0) {
+        CharCouplets* w = getWrappers();
+        unsigned int s = w->size();
+        string orig = getOriginal();
+        char char0 = orig.at(0);
+        for (unsigned int i = 0; i < s; i++) {
+            if (w->at(i).first == char0) {
+                return TokenGenerator::next();
+            }
+        }
+        setCurrentPosition(orig.length());
+        starts_with_string = true;
+        return orig;
+    }
+    return TokenGenerator::next();
 }
 
-}//namespace Parsers
+}    //namespace Parsers

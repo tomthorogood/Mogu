@@ -8,7 +8,7 @@
  * cause some problems with Eclipse if editing the enums or their parsers, so
  * if Eclipse starts going insane, just rebuild the index.
  */
-namespace Enums{
+namespace Enums {
 
 #include <Types/E_Signals.h>
 #include <Types/E_Submissions.h>
@@ -16,7 +16,6 @@ namespace Enums{
 #include <Types/E_Widgets.h>
 #include <Types/E_Validators.h>
 
-
-} // <-- namespace Enums
+}    // <-- namespace Enums
 
 #endif // ENUMS_H_

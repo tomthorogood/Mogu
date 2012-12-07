@@ -13,34 +13,35 @@
 #include <cassert>
 #include <Exceptions/Exceptions.h>
 
-namespace Redis{
+namespace Redis {
 
 using std::stringstream;
 using std::string;
 
-string toString(redisReply* reply)
+string toString(
+    redisReply* reply)
 {
     string ret(reply->str);
     freeReplyObject(reply);
     return ret;
 }
 
-long long getInt(redisReply* reply)
+long long getInt(
+    redisReply* reply)
 {
     long long ret_int = reply->integer;
     freeReplyObject(reply);
     return ret_int;
 }
 
-void toVector(redisReply* reply, strvector& vec)
+void toVector(
+    redisReply* reply, strvector& vec)
 {
-    for (unsigned int i = 0; i < reply->elements; i++)
-    {
+    for (unsigned int i = 0; i < reply->elements; i++) {
         string str(reply->element[i]->str);
         vec.push_back(str);
     }
     freeReplyObject(reply);
 }
-} //namespace Redis
-
+}    //namespace Redis
 

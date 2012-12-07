@@ -31,8 +31,7 @@
 #include <Wt/WSignal>
 #include <Types/NodeValue.h>
 //!\brief The namespace in which the Mogu Core is located.
-namespace Goo
-{
+namespace Goo {
 
 /*! \brief The semi-base class for widgets that automatically add their own
  * children. Upon instantiation, ModdableGoo widgets connect to their
@@ -41,58 +40,58 @@ namespace Goo
  * (or derived from one).
  */
 
-class Moldable : public Wt::WContainerWidget
+class Moldable: public Wt::WContainerWidget
 {
 private:
 
-	MoldableTemplate* __tmpl;
+    MoldableTemplate* __tmpl;
 
-    Events::EventBindery* bindery; //!< The widget's personal event bindery
-    bool __reload; //!< Allows the widget to be reloaded
+    Events::EventBindery* bindery;    //!< The widget's personal event bindery
+    bool __reload;    //!< Allows the widget to be reloaded
 
     /*!\brief A container with pointers to child widgets that are also of
      * the Moldable class (or descendant classes). Necessary since the native
      * widget() method will return WWidgets.
      * \sa addGoo()
      */
-    std::vector <Moldable*> mchildren;
+    std::vector<Moldable*> mchildren;
 
     /*!\brief Signal emitted when the style is changed. */
-    Wt::Signal <> __style_changed;
+    Wt::Signal<> __style_changed;
 
     /*!\brief Signal emitted if the widget contains a WStackedWidget and the
      * stack index is manipulated by Mogu.
      */
-    Wt::Signal <> __index_changed;
+    Wt::Signal<> __index_changed;
 
     /*!\brief Signal emitted if the widget is given a test which it fails. */
-    Wt::Signal <> __failed_test;
+    Wt::Signal<> __failed_test;
 
     /*!\brief Signal emitted if the widget is given a test which it passes. */
-    Wt::Signal <> __succeeded_test;
+    Wt::Signal<> __succeeded_test;
 
     /*!\brief Signal emitted after setHidden() is called.*/
-    Wt::Signal <bool> __hidden_changed;
-
+    Wt::Signal<> __hidden_changed;
 
     /*!\brief Signal emitted when the widget is loaded. */
-    Wt::Signal <> __onload;
-
-
+    Wt::Signal<> __onload;
 
     /*!\brief A late-bound callback that allows the value for this widget
      * to be retrieved.
      */
-    std::string (*__value_callback)(Moldable&);
+    std::string (*__value_callback)(
+        Moldable&);
 
     /*!\brief A late-bound callback that allows the value for this widget
      * to be set.
      */
-    void (*__setvalue_callback)(Moldable&, std::string&);
+    void (*__setvalue_callback)(
+        Moldable&, std::string&);
 
 public:
     Moldable();
-    Moldable(MoldableTemplate*);
+    Moldable(
+        MoldableTemplate*);
 
     virtual ~Moldable();
 
@@ -104,22 +103,23 @@ public:
      */
     virtual void load();
     virtual void setHidden(
-    		bool hidden, const Wt::WAnimation& animation= Wt::WAnimation());
-
+        bool hidden, const Wt::WAnimation& animation = Wt::WAnimation());
 
     /*!\brief An implementation of the setStyleClass method which also
      * emits the new style as part of the styleChanged signal.
      * @param style
      */
-    inline virtual void setStyleClass(const Wt::WString& style)
+    inline virtual void setStyleClass(
+        const Wt::WString& style)
     {
         Wt::WContainerWidget::setStyleClass(style);
         __style_changed.emit();
     }
 
-    inline void addMoldableChild(Moldable* __child)
+    inline void addMoldableChild(
+        Moldable* __child)
     {
-    	mchildren.push_back(__child);
+        mchildren.push_back(__child);
     }
 
     /*!\brief Retrieves a Moldable widget from this widget.
@@ -127,9 +127,10 @@ public:
      * @param index The widget to be retrieved.
      * @return The *MOLDABLE* widget within the index of moldable children.
      */
-    inline Moldable* child (int index)
+    inline Moldable* child(
+        int index)
     {
-    	return mchildren.at(index);
+        return mchildren.at(index);
     }
 
     /*!\brief Returns the number of moldable children this widget contains.
@@ -138,13 +139,13 @@ public:
      */
     inline int countMoldableChildren()
     {
-    	return mchildren.size();
+        return mchildren.size();
     }
 
     /*!\brief Provides an accessor for the styleChanged signal. */
     Wt::Signal<>& styleChanged()
-	{
-    	return __style_changed;
+    {
+        return __style_changed;
     }
 
     /*!\brief Use instead of getNodeList to retrieve this widget's location
@@ -153,7 +154,7 @@ public:
      */
     inline std::string& getNode()
     {
-    	return __tmpl->node;
+        return __tmpl->node;
     }
 
     /*!\brief Alerts the caller to whether or not this widget allows a
@@ -161,64 +162,70 @@ public:
      * @param action The action requested
      * @return Whether or not it is a valid action for this widget
      */
-    bool allowsAction(Enums::SignalActions::SignalAction action);
+    bool allowsAction(
+        Enums::SignalActions::SignalAction action);
     /*!\brief Allows another widget to remove a specific child from this
      * widget's family tree. The other widget must already have the child's
      * pointer handy
      * @param child The pointer to the Moldable* widget that is to be
      * deleted.
      */
-    inline void requestRemoval(Moldable* child)
+    inline void requestRemoval(
+        Moldable* child)
     {
-    	removeChild(child);
+        removeChild(child);
     }
 
     /*!\brief Provides an accessor to the widget's properties */
     inline MoldableTemplate* getProperties()
     {
-    	return __tmpl;
+        return __tmpl;
     }
 
     /*\brief Returns this widget's type. */
     inline const mapped& getType() const
     {
-    	return __tmpl->type;
+        return __tmpl->type;
     }
 
     /*!\brief If this widget is provided a validator, its first child is
      * assigned said validator.
      * @param validator
      */
-    inline void validate (Wt::WValidator* validator)
+    inline void validate(
+        Wt::WValidator* validator)
     {
-    	Wt::WLineEdit* input = (Wt::WLineEdit*) widget(0);
-    	input->setValidator(validator);
+        Wt::WLineEdit* input = (Wt::WLineEdit*) widget(0);
+        input->setValidator(validator);
     }
 
     /*!\brief Provides an accessor to the fail signal. */
     inline Wt::Signal<>& fail()
-	{
-    	return __failed_test;
-	}
+    {
+        return __failed_test;
+    }
 
-    inline Wt::Signal<>& onLoad() { return __onload;}
+    inline Wt::Signal<>& onLoad()
+    {
+        return __onload;
+    }
 
     /*!\brief Provides an accessor to the index changed signal. */
     inline Wt::Signal<>& stackIndexChanged()
-	{
-    	return __index_changed;
-	}
+    {
+        return __index_changed;
+    }
 
     /*!\brief Provides an accessor for the success signal. */
     inline Wt::Signal<>& succeed()
-	{
-    	return __succeeded_test;
-	}
+    {
+        return __succeeded_test;
+    }
 
-    inline Wt::Signal<bool>& hiddenChanged()
-	{
-    	return __hidden_changed;
-	}
+    inline Wt::Signal<>& hiddenChanged()
+    {
+        return __hidden_changed;
+    }
 
     /*!\brief Validates this widget's first child, which will emit either the
      * fail() or succeed() signals.
@@ -231,36 +238,45 @@ public:
      */
     inline Moldable& setReload()
     {
-    	__reload = true;
-    	return *this;
+        __reload = true;
+        return *this;
     }
 
     /*!\brief Returns whether or not this widget may be reloaded */
-    inline bool reload() { return __reload; }
-
-    inline void setValueCallback(std::string(*cb)(Moldable&))
+    inline bool reload()
     {
-    	__value_callback = cb;
+        return __reload;
     }
 
-    inline void setSetValueCallback(void(*cb)(Moldable&, std::string&))
+    inline void setValueCallback(
+        std::string (*cb)(
+            Moldable&))
     {
-    	__setvalue_callback = cb;
+        __value_callback = cb;
+    }
+
+    inline void setSetValueCallback(
+        void (*cb)(
+            Moldable&, std::string&))
+    {
+        __setvalue_callback = cb;
     }
 
     inline std::string valueCallback()
     {
-    	return __value_callback(*this);
+        return __value_callback(*this);
     }
 
-    inline void setValueCallback(std::string& newtxt)
+    inline void setValueCallback(
+        std::string& newtxt)
     {
-    	__setvalue_callback(*this, newtxt);
+        __setvalue_callback(*this, newtxt);
     }
 
-    void getState(	Enums::WidgetTypes::States state, NodeValue& val);
+    void getState(
+        Enums::WidgetTypes::States state, NodeValue& val);
 
 };
 
-} //namespace Goo
+}    //namespace Goo
 #endif /* MODDABLEGOO_H_ */

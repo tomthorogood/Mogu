@@ -10,20 +10,17 @@
 
 #include <Redis/AccessLayer.h>
 
-namespace Redis
-{
+namespace Redis {
 
 class WidgetAccessLayer
 {
 public:
-	enum ReadRequests {
-		widet_exists
-		,widget_has_children
-		,
-	};
+    enum ReadRequests
+    {
+        widet_exists, widget_has_children,
+    };
 };
 
 }
-
 
 #endif /* WIDGETACCESSLAYER_H_ */

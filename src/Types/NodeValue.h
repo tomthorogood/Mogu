@@ -11,16 +11,12 @@
 #include <declarations.h>
 #include <string>
 
-
 #include <float.h>
 #include <limits.h>
 
 enum ReadType
 {
-	NO_VALUE		=0x0,
-    string_value	=0x1,
-    int_value		=0x2,
-    float_value		=0x3
+    NO_VALUE = 0x0, string_value = 0x1, int_value = 0x2, float_value = 0x3
 };
 
 /*!\brief Since a NodeValue can only be int, float, or string, the NumericUnion
@@ -29,8 +25,8 @@ enum ReadType
  */
 union NumericUnion
 {
-	int		as_int;
-	float 	as_float;
+    int as_int;
+    float as_float;
 };
 
 /*!\brief The NodeValue class holds a parsed node value of any valid type,
@@ -39,7 +35,7 @@ union NumericUnion
  */
 class NodeValue
 {
-	/*!\brief one of the possible types of values */
+    /*!\brief one of the possible types of values */
     ReadType __type;
 
     /*!\brief If the value is a string, it is stored here. */
@@ -50,70 +46,78 @@ class NodeValue
 
     inline void resetStr()
     {
-    	as_string = EMPTY;
+        as_string = EMPTY;
     }
 
 public:
     NodeValue();
 
     /*!\brief Copies the value of another node value into this one. */
-    NodeValue(NodeValue*);
+    NodeValue(
+        NodeValue*);
 
-    inline void operator=(NodeValue& v)
+    inline void operator=(
+        NodeValue& v)
     {
-    	copy(&v);
+        copy(&v);
     }
 
     /*!\brief deletes the pointer to the NumericUnion*/
     virtual ~NodeValue();
 
     /*!\brief Sets the string as well as __type */
-    inline void  setString(std::string val)
+    inline void setString(
+        std::string val)
     {
-    	as_string = val;
-    	__type = string_value;
+        as_string = val;
+        __type = string_value;
     }
 
-
     /*!\brief Sets an int as well as __type */
-    inline void setInt(int val)
+    inline void setInt(
+        int val)
     {
-    	resetStr();
-    	__numerics->as_int = val;
-    	__type = int_value;
+        resetStr();
+        __numerics->as_int = val;
+        __type = int_value;
     }
 
     /*!\brief Sets a float as well as __type */
-    inline void setFloat(float val)
+    inline void setFloat(
+        float val)
     {
-    	resetStr();
-    	__numerics->as_float = val;
-    	__type = float_value;
+        resetStr();
+        __numerics->as_float = val;
+        __type = float_value;
     }
 
     /*!\brief If the type is `string_value`, returns a string. */
     inline std::string& getString()
     {
-    	return as_string;
+        return as_string;
     }
 
     /*!\brief If the type is `int_value`, returns the int.*/
     inline int& getInt()
     {
-    	return __numerics->as_int;
+        return __numerics->as_int;
     }
 
     /*!\brief If the type is `float_value`, returns the float. */
     inline float getFloat()
     {
-    	return __numerics->as_float;
+        return __numerics->as_float;
     }
 
     /*!\brief Returns the type so the correct data can be extracted. */
-    inline ReadType getType() { return __type;}
+    inline ReadType getType()
+    {
+        return __type;
+    }
 
-    void copy(NodeValue*);
-}; // end NodeValue
-
+    void copy(
+        NodeValue*);
+};
+// end NodeValue
 
 #endif /* NODEVALUE_H_ */

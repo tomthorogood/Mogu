@@ -11,27 +11,21 @@
 #include <Security/Security.h>
 #include <hash.h>
 
-
-namespace Security
-{
+namespace Security {
 using std::string;
 
 std::string create_raw_auth_string(
-		string userid
-		,string salt
-		,string userauth)
+    string userid, string salt, string userauth)
 {
-	string ustr = userid+salt+userauth;
-	string hstr = Hash::toHash(ustr);
-	return encrypt(hstr);
+    string ustr = userid + salt + userauth;
+    string hstr = Hash::toHash(ustr);
+    return encrypt(hstr);
 }
 
 string generate_salt()
 {
-	TurnLeft::Utils::RandomCharSet r;
-	return r.generate(3);
+    TurnLeft::Utils::RandomCharSet r;
+    return r.generate(3);
 }
 
-
-
-}//namespace Security
+}    //namespace Security

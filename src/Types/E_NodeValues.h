@@ -8,77 +8,79 @@
 #ifndef E_NODEVALUES_H_
 #define E_NODEVALUES_H_
 
-namespace NodeValueTypes{
+namespace NodeValueTypes {
 
-enum NodeValueTypes{
+enum NodeValueTypes
+{
     /*!\brief When read in from the database, string values are interpreted
      * exactly as they are read.
      */
-    string_value		=0x0
+    string_value = 0x0
 
     /*!\brief When read in from the database, integer values are transformed
      * into integers.
      */
-    ,integer_value		=0x1
+    , integer_value = 0x1
 
     /*!\brief When read in from the database, enum values are parsed with a
      * callback that returns an integer representation of the enumerated type.
      */
-    ,float_value		=0x2
+    , float_value = 0x2
 
     /*!\brief When readin from the database, the value from another node
      * in the database is read in.
      */
-    ,enum_value			=0x3
+    , enum_value = 0x3
     /*!\brief Returns a string or integer based on a widget's state
      */
-    ,widget_state		=0x5
+    , widget_state = 0x5
 
     /*!\brief Returns a string which can be hashed to search a user session.*/
-    ,dynamic_storage	=0x6
+    , dynamic_storage = 0x6
 
     /*!\brief When read in from the datbase, file_values will attempt to open
      * a file at the listed location, and will read the contents of the file.
      */
-    ,file_value			=0x8
+    , file_value = 0x8
 
     /*!\brief Reads a node from the database */
-    ,node_value			=0x9
+    , node_value = 0x9
 
     /*!\brief Read information from a widget's that's been registered. */
-    ,registry_value		=0xA
+    , registry_value = 0xA
 
     /*!\brief Execute a redis command. */
-    ,redis_command		=0xB
+    , redis_command = 0xB
 
     /*!\brief Hashed value */
-    ,hashed_string		=0xC
+    , hashed_string = 0xC
 };
 
-enum TokenTestResult{
-	BEG			=0x0
-	,ERR		=0x1
-	,REQ_STR	=0x2
-	,ICPL_CMD	=0x3
-	,NXT_NODE	=0x4
-	,NXT_REG	=0x5
-	,NXT_CMD	=0x6
-	,NXT_DYN	=0x7
-	,CPL		=0x8
+enum TokenTestResult
+{
+    BEG = 0x0,
+    ERR = 0x1,
+    REQ_STR = 0x2,
+    ICPL_CMD = 0x3,
+    NXT_NODE = 0x4,
+    NXT_REG = 0x5,
+    NXT_CMD = 0x6,
+    NXT_DYN = 0x7,
+    CPL = 0x8
 };
 
-enum InterpretationMode{
-	VAL
-	,ARG
+enum InterpretationMode
+{
+    VAL, ARG
 };
 
-namespace RedisTypes{
-	const std::string REDIS_STR = "string";
-	const std::string REDIS_LST = "list";
-	const std::string REDIS_HSH = "hash";
-	const std::string REDIS_NUL = "none";
+namespace RedisTypes {
+const std::string REDIS_STR = "string";
+const std::string REDIS_LST = "list";
+const std::string REDIS_HSH = "hash";
+const std::string REDIS_NUL = "none";
 }
 
-} //namespace NodeValueTypes
+}    //namespace NodeValueTypes
 
 #endif /* E_NODEVALUES_H_ */

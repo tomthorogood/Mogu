@@ -15,26 +15,28 @@
  * to each user. This can make data available globally to the application
  * instance without exposing it anywhere else.
  */
-namespace Application
-{
-	bool metaKeyConfigured(std::string key);
-	std::string getMetaValue(std::string key);
-	int getUserLevel(const std::string&);
-	std::string getUserLevel(int&);
-	void configure();
+namespace Application {
+bool metaKeyConfigured(
+    std::string key);
+std::string getMetaValue(
+    std::string key);
+int getUserLevel(
+    const std::string&);
+std::string getUserLevel(
+    int&);
+void configure();
 
 inline int getRandomSeed()
 {
-	static int seed_salt = 1;
-	srand( time(NULL) + ++seed_salt);
-	return rand();
+    static int seed_salt = 1;
+    srand(time(NULL) + ++seed_salt);
+    return rand();
 }
 
 const size_t& getNumLevels();
 
 void configure();
 
-}//namespace Application
-
+}    //namespace Application
 
 #endif /* STATIC_H_ */

@@ -5,10 +5,8 @@
  *      Author: tom
  */
 
-
 #include <Static.h>
 #include <algorithm>
-
 
 #include <Wt/WApplication>
 #include <Wt/WScrollArea>
@@ -26,28 +24,26 @@
 #include <Wt/WOverlayLoadingIndicator>
 #include <Types/ApplicationManager.h>
 
-Mogu::Mogu(const Wt::WEnvironment& env)
-:   Wt::WApplication(env)
-	, widgetRegister()
-	, manager(*this)
-	, userManager(*this)
+Mogu::Mogu(
+    const Wt::WEnvironment& env)
+    : Wt::WApplication(env), widgetRegister(), manager(*this), userManager(
+        *this)
 {
-	TurnLeft::Utils::RandomCharSet rchar;
-	setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
-	__session = GLOBAL_SESSION;
-	__auth_token = AUTH_TOKEN;
-	__group = DEFAULT_GROUP;
-	__instanceid = rchar.generate(4);
+    TurnLeft::Utils::RandomCharSet rchar;
+    setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
+    __session = GLOBAL_SESSION;
+    __auth_token = AUTH_TOKEN;
+    __group = DEFAULT_GROUP;
+    __instanceid = rchar.generate(4);
 
-	__reply = 0;
-	__redis = redisConnect(REDIS_HOST,REDIS_PORT);
+    __reply = 0;
+    __redis = redisConnect(REDIS_HOST, REDIS_PORT);
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
 
     std::string outermost_container = "widgets.wrapper";
-    Goo::MoldableTemplate* __wrapper_tmpl =
-    		Goo::MoldableFactory::conceptualize(outermost_container);
-
+    Goo::MoldableTemplate* __wrapper_tmpl = Goo::MoldableFactory::conceptualize(
+        outermost_container);
 
     __wrapper = Goo::MoldableFactory::sculpt(__wrapper_tmpl);
 
@@ -57,32 +53,30 @@ Mogu::Mogu(const Wt::WEnvironment& env)
 
     std::string entry_path = internalPath();
 
-    if (entry_path != "/" && entry_path.length() > 0)
-    {
-    	handlePathChange(entry_path);
+    if (entry_path != "/" && entry_path.length() > 0) {
+        handlePathChange(entry_path);
     }
 
-    if (Application::metaKeyConfigured("analytics"))
-    {
-    	loadAnalytics(Application::getMetaValue("analytics"));
+    if (Application::metaKeyConfigured("analytics")) {
+        loadAnalytics(Application::getMetaValue("analytics"));
     }
     loadMoguStyles();
 }
 
-void Mogu::handlePathChange(std::string path)
+void Mogu::handlePathChange(
+    std::string path)
 {
-	std::string perspective = path.substr(1,path.length()-1);
-	Parsers::TokenGenerator t(perspective);
-	std::string mold = t.next('/');
-	while (mold != EMPTY)
-	{
-		Perspective::Handler::mold(mold);
-		mold = t.next('/');
-	}
+    std::string perspective = path.substr(1, path.length() - 1);
+    Parsers::TokenGenerator t(perspective);
+    std::string mold = t.next('/');
+    while (mold != EMPTY) {
+        Perspective::Handler::mold(mold);
+        mold = t.next('/');
+    }
 
 }
 
 Mogu::~Mogu()
 {
-	redisFree(__redis);
+    redisFree(__redis);
 }

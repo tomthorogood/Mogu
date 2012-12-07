@@ -10,17 +10,19 @@
 
 #include <declarations.h>
 
-namespace Goo{
+namespace Goo {
 
-namespace MoldableFactory{
+namespace MoldableFactory {
 
-MoldableTemplate* conceptualize(const std::string& nodeName);
-MoldableTemplate* conceptualize(const MoldableTemplate* t);
-Moldable* sculpt (MoldableTemplate*, Moldable* m=0);
+MoldableTemplate* conceptualize(
+    const std::string& nodeName);
+MoldableTemplate* conceptualize(
+    const MoldableTemplate* t);
+Moldable* sculpt(
+    MoldableTemplate*, Moldable* m = 0);
 
 }
 
-}//namespace Goo
-
+}    //namespace Goo
 
 #endif /* MOLDABLEFACTORY_H_ */

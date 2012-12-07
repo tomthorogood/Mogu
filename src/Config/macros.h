@@ -19,7 +19,6 @@
 #define __PREFIX_SESSION "s."
 #define __PREFIX_WIDGET "widgets."
 
-
 #define MoguApp (Mogu*) wApp
 
 //Provides access to the user-specific instance of Mogu
