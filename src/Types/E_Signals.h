@@ -118,6 +118,7 @@ enum SignalAction
     match = 0x15,
     test_text = 0x16,
     store_abstract = 0x17,
+    test = 0x18,
     delete_value = 0x1F,
     set_text = 0x20,
     reload = 0x21,

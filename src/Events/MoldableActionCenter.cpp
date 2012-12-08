@@ -286,6 +286,7 @@ void directListeners(
         Actions::store(broadcast.listeners, message);
         break;
 
+        //!\deprecated
     case Action::store_abstract: {
         for (size_t w = 0; w < num_listeners; w++) {
             Moldable& widget = broadcast.listeners[w]->getWidget();
@@ -300,6 +301,23 @@ void directListeners(
         }
         break;
     }
+
+    case Action::test: {
+        NodeValue listener_;
+        NodeValue message_;
+        app->interpreter()
+            .giveInput(broadcast.listeners[0]->getString()
+                , listener_, broadcast.broadcaster);
+        if (message.getType() == string_value) {
+            app->interpreter()
+                .giveInput(message.getString(), message_, broadcast.broadcaster);
+        }
+        else message_.copy(&message);
+
+        Actions::true_test(listener_, message_) ?
+            broadcast.broadcaster->succeed().emit() :
+            broadcast.broadcaster->fail().emit();
+        break;}
 
     case Action::slot: {
         for (size_t w = 0; w < num_listeners; w++) {

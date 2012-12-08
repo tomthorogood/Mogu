@@ -84,6 +84,7 @@ bool change_password(
     std::string username, std::string new_pass);
 bool test(
     Goo::Moldable&, NodeValue&);
+bool true_test(NodeValue&, NodeValue&);
 bool emit(
     Listeners& listeners, std::string& sig);
 bool store(

@@ -133,6 +133,7 @@ void Moldable::getState(
     }
     default:
         val.setInt(0);
+        break;
     }
 }
 
