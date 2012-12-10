@@ -92,6 +92,7 @@ class WRegExpValidator;
 }
 
 class Mogu;
+class MoguNode;
 class Parseable;
 class redisContext;
 class redisReply;
