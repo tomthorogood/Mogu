@@ -44,7 +44,6 @@ public:
         enumMap["set_index"] = Action::set_index;
         enumMap["set_path"] = Action::set_internal_path;
         enumMap["store"] = Action::store_value;
-        enumMap["store_abstract"] = Action::store_abstract;
         enumMap["remove_child"] = Action::remove_child;
         enumMap["add_child"] = Action::add_widget;
         enumMap["block"] = Action::BLOCK;

@@ -118,6 +118,7 @@ void BroadcastMessage::resolveListeners()
 
     default:
         listeners.push_back(new Listener(iter_widget));
+        break;
     }
 }
 

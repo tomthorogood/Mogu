@@ -298,7 +298,6 @@ void parse_data_node(
  * user's screen.
  * @param v The NodeValue which will hold the result.
  * @param widget_identifier Either "{self}" or a '|registered_name|'.
- *TODO Enable other family members to be resolves as well.
  * @param state The "$state$" to be resolved from the widget.
  * @param broadcaster The widget requesting the information; only used if
  * the identifier is {self}.

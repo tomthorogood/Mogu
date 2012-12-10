@@ -128,12 +128,6 @@ void EventBindery::handleVoidSignal(
     }
 }
 
-void EventBindery::handleBoolSignal(
-    Triggers::SignalTrigger trigger, bool commence)
-{
-    if (commence) handleVoidSignal(trigger);
-}
-
 EventBindery::~EventBindery()
 {
     PreprocessorMap::iterator iter = __map.begin();

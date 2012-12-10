@@ -171,7 +171,7 @@ Moldable* sculpt(
         break;
     }
     }
-    if (mnew) ++__tmpl->num_connected_widgets;
+    if (mnew) ++(__tmpl->num_connected_widgets);
     return m;
 }
 

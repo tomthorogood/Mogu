@@ -286,22 +286,6 @@ void directListeners(
         Actions::store(broadcast.listeners, message);
         break;
 
-        //!\deprecated
-    case Action::store_abstract: {
-        for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::store_abstract)) {
-                using namespace Parsers::StyleParser;
-                NodeValue v;
-                v.setString(getWidgetProperty(widget.getNode(), "abstract"));
-                Redis::StorageRequest r(message.getString(), v);
-                r.execute();
-                //TODO REPLACE WITH REDIS STORAGE REQUEST!
-            }
-        }
-        break;
-    }
-
     case Action::test: {
         NodeValue listener_;
         NodeValue message_;
