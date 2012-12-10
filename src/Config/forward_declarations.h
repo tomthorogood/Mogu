@@ -10,7 +10,6 @@
 
 namespace Goo {
 class RedisInterface;
-class Moldable;
 struct MoldableTemplate;
 struct GooVariables;
 }
@@ -93,6 +92,8 @@ class WRegExpValidator;
 
 class Mogu;
 class MoguNode;
+class MoldableFactory;
+class Moldable;
 class Parseable;
 class redisContext;
 class redisReply;

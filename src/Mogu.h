@@ -30,6 +30,7 @@ class Mogu: public Wt::WApplication
     /*!\brief Changes the state of the application based on the URL */
     void handlePathChange(
         std::string path);
+    MoldableFactory moldableFactory;
 
     /*!\brief A map of named widgets. */
     WidgetRegister widgetRegister;
@@ -37,7 +38,7 @@ class Mogu: public Wt::WApplication
     void loadMoguStyles();
 
     /*!\brief The widget that started it all... */
-    Goo::Moldable* __wrapper;
+    Moldable* __wrapper;
 
     Parsers::NodeValueParser __interpreter;
 
@@ -79,13 +80,13 @@ public:
      * @param widget The pointer to the widget itself.
      */
     inline void registerWidget(
-        std::string name, Goo::Moldable* widget)
+        std::string name, Moldable* widget)
     {
         widgetRegister[name] = widget;
     }
 
     inline void registerWidget(
-        std::string name, Goo::Moldable& widget)
+        std::string name, Moldable& widget)
     {
         widgetRegister[name] = &widget;
     }
@@ -182,16 +183,17 @@ public:
         return __auth_token;
     }
     inline void setSessionID(
-        const std::string&& sid) {__session = sid;}
-        inline void setSessionID (const std::string& sid) {__session = sid;}
-        inline void setAuthToken (const std::string& ath) {__auth_token = ath;}
-        inline redisContext* DBConnection() {return __redis;}
-        inline ApplicationManager& getManager() {return manager;}
-        inline Security::UserManager& getUserManager() {return userManager;}
-        inline std::map<std::string,std::string>& getSlots() {return __slots;}
-        inline void setGroup(const std::string& group) {__group = group;}
-        inline void setGroup(const std::string&& group) {__group = group;}
-        inline std::string& getGroup() {return __group;}
+    const std::string&& sid) {__session = sid;}
+    inline void setSessionID (const std::string& sid) {__session = sid;}
+    inline void setAuthToken (const std::string& ath) {__auth_token = ath;}
+    inline redisContext* DBConnection() {return __redis;}
+    inline ApplicationManager& getManager() {return manager;}
+    inline Security::UserManager& getUserManager() {return userManager;}
+    inline std::map<std::string,std::string>& getSlots() {return __slots;}
+    inline void setGroup(const std::string& group) {__group = group;}
+    inline void setGroup(const std::string&& group) {__group = group;}
+    inline std::string& getGroup() {return __group;}
+    inline const MoldableFactory& getFactory() { return moldableFactory; }
     };
 
 #endif /* PREVIEW_H_ */

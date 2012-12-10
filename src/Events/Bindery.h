@@ -19,7 +19,7 @@ typedef std::map<Enums::SignalTriggers::SignalTrigger, PreprocessorVector> Prepr
 class EventBindery: public Wt::WObject
 {
 
-    Goo::Moldable* __broadcaster;
+    Moldable* __broadcaster;
 
     PreprocessorMap __map;
 
@@ -82,8 +82,7 @@ class EventBindery: public Wt::WObject
     }
 
 public:
-    EventBindery(
-        Goo::Moldable* broadcaster);
+    EventBindery(Moldable* broadcaster);
     ~EventBindery();
 };
 

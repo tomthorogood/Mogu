@@ -8,9 +8,52 @@
 #ifndef MOGUNODE_H_
 #define MOGUNODE_H_
 
-class MoguNode
+class FixedString
 {
+protected:
     std::string __str;
+    inline std::string assertEndsWith (const std::string& suffix) const
+    {
+        size_t suf_len = suffix.length();
+        size_t str_len = __str.length();
+        size_t incl_index = __str.find(suffix);
+        if (incl_index == std::string::npos) return __str + suffix;
+
+        return
+            ((str_len - suf_len) == incl_index)
+            ?__str : __str + suffix;
+    }
+
+    inline std::string assertEndsWith(const std::string&& suffix) const
+    {
+        return assertEndsWith(suffix);
+    }
+
+    std::string assertStartsWith (const std::string& prefix) const
+    {
+        size_t prf_len = prefix.length();
+        size_t str_len = __str.length();
+        size_t incl_index = __str.find(prefix);
+        if (incl_index == std::string::npos) return prefix + __str;
+        return
+            (incl_index == 0)
+            ? __str : prefix + __str;
+    }
+    std::string assertStartsWith (const std::string&& prefix)
+    {
+        return assertStartsWith(prefix);
+    }
+
+public:
+    FixedString(const std::string& str){__str = str;}
+    FixedString(const std::string&& str) { __str = str;}
+    FixedString(const FixedString& fstr) {__str = fstr.str();}
+
+    const std::string& str () const { return __str; }
+};
+
+class MoguNode : public FixedString
+{
 public:
     MoguNode(const std::string& node)
     {
@@ -34,19 +77,21 @@ public:
 
     inline std::string addPrefix(const std::string& prefix) const
     {
-        return prefix + "." + __str;
+        std::string prf = prefix + ".";
+        return assertStartsWith(prf);
     }
-    std::string addPrefix(const std::string&& prefix) const
+    inline std::string addPrefix(const std::string&& prefix) const
     {
-        return prefix + "." + __str;
+        return addPrefix(prefix);
     }
-    std::string addSuffix(const std::string& suffix)
+    inline std::string addSuffix(const std::string& suffix)
     {
-        return __str + "." + suffix;
+        std::string suf = "." + suffix;
+        return assertEndsWith(suf);
     }
-    std::string addSuffix(const std::string&& suffix) const
+    inline std::string addSuffix(const std::string&& suffix) const
     {
-        return __str + "." + suffix;
+        return assertEndsWith(suffix);
     }
 
 };

@@ -41,11 +41,7 @@ Mogu::Mogu(
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
 
-    std::string outermost_container = "widgets.wrapper";
-    Goo::MoldableTemplate* __wrapper_tmpl = Goo::MoldableFactory::conceptualize(
-        outermost_container);
-
-    __wrapper = Goo::MoldableFactory::sculpt(__wrapper_tmpl);
+    __wrapper = moldableFactory.createMoldableWidget("widgets.wrapper");
 
     root()->addWidget(__wrapper);
 
@@ -60,6 +56,7 @@ Mogu::Mogu(
     if (Application::metaKeyConfigured("analytics")) {
         loadAnalytics(Application::getMetaValue("analytics"));
     }
+
     loadMoguStyles();
 }
 

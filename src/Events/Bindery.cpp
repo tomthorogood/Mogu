@@ -16,8 +16,6 @@
 #include <Types/NodeValue.h>
 #include <Mogu.h>
 
-#include <Core/Moldable.h>
-
 namespace Events {
 
 using Goo::Moldable;
@@ -26,9 +24,8 @@ using Redis::strvector;
 namespace Labels = Enums::Labels;
 namespace Triggers = Enums::SignalTriggers;
 
-EventBindery::EventBindery(
-    Moldable* broadcaster)
-    : __map()
+EventBindery::EventBindery(Moldable* broadcaster)
+: __map()
 {
     mApp;
     __broadcaster = broadcaster;
@@ -139,8 +136,7 @@ EventBindery::~EventBindery()
         }
     }
 #ifdef DEBUG
-    std::cout << "Deleting bindery for " << __broadcaster->getProperties()->node
-        << std::endl;
+    std::cout << "Deleting bindery for " << __broadcaster->getNode() << std::endl;
 #endif
 }
 

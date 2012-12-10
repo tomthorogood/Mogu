@@ -10,19 +10,12 @@
 
 #include <declarations.h>
 
-namespace Goo {
+class MoldableFactory
+{
+public:
+    MoldableFactory();
+    Moldable* createMoldableWidget(const std::string& node) const;
+};
 
-namespace MoldableFactory {
-
-MoldableTemplate* conceptualize(
-    const std::string& nodeName);
-MoldableTemplate* conceptualize(
-    const MoldableTemplate* t);
-Moldable* sculpt(
-    MoldableTemplate*, Moldable* m = 0);
-
-}
-
-}    //namespace Goo
 
 #endif /* MOLDABLEFACTORY_H_ */

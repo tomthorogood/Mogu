@@ -12,33 +12,53 @@
 #include <Wt/WContainerWidget>
 #include <Wt/WSignal>
 
-namespace Mogu
-{
-
 class Moldable : public Wt::WContainerWidget
 {
     Events::EventBindery* __bindery;
+
     Wt::Signal <> __style_changed;
     Wt::Signal <> __failed_test;
     Wt::Signal <> __succeeded_test;
     Wt::Signal <> __loaded;
+    Wt::Signal <> __hidden_changed;
 
     MoguNode __node;
 
+    void __init__();
+
+    std::string getParameter(const std::string& param);
+    std::string getParameter(const std::string&& param);
+
 public:
 
-    Moldable();
+    Moldable(const std::string& node);
+
+    virtual ~Moldable() {
+        if (__bindery != NULL) delete __bindery;
+    }
 
     virtual std::string moldableValue() =0;
-    virtual void setMoldableValue() =0;
+    virtual void setMoldableValue(const std::string&) =0;
+    virtual void getState(
+        Enums::WidgetTypes::States state, NodeValue& val);
+
     inline virtual void setStyleClass (const Wt::WString& style)
     {
         Wt::WContainerWidget::setStyleClass(style);
         __style_changed.emit();
     }
+
+    inline virtual std::string getNode()
+    {
+        return __node.addPrefix("widgets");
+    }
+
+    inline Wt::Signal <> styleChanged() { return __style_changed; }
+    inline Wt::Signal <> fail() { return __failed_test; }
+    inline Wt::Signal <> succeed() { return __succeeded_test;}
+    inline Wt::Signal <> onLoad() { return __loaded; }
+    inline Wt::Signal <> hiddenChanged() { return __hidden_changed; }
+
 };
-
-}
-
 
 #endif /* MOLDABLE_H_ */
