@@ -8,12 +8,6 @@
 #ifndef FORWARD_DECLARATIONS_H_
 #define FORWARD_DECLARATIONS_H_
 
-namespace Goo {
-class RedisInterface;
-struct MoldableTemplate;
-struct GooVariables;
-}
-
 namespace Exceptions {
 class MoguException;
 class Err_UserNotFound;

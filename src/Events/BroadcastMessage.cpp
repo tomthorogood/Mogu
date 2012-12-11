@@ -6,7 +6,8 @@
  */
 
 #include <Events/BroadcastMessage.h>
-#include <Core/Moldable.h>
+#include <Moldable/Moldable.h>
+#include <Moldable/Implementations.h>
 #include <Events/EventPreprocessor.h>
 #include <Parsers/Parsers.h>
 #include <Parsers/MoguScript_Tokenizer.h>
@@ -16,13 +17,12 @@
 
 namespace Events {
 using std::string;
-using Goo::Moldable;
 
 namespace Action = Enums::SignalActions;
 namespace Labels = Enums::Labels;
 
 BroadcastMessage::BroadcastMessage(
-    Goo::Moldable* _broadcaster, EventPreprocessor* preproc)
+    Moldable* _broadcaster, EventPreprocessor* preproc)
     : listeners()
 {
     mApp;
@@ -68,11 +68,11 @@ void BroadcastMessage::resolveListeners()
      * trickling effects.
      */
     int degradation = properties->degradation;
-    Goo::Moldable* iter_widget = broadcaster;
+    Moldable* iter_widget = broadcaster;
 
     while (--degradation >= 0) {
         if (properties->action == bubble) {
-            iter_widget = (Goo::Moldable*) iter_widget->parent();
+            iter_widget = (Moldable*) iter_widget->parent();
         }
     }
 
@@ -94,25 +94,29 @@ void BroadcastMessage::resolveListeners()
     switch (properties->listener.f_listener) {
 
     case Enums::Family::parent: {
-        Goo::Moldable* m = (Goo::Moldable*) iter_widget->parent();
+        Moldable* m = (Moldable*) iter_widget->parent();
         listeners.push_back(new Listener(m));
         break;
     }
 
     case Enums::Family::siblings: {
-        Goo::Moldable* parent = (Goo::Moldable*) iter_widget->parent();
-        size_t num_children = parent->countMoldableChildren();
+        MoldableAbstractParent* parent =
+            static_cast <MoldableAbstractParent*>(iter_widget->parent());
+
+        size_t num_children = parent->moldableChildren().size();;
         for (size_t c = 0; c < num_children; ++c) {
-            Goo::Moldable* w = parent->child(c);
+            Moldable* w = parent->moldableChild(c);
             if (w != iter_widget) listeners.push_back(new Listener(w));
         }
         break;
     }
 
     case Enums::Family::children: {
-        size_t num_children = iter_widget->countMoldableChildren();
+        MoldableAbstractParent* parent =
+            static_cast <MoldableAbstractParent*>(iter_widget);
+        size_t num_children = parent->moldableChildren().size();
         for (size_t c = 0; c < num_children; ++c)
-            listeners.push_back(new Listener(iter_widget->child(c)));
+            listeners.push_back(new Listener(parent->moldableChild(c)));
         break;
     }
 

@@ -9,6 +9,7 @@
 #define MOLDABLETEXT_H_
 
 #include "Moldable.h"
+#include <Wt/WText>
 
 class MoldableText : public Moldable
 {

@@ -7,7 +7,7 @@
 
 #include <Events/MoldableActionCenter.h>
 #include <Wt/WEvent>
-#include <Core/Moldable.h>
+#include <Moldable/Moldable.h>
 #include <Types/Listener.h>
 
 namespace Events {
@@ -21,7 +21,7 @@ bool emit(
     for (size_t i = 0; i < sz; i++) {
         Listener& listener = *(listeners.at(i));
         if (listener.getType() != listener.widget) return false;
-        Goo::Moldable& widget = listeners.at(i)->getWidget();
+        Moldable& widget = listeners.at(i)->getWidget();
         if (!widget.allowsAction(Enums::SignalActions::emit)) continue;
 
         if (sig == "click") {

@@ -18,7 +18,7 @@ using namespace Parsers;
 TestValue __m_named_state (va_list* args)
 {
 	std::string s_val_in = va_arg(args, const char*);
-	Goo::Moldable* w = va_arg(args, Goo::Moldable*);
+	Moldable* w = va_arg(args, Moldable*);
 	NodeValue v;
 	Parsers::NodeValueParser(s_val_in,&v,w);
 	TestValue result(v.getString());
@@ -28,12 +28,12 @@ TestValue __m_named_state (va_list* args)
 class T_NodeValueParser : public Test
 {
 	WtTestApp* app;
-	Goo::Moldable* add;
+	Moldable* add;
 	std::string &value_in;
 
 public:
 	T_NodeValueParser(
-			Goo::MoldableTemplate* tpl
+			MoldableTemplate* tpl
 			,std::string& __value_in
 			,std::string tname
 			,TestValue* expected
@@ -66,7 +66,7 @@ std::string Suite_NodeValueParser()
 	Evaluation __e_named_state(ResultType::t_str, &__m_named_state);
 	TestValue __v_named_state(__hello);
 
-	Goo::MoldableTemplate* __tpl_named_state = new Goo::MoldableTemplate();
+	MoldableTemplate* __tpl_named_state = new MoldableTemplate();
 	__tpl_named_state->content = __hello;
 	__tpl_named_state->type = Enums::WidgetTypes::text;
 	__tpl_named_state->name = __hello_name;

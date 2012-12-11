@@ -8,12 +8,14 @@
 #ifndef MOLDABLESTACK_H_
 #define MOLDABLESTACK_H_
 
-#include "Moldable.h"
+#include "MoldableAbstractParent.h"
 #include <Mogu.h>
+#include <Wt/WStackedWidget>
 
-class MoldableStack : public Moldable
+class MoldableStack : public MoldableAbstractParent
 {
     Wt::WStackedWidget* __stack;
+    Wt::Signal <> __stack_index_changed;
 public:
     MoldableStack (const std::string& node);
 
@@ -23,10 +25,10 @@ public:
 
     inline virtual void addWidget(Wt::WWidget* moldable)
     {
-        mApp;
         __stack->addWidget(moldable);
-        }
     }
+
+    inline Wt::Signal <>& stackIndexChanged() { return __stack_index_changed;}
 };
 
 

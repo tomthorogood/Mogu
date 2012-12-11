@@ -15,9 +15,9 @@
 #include <Parsers/TokenGenerator.h>
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
-#include <Core/Moldable.h>
-#include <Core/MoldableTemplate.h>
-#include <Core/MoldableFactory.h>
+#include <Factories/MoldableFactory.h>
+#include <Moldable/Moldable.h>
+#include <Moldable/Implementations.h>
 #include <Static.h>
 #include <Mogu.h>
 #include <Wt/WString>
@@ -32,8 +32,6 @@ namespace ActionCenter {
 using std::string;
 namespace Action = Enums::SignalActions;
 namespace Family = Enums::Family;
-
-using namespace Goo;
 
 inline void handleBoolAction(
     BroadcastMessage& message, bool (*callback)())
@@ -232,9 +230,10 @@ void directListeners(
             app->interpreter().giveInput(message.getString(), v);
 
             if (widget.allowsAction(Action::add_widget)) {
-                MoldableTemplate* tpl = MoldableFactory::conceptualize(
-                    v.getString());
-                widget.addWidget(MoldableFactory::sculpt(tpl));
+                MoguNode n_template(v.getString());
+                widget.addWidget(
+                    app->getFactory().createMoldableWidget(
+                        n_template.addPrefix("widgets")));
             }
         }
         break;
@@ -242,7 +241,7 @@ void directListeners(
 
         /* Removes a widget from the tree. */
         /* Note: Does not delete the widget! (?) */
-    case Action::remove_child: {
+    /*case Action::remove_child: {
         for (size_t w = 0; w < num_listeners; w++) {
             Moldable& widget = broadcast.listeners[w]->getWidget();
             if (widget.allowsAction(Action::remove_child)) {
@@ -259,14 +258,14 @@ void directListeners(
                     int msg = message.getInt();
                     child = (Moldable*) widget.widget(msg);
                 }
-                if (child != NULL) {
-                    widget.requestRemoval(child);
-                }
+               // if (child != NULL) {
+               //     widget.removeChild(child);
+               // }
             }
 
         }
         break;
-    }
+    }*/
 
     case Action::clear: {
         for (size_t w = 0; w < num_listeners; w++) {
@@ -308,7 +307,7 @@ void directListeners(
             Moldable& widget = broadcast.listeners[w]->getWidget();
             if (widget.allowsAction(Action::slot)) {
                 std::string slot_ = message.getString();
-                std::string value_ = widget.valueCallback();
+                std::string value_ = widget.moldableValue();
                 app->getSlots()[slot_] = value_;
             }
         }
@@ -317,7 +316,7 @@ void directListeners(
 
     case Action::match:
     case Action::test_text:
-        if (broadcast.broadcaster->valueCallback() == EMPTY) break;
+        if (broadcast.broadcaster->moldableValue() == EMPTY) break;
         Actions::test(broadcast.listeners[0]->getWidget(), message) ?
             broadcast.broadcaster->succeed().emit() :
             broadcast.broadcaster->fail().emit();
@@ -327,7 +326,7 @@ void directListeners(
         for (size_t w = 0; w < num_listeners; w++) {
             Moldable& widget = broadcast.listeners[w]->getWidget();
             if (widget.allowsAction(Action::set_text)) {
-                widget.setValueCallback(message.getString());
+                widget.setMoldableValue(message.getString());
             }
         }
         break;
@@ -336,7 +335,8 @@ void directListeners(
     case Action::reload: {
         for (size_t w = 0; w < num_listeners; w++) {
             Moldable& widget = broadcast.listeners[w]->getWidget();
-            MoldableFactory::sculpt(widget.getProperties(), &widget);
+            widget.clear();
+            widget.load();
         }
         break;
     }

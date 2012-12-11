@@ -1,5 +1,5 @@
-#include <crypt/BlowfishKey.h>
-#include <crypt/KeyDefinitions.h>
+#include "BlowfishKey.h"
+#include "KeyDefinitions.h"
 #include <stdlib.h>
 
 #ifndef BF_RANDOM_BYTES

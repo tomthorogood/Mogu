@@ -6,6 +6,8 @@
  */
 
 #include "MoldableInput.h"
+#include <Validators/Validators.h>
+
 
 MoldableInput::MoldableInput (const std::string& node)
 : Moldable(node)

@@ -7,6 +7,7 @@
 
 #include "MoldableForEachUser.h"
 #include <Mogu.h>
+#include <Types/GroupManager.h>
 
 MoldableForEachUser::MoldableForEachUser(const std::string& node)
 : MoldableContainer(node)

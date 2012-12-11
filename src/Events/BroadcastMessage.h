@@ -13,18 +13,15 @@
 
 namespace Events {
 
-#define INTERRUPT_CHAIN 0x1
-#define CLEAR_INTERRUPT 0x2
-
 typedef NodeValue NodeValue;
 
 struct BroadcastMessage
 {
-    Goo::Moldable* broadcaster;
+    Moldable* broadcaster;
     Listeners listeners;
     EventPreprocessor* properties;
     BroadcastMessage(
-        Goo::Moldable*, EventPreprocessor*);
+        Moldable*, EventPreprocessor*);
     void updateAction();
     ~BroadcastMessage();
     void resolveListeners();

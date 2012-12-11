@@ -10,6 +10,7 @@
 
 #include "Moldable.h"
 #include <Wt/WValidator>
+#include <Wt/WLineEdit>
 
 class MoldableInput : public Moldable
 {

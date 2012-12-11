@@ -8,6 +8,7 @@
 #ifndef IMPLEMENTATIONS_H_
 #define IMPLEMENTATIONS_H_
 
+#include "MoldableAbstractParent.h"
 #include "MoldableContainer.h"
 #include "MoldableStack.h"
 #include "MoldableText.h"

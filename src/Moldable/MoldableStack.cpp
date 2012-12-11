@@ -7,9 +7,11 @@
 
 
 #include "MoldableStack.h"
+#include <Parsers/Parsers.h>
+#include <Wt/WAnimation>
 
 MoldableStack::MoldableStack(const std::string& node)
-: Moldable(node)
+: MoldableAbstractParent(node)
 {
     mApp;
     __stack = new Wt::WStackedWidget();
@@ -17,8 +19,8 @@ MoldableStack::MoldableStack(const std::string& node)
     if (param != EMPTY) {
         NodeValue v;
         app->interpreter().giveInput(param, v, NULL
-            , Parsers::enum_callback <Parsers::WtAnimationParser>);
-        Wt::WAnimation transition( (Wt::WAnimation::AnimationEffect) v.getInt);
+            , &Parsers::enum_callback <Parsers::WtAnimationParser>);
+        Wt::WAnimation transition( (Wt::WAnimation::AnimationEffect) v.getInt());
         __stack->setTransitionAnimation(transition, true);
     }
     Wt::WContainerWidget::addWidget(__stack);

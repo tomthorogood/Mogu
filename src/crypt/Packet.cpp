@@ -5,7 +5,7 @@
  *      Author: tom
  */
 
-#include <crypt/Packet.h>
+#include "Packet.h"
 #include <TurnLeftLib/Utils/inlines.h>
 using TurnLeft::Utils::HungryVector;
 using TurnLeft::Utils::int_str_to_uchar;

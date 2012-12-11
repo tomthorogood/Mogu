@@ -9,6 +9,7 @@
 #define MOLDABLELINK_H_
 
 #include "Moldable.h"
+#include <Wt/WAnchor>
 
 class MoldableLink : public Moldable
 {

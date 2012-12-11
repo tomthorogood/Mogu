@@ -8,7 +8,7 @@
 #ifndef PACKETCENTER_H_
 #define PACKETCENTER_H_
 
-#include <crypt/Packet.h>
+#include "Packet.h"
 #include <TurnLeftLib/TurnLeft.h>
 #include <TurnLeftLib/Utils/inlines.h>
 using TurnLeft::Utils::HungryVector;

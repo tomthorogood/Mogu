@@ -23,9 +23,9 @@ WtTestApp::WtTestApp(const Wt::WEnvironment& env)
 
 }
 
-Goo::Moldable* addTextWidget(WtTestApp& instance, Goo::MoldableTemplate* tpl)
+Moldable* addTextWidget(WtTestApp& instance, MoldableTemplate* tpl)
 {
-	Goo::Moldable* w = Goo::MoldableFactory::sculpt(tpl);
+	Moldable* w = MoldableFactory::sculpt(tpl);
 	instance.root()->addWidget(w);
 	return w;
 }

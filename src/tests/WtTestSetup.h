@@ -11,4 +11,4 @@ public:
 };
 
 WtTestApp* createWtTest();
-Goo::Moldable* addTextWidget(WtTestApp& instance, Goo::MoldableTemplate* tpl);
+Moldable* addTextWidget(WtTestApp& instance, MoldableTemplate* tpl);

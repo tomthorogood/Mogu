@@ -15,9 +15,8 @@
 #include <TurnLeftLib/Utils/randomcharset.h>
 
 #include <Mogu.h>
-#include <Core/Moldable.h>
-#include <Core/MoldableFactory.h>
-#include <Core/MoldableTemplate.h>
+#include <Moldable/Moldable.h>
+#include <Factories/MoldableFactory.h>
 #include <Parsers/StyleParser.h>
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>

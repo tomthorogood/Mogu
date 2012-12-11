@@ -13,12 +13,13 @@
 #include <Events/EventPreprocessor.h>
 #include <Static.h>
 
+#include <Moldable/Implementations.h>
+
 #include <Types/NodeValue.h>
 #include <Mogu.h>
 
 namespace Events {
 
-using Goo::Moldable;
 using std::string;
 using Redis::strvector;
 namespace Labels = Enums::Labels;
@@ -83,19 +84,20 @@ EventBindery::EventBindery(Moldable* broadcaster)
             broadcaster->enterPressed().connect(this, &EventBindery::enterSlot);
             break;
 
-        case Triggers::index_changed:
-            broadcaster->stackIndexChanged().connect(this,
+        case Triggers::index_changed:{
+            MoldableStack* stacked = (MoldableStack*) broadcaster;
+            stacked->stackIndexChanged().connect(this,
                 &EventBindery::indexChangedSlot);
-            break;
+            break;}
 
-        case Triggers::hidden_changed:
+        case Triggers::hidden_changed:{
             broadcaster->hiddenChanged().connect(this,
                 &EventBindery::hiddenChangedSlot);
-            break;
+            break;}
 
-        case Triggers::onload:
+        case Triggers::onload:{
             broadcaster->onLoad().connect(this, &EventBindery::onLoadSlot);
-            break;
+            break;}
 
         default:
             return;

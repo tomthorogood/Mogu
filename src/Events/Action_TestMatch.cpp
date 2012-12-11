@@ -12,7 +12,6 @@
 namespace Events {
 namespace ActionCenter {
 namespace Actions {
-using Goo::Moldable;
 
 bool test(
     Moldable& widget, NodeValue& val)
@@ -21,7 +20,7 @@ bool test(
     app->interpreter().giveInput(val.getString(), val);
 
     if (widget.allowsAction(Enums::SignalActions::match)) {
-        return val.getString().find(widget.valueCallback()) != std::string::npos;
+        return val.getString().find(widget.moldableValue()) != std::string::npos;
     }
 
     return false;

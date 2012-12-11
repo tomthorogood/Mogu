@@ -24,7 +24,7 @@ public:
     }
 
     Listener(
-        Goo::Moldable* w)
+        Moldable* w)
     {
         __init__();
         __widget = w;
@@ -39,7 +39,7 @@ public:
         type = string;
     }
 
-    inline Goo::Moldable& getWidget()
+    inline Moldable& getWidget()
     {
         return *__widget;
     }
@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    Goo::Moldable* __widget;
+    Moldable* __widget;
     std::string __string;
     Type type;
 

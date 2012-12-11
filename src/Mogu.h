@@ -12,10 +12,11 @@
 #include <Wt/WApplication>
 #include <signal.h>
 #include <Redis/RedisCore.h>
-#include <Core/Moldable.h>
+#include <Moldable/Moldable.h>
 #include <Types/ApplicationManager.h>
 #include <Security/UserManager.h>
 #include <Parsers/NodeValueParser.h>
+#include <Factories/MoldableFactory.h>
 
 #ifndef AUTH_TOKEN
 #define AUTH_TOKEN "BendTheWeb"
@@ -97,7 +98,7 @@ public:
     }
 
     /*!\brief Returns a widget from the registry based on its name. */
-    inline Goo::Moldable* registeredWidget(
+    inline Moldable* registeredWidget(
         std::string name)
     {
         return widgetRegister[name];

@@ -9,7 +9,7 @@
 #define MOLDABLEACTIONCENTER_H_
 
 #include <declarations.h>
-#include <Core/Moldable.h>
+#include <Moldable/Moldable.h>
 #include <Events/BroadcastMessage.h>
 
 namespace Events {
@@ -82,8 +82,7 @@ bool reset_password(
     std::string username);
 bool change_password(
     std::string username, std::string new_pass);
-bool test(
-    Goo::Moldable&, NodeValue&);
+bool test(Moldable&, NodeValue&);
 bool true_test(NodeValue&, NodeValue&);
 bool emit(
     Listeners& listeners, std::string& sig);

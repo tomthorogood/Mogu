@@ -1,12 +1,12 @@
 /*
- * GooRedis.h
+ * RedisCore.h
  *
  *  Created on: Jul 14, 2012
  *      Author: tom
  */
 
-#ifndef GOOREDIS_H_
-#define GOOREDIS_H_
+#ifndef MOGUREDIS_H_
+#define MOGUREDIS_H_
 
 #ifndef REDIS_CONFIG
 #define REDIS_CONFIG
@@ -41,4 +41,4 @@ inline bool getBool(
 
 }    //namespace Redis
 
-#endif /* GOOREDIS_H_ */
+#endif /* MOGUREDIS_H_ */

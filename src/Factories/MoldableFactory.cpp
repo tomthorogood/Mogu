@@ -7,6 +7,7 @@
 
 #include "MoldableFactory.h"
 #include <Moldable/Implementations.h>
+#include <Parsers/Parsers.h>
 #include <Mogu.h>
 
 MoldableFactory::MoldableFactory ()
@@ -41,7 +42,7 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
         s_type = redisReply_STRING;
     }
     app->interpreter().giveInput(s_type, v, NULL,
-        Parsers::enum_callback <Parsers::WidgetTypeParser>);
+        &Parsers::enum_callback <Parsers::WidgetTypeParser>);
     e_type = (WidgetTypes) v.getInt();
     switch(e_type)
     {
@@ -65,6 +66,6 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
         return new MoldableForEach(node);
     case memberlist:
         return new MoldableForEachUser(node);
+    default: return new MoldableContainer("");
     }
-
 }

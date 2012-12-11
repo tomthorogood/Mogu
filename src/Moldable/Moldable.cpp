@@ -10,17 +10,25 @@
 #include <Mogu.h>
 #include <Events/Bindery.h>
 #include <Types/NodeValue.h>
+#include <Wt/WStackedWidget>
+#include <Parsers/Parsers.h>
 
 
 Moldable::Moldable (const std::string& node)
-: __node(node)
-,__style_changed(this)
+:
+__style_changed(this)
 ,__failed_test(this)
 ,__succeeded_test(this)
 ,__loaded(this)
 ,__hidden_changed(this)
+,__node(node)
 {
     __init__();
+}
+
+Moldable::~Moldable()
+{
+    if (__bindery != NULL) delete __bindery;
 }
 
 void Moldable::__init__ ()
@@ -41,29 +49,13 @@ void Moldable::__init__ ()
     std::string events = __node.addPrefix("widgets") + ".events";
     app->redisExec(Mogu::Keep, "exists %s", events.c_str());
     has_events = redisReply_TRUE ? true : false;
-
-    std::string children = __node.addPrefix("widgets")+".children";
-    app->redisExec(Mogu::Keep, "exists %s", children.c_str());
-    has_children = redisReply_TRUE ? true : false;
 }
 
 void Moldable::load()
 {
-    if (loaded()) return;
+    if (loaded() && !force_reload) return;
     Wt::WContainerWidget::load();
-    if (has_children) {
-        mApp;
-        const MoldableFactory& factory = app->getFactory();
-        std::string n_children = __node.addPrefix("widgets") + ".children";
-        app->redisExec(Mogu::Keep, "llen %s", n_children.c_str());
-        int i_children = redisReply_INT;
-        for (size_t i = 0; i < i_children; ++i)
-        {
-            app->redisExec(Mogu::Keep, "lindex %s %d", n_children.c_str(), i);
-            std::string s_child = redisReply_STRING;
-            addWidget(factory.createMoldableWidget(s_child));
-        }
-    }
+
     if (has_events) __bindery = new Events::EventBindery(this);
 }
 
@@ -130,4 +122,25 @@ void Moldable::getState(Enums::WidgetTypes::States state, NodeValue& val)
         val.setInt(0);
         break;
     }
+}
+
+bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
+{
+    mApp;
+    std::string node = __node.addPrefix("widgets");
+    app->redisExec(Mogu::Keep, "hexists %s block", node.c_str());
+    if (!redisReply_TRUE) return true;
+
+    app->redisExec(Mogu::Keep, "hget %s block", node.c_str());
+    std::string blocks = redisReply_STRING;
+
+    Parsers::MoguScript_Tokenizer tokens(blocks);
+    Parsers::SignalActionParser p;
+
+    std::string block;
+    do {
+        block = tokens.next();
+        if (p.parse(block) == action) return false;
+    } while (block != EMPTY);
+    return true;
 }

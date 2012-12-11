@@ -10,6 +10,7 @@
 
 #include "Moldable.h"
 #include <Wt/WLink>
+#include <Wt/WImage>
 
 class MoldableImage : public Moldable
 {

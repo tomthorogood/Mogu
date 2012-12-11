@@ -10,14 +10,14 @@
 
 #include <Events/MoldableActionCenter.h>
 #include <Events/BroadcastMessage.h>
+#include <Moldable/Implementations.h>
 #include <Wt/WStackedWidget>
-#include <Core/Moldable.h>
+#include <Moldable/Moldable.h>
 #include <Types/Listener.h>
 
 namespace Events {
 namespace ActionCenter {
 namespace Actions {
-using Goo::Moldable;
 namespace Action = Enums::SignalActions;
 
 inline void emitHiddenChangedSignals(Moldable& hidden, Moldable& visible)
@@ -33,7 +33,7 @@ void set_index(
 {
     size_t num_listeners = listeners.size();
     for (size_t i = 0; i < num_listeners; i++) {
-        Moldable& widget = listeners.at(i)->getWidget();
+        MoldableStack& widget = (MoldableStack&) listeners.at(i)->getWidget();
         if (widget.allowsAction(Action::set_index)) {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget.widget(0);
             Moldable* current = (Moldable*) stack->currentWidget();
@@ -51,7 +51,7 @@ void increment_index(
 {
     int num_listeners = listeners.size();
     for (int w = 0; w < num_listeners; w++) {
-        Moldable& widget = listeners.at(w)->getWidget();
+        MoldableStack& widget = (MoldableStack&) listeners.at(w)->getWidget();
         if (widget.allowsAction(Action::increment_index)) {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget.widget(0);
             int current_index = stack->currentIndex();
@@ -71,7 +71,7 @@ void decrement_index(
 {
     int num_listeners = listeners.size();
     for (int w = 0; w < num_listeners; w++) {
-        Moldable& widget = listeners.at(w)->getWidget();
+        MoldableStack& widget = (MoldableStack&) listeners.at(w)->getWidget();
         if (widget.allowsAction(Action::decrement_index)) {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget.widget(0);
             int current_index = stack->currentIndex();

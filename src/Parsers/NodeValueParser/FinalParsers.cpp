@@ -32,7 +32,7 @@ inline std::string convert_nv_to_string(
 
 void parse_single_static_token(
     NodeValue& v, std::string& input, NodeValueParser::Outputs tokentype,
-    Goo::Moldable* broadcaster, int (*enumcallback)(
+    Moldable* broadcaster, int (*enumcallback)(
         const std::string&))
 {
     std::string inputcpy = input;
@@ -86,7 +86,7 @@ void parse_session_node(
 
 void parse_data_node(
     NodeValue& v, std::string& base, std::string arg,
-    NodeValueParser::Outputs arg_type, Goo::Moldable* broadcaster)
+    NodeValueParser::Outputs arg_type, Moldable* broadcaster)
 {
     using namespace Enums::NodeValueTypes::RedisTypes;
     mApp;
@@ -126,7 +126,7 @@ void parse_data_node(
 
 void parse_widget_state(
     NodeValue& v, std::string widget_identifier, std::string& state,
-    Goo::Moldable* broadcaster)
+    Moldable* broadcaster)
 {
     std::string uw_state = state.substr(1, state.length() - 2);
     WidgetStateParser p;
@@ -138,7 +138,7 @@ void parse_widget_state(
         mApp;
         std::string uw_id = widget_identifier.substr(1,
             widget_identifier.length() - 2);
-        Goo::Moldable* widget = app->registeredWidget(uw_id);
+        Moldable* widget = app->registeredWidget(uw_id);
         widget->getState(p.parse(uw_state), v);
     }
 }

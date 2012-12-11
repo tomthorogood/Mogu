@@ -126,7 +126,7 @@ public:
 
     NodeValueParser();
     NodeValueParser(
-        std::string input, NodeValue& v, Goo::Moldable* broadcaster = 0,
+        std::string input, NodeValue& v, Moldable* broadcaster = 0,
         int (*enumparser)(
             const std::string&) =0);
 
@@ -136,7 +136,7 @@ public:
 
     /*!\brief Allows the automaton to remain live for multiple uses. */
     void giveInput(
-        std::string input, NodeValue& v, Goo::Moldable* broadcaster = 0,
+        std::string input, NodeValue& v, Moldable* broadcaster = 0,
         int (*enumparser)(
             const std::string&) =0);
 
@@ -210,7 +210,7 @@ private:
     void __init__();
 
     /*!\brief The widget that invoked the NVP */
-    Goo::Moldable* __broadcaster;
+    Moldable* __broadcaster;
 
     /*!\brief The callback that will be used if an enum is parsed. If this
      * is not passed in, but an enum is attempted, an error will be thrown.
@@ -268,7 +268,7 @@ NodeValueParser::Outputs getMoguType(
  */
 void parse_single_static_token(
     NodeValue& v, std::string& input, NodeValueParser::Outputs tokentype,
-    Goo::Moldable* broadcaster = 0, int (*enumcallback)(
+    Moldable* broadcaster = 0, int (*enumcallback)(
         const std::string&)=0);
 
 /*!\brief Resolves a node from within a user's keyspace within the Redis instance.
@@ -292,7 +292,7 @@ void parse_session_node(
 void parse_data_node(
     NodeValue& v, std::string& base, std::string arg = EMPTY,
     NodeValueParser::Outputs arg_type = NodeValueParser::string_value,
-    Goo::Moldable* broadcaster = NULL);
+    Moldable* broadcaster = NULL);
 
 /*!\brief Resolves information about a widget currently displayed on the
  * user's screen.
@@ -304,7 +304,7 @@ void parse_data_node(
  */
 void parse_widget_state(
     NodeValue& v, std::string widget_identifier, std::string& state,
-    Goo::Moldable* broadcaster = 0);
+    Moldable* broadcaster = 0);
 
 }    //namespace Parser
 #endif /* NVPAUTOMATON_H_ */

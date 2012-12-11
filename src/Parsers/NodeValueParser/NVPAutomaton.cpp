@@ -7,7 +7,7 @@
 
 #include <Parsers/NodeValueParser/NVPAutomaton.h>
 #include <Exceptions/Exceptions.h>
-#include <Core/Moldable.h>
+#include <Moldable/Moldable.h>
 
 namespace Parsers {
 using namespace Automaton;
@@ -63,7 +63,8 @@ NodeValueParser::Outputs getMoguType(
     default:
         ntype =
             (token == "->") ?
-                NodeValueParser::access_token : NodeValueParser::string_value;
+            NodeValueParser::access_token : NodeValueParser::string_value;
+        break;
     }
     return ntype;
 }
@@ -75,7 +76,7 @@ NodeValueParser::NodeValueParser()
 }
 
 NodeValueParser::NodeValueParser(
-    std::string input, NodeValue& v, Goo::Moldable* broadcaster,
+    std::string input, NodeValue& v, Moldable* broadcaster,
     int (*enumcallback)(
         const std::string& str))
     : FiniteAutomatonTmpl<std::string, void, NVP_States>()
@@ -85,7 +86,7 @@ NodeValueParser::NodeValueParser(
 }
 
 void NodeValueParser::giveInput(
-    std::string input, NodeValue& v, Goo::Moldable* broadcaster,
+    std::string input, NodeValue& v, Moldable* broadcaster,
     int (*enumcallback)(
         const std::string& str))
 {

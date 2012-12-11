@@ -22,7 +22,6 @@ using namespace Parsers::StyleParser;
 using namespace Enums::Validators;
 using Parsers::ValidatorTypeParser;
 using std::string;
-using Goo::Moldable;
 
 Wt::WValidator* createValidator(
     std::string validatorName)

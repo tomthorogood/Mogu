@@ -31,8 +31,6 @@ protected:
 
     std::string assertStartsWith (const std::string& prefix) const
     {
-        size_t prf_len = prefix.length();
-        size_t str_len = __str.length();
         size_t incl_index = __str.find(prefix);
         if (incl_index == std::string::npos) return prefix + __str;
         return
@@ -45,6 +43,7 @@ protected:
     }
 
 public:
+    FixedString(){}
     FixedString(const std::string& str){__str = str;}
     FixedString(const std::string&& str) { __str = str;}
     FixedString(const FixedString& fstr) {__str = fstr.str();}
