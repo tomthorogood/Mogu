@@ -13,11 +13,17 @@ MoldableText::MoldableText(const std::string& node)
 {
     mApp;
     __text = new Wt::WText;
-    std::string param = getParameter("contents");
+    std::string param = getParameter("content");
     NodeValue v;
     app->interpreter().giveInput(param, v);
     if (v.getString() != EMPTY)
+    {
         __text->setText(v.getString());
+    }
+    else
+    {
+        bool f = true;
+    }
     addWidget(__text);
 
 }

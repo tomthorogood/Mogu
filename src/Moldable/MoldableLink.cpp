@@ -11,8 +11,14 @@
 MoldableLink::MoldableLink (const std::string& node)
 : Moldable(node)
 {
-    std::string href = getParameter("location");
-    std::string text = getParameter("contents");
+    mApp;
+    NodeValue v;
+    std::string param = getParameter("location");
+    app->interpreter().giveInput(param,v);
+    std::string href = v.getString();
+    param = getParameter("content");
+    app->interpreter().giveInput(param,v);
+    std::string text = v.getString();
     __link = new Wt::WAnchor(href, text);
     //TODO Add support for toggling target
     __link->setTarget(Wt::TargetNewWindow);

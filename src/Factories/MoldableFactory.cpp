@@ -30,11 +30,11 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
         {
             app->redisExec(Mogu::Keep, "hget %s %s", node.c_str(), "template");
             MoguNode template_(redisReply_STRING);
-            std::string tmpl = template_.addPrefix("templates.");
+            std::string tmpl = template_.addPrefix("templates");
             app->redisExec(Mogu::Keep, "hget %s %s", tmpl.c_str(), "type");
             s_type = redisReply_STRING;
         }
-        s_type = "{container}";
+        else s_type = "{container}";
     }
     else
     {

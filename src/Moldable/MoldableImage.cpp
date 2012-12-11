@@ -11,8 +11,16 @@
 MoldableImage::MoldableImage (const std::string& node)
 : Moldable(node)
 {
-    std::string src = getParameter("source");
-    std::string alt = getParameter("contents");
+    NodeValue v;
+    mApp;
+
+    std::string param = getParameter("source");
+    app->interpreter().giveInput(param, v);
+    std::string src = v.getString();
+
+    param = getParameter("content");
+    app->interpreter().giveInput(param,v);
+    std::string alt = v.getString();
     __image = new Wt::WImage(src, alt);
     addWidget(__image);
 }

@@ -21,7 +21,7 @@ MoldableForEachUser::MoldableForEachUser(const std::string& node)
 
 
     // Get the content we'll be parsing for each user:
-    app->redisExec(Mogu::Keep, "hget %s contents", node.c_str());
+    app->redisExec(Mogu::Keep, "hget %s content", node.c_str());
     std::string contents = redisReply_STRING;
 
     // Convert reference into string object ON PURPOSE! We need the original.

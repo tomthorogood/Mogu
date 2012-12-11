@@ -32,7 +32,7 @@ MoldableForEach::MoldableForEach(const std::string& node)
      * s = string
      * v = vector
      */
-    app->redisExec(Mogu::Keep, "hget %s contents", node.c_str());
+    app->redisExec(Mogu::Keep, "hget %s content", node.c_str());
     Parsers::MoguScript_Tokenizer t(redisReply_STRING);
     MoguNode n_data(t.next());
     std::string s_data = n_data.addPrefix("data");
