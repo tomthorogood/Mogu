@@ -24,6 +24,9 @@ class Moldable : public Wt::WContainerWidget
 
     void __init__();
 
+    bool has_events;
+    bool has_children;
+
 protected:
     MoguNode __node;
     std::string getParameter(const std::string& param);
@@ -52,6 +55,8 @@ public:
     {
         return __node.addPrefix("widgets");
     }
+
+    virtual void load();
 
     inline Wt::Signal <> styleChanged() { return __style_changed; }
     inline Wt::Signal <> fail() { return __failed_test; }

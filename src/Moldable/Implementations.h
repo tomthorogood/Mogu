@@ -15,7 +15,9 @@
 #include "MoldablePassword.h"
 #include "MoldableImage.h"
 #include "MoldableLink.h"
-#include "MoldablelImageLink.h"
+#include "MoldableImageLink.h"
+#include "MoldableForEach.h"
+#include "MoldableForEachUser.h"
 
 
 #endif /* IMPLEMENTATIONS_H_ */

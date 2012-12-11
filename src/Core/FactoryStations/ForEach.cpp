@@ -89,7 +89,7 @@ ForEachGroupMember::ForEachGroupMember(
 void ForEachGroupMember::getNumChildren()
 {
     const std::string& mogu_id = app->getUserManager().getMoguID();
-
+    GroupManager groupManager;
     std::vector<std::string>& accessible = groupManager.getMembership(
         groupManager.getMemberRank(mogu_id), 0);
     __tmpl.num_children = accessible.size();

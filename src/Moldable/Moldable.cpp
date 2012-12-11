@@ -40,7 +40,31 @@ void Moldable::__init__ ()
 
     std::string events = __node.addPrefix("widgets") + ".events";
     app->redisExec(Mogu::Keep, "exists %s", events.c_str());
-    if (redisReply_TRUE) __bindery = new Events::EventBindery(this);
+    has_events = redisReply_TRUE ? true : false;
+
+    std::string children = __node.addPrefix("widgets")+".children";
+    app->redisExec(Mogu::Keep, "exists %s", children.c_str());
+    has_children = redisReply_TRUE ? true : false;
+}
+
+void Moldable::load()
+{
+    if (loaded()) return;
+    Wt::WContainerWidget::load();
+    if (has_children) {
+        mApp;
+        const MoldableFactory& factory = app->getFactory();
+        std::string n_children = __node.addPrefix("widgets") + ".children";
+        app->redisExec(Mogu::Keep, "llen %s", n_children.c_str());
+        int i_children = redisReply_INT;
+        for (size_t i = 0; i < i_children; ++i)
+        {
+            app->redisExec(Mogu::Keep, "lindex %s %d", n_children.c_str(), i);
+            std::string s_child = redisReply_STRING;
+            addWidget(factory.createMoldableWidget(s_child));
+        }
+    }
+    if (has_events) __bindery = new Events::EventBindery(this);
 }
 
 std::string Moldable::getParameter(const std::string& param)

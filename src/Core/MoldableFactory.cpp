@@ -61,6 +61,10 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
         return new MoldableInput(node);
     case password:
         return new MoldablePassword(node);
+    case foreach:
+        return new MoldableForEach(node);
+    case memberlist:
+        return new MoldableForEachUser(node);
     }
 
 }
