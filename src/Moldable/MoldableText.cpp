@@ -20,10 +20,6 @@ MoldableText::MoldableText(const std::string& node)
     {
         __text->setText(v.getString());
     }
-    else
-    {
-        bool f = true;
-    }
     addWidget(__text);
 
 }

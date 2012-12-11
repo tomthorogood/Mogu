@@ -27,10 +27,10 @@ class Moldable : public Wt::WContainerWidget
     void __init__();
 
     bool has_events;
-    bool has_children;
-    bool force_reload;
 
 protected:
+    bool force_reload;
+
     MoguNode __node;
     std::string getParameter(const std::string& param);
     inline std::string getParameter(const std::string&& param)

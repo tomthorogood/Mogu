@@ -18,7 +18,7 @@ MoldableAbstractParent::MoldableAbstractParent (const std::string& node)
 }
 
 void MoldableAbstractParent::load(){
-    if (loaded()) return;
+    if (loaded() && !force_reload) return;
     Moldable::load();
     if (has_children) {
 #ifdef DEBUG
