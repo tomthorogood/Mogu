@@ -22,10 +22,10 @@ class Moldable : public Wt::WContainerWidget
     Wt::Signal <> __loaded;
     Wt::Signal <> __hidden_changed;
 
-    MoguNode __node;
-
     void __init__();
 
+protected:
+    MoguNode __node;
     std::string getParameter(const std::string& param);
     std::string getParameter(const std::string&& param);
 

@@ -19,8 +19,7 @@ MoldableStack::MoldableStack(const std::string& node)
         app->interpreter().giveInput(param, v, NULL
             , Parsers::enum_callback <Parsers::WtAnimationParser>);
         Wt::WAnimation transition( (Wt::WAnimation::AnimationEffect) v.getInt);
-        __stack->animateHide(transition);
-        __stack->animateShow(transition);
+        __stack->setTransitionAnimation(transition, true);
     }
     Wt::WContainerWidget::addWidget(__stack);
 }
