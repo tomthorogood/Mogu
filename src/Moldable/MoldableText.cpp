@@ -11,6 +11,12 @@
 MoldableText::MoldableText(const std::string& node)
 : Moldable(node)
 {
+    __init__();
+}
+
+void MoldableText::__init__()
+{
+    //Moldable::__init__();
     mApp;
     __text = new Wt::WText;
     std::string param = getParameter("content");
@@ -21,6 +27,5 @@ MoldableText::MoldableText(const std::string& node)
         __text->setText(v.getString());
     }
     addWidget(__text);
-
 }
 

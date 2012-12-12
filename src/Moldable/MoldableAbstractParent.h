@@ -15,6 +15,7 @@ class MoldableAbstractParent : public Moldable
 protected:
     bool has_children;
     std::vector <Moldable*> __moldable_children;
+    virtual void __init__();
 public:
     MoldableAbstractParent (const std::string& node);
     virtual void load();
@@ -25,6 +26,16 @@ public:
 
     inline Moldable* moldableChild(size_t index) {
         return __moldable_children[index];
+    }
+
+    inline virtual void reload()
+    {
+        clear();
+        force_reload = true;
+        Moldable::__init__();
+        __init__();
+        load();
+        force_reload = false;
     }
 };
 

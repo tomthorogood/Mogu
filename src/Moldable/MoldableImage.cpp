@@ -11,6 +11,12 @@
 MoldableImage::MoldableImage (const std::string& node)
 : Moldable(node)
 {
+    __init__();
+}
+
+void MoldableImage::__init__()
+{
+    //Moldable::__init__();
     NodeValue v;
     mApp;
 

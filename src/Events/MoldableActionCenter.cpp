@@ -335,7 +335,6 @@ void directListeners(
     case Action::reload: {
         for (size_t w = 0; w < num_listeners; w++) {
             Moldable& widget = broadcast.listeners[w]->getWidget();
-            widget.clear();
             widget.reload();
         }
         break;

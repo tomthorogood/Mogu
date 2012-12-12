@@ -15,6 +15,8 @@ class MoldableLink : public Moldable
 {
 protected:
     Wt::WAnchor* __link;
+    virtual void __init__();
+
 public:
     MoldableLink (const std::string& node);
 
@@ -25,6 +27,15 @@ public:
 
     // Not currently supported in Wt
     inline virtual void setMoldableValue(const std::string& str) {}
+
+    inline virtual void reload()
+    {
+        force_reload = true;
+        Moldable::__init__();
+        __init__();
+        load();
+        force_reload = false;
+    }
 };
 
 #endif /* MOLDABLELINK_H_ */

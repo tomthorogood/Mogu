@@ -15,6 +15,10 @@
 class MoldableImage : public Moldable
 {
     Wt::WImage* __image;
+
+protected:
+    virtual void __init__();
+
 public:
     MoldableImage(const std::string& node);
 
@@ -25,6 +29,16 @@ public:
 
     //Currently, this operation is unsupported by Wt.
     inline virtual void setMoldableValue(const std::string& str_src) {}
+
+    inline virtual void reload()
+    {
+        force_reload = true;
+        clear();
+        Moldable::__init__();
+        __init__();
+        load();
+        force_reload = false;
+    }
 };
 
 

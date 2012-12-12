@@ -13,6 +13,12 @@
 MoldableStack::MoldableStack(const std::string& node)
 : MoldableAbstractParent(node)
 {
+    __init__();
+}
+
+void MoldableStack::__init__()
+{
+    //MoldableAbstractParent::__init__();
     mApp;
     __stack = new Wt::WStackedWidget();
     std::string param = getParameter("animation");
@@ -25,4 +31,3 @@ MoldableStack::MoldableStack(const std::string& node)
     }
     Wt::WContainerWidget::addWidget(__stack);
 }
-

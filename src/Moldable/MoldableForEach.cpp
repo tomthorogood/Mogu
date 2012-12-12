@@ -15,6 +15,12 @@
 MoldableForEach::MoldableForEach(const std::string& node)
 : MoldableContainer(node)
 {
+    __init__();
+}
+
+void MoldableForEach::__init__()
+{
+    //MoldableContainer::__init__();
     mApp;
     const MoldableFactory& factory = app->getFactory();
 
@@ -22,17 +28,17 @@ MoldableForEach::MoldableForEach(const std::string& node)
     setStyleClass(" ");
 
     //ForEach widgets must have a template
-    app->redisExec(Mogu::Keep, "hget %s template", node.c_str());
+    app->redisExec(Mogu::Keep, "hget %s template", getNode().c_str());
     MoguNode n_template(redisReply_STRING);
     std::string s_template = n_template.addPrefix("templates");
 
     /* Get the data that will be used to populate the widgets
-     * n = node
-     * i = int
-     * s = string
-     * v = vector
-     */
-    app->redisExec(Mogu::Keep, "hget %s content", node.c_str());
+    * n = node
+    * i = int
+    * s = string
+    * v = vector
+    */
+    app->redisExec(Mogu::Keep, "hget %s content", getNode().c_str());
     Parsers::MoguScript_Tokenizer t(redisReply_STRING);
     MoguNode n_data(t.next());
     std::string s_data = n_data.addPrefix("data");
@@ -53,5 +59,3 @@ MoldableForEach::MoldableForEach(const std::string& node)
         addWidget(moldable_child);
     }
 }
-
-

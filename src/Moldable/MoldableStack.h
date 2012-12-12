@@ -16,6 +16,9 @@ class MoldableStack : public MoldableAbstractParent
 {
     Wt::WStackedWidget* __stack;
     Wt::Signal <> __stack_index_changed;
+protected:
+    virtual void __init__();
+
 public:
     MoldableStack (const std::string& node);
 
@@ -29,6 +32,16 @@ public:
     }
 
     inline Wt::Signal <>& stackIndexChanged() { return __stack_index_changed;}
+
+    inline virtual void reload()
+    {
+        force_reload = true;
+        Moldable::__init__();
+        MoldableAbstractParent::__init__();
+        __init__();
+        load();
+        force_reload = false;
+    }
 };
 
 

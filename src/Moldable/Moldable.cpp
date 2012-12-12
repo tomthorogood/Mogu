@@ -65,9 +65,6 @@ void Moldable::__init__ ()
 
 void Moldable::load()
 {
-#ifdef DEBUG
-    std::cout << "Loading " << getNode() << std::endl;
-#endif
     if (loaded() && !force_reload) return;
     Wt::WContainerWidget::load();
 
@@ -77,30 +74,18 @@ void Moldable::load()
 std::string Moldable::getParameter(const std::string& param)
 {
     mApp;
-#ifdef DEBUG
-    std::cout << "Checking paramater " << param;
-#endif
     std::string dbnode = __node.addPrefix("widgets");
     app->redisExec(Mogu::Keep, "hexists %s %s", dbnode.c_str(), param.c_str());
     if (redisReply_TRUE)
     {
-#ifdef DEBUG
-        std::cout << ", found it!" << std::endl;
-#endif
         app->redisExec(Mogu::Keep, "hget %s %s", dbnode.c_str(), param.c_str());
         return redisReply_STRING;
     }
     else
     {
-#ifdef DEBUG
-        std::cout << ", didn't find it. Checking for a template. " << std::endl;
-#endif
         app->redisExec(Mogu::Keep, "hexists %s template", dbnode.c_str());
         if (redisReply_TRUE)
         {
-#ifdef DEBUG
-            std::cout << " Found one. Checking for " << param << "...";
-#endif
             app->redisExec(Mogu::Keep, "hget %s template", dbnode.c_str());
             MoguNode tpl(redisReply_STRING);
             std::string template_ = tpl.addPrefix("templates");
@@ -108,19 +93,12 @@ std::string Moldable::getParameter(const std::string& param)
                 , template_.c_str(), param.c_str());
             if (redisReply_TRUE)
             {
-#ifdef DEBUG
-                std::cout << "found it!" << std::endl;
-#endif
                 app->redisExec(Mogu::Keep, "hget %s %s"
                     , template_.c_str(), param.c_str());
                 return redisReply_STRING;
             }
         }
     }
-#ifdef DEBUG
-    std::cout << "...no joy. RETURNING EMPTY!" << std::endl;
-#endif
-
     return EMPTY;
 }
 

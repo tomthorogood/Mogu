@@ -11,6 +11,12 @@
 MoldableLink::MoldableLink (const std::string& node)
 : Moldable(node)
 {
+    __init__();
+}
+
+void MoldableLink::__init__()
+{
+    ///Moldable::__init__();
     mApp;
     NodeValue v;
     std::string param = getParameter("location");

@@ -12,6 +12,12 @@
 MoldableInput::MoldableInput (const std::string& node)
 : Moldable(node)
 {
+    __init__();
+}
+
+void MoldableInput::__init__()
+{
+    //Moldable::__init__();
     mApp;
     NodeValue v;
     __input = new Wt::WLineEdit();

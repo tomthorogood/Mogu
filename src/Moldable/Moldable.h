@@ -24,12 +24,12 @@ class Moldable : public Wt::WContainerWidget
     Wt::Signal <> __loaded;
     Wt::Signal <> __hidden_changed;
 
-    void __init__();
 
     bool has_events;
 
 protected:
     bool force_reload;
+    virtual void __init__();
 
     MoguNode __node;
     std::string getParameter(const std::string& param);
@@ -73,6 +73,8 @@ public:
     virtual void inline reload()
     {
         force_reload = true;
+        clear();
+        __init__();
         load();
         force_reload = false;
     }

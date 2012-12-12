@@ -11,6 +11,12 @@
 MoldableAbstractParent::MoldableAbstractParent (const std::string& node)
 : Moldable(node)
 {
+    __init__();
+}
+
+void MoldableAbstractParent::__init__()
+{
+    //Moldable::__init__();
     mApp;
     std::string children = getNode() + ".children";
     app->redisExec(Mogu::Keep, "exists %s", children.c_str());

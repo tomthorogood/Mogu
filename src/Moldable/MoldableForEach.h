@@ -12,8 +12,20 @@
 
 class MoldableForEach : public MoldableContainer
 {
+protected:
+    virtual void __init__();
 public:
     MoldableForEach (const std::string& node);
+    inline virtual void reload()
+    {
+        clear();
+        force_reload = true;
+        Moldable::__init__();
+        MoldableAbstractParent::__init__();
+        __init__();
+        load();
+        force_reload = false;
+    }
 
 };
 

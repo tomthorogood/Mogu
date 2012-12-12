@@ -12,6 +12,12 @@
 MoldableForEachUser::MoldableForEachUser(const std::string& node)
 : MoldableContainer(node)
 {
+    __init__();
+}
+
+void MoldableForEachUser::__init__()
+{
+    //MoldableContainer::__init__();
     mApp;
     std::vector <std::string> memberSessions;
     std::vector <std::string> values;
@@ -21,7 +27,7 @@ MoldableForEachUser::MoldableForEachUser(const std::string& node)
 
 
     // Get the content we'll be parsing for each user:
-    app->redisExec(Mogu::Keep, "hget %s content", node.c_str());
+    app->redisExec(Mogu::Keep, "hget %s content", getNode().c_str());
     std::string contents = redisReply_STRING;
 
     // Convert reference into string object ON PURPOSE! We need the original.
@@ -57,7 +63,7 @@ MoldableForEachUser::MoldableForEachUser(const std::string& node)
 
     setStyleClass(" ");
 
-    app->redisExec(Mogu::Keep, "hget %s template", node.c_str());
+    app->redisExec(Mogu::Keep, "hget %s template", getNode().c_str());
     MoguNode n_template = redisReply_STRING;
     std::string s_template = n_template.addPrefix("templates");
 
@@ -67,6 +73,4 @@ MoldableForEachUser::MoldableForEachUser(const std::string& node)
         moldable_child->setMoldableValue(values[i]);
         addWidget(moldable_child);
     }
-
 }
-

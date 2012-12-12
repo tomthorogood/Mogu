@@ -13,6 +13,12 @@
 MoldableImageLink::MoldableImageLink(const std::string& node)
 : MoldableLink(node)
 {
+    __init__();
+}
+
+void MoldableImageLink::__init__()
+{
+    //MoldableLink::__init__();
     std::string param = getParameter("source");
     mApp;
     NodeValue v;
@@ -22,5 +28,4 @@ MoldableImageLink::MoldableImageLink(const std::string& node)
     __link->setImage(__image);
     __link->setTarget(Wt::TargetNewWindow);
 }
-
 

@@ -16,6 +16,7 @@ class MoldableInput : public Moldable
 {
 protected:
     Wt::WLineEdit* __input;
+    virtual void __init__();
 public:
     MoldableInput (const std::string& node);
 
@@ -35,6 +36,15 @@ public:
             return;
         }
         fail().emit();
+    }
+
+    inline virtual void reload()
+    {
+        force_reload = true;
+        Moldable::__init__();
+        __init__();
+        load();
+        force_reload = false;
     }
 };
 

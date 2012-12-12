@@ -14,6 +14,8 @@
 class MoldableText : public Moldable
 {
     Wt::WText* __text;
+protected:
+    virtual void __init__();
 public:
     MoldableText(const std::string& node);
 
@@ -23,6 +25,15 @@ public:
 
     inline virtual void setMoldableValue(const std::string& value) {
         __text->setText(value);
+    }
+
+    inline virtual void reload()
+    {
+        force_reload = true;
+        Moldable::__init__();
+        __init__();
+        load();
+        force_reload = false;
     }
 
 };
