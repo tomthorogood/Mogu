@@ -239,34 +239,6 @@ void directListeners(
         break;
     }
 
-        /* Removes a widget from the tree. */
-        /* Note: Does not delete the widget! (?) */
-    /*case Action::remove_child: {
-        for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::remove_child)) {
-                Moldable* child = NULL;
-                ReadType msg_type;
-                msg_type = message.getType();
-                if (msg_type == string_value) {
-                    std::string msg = message.getString();
-                    if (app->widgetIsRegistered(msg)) {
-                        child = app->registeredWidget(msg);
-                    }
-                }
-                else {
-                    int msg = message.getInt();
-                    child = (Moldable*) widget.widget(msg);
-                }
-               // if (child != NULL) {
-               //     widget.removeChild(child);
-               // }
-            }
-
-        }
-        break;
-    }*/
-
     case Action::clear: {
         for (size_t w = 0; w < num_listeners; w++) {
             Moldable& widget = broadcast.listeners[w]->getWidget();

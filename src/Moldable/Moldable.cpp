@@ -14,6 +14,30 @@
 #include <Parsers/Parsers.h>
 
 
+TemplateNodeReply::TemplateNodeReply(const char* widgetnode, const char* field)
+{
+    mApp;
+    app->redisExec(Mogu::Keep, "hexists %s template", widgetnode);
+    exists = redisReply_TRUE;
+
+    if (exists)
+    {
+       app->redisExec(Mogu::Keep, "hget %s template", widgetnode);
+       MoguNode tpl(redisReply_STRING);
+       std::string template_ = tpl.addPrefix("templates");
+       app->redisExec(Mogu::Keep, "hexists %s %s", template_.c_str(), field);
+       exists = redisReply_TRUE;
+       if (exists)
+       {
+           app->redisExec(Mogu::Keep, "hget %s %s", template_.c_str(), field);
+           response = redisReply_STRING;
+
+       }
+       else response = EMPTY;
+    }
+    else response = EMPTY;
+}
+
 Moldable::Moldable (const std::string& node)
 :
 __style_changed(this)
@@ -71,6 +95,40 @@ void Moldable::load()
     if (has_events) __bindery = new Events::EventBindery(this);
 }
 
+bool Moldable::hasProperty(const std::string& property){
+
+    mApp;
+    Redis::strvector v_reply;
+    std::string dbnode = __node.addPrefix("widgets") + ".properties";
+    app->redisExec(Mogu::Keep, "exists %s", dbnode.c_str());
+    if (redisReply_TRUE)
+    {
+        app->redisExec(Mogu::Keep, "sismember %s %s",
+            dbnode.c_str(), property.c_str());
+        return redisReply_TRUE;
+    }
+    else
+    {
+        app->redisExec(Mogu::Keep, "hexists %s template", dbnode.c_str());
+        if (redisReply_TRUE)
+        {
+            app->redisExec(Mogu::Keep, "hget %s template", dbnode.c_str());
+            MoguNode tpl(redisReply_STRING);
+            std::string tplnode = tpl.addPrefix("templates");
+            std::string tplprop = tplnode + ".properties";
+            app->redisExec(Mogu::Keep, "exists %s", tplprop.c_str());
+            if (redisReply_TRUE)
+            {
+                app->redisExec(Mogu::Keep, "sismember %s %s",
+                    tplprop.c_str(), property.c_str());
+                return redisReply_TRUE;
+            }
+            else return false;
+        }
+        else return false;
+    }
+}
+
 std::string Moldable::getParameter(const std::string& param)
 {
     mApp;
@@ -83,21 +141,8 @@ std::string Moldable::getParameter(const std::string& param)
     }
     else
     {
-        app->redisExec(Mogu::Keep, "hexists %s template", dbnode.c_str());
-        if (redisReply_TRUE)
-        {
-            app->redisExec(Mogu::Keep, "hget %s template", dbnode.c_str());
-            MoguNode tpl(redisReply_STRING);
-            std::string template_ = tpl.addPrefix("templates");
-            app->redisExec(Mogu::Keep, "hexists %s %s"
-                , template_.c_str(), param.c_str());
-            if (redisReply_TRUE)
-            {
-                app->redisExec(Mogu::Keep, "hget %s %s"
-                    , template_.c_str(), param.c_str());
-                return redisReply_STRING;
-            }
-        }
+        TemplateNodeReply reply(dbnode.c_str(), param.c_str());
+        return reply.response;
     }
     return EMPTY;
 }

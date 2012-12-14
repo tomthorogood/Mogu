@@ -29,4 +29,8 @@ void MoldableImage::__init__()
     std::string alt = v.getString();
     __image = new Wt::WImage(src, alt);
     addWidget(__image);
+    if (hasProperty("scaled"))
+    {
+        __image->addStyleClass("mogu_SCALED_IMAGE");
+    }
 }

@@ -14,6 +14,13 @@
 #include <Types/MoguNode.h>
 #include <Types/NodeValue.h>
 
+struct TemplateNodeReply {
+    bool exists;
+    std::string response;
+
+    TemplateNodeReply(const char* widgetnode, const char* field);
+};
+
 class Moldable : public Wt::WContainerWidget
 {
     Events::EventBindery* __bindery;
@@ -36,6 +43,12 @@ protected:
     inline std::string getParameter(const std::string&& param)
     {
         return getParameter(param);
+    }
+
+    bool  hasProperty(const std::string& property);
+    inline bool  hasProperty(const std::string&& property)
+    {
+        return hasProperty(property);
     }
 
 public:
