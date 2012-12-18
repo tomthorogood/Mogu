@@ -58,6 +58,12 @@ $(turnleft):
 	cd TurnLeftLib && $(MAKE) && sudo $(MAKE) install
 	rm -rf TurnLeftLib
 
+src/Types/syntax.h: syntax/create_syntax_map
+	cp syntax/syntax.h $@
+
+syntax/create_syntax_map:
+	cd syntax && $(MAKE)
+
 upgrade:
 	$(MAKE) uninstall
 	$(MAKE)
@@ -66,6 +72,7 @@ upgrade:
 clean:
 	rm -rf $(objects)
 	rm -rf *.pyc
+	cd syntax && $(MAKE) clean
 
 purge: clean
 	rm -rf mogu-server

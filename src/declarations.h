@@ -18,6 +18,7 @@
 #include <exception>
 #include <utility>
 #include <map>
+#include <unordered_map>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
