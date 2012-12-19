@@ -67,11 +67,11 @@ struct EmailPacket
 bool change_session();
 bool register_user();
 void set_index(
-    Listeners& listeners, int& index);
+    std::vector<Listener*>& listeners, int& index);
 void increment_index(
-    Listeners& listeners);
+    std::vector<Listener*>& listeners);
 void decrement_index(
-    Listeners& listeners);
+    std::vector<Listener*>& listeners);
 std::string get_user_email(
     std::string username);
 int send_system_email(
@@ -85,9 +85,9 @@ bool change_password(
 bool test(Moldable&, NodeValue&);
 bool true_test(NodeValue&, NodeValue&);
 bool emit(
-    Listeners& listeners, std::string& sig);
+    std::vector<Listener*>& listeners, std::string& sig);
 bool store(
-    Listeners& listeners, NodeValue& message);
+    std::vector<Listener*>& listeners, NodeValue& message);
 }    //namespace Actions
 
 }    //Namspace ActionCenter

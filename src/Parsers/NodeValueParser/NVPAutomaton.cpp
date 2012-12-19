@@ -76,30 +76,26 @@ NodeValueParser::NodeValueParser()
 }
 
 NodeValueParser::NodeValueParser(
-    std::string input, NodeValue& v, Moldable* broadcaster,
-    int (*enumcallback)(
-        const std::string& str))
+    std::string input
+    , NodeValue& v
+    , Moldable* broadcaster)
     : FiniteAutomatonTmpl<std::string, void, NVP_States>()
 {
     __init__();
-    giveInput(input, v, broadcaster, enumcallback);
+    giveInput(input, v, broadcaster);
 }
 
 void NodeValueParser::giveInput(
-    std::string input, NodeValue& v, Moldable* broadcaster,
-    int (*enumcallback)(
-        const std::string& str))
+    std::string input, NodeValue& v, Moldable* broadcaster)
 {
     __iovalue = &v;
     __broadcaster = broadcaster;
-    __enumcallback = enumcallback;
     giveInput(input);
 }
 
 void NodeValueParser::__init__()
 {
     __broadcaster = 0;
-    __enumcallback = 0;
 
     __vo_Start = 0xFFFF;
     __vo_ABCL = 0xF;
@@ -207,8 +203,10 @@ void NodeValueParser::giveInput(
     switch (current_state) {
     case NVP_ABCL_F:
     case NVP_E_TF:
-        parse_single_static_token(*__iovalue, tokens[0], tokenTypes[0],
-            __broadcaster, __enumcallback);
+        parse_single_static_token(
+            *__iovalue
+            , tokens[0]
+            , tokenTypes[0]);
         break;
 
     case NVP_D_F:

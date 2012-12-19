@@ -21,22 +21,12 @@ namespace Maps {
 typedef std::map<std::string, std::string> Strings;
 }
 
-namespace Events {
-typedef std::vector<Listener*> Listeners;
-}
-
 typedef TurnLeft::Utils::HungryVector<char> CharVector;
 typedef std::map<std::string, Moldable*> WidgetRegister;
 
 typedef std::vector<std::pair<char, char> > CharCouplets;
 
-typedef std::pair<std::string, Enums::NodeValueTypes::NodeValueTypes> decl_pair;
-typedef std::vector<decl_pair> MoguDeclaration;
-
 typedef std::pair<std::string, int> TokenCycles;
-
-typedef Enums::NodeValueTypes::TokenTestResult (*__m_token_test)(
-    Parsers::TokenTestPackage&);
 
 typedef int (*__m_enm_parse)(
     const std::string&);

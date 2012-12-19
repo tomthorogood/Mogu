@@ -39,6 +39,12 @@ void SyntaxReader::read_line(const std::string& line) {
     //delim = 3
     std::string enumerated = input.substr(0, delim);
     std::string str_eq = input.substr(delim+1);
+    for (std::pair <std::string, std::vector<std::string> > pr: __tpairs__) {
+        if (pr.first == str_eq)
+        {
+            return;
+        }
+    }
     std::vector <std::string> wordlist = word_list(str_eq);
     __tpairs__.push_back(std::make_pair(enumerated, wordlist));
 }

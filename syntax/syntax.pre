@@ -8,6 +8,20 @@ children:children,child
 siblings:siblings,sibling
 application:application,app
 
+# Triggers
+click:click
+mouseover:mouseover
+mouseout:mouseout
+style_changed:style_changed
+keyup:keyup
+fail:fail
+succeed:succeed
+enter_pressed:enter_pressed,enter
+index_changed:index_changed
+hidden_changed:hidden_changed
+onload:onload
+
+
 
 # Actions
 change:change
@@ -16,8 +30,8 @@ subtract:subtract,remove
 multiply:multiply
 divide:divide
 clear:clear
-increment:increment,incr
-decrement:decrement,decr
+increment:increment,incr,increment_index
+decrement:decrement,decr,decrement_index
 test:test,match
 email:email
 reload:reload,refresh
@@ -28,6 +42,24 @@ pop:pop
 fade:fade
 emit:emit
 count:count
+bubble:bubble
+set_index:set_index
+set_internal_path:set_internal_path
+register_user:register:user
+change_session:change_session
+activate_global:activate_global
+email_user:email_user
+reset_password:reset_password
+set_style
+change_group:change_group
+add_self_to_group:add_self_to_group
+add_other_to_group:add_other_to_group
+add_class:add_class
+remove_class:remove_class
+add_widget:add_widget
+store_value:store,store_value
+set_text:set_text
+
 
 # Directions
 right:right
@@ -47,7 +79,7 @@ user:user
 slot:slot
 javascript:javascript
 value:value
-link:link
+anchor:link
 image:image
 submit:submit
 radio:radio
@@ -64,3 +96,7 @@ index:index
 name:name
 hidden:hidden
 value:value
+text:text
+image_link:image_link
+memberlist:memberlist
+set:set

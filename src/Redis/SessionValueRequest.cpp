@@ -17,7 +17,6 @@
 
 namespace Redis {
 
-using namespace Enums::SubmissionPolicies;
 
 SessionValueRequest::SessionValueRequest(
     std::vector<std::string>& session_ids, const std::string& key,
@@ -78,22 +77,22 @@ void SessionValueRequest::process_request(
         if (redisReply_TRUE) {
             if (arg != EMPTY) {
                 const char* carg = arg.c_str();
-                if (lookup.getStorageType() == hash) {
-                    app->redisCommand("hexists %s %s", cnode, carg);
+                if (lookup.getStorageType() == Tokens::hash) {
+                    app->redisExec(Mogu::Keep, "hexists %s %s", cnode, carg);
                     if (redisReply_TRUE) break;
                 }
-                else if (lookup.getStorageType() == list) {
-                    app->redisCommand("llen %s", cnode);
+                else if (lookup.getStorageType() == Tokens::list) {
+                    app->redisExec(Mogu::Keep, "llen %s", cnode);
                     if (redisReply_INT> atoi(carg) )
                     break;
                 }
-                else if (lookup.getStorageType() == set)
+                else if (lookup.getStorageType() == Tokens::set)
                 {
                     app->redisCommand("sismember %s", cnode);
                     if (redisReply_TRUE) break;
                 }
             }
-            else if (lookup.getStorageType() != Enums::SubmissionPolicies::string)
+            else if (lookup.getStorageType() != Tokens::string)
             {
                 //TODO THROW ERROR
             }
@@ -106,14 +105,14 @@ void SessionValueRequest::process_request(
     const char* carg = arg.c_str();
 
     switch (lookup.getStorageType()) {
-    case Enums::SubmissionPolicies::string:
-        app->redisCommand("get %s", cnode);
+    case Tokens::string:
+        app->redisExec(Mogu::Keep, "get %s", cnode);
         break;
-    case hash:
-        app->redisCommand("hget %s %s", cnode, carg);
+    case Tokens::hash:
+        app->redisExec(Mogu::Keep, "hget %s %s", cnode, carg);
         break;
-    case list:
-        app->redisCommand("lindex %s %d", cnode, atoi(carg));
+    case Tokens::list:
+        app->redisExec(Mogu::Keep, "lindex %s %d", cnode, atoi(carg));
         break;
     default:
         break;

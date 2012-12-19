@@ -126,24 +126,18 @@ public:
 
     NodeValueParser();
     NodeValueParser(
-        std::string input, NodeValue& v, Moldable* broadcaster = 0,
-        int (*enumparser)(
-            const std::string&) =0);
+        std::string input, NodeValue& v, Moldable* broadcaster = 0);
 
     /*!\brief Implemented from FiniteAutomatonTmpl */
-    void giveInput(
-        std::string input);
+    void giveInput(std::string input);
 
     /*!\brief Allows the automaton to remain live for multiple uses. */
     void giveInput(
-        std::string input, NodeValue& v, Moldable* broadcaster = 0,
-        int (*enumparser)(
-            const std::string&) =0);
+        std::string input, NodeValue& v, Moldable* broadcaster = 0);
 
     inline void reset()
     {
         __broadcaster = 0;
-        __enumcallback = 0;
         __iovalue = 0;
         tokens.clear();
         tokenTypes.clear();
@@ -212,13 +206,6 @@ private:
     /*!\brief The widget that invoked the NVP */
     Moldable* __broadcaster;
 
-    /*!\brief The callback that will be used if an enum is parsed. If this
-     * is not passed in, but an enum is attempted, an error will be thrown.
-     * @param A string to be parsed from the callback.
-     * @return An integral representation of that string.
-     */
-    int (*__enumcallback)(
-        const std::string&);
 };
 
 using Automaton::State;
@@ -264,12 +251,11 @@ NodeValueParser::Outputs getMoguType(
  * @param input The input string.
  * @param tokentype The type of the input, as determined by getMoguType
  * @param broadcaster (optional) The widget invoking the parser
- * @param enumcallback (optional) A callback to resolve numerated types
  */
 void parse_single_static_token(
-    NodeValue& v, std::string& input, NodeValueParser::Outputs tokentype,
-    Moldable* broadcaster = 0, int (*enumcallback)(
-        const std::string&)=0);
+    NodeValue& v
+    , std::string& input
+    , NodeValueParser::Outputs tokentype);
 
 /*!\brief Resolves a node from within a user's keyspace within the Redis instance.
  *
@@ -279,7 +265,9 @@ void parse_single_static_token(
  * @param arg_type (optional, used if node is a lsit or hash)
  */
 void parse_session_node(
-    NodeValue& v, std::string& base, std::string arg = EMPTY,
+    NodeValue& v
+    , std::string& base
+    , std::string arg = EMPTY,
     NodeValueParser::Outputs arg_type = NodeValueParser::string_value);
 
 /*!\brief Resolves a node from within the data keyspace, globally accessible.
@@ -290,7 +278,9 @@ void parse_session_node(
  * @param arg_type (optional, used if node is a list or hash)
  */
 void parse_data_node(
-    NodeValue& v, std::string& base, std::string arg = EMPTY,
+    NodeValue& v
+    , std::string& base
+    , std::string arg = EMPTY,
     NodeValueParser::Outputs arg_type = NodeValueParser::string_value,
     Moldable* broadcaster = NULL);
 
@@ -303,8 +293,10 @@ void parse_data_node(
  * the identifier is {self}.
  */
 void parse_widget_state(
-    NodeValue& v, std::string widget_identifier, std::string& state,
-    Moldable* broadcaster = 0);
+    NodeValue& v
+    , std::string widget_identifier
+    , std::string& state
+    , Moldable* broadcaster = 0);
 
-}    //namespace Parser
+}    //namespace Parsers
 #endif /* NVPAUTOMATON_H_ */

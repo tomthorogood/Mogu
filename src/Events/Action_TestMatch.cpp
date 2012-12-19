@@ -19,7 +19,7 @@ bool test(
     mApp;
     app->interpreter().giveInput(val.getString(), val);
 
-    if (widget.allowsAction(Enums::SignalActions::match)) {
+    if (widget.allowsAction(Tokens::test)) {
         return val.getString().find(widget.moldableValue()) != std::string::npos;
     }
 

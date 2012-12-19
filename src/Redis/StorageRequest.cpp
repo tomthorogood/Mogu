@@ -7,7 +7,6 @@
 
 #include <Redis/StorageRequest.h>
 #include <Redis/StoragePolicyLookup.h>
-#include <Parsers/StyleParser.h>
 #include <Security/Security.h>
 #include <hash.h>
 #include <Mogu.h>
@@ -55,22 +54,21 @@ bool StorageRequest::policyLookup()
 void StorageRequest::build_command()
 {
     mApp;
-    using namespace Enums::SubmissionPolicies;
     //All other entities must first have been set.
 
     //TODO add ability to lpush or rpush
-    StorageType nodetype = lookup->getStorageType();
+    Tokens::MoguTokens nodetype = lookup->getStorageType();
     switch (nodetype) {
-    case Enums::SubmissionPolicies::string:
+    case Tokens::string:
         command = "set %s";
         break;
-    case list:
+    case Tokens::list:
         command = "rpush %s %s";
         break;
-    case hash:
+    case Tokens::hash:
         command = "hset %s %s %s";
         break;
-    case set:
+    case Tokens::set:
         command = "sadd %s %s";
         break;
     }
@@ -95,6 +93,7 @@ void StorageRequest::build_command()
         break;
     default:
         f_value = value.getString();
+        break;
     }
 
     if (lookup->isEncrypted()) f_value = Security::encrypt(f_value);

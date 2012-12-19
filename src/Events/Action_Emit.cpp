@@ -15,14 +15,14 @@ namespace ActionCenter {
 namespace Actions {
 
 bool emit(
-    Listeners& listeners, std::string& sig)
+    std::vector<Listener*>& listeners, std::string& sig)
 {
     size_t sz = listeners.size();
     for (size_t i = 0; i < sz; i++) {
-        Listener& listener = *(listeners.at(i));
-        if (listener.getType() != listener.widget) return false;
-        Moldable& widget = listeners.at(i)->getWidget();
-        if (!widget.allowsAction(Enums::SignalActions::emit)) continue;
+        Listener* listener = listeners[i];
+        if (listener->getType() != listener->widget) return false;
+        Moldable& widget = listener->getWidget();
+        if (!widget.allowsAction(Tokens::emit)) continue;
 
         if (sig == "click") {
             Wt::WMouseEvent m;

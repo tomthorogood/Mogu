@@ -6,27 +6,28 @@
  */
 
 #include <Events/EventPreprocessor.h>
-#include <Parsers/StyleParser.h>
-#include <Parsers/Parsers.h>
 #include <Redis/RedisCore.h>
 #include <Types/NodeValue.h>
 #include <Parsers/MoguScript_Tokenizer.h>
 #include <Exceptions/Exceptions.h>
+#include <Mogu.h>
 
 namespace Events {
 
-using namespace Enums::SignalActions;
-using namespace Enums::SignalTriggers;
-using namespace Parsers::StyleParser;
 using Exceptions::Err_MissingProperty;
 
-inline std::string valOrEmpty(
-    const std::string& node, const char* field, std::string alternate = EMPTY)
+std::string EventPreprocessor::getHashEntry(
+    const std::string& node, const char* field)
 {
-    return
-        (widgetHasProperty(node, field)) ?
-            getWidgetProperty(node, field) : alternate;
-
+    std::string result = EMPTY;
+    mApp;
+    app->redisExec(Mogu::Keep, "hexists %s %s", node.c_str(), field);
+    if (redisReply_TRUE)
+    {
+        app->redisExec(Mogu::Keep, "hget %s %s", node.c_str(), field);
+        result = redisReply_STRING;
+    }
+    return result;
 }
 
 EventPreprocessor::EventPreprocessor(
@@ -35,47 +36,49 @@ EventPreprocessor::EventPreprocessor(
     mApp;
     NodeValue v;
 
-    std::string trigger_str = getHashEntry(node, event_num, "trigger");
-    std::string msg_str = getHashEntry(node, event_num, "message", " ");
-    std::string action_str = getHashEntry(node, event_num, "action");
+    MoguNode n_node(node);
+    std::string i_event = itoa(event_num);
+    std::string s_node = n_node.addSuffix(i_event);
+
+    std::string trigger_str = getHashEntry(s_node, "trigger");
+    std::string msg_str = getHashEntry(s_node, "message");
+    if (msg_str == EMPTY) msg_str = " ";
+    std::string action_str = getHashEntry(s_node, "action");
     message.original = msg_str;
 
-    std::string listener_str = getHashEntry(node, event_num, "listener");
+    std::string listener_str = getHashEntry(s_node, "listener");
     if (listener_str == EMPTY)
-        listener_str = getHashEntry(node, event_num, "listeners");
+        listener_str = getHashEntry(s_node, "listeners");
 
-    std::string degrad_str = getHashEntry(node, event_num, "degradation");
+    std::string degrad_str = getHashEntry(s_node, "degradation");
 
     if (degrad_str != EMPTY) {
         app->interpreter().giveInput(degrad_str, v);
         degradation = v.getInt();
-        std::string nxt_str = getHashEntry(node, event_num, "nextAction");
+        std::string nxt_str = getHashEntry(s_node, "nextAction");
 
         if (nxt_str != EMPTY) {
-            app->interpreter().giveInput(nxt_str, v, NONE,
-                &Parsers::enum_callback<Parsers::SignalActionParser>);
-            next_action = (SignalAction) v.getInt();
+            app->interpreter().giveInput(nxt_str, v, NONE);
+            next_action = (Tokens::MoguTokens) v.getInt();
         }
         else
-            next_action = (Enums::SignalActions::SignalAction) 0;
+            next_action = Tokens::__NONE__;
     }
     else {
         degradation = 0;
-        next_action = Enums::SignalActions::NO_ACTION;
+        next_action = Tokens::__NONE__;
     }
 
     /*The trigger string will always be parseable to an enumerated type,
      * so we can do that now.
      */
     if (trigger_str == EMPTY) trigger_str = "{click}";
-    app->interpreter().giveInput(trigger_str, v, NONE,
-        &Parsers::enum_callback<Parsers::SignalTriggerParser>);
-    trigger = (SignalTrigger) v.getInt();
+    app->interpreter().giveInput(trigger_str, v);
+    trigger = (Tokens::MoguTokens) v.getInt();
 
     if (action_str == EMPTY) throw Err_MissingProperty(node, "action");
-    app->interpreter().giveInput(action_str, v, NONE,
-        &Parsers::enum_callback<Parsers::SignalActionParser>);
-    action = (SignalAction) v.getInt();
+    app->interpreter().giveInput(action_str, v);
+    action = (Tokens::MoguTokens) v.getInt();
 
     /* The listener will either be an enumerated type OR a string. Passing
      * it through the NVP will yield the final result and tell us what type
@@ -84,15 +87,14 @@ EventPreprocessor::EventPreprocessor(
      * at event firing.
      */
     if (listener_str == EMPTY) listener_str = "{self}";
-    app->interpreter().giveInput(listener_str, v, NONE,
-        Parsers::enum_callback<Parsers::FamilyMemberParser>);
+    app->interpreter().giveInput(listener_str, v, NONE);
 
     if (v.getType() == string_value) {
         listener.s_listener = v.getString();
         listener.type = listener.string;
     }
     else {
-        listener.f_listener = (Enums::Family::_Family) v.getInt();
+        listener.f_listener = (Tokens::MoguTokens) v.getInt();
         listener.type = listener.widget;
     }
 

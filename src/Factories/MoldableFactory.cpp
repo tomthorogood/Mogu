@@ -7,7 +7,6 @@
 
 #include "MoldableFactory.h"
 #include <Moldable/Implementations.h>
-#include <Parsers/Parsers.h>
 #include <Mogu.h>
 
 MoldableFactory::MoldableFactory ()
@@ -18,9 +17,8 @@ MoldableFactory::MoldableFactory ()
 Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 {
     mApp;
-    using namespace Enums::WidgetTypes;
     std::string s_type;
-    WidgetTypes e_type;
+    Tokens::MoguTokens e_type;
     NodeValue v;
     app->redisExec(Mogu::Keep, "hexists %s %s", node.c_str(), "type");
     if (!redisReply_TRUE)
@@ -41,30 +39,29 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
         app->redisExec(Mogu::Keep, "hget %s %s", node.c_str(), "type");
         s_type = redisReply_STRING;
     }
-    app->interpreter().giveInput(s_type, v, NULL,
-        &Parsers::enum_callback <Parsers::WidgetTypeParser>);
-    e_type = (WidgetTypes) v.getInt();
+    app->interpreter().giveInput(s_type, v);
+    e_type = (Tokens::MoguTokens) v.getInt();
     switch(e_type)
     {
-    case container:
+    case Tokens::container:
         return new MoldableContainer(node);
-    case stack:
+    case Tokens::stack:
         return new MoldableStack(node);
-    case text:
+    case Tokens::text:
         return new MoldableText(node);
-    case Enums::WidgetTypes::link:
+    case Tokens::anchor:
         return new MoldableLink(node);
-    case image:
+    case Tokens::image:
         return new MoldableImage(node);
-    case image_link:
+    case Tokens::image_link:
         return new MoldableImageLink(node);
-    case input_text:
+    case Tokens::input:
         return new MoldableInput(node);
-    case password:
+    case Tokens::password:
         return new MoldablePassword(node);
-    case foreach:
+    case Tokens::foreach:
         return new MoldableForEach(node);
-    case memberlist:
+    case Tokens::memberlist:
         return new MoldableForEachUser(node);
     default: return new MoldableContainer("");
     }

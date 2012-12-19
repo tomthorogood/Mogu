@@ -17,11 +17,12 @@ namespace ActionCenter {
 namespace Actions {
 
 bool store(
-    Listeners& listeners, NodeValue& message)
+    std::vector <Listener*>& listeners, NodeValue& message)
 {
     size_t num_listeners = listeners.size();
     for (size_t w = 0; w < num_listeners; w++) {
-        Redis::StorageRequest r(listeners.at(w)->getString(), message);
+        Listener* listener = listeners[w];
+        Redis::StorageRequest r(listener->getString(), message);
         if (!r.execute()) return false;
     }
     return true;

@@ -8,6 +8,8 @@
 #ifndef STORAGEPOLICYLOOKUP_H_
 #define STORAGEPOLICYLOOKUP_H_
 
+#include <Types/syntax.h>
+
 namespace Redis {
 
 class StoragePolicyLookup
@@ -23,6 +25,7 @@ class StoragePolicyLookup
         ,
         storagetype = 0x80
     };
+    std::string getHashEntry(const std::string& node, const std::string& field);
 public:
 
     StoragePolicyLookup(
@@ -51,18 +54,18 @@ public:
     {
         return __flags & encrypted;
     }
-    inline Enums::SubmissionPolicies::DataWrapping getDataType()
+    inline Tokens::MoguTokens getDataType()
     {
         uint8_t masked = __flags & 0x38;
         masked >>= 3;
-        return (Enums::SubmissionPolicies::DataWrapping) masked;
+        return (Tokens::MoguTokens) masked;
     }
 
-    inline Enums::SubmissionPolicies::StorageType getStorageType()
+    inline Tokens::MoguTokens getStorageType()
     {
         uint8_t masked = __flags & 0xC0;
         masked >>= 6;
-        return (Enums::SubmissionPolicies::StorageType) masked;
+        return (Tokens::MoguTokens) masked;
     }
 };
 

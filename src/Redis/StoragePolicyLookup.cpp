@@ -9,15 +9,26 @@
 #include <Types/NodeValue.h>
 #include <Redis/StoragePolicyLookup.h>
 #include <Redis/RedisCore.h>
-#include <Parsers/StyleParser.h>
 #include <Mogu.h>
 
 namespace Redis {
 
+std::string StoragePolicyLookup::getHashEntry(
+    const std::string& node, const std::string& field)
+{
+    mApp;
+    std::string result = EMPTY;
+    app->redisExec(Mogu::Keep, "hexists %s %s", node.c_str(), field.c_str());
+    if (redisReply_TRUE)
+    {
+        app->redisExec(Mogu::Keep, "hget %s %s", node.c_str(), field.c_str());
+    }
+    return result;
+}
+
 StoragePolicyLookup::StoragePolicyLookup(
     const std::string& policyName)
 {
-    using namespace Parsers::StyleParser;
     __flags = 0;
     std::string node = buildPolicyNode(policyName);
     const char* cnode = node.c_str();
@@ -37,8 +48,7 @@ StoragePolicyLookup::StoragePolicyLookup(
 
     str = getHashEntry(node, "mode");
     if (str != EMPTY) {
-        Parsers::NodeValueParser p(str, v, NULL,
-            &Parsers::enum_callback<Parsers::StorageModeParser>);
+        Parsers::NodeValueParser p(str, v);
         if (v.getInt() > 0) __flags |= set_append;
     }
 
@@ -46,8 +56,7 @@ StoragePolicyLookup::StoragePolicyLookup(
 
     str = getHashEntry(node, "data_type");
     if (str != EMPTY) {
-        Parsers::NodeValueParser p(str, v, NULL,
-            &Parsers::enum_callback<Parsers::StorageWrappingParser>);
+        Parsers::NodeValueParser p(str, v);
         temp |= (uint8_t) v.getInt();
         temp <<= 3;
         __flags |= temp;
@@ -56,8 +65,7 @@ StoragePolicyLookup::StoragePolicyLookup(
 
     str = getHashEntry(node, "storage_type");
     if (str != EMPTY) {
-        Parsers::NodeValueParser p(str, v, NULL,
-            &Parsers::enum_callback<Parsers::StorageTypeParser>);
+        Parsers::NodeValueParser p(str, v, NULL);
         temp |= (uint8_t) v.getInt();
         temp <<= 6;
         __flags |= temp;

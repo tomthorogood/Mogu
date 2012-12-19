@@ -13,17 +13,16 @@
 #include <TurnLeftLib/TurnLeft.h>
 #include <TurnLeftLib/Utils/enumparser.h>
 
-#include <Types/Enums.h>
 #include <string>
 #include <exception>
 #include <utility>
 #include <map>
-#include <unordered_map>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <Config/inline_utils.h>
 #include <iostream>
+#include <Types/syntax.h>
 
 #include <Config/forward_declarations.h>
 #include <Config/typedefs.h>

@@ -17,7 +17,6 @@
 #include <Mogu.h>
 #include <Moldable/Moldable.h>
 #include <Factories/MoldableFactory.h>
-#include <Parsers/StyleParser.h>
 #include <Perspectives/PerspectiveHandler.h>
 #include <hash.h>
 #include <Wt/WOverlayLoadingIndicator>

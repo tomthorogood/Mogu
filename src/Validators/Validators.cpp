@@ -6,21 +6,16 @@
  */
 
 #include <Validators/Validators.h>
-
-#include <Types/Enums.h>
-#include <Parsers/StyleParser.h>
-#include <Parsers/Parsers.h>
 #include <Wt/WValidator>
 #include <Wt/WRegExpValidator>
 #include <Redis/RedisCore.h>
 #include <Types/NodeValue.h>
 #include <Wt/WApplication>
 #include <Exceptions/Exceptions.h>
+#include <Mogu.h>
+#include <Types/syntax.h>
 namespace Validators {
 
-using namespace Parsers::StyleParser;
-using namespace Enums::Validators;
-using Parsers::ValidatorTypeParser;
 using std::string;
 
 Wt::WValidator* createValidator(
@@ -29,13 +24,13 @@ Wt::WValidator* createValidator(
     mApp;
     Wt::WValidator* validator = 0;
     string validator_node = "validators." + validatorName;
-    string vtype = Parsers::StyleParser::getHashEntry(validator_node, "type");
+    app->redisExec(Mogu::Keep, "hget %s type", validator_node.c_str());
+    string vtype =  redisReply_STRING;
     if (vtype == EMPTY) throw Exceptions::Err_MissingProperty(vtype, "type");
     NodeValue vval;
-    app->interpreter().giveInput(vtype, vval, NULL,
-        Parsers::enum_callback<Parsers::ValidatorTypeParser>);
+    app->interpreter().giveInput(vtype, vval);
     switch (vval.getInt()) {
-    case regex: {
+    case Tokens::regex: {
         validator = (Wt::WValidator*) createRegexValidator(validator_node);
         break;
     }
@@ -46,8 +41,10 @@ Wt::WValidator* createValidator(
 Wt::WRegExpValidator* createRegexValidator(
     string node)
 {
+    mApp;
     Wt::WRegExpValidator* validator = 0;
-    string pattern = Parsers::StyleParser::getHashEntry(node, "test");
+    app->redisExec(Mogu::Keep, "hget %s test", node.c_str());
+    string pattern = redisReply_STRING;
     if (pattern == EMPTY) throw Exceptions::Err_MissingProperty(node, "test");
     Wt::WString wpattern(pattern);
     validator = new Wt::WRegExpValidator(wpattern);

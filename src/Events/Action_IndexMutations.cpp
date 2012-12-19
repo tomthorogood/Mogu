@@ -18,7 +18,6 @@
 namespace Events {
 namespace ActionCenter {
 namespace Actions {
-namespace Action = Enums::SignalActions;
 
 inline void emitHiddenChangedSignals(Moldable& hidden, Moldable& visible)
 {
@@ -29,12 +28,13 @@ inline void emitHiddenChangedSignals(Moldable& hidden, Moldable& visible)
 
 
 void set_index(
-    Listeners& listeners, int& new_index)
+    std::vector <Listener*>& listeners, int& new_index)
 {
     size_t num_listeners = listeners.size();
     for (size_t i = 0; i < num_listeners; i++) {
-        MoldableStack& widget = (MoldableStack&) listeners.at(i)->getWidget();
-        if (widget.allowsAction(Action::set_index)) {
+        Listener* listener = listeners[i];
+        MoldableStack& widget = (MoldableStack&) listener->getWidget();
+        if (widget.allowsAction(Tokens::set_index)) {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget.widget(0);
             Moldable* current = (Moldable*) stack->currentWidget();
             stack->setCurrentIndex(new_index);
@@ -47,12 +47,13 @@ void set_index(
 }
 
 void increment_index(
-    Listeners& listeners)
+    std::vector <Listener*>& listeners)
 {
     int num_listeners = listeners.size();
     for (int w = 0; w < num_listeners; w++) {
-        MoldableStack& widget = (MoldableStack&) listeners.at(w)->getWidget();
-        if (widget.allowsAction(Action::increment_index)) {
+        Listener* listener = listeners[w];
+        MoldableStack& widget = (MoldableStack&) listener->getWidget();
+        if (widget.allowsAction(Tokens::increment)) {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget.widget(0);
             int current_index = stack->currentIndex();
             Moldable* current_widget = (Moldable*) stack->currentWidget();
@@ -67,12 +68,13 @@ void increment_index(
 }
 
 void decrement_index(
-    Listeners& listeners)
+    std::vector <Listener*>& listeners)
 {
     int num_listeners = listeners.size();
     for (int w = 0; w < num_listeners; w++) {
-        MoldableStack& widget = (MoldableStack&) listeners.at(w)->getWidget();
-        if (widget.allowsAction(Action::decrement_index)) {
+        Listener* listener = listeners[w];
+        MoldableStack& widget = (MoldableStack&) listener->getWidget();
+        if (widget.allowsAction(Tokens::decrement)) {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget.widget(0);
             int current_index = stack->currentIndex();
             Moldable* current_widget = (Moldable*) stack->currentWidget();

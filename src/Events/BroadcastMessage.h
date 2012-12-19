@@ -18,7 +18,7 @@ typedef NodeValue NodeValue;
 struct BroadcastMessage
 {
     Moldable* broadcaster;
-    Listeners listeners;
+    std::vector <Listener*> listeners;
     EventPreprocessor* properties;
     BroadcastMessage(
         Moldable*, EventPreprocessor*);

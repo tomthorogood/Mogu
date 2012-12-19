@@ -9,7 +9,6 @@
 #include <Moldable/Moldable.h>
 #include <Moldable/Implementations.h>
 #include <Events/EventPreprocessor.h>
-#include <Parsers/Parsers.h>
 #include <Parsers/MoguScript_Tokenizer.h>
 #include <stdio.h>
 #include <Mogu.h>
@@ -17,9 +16,6 @@
 
 namespace Events {
 using std::string;
-
-namespace Action = Enums::SignalActions;
-namespace Labels = Enums::Labels;
 
 BroadcastMessage::BroadcastMessage(
     Moldable* _broadcaster, EventPreprocessor* preproc)
@@ -53,16 +49,15 @@ BroadcastMessage::~BroadcastMessage()
 
 void BroadcastMessage::updateAction()
 {
-    if (properties->next_action == Enums::SignalActions::NO_ACTION) return;
+    if (properties->next_action == Tokens::__NONE__) return;
 
-    Enums::SignalActions::SignalAction current = properties->action;
+    Tokens::MoguTokens current = properties->action;
     properties->action = properties->next_action;
     properties->next_action = current;
 }
 
 void BroadcastMessage::resolveListeners()
 {
-    using namespace Enums::SignalActions;
     listeners.clear();
     /*!\brief First, determine if we need to deal with any bubbling or
      * trickling effects.
@@ -71,7 +66,7 @@ void BroadcastMessage::resolveListeners()
     Moldable* iter_widget = broadcaster;
 
     while (--degradation >= 0) {
-        if (properties->action == bubble) {
+        if (properties->action == Tokens::bubble) {
             iter_widget = (Moldable*) iter_widget->parent();
         }
     }
@@ -93,13 +88,13 @@ void BroadcastMessage::resolveListeners()
     updateAction();
     switch (properties->listener.f_listener) {
 
-    case Enums::Family::parent: {
+    case Tokens::parent: {
         Moldable* m = (Moldable*) iter_widget->parent();
         listeners.push_back(new Listener(m));
         break;
     }
 
-    case Enums::Family::siblings: {
+    case Tokens::siblings: {
         MoldableAbstractParent* parent =
             static_cast <MoldableAbstractParent*>(iter_widget->parent());
 
@@ -111,7 +106,7 @@ void BroadcastMessage::resolveListeners()
         break;
     }
 
-    case Enums::Family::children: {
+    case Tokens::children: {
         MoldableAbstractParent* parent =
             static_cast <MoldableAbstractParent*>(iter_widget);
         size_t num_children = parent->moldableChildren().size();

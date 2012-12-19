@@ -14,7 +14,7 @@
 namespace Events {
 
 typedef std::vector<EventPreprocessor*> PreprocessorVector;
-typedef std::map<Enums::SignalTriggers::SignalTrigger, PreprocessorVector> PreprocessorMap;
+typedef std::map<Tokens::MoguTokens, PreprocessorVector> PreprocessorMap;
 
 class EventBindery: public Wt::WObject
 {
@@ -24,61 +24,61 @@ class EventBindery: public Wt::WObject
     PreprocessorMap __map;
 
     void handleVoidSignal(
-        Enums::SignalTriggers::SignalTrigger trigger);
+        Tokens::MoguTokens trigger);
 
     inline void clickSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::click);
+        handleVoidSignal(Tokens::click);
     }
 
     inline void mouseoverSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::mouseover);
+        handleVoidSignal(Tokens::mouseover);
     }
 
     inline void mouseoutSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::mouseout);
+        handleVoidSignal(Tokens::mouseout);
     }
 
     inline void styleChangedSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::style_changed);
+        handleVoidSignal(Tokens::style_changed);
     }
 
     inline void keyupSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::keyup);
+        handleVoidSignal(Tokens::keyup);
     }
 
     inline void failSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::fail);
+        handleVoidSignal(Tokens::fail);
     }
 
     inline void succeedSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::succeed);
+        handleVoidSignal(Tokens::succeed);
     }
 
     inline void enterSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::enter_pressed);
+        handleVoidSignal(Tokens::enter_pressed);
     }
 
     inline void indexChangedSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::index_changed);
+        handleVoidSignal(Tokens::index_changed);
     }
 
     inline void hiddenChangedSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::hidden_changed);
+        handleVoidSignal(Tokens::hidden_changed);
     }
 
     inline void onLoadSlot()
     {
-        handleVoidSignal(Enums::SignalTriggers::onload);
+        handleVoidSignal(Tokens::onload);
     }
 
 public:

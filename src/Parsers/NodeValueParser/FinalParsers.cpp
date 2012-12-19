@@ -13,8 +13,6 @@
 #include <Exceptions/Exceptions.h>
 #include <Redis/RedisCore.h>
 #include <Mogu.h>
-#include <Parsers/Parsers.h>
-
 #include <Redis/SessionValueRequest.h>
 
 namespace Parsers {
@@ -31,9 +29,9 @@ inline std::string convert_nv_to_string(
 }
 
 void parse_single_static_token(
-    NodeValue& v, std::string& input, NodeValueParser::Outputs tokentype,
-    Moldable* broadcaster, int (*enumcallback)(
-        const std::string&))
+    NodeValue& v
+    , std::string& input
+    , NodeValueParser::Outputs tokentype)
 {
     std::string inputcpy = input;
     if (tokentype != NodeValueParser::string_value) {
@@ -55,10 +53,7 @@ void parse_single_static_token(
         v.setString(Hash::toHash(inputcpy));
         return;
     case NodeValueParser::enum_value:
-        if (enumcallback == 0) {
-            throw Exceptions::Err_NoCallbackGiven("parse_single_static_token");
-        }
-        v.setInt(enumcallback(inputcpy));
+        v.setInt((int) Tokens::syntaxMap.get(inputcpy));
         return;
     default:
         v.setString(inputcpy);
@@ -88,12 +83,11 @@ void parse_data_node(
     NodeValue& v, std::string& base, std::string arg,
     NodeValueParser::Outputs arg_type, Moldable* broadcaster)
 {
-    using namespace Enums::NodeValueTypes::RedisTypes;
     mApp;
     std::string uw_base = base.substr(1, base.length() - 2);
     const char* cbase = uw_base.c_str();
     app->redisCommand("type %s", cbase);
-    std::string node_type = Redis::toString(app->reply());
+    std::string node_type = redisReply_STRING;
 
     if (arg != EMPTY) {
         NodeValue varg;
@@ -108,10 +102,10 @@ void parse_data_node(
 
     const char* carg = arg.c_str();
 
-    if (node_type == REDIS_STR) {
+    if (node_type == Tokens::syntaxMap.get(Tokens::string)) {
         app->redisCommand("get %s", cbase);
     }
-    else if (node_type == REDIS_HSH) {
+    else if (node_type == Tokens::syntaxMap.get(Tokens::hash)) {
         app->redisCommand("hget %s %s", cbase, carg);
     }
     else    //(node_type == REDIS_LST)
@@ -129,17 +123,16 @@ void parse_widget_state(
     Moldable* broadcaster)
 {
     std::string uw_state = state.substr(1, state.length() - 2);
-    WidgetStateParser p;
 
     if (widget_identifier == "{self}") {
-        broadcaster->getState(p.parse(uw_state), v);
+        broadcaster->getState(Tokens::syntaxMap.get(uw_state), v);
     }
     else {
         mApp;
         std::string uw_id = widget_identifier.substr(1,
             widget_identifier.length() - 2);
         Moldable* widget = app->registeredWidget(uw_id);
-        widget->getState(p.parse(uw_state), v);
+        widget->getState(Tokens::syntaxMap.get(uw_state), v);
     }
 }
 

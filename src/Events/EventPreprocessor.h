@@ -20,7 +20,7 @@ struct PreprocessedEventListener
         string, widget,
     };
 
-    Enums::Family::_Family f_listener;
+    Tokens::MoguTokens f_listener;
     std::string s_listener;
     Ltype type;
 
@@ -28,7 +28,7 @@ struct PreprocessedEventListener
     {
         s_listener = EMPTY;
         type = widget;
-        f_listener = Enums::Family::self;
+        f_listener = Tokens::self;
     }
 
     PreprocessedEventListener(
@@ -36,11 +36,11 @@ struct PreprocessedEventListener
     {
         type = string;
         s_listener = listener;
-        f_listener = Enums::Family::self;
+        f_listener = Tokens::self;
     }
 
     PreprocessedEventListener(
-        Enums::Family::_Family& listener)
+        Tokens::MoguTokens& listener)
     {
         type = widget;
         f_listener = listener;
@@ -53,6 +53,7 @@ struct PreprocessedMessage
     {
         processed, delayed
     };
+
     Mtype status;
     std::string original;
     NodeValue value;
@@ -65,9 +66,13 @@ struct PreprocessedMessage
 
 struct EventPreprocessor
 {
-    Enums::SignalTriggers::SignalTrigger trigger;
-    Enums::SignalActions::SignalAction action;
-    Enums::SignalActions::SignalAction next_action;
+    inline std::string
+        getHashEntry(const std::string& node, const std::string& field) {
+        return getHashEntry(node, field.c_str());
+    }
+    std::string getHashEntry(const std::string& node, const char* field);
+    Tokens::MoguTokens trigger, action, next_action;
+
     PreprocessedEventListener listener;
     PreprocessedMessage message;
     Parsers::NodeValueParser::Outputs getListenerType(

@@ -11,7 +11,6 @@
 #include <Events/Bindery.h>
 #include <Types/NodeValue.h>
 #include <Wt/WStackedWidget>
-#include <Parsers/Parsers.h>
 
 
 TemplateNodeReply::TemplateNodeReply(const char* widgetnode, const char* field)
@@ -147,31 +146,30 @@ std::string Moldable::getParameter(const std::string& param)
     return EMPTY;
 }
 
-void Moldable::getState(Enums::WidgetTypes::States state, NodeValue& val)
+void Moldable::getState(Tokens::MoguTokens state, NodeValue& val)
 {
-    using namespace Enums::WidgetTypes;
     switch (state) {
-    case num_children: {
+    case Tokens::children: {
         int n = children().size();
         val.setInt(n);
         break;
     }
-    case current_index: {
+    case Tokens::index: {
         Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
         int n = stack->currentIndex();
         val.setInt(n);
         break;
     }
-    case is_hidden: {
+    case Tokens::hidden: {
         bool v = isHidden();
         val.setInt((int) v);
         break;
     }
-    case value: {
+    case Tokens::value: {
         val.setString(moldableValue());
         break;
     }
-    case currentstyle: {
+    case Tokens::style: {
         val.setString(styleClass().toUTF8());
         break;
     }
@@ -181,7 +179,7 @@ void Moldable::getState(Enums::WidgetTypes::States state, NodeValue& val)
     }
 }
 
-bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
+bool Moldable::allowsAction(Tokens::MoguTokens action)
 {
     mApp;
     std::string node = __node.addPrefix("widgets");
@@ -193,13 +191,12 @@ bool Moldable::allowsAction(Enums::SignalActions::SignalAction action)
     if (blocks == "block") return false;
 
     Parsers::MoguScript_Tokenizer tokens(blocks);
-    Parsers::SignalActionParser p;
 
     std::string block;
     do {
         block = tokens.next();
         if (block == EMPTY) break;
-        if (p.parse(block) == action) return false;
+        if (Tokens::syntaxMap.get(block) == action) return false;
     } while (block != EMPTY);
     return true;
 }

@@ -13,6 +13,7 @@
 #include <Wt/WSignal>
 #include <Types/MoguNode.h>
 #include <Types/NodeValue.h>
+#include <Types/syntax.h>
 
 struct TemplateNodeReply {
     bool exists;
@@ -60,7 +61,7 @@ public:
     virtual std::string moldableValue() =0;
     virtual void setMoldableValue(const std::string&) =0;
     virtual void getState(
-        Enums::WidgetTypes::States state, NodeValue& val);
+        Tokens::MoguTokens state, NodeValue& val);
 
     inline virtual void setStyleClass (const Wt::WString& style)
     {
@@ -81,7 +82,7 @@ public:
     inline Wt::Signal <>& onLoad() { return __loaded; }
     inline Wt::Signal <>& hiddenChanged() { return __hidden_changed; }
 
-    bool allowsAction(Enums::SignalActions::SignalAction action);
+    bool allowsAction(Tokens::MoguTokens action);
 
     virtual void inline reload()
     {

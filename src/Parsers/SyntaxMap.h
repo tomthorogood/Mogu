@@ -8,14 +8,13 @@
 #ifndef MAPREADER_H_
 #define MAPREADER_H_
 
-#include <unordered_map>
 #include <string>
 
 template <typename E>
 class SyntaxMap {
-    std::unordered_map <E, std::string> __etos__;
-    std::unordered_map <std::string, E> __stoe__;
-
+    std::map <E, std::string> __etos__;
+    std::map <std::string, E> __stoe__;
+public:
     SyntaxMap (E enum_entry,std::string str_entry)
     {
         __etos__[enum_entry] = str_entry;
@@ -28,20 +27,24 @@ class SyntaxMap {
         return *this;
     }
 
-    operator std::unordered_map <E, std::string>() {
+    operator std::map <E, std::string>() {
         return __etos__;
     }
 
-    operator std::unordered_map <std::string, E>() {
+    operator std::map <std::string, E>() {
         return __stoe__;
     }
 
     std::string get (E enum_entry) const {
-        return __etos__[enum_entry];
+        auto iter = __etos__.find(enum_entry);
+        if (iter == __etos__.end()) return "";
+        else return iter->second;
     }
 
     E get (std::string str_entry) const {
-        return __stoe__[str_entry];
+        auto iter = __stoe__.find(str_entry);
+        if (iter == __stoe__.end()) return (E) 0;
+        else return iter->second;
     }
 };
 

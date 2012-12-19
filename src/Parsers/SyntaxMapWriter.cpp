@@ -11,7 +11,9 @@ SyntaxMapWriter::SyntaxMapWriter(
    const std::string& e_type
    , const std::string& map_name
    , std::string preface) {
-    __ebuf__ << preface << "\n\nenum " << e_type << "{\n";
+    __ebuf__ << "#ifndef __SYNTAX_H_\n#define __SYNTAX_H_\n";
+    __ebuf__ << preface << "\nnamespace Tokens {\n"
+            << "\n\nenum " << e_type << "{\n";
     __mbuf__ <<
         "\n\nconst static SyntaxMap <" << e_type << "> " << map_name << " ="
         << "SyntaxMap <" << e_type << ">\n";
@@ -34,5 +36,6 @@ void SyntaxMapWriter::write(const char* outfile)
     out.open(outfile);
     out << __ebuf__.str();
     out << __mbuf__.str();
+    out << "\n}//namespace Tokens\n#endif //SYNTAX_H_";
     out.close();
 }

@@ -10,8 +10,6 @@
 #include <Events/MoldableActionCenter.h>
 #include <Events/BroadcastMessage.h>
 #include <Events/EventPreprocessor.h>
-#include <Parsers/Parsers.h>
-#include <Parsers/StyleParser.h>
 #include <Parsers/TokenGenerator.h>
 #include <Wt/WStackedWidget>
 #include <Wt/WText>
@@ -30,8 +28,6 @@ namespace Events {
 namespace ActionCenter {
 
 using std::string;
-namespace Action = Enums::SignalActions;
-namespace Family = Enums::Family;
 
 inline void handleBoolAction(
     BroadcastMessage& message, bool (*callback)())
@@ -56,10 +52,9 @@ void directListeners(
 {
     if (broadcast.listeners.size() <= 0) return;
     mApp;
-    namespace Action = Enums::SignalActions;
     size_t num_listeners = broadcast.listeners.size();
     NodeValue& message = broadcast.properties->message.value;
-    Action::SignalAction action = broadcast.properties->action;
+    Tokens::MoguTokens action = broadcast.properties->action;
 
 #ifdef DEBUG
     if (broadcast.broadcaster != 0) {
@@ -75,11 +70,12 @@ void directListeners(
         std::cout << std::endl;
         std::cout << "Listeners: ";
         for (size_t i = 0; i < num_listeners; ++i) {
-            if (&(broadcast.listeners[i]->getWidget()) != NULL) {
-                std::cout << broadcast.listeners[i]->getWidget().getNode();
+            Listener* listener = broadcast.listeners[i];
+            if (&(listener->getWidget()) != NULL) {
+                std::cout << listener->getWidget().getNode();
             }
             else {
-                std::cout << broadcast.listeners[i]->getString();
+                std::cout << listener->getString();
             }
             std::cout << " ";
         }
@@ -88,35 +84,35 @@ void directListeners(
 #endif
 
     switch (action) {
-    case Action::set_internal_path: {
+    case Tokens::set_internal_path: {
         std::string path = message.getString();
         app->setInternalPath(path);
         break;
     }
 
-    case Action::register_user: {
+    case Tokens::register_user: {
         handleBoolAction(broadcast, &Actions::register_user);
         break;
     }
 
-    case Action::change_session: {
+    case Tokens::change_session: {
         handleBoolAction(broadcast, &Actions::change_session);
         break;
     }
 
-    case Action::activate_global: {
+    case Tokens::activate_global: {
         mApp;
         app->setSessionID("global");
         break;
     }
 
-    case Action::javascript: {
+    case Tokens::javascript: {
         std::string script = message.getString();
         app->doJavaScript(script);
         break;
     }
 
-    case Action::email_user: {
+    case Tokens::email_user: {
         std::string emailmsg = message.getString();
         Actions::EmailPacket pkt;
         std::string URL = app->bookmarkUrl();
@@ -126,7 +122,7 @@ void directListeners(
         break;
     }
 
-    case Action::reset_password: {
+    case Tokens::reset_password: {
         std::string uid = app->getSlots()["USERID"];
         if (!Actions::reset_password(uid)) {
             broadcast.broadcaster->fail().emit();
@@ -140,32 +136,34 @@ void directListeners(
         /* Change the CSS style class of all listeners to the style
          * given as the broadcast message.
          */
-    case Action::set_style: {
+    case Tokens::set_style: {
 
         string new_style = message.getString();
         Wt::WString wNewStyle(new_style);
 
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::set_style))
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget = listener->getWidget();
+            if (widget.allowsAction(Tokens::set_style))
                 widget.setStyleClass(wNewStyle);
         }
         break;
     }
 
-    case Action::emit: {
+    case Tokens::emit: {
         Actions::emit(broadcast.listeners, message.getString());
         break;
     }
 
-    case Action::change_group: {
+    case Tokens::change_group: {
         app->setGroup(message.getString());
         break;
     }
 
-    case Action::add_self_to_group: {
+    case Tokens::add_self_to_group: {
         const std::string& moguid = app->getUserManager().getMoguID();
-        std::string& groupid = broadcast.listeners[0]->getString();
+        Listener* listener = broadcast.listeners[0];
+        std::string& groupid = listener->getString();
         std::string& rank = message.getString();
         GroupManager g(groupid);
         std::string origin = app->getUserManager().getUserSessions()[0];
@@ -173,9 +171,10 @@ void directListeners(
         break;
     }
 
-    case Action::add_other_to_group: {
+    case Tokens::add_other_to_group: {
         std::string moguid = app->getSlots()["USERID"];
-        std::string& groupid = broadcast.listeners[0]->getString();
+        Listener* listener = broadcast.listeners[0];
+        std::string& groupid = listener->getString();
         std::string& rank = message.getString();
         GroupManager g(groupid);
         std::string origin = app->getUserManager().getUserSessions()[0];
@@ -184,15 +183,16 @@ void directListeners(
     }
 
         /* Change the widget index of the listeners' stacked widgets. */
-    case Action::set_index:
+    case Tokens::set_index:
         Actions::set_index(broadcast.listeners, message.getInt());
         break;
 
         /* Append a new CSS class to the current widget style. */
-    case Action::add_class: {
+    case Tokens::add_class: {
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::add_class)) {
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget =listener->getWidget();
+            if (widget.allowsAction(Tokens::add_class)) {
                 Wt::WString addl_style = message.getString();
                 widget.addStyleClass(addl_style);
             }
@@ -201,10 +201,11 @@ void directListeners(
     }
 
         /* Remove a CSS class from the current widget style. */
-    case Action::remove_class: {
+    case Tokens::remove_class: {
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::remove_class)) {
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget = listener->getWidget();
+            if (widget.allowsAction(Tokens::remove_class)) {
                 Wt::WString msg = message.getString();
                 widget.removeStyleClass(msg);
             }
@@ -213,23 +214,24 @@ void directListeners(
     }
 
         /* Advance the stack's widget index. */
-    case Action::increment_index:
+    case Tokens::increment:
         Actions::increment_index(broadcast.listeners);
         break;
 
         /* Rewind the stack's widget index. */
-    case Action::decrement_index:
+    case Tokens::decrement:
         Actions::decrement_index(broadcast.listeners);
         break;
 
         /* Adds a new widget to the tree. */
-    case Action::add_widget: {
+    case Tokens::add_widget: {
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget = listener->getWidget();
             NodeValue v;
             app->interpreter().giveInput(message.getString(), v);
 
-            if (widget.allowsAction(Action::add_widget)) {
+            if (widget.allowsAction(Tokens::add_widget)) {
                 MoguNode n_template(v.getString());
                 widget.addWidget(
                     app->getFactory().createMoldableWidget(
@@ -239,10 +241,11 @@ void directListeners(
         break;
     }
 
-    case Action::clear: {
+    case Tokens::clear: {
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::clear)) {
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget = listener->getWidget();
+            if (widget.allowsAction(Tokens::clear)) {
                 widget.clear();
             }
         }
@@ -253,15 +256,16 @@ void directListeners(
          * The message is the data to be stored. If 'listeners' contains only a
          * single argument, the data cannot be given to a hash node.
          */
-    case Action::store_value:
+    case Tokens::store_value:
         Actions::store(broadcast.listeners, message);
         break;
 
-    case Action::test: {
+    case Tokens::test: {
         NodeValue listener_;
         NodeValue message_;
+        Listener* listener = broadcast.listeners[0];
         app->interpreter()
-            .giveInput(broadcast.listeners[0]->getString()
+            .giveInput(listener->getString()
                 , listener_, broadcast.broadcaster);
         if (message.getType() == string_value) {
             app->interpreter()
@@ -274,10 +278,11 @@ void directListeners(
             broadcast.broadcaster->fail().emit();
         break;}
 
-    case Action::slot: {
+    case Tokens::slot: {
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::slot)) {
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget = listener->getWidget();
+            if (widget.allowsAction(Tokens::slot)) {
                 std::string slot_ = message.getString();
                 std::string value_ = widget.moldableValue();
                 app->getSlots()[slot_] = value_;
@@ -286,37 +291,22 @@ void directListeners(
         break;
     }
 
-    case Action::match:
-    case Action::test_text:
-        if (broadcast.broadcaster->moldableValue() == EMPTY) break;
-        Actions::test(broadcast.listeners[0]->getWidget(), message) ?
-            broadcast.broadcaster->succeed().emit() :
-            broadcast.broadcaster->fail().emit();
-        break;
-
-    case Action::set_text: {
+    case Tokens::set_text: {
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            if (widget.allowsAction(Action::set_text)) {
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget = listener->getWidget();
+            if (widget.allowsAction(Tokens::set_text)) {
                 widget.setMoldableValue(message.getString());
             }
         }
         break;
     }
 
-    case Action::reload: {
+    case Tokens::reload: {
         for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
+            Listener* listener = broadcast.listeners[w];
+            Moldable& widget = listener->getWidget();
             widget.reload();
-        }
-        break;
-    }
-
-    case Action::STDOUT: {
-        for (size_t w = 0; w < num_listeners; w++) {
-            Moldable& widget = broadcast.listeners[w]->getWidget();
-            std::cout << widget.getNode() << " says: ";
-            std::cout << message.getString() << std::endl;
         }
         break;
     }

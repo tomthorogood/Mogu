@@ -8,7 +8,6 @@
 #include <Events/Bindery.h>
 #include <Redis/RedisCore.h>
 
-#include <Parsers/Parsers.h>
 #include <Events/MoldableActionCenter.h>
 #include <Events/EventPreprocessor.h>
 #include <Static.h>
@@ -22,8 +21,6 @@ namespace Events {
 
 using std::string;
 using Redis::strvector;
-namespace Labels = Enums::Labels;
-namespace Triggers = Enums::SignalTriggers;
 
 EventBindery::EventBindery(Moldable* broadcaster)
 : __map()
@@ -49,53 +46,53 @@ EventBindery::EventBindery(Moldable* broadcaster)
      */
     PreprocessorMap::iterator iter;
     for (iter = __map.begin(); iter != __map.end(); ++iter) {
-        Triggers::SignalTrigger trigger = iter->first;
+        Tokens::MoguTokens trigger = iter->first;
 
         switch (trigger) {
-        case Triggers::click:
+        case Tokens::click:
             broadcaster->clicked().connect(this, &EventBindery::clickSlot);
             break;
 
-        case Triggers::style_changed:
+        case Tokens::style_changed:
             broadcaster->styleChanged().connect(this,
                 &EventBindery::styleChangedSlot);
             break;
-        case Triggers::mouseover:
+        case Tokens::mouseover:
             broadcaster->mouseWentOver().connect(this,
                 &EventBindery::mouseoverSlot);
             break;
-        case Triggers::mouseout:
+        case Tokens::mouseout:
             broadcaster->mouseWentOut().connect(this,
                 &EventBindery::mouseoutSlot);
             break;
-        case Triggers::fail:
+        case Tokens::fail:
             broadcaster->fail().connect(this, &EventBindery::failSlot);
             break;
 
-        case Triggers::succeed:
+        case Tokens::succeed:
             broadcaster->succeed().connect(this, &EventBindery::succeedSlot);
             break;
 
-        case Triggers::keyup:
+        case Tokens::keyup:
             broadcaster->keyWentUp().connect(this, &EventBindery::keyupSlot);
             break;
 
-        case Triggers::enter_pressed:
+        case Tokens::enter_pressed:
             broadcaster->enterPressed().connect(this, &EventBindery::enterSlot);
             break;
 
-        case Triggers::index_changed:{
+        case Tokens::index_changed:{
             MoldableStack* stacked = (MoldableStack*) broadcaster;
             stacked->stackIndexChanged().connect(this,
                 &EventBindery::indexChangedSlot);
             break;}
 
-        case Triggers::hidden_changed:{
+        case Tokens::hidden_changed:{
             broadcaster->hiddenChanged().connect(this,
                 &EventBindery::hiddenChangedSlot);
             break;}
 
-        case Triggers::onload:{
+        case Tokens::onload:{
             broadcaster->onLoad().connect(this, &EventBindery::onLoadSlot);
             break;}
 
@@ -107,7 +104,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
 }
 
 void EventBindery::handleVoidSignal(
-    Triggers::SignalTrigger trigger)
+   Tokens::MoguTokens trigger)
 {
 
     PreprocessorVector& vec = __map[trigger];

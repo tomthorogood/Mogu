@@ -1,4 +1,8 @@
+#ifndef __SYNTAX_H_
+#define __SYNTAX_H_
 #include <Parsers/SyntaxMap.h>
+namespace Tokens {
+
 
 enum MoguTokens{
 	__NONE__,
@@ -7,6 +11,17 @@ enum MoguTokens{
 	children,
 	siblings,
 	application,
+	click,
+	mouseover,
+	mouseout,
+	style_changed,
+	keyup,
+	fail,
+	succeed,
+	enter_pressed,
+	index_changed,
+	hidden_changed,
+	onload,
 	change,
 	add,
 	subtract,
@@ -25,6 +40,23 @@ enum MoguTokens{
 	fade,
 	emit,
 	count,
+	bubble,
+	set_index,
+	set_internal_path,
+	register_user,
+	change_session,
+	activate_global,
+	email_user,
+	reset_password,
+	set_style,
+	change_group,
+	add_self_to_group,
+	add_other_to_group,
+	add_class,
+	remove_class,
+	add_widget,
+	store_value,
+	set_text,
 	right,
 	left,
 	up,
@@ -40,7 +72,7 @@ enum MoguTokens{
 	slot,
 	javascript,
 	value,
-	link,
+	anchor,
 	image,
 	submit,
 	radio,
@@ -53,10 +85,12 @@ enum MoguTokens{
 	password,
 	stack,
 	foreach,
-	index,
 	name,
 	hidden,
-	value,
+	text,
+	image_link,
+	memberlist,
+	set,
 };
 
 
@@ -70,6 +104,18 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(siblings,"sibling")
 	(application,"application")
 	(application,"app")
+	(click,"click")
+	(mouseover,"mouseover")
+	(mouseout,"mouseout")
+	(style_changed,"style_changed")
+	(keyup,"keyup")
+	(fail,"fail")
+	(succeed,"succeed")
+	(enter_pressed,"enter_pressed")
+	(enter_pressed,"enter")
+	(index_changed,"index_changed")
+	(hidden_changed,"hidden_changed")
+	(onload,"onload")
 	(change,"change")
 	(add,"add")
 	(subtract,"subtract")
@@ -79,8 +125,10 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(clear,"clear")
 	(increment,"increment")
 	(increment,"incr")
+	(increment,"increment_index")
 	(decrement,"decrement")
 	(decrement,"decr")
+	(decrement,"decrement_index")
 	(test,"test")
 	(test,"match")
 	(email,"email")
@@ -93,6 +141,24 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(fade,"fade")
 	(emit,"emit")
 	(count,"count")
+	(bubble,"bubble")
+	(set_index,"set_index")
+	(set_internal_path,"set_internal_path")
+	(register_user,"register:user")
+	(change_session,"change_session")
+	(activate_global,"activate_global")
+	(email_user,"email_user")
+	(reset_password,"reset_password")
+	(set_style,"set_style")
+	(change_group,"change_group")
+	(add_self_to_group,"add_self_to_group")
+	(add_other_to_group,"add_other_to_group")
+	(add_class,"add_class")
+	(remove_class,"remove_class")
+	(add_widget,"add_widget")
+	(store_value,"store")
+	(store_value,"store_value")
+	(set_text,"set_text")
 	(right,"right")
 	(left,"left")
 	(up,"up")
@@ -108,7 +174,7 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(slot,"slot")
 	(javascript,"javascript")
 	(value,"value")
-	(link,"link")
+	(anchor,"link")
 	(image,"image")
 	(submit,"submit")
 	(radio,"radio")
@@ -122,8 +188,13 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(stack,"stack")
 	(stack,"stacked")
 	(foreach,"foreach")
-	(index,"index")
 	(name,"name")
 	(hidden,"hidden")
-	(value,"value")
+	(text,"text")
+	(image_link,"image_link")
+	(memberlist,"memberlist")
+	(set,"set")
 ;
+
+}//namespace Tokens
+#endif //SYNTAX_H_
