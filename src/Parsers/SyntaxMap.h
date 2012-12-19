@@ -9,11 +9,37 @@
 #define MAPREADER_H_
 
 #include <string>
+#include <unordered_map>
+
+
+class SyntaxRangeException : public std::exception {
+public:
+    int oor;
+    SyntaxRangeException(int i) { oor = i;}
+    const char* what() const throw()
+    {
+        std::string s_oor = itoa(oor);
+        std::string message = "Syntax Enumerator out of range: ";
+        message += s_oor;
+        return message.c_str();
+    }
+};
+
+class InvalidTokenException : public std::exception {
+public:
+    std::string s_invalid;
+    InvalidTokenException(std::string invalid) {s_invalid = invalid;}
+    const char* what() const throw()
+    {
+        std::string message = "Invalid token encountered: " + s_invalid;
+        return message.c_str();
+    }
+};
 
 template <typename E>
 class SyntaxMap {
-    std::map <E, std::string> __etos__;
-    std::map <std::string, E> __stoe__;
+    std::unordered_map <E, std::string, std::hash<int> > __etos__;
+    std::unordered_map <std::string, E> __stoe__;
 public:
     SyntaxMap (E enum_entry,std::string str_entry)
     {
@@ -27,24 +53,38 @@ public:
         return *this;
     }
 
-    operator std::map <E, std::string>() {
+    operator std::unordered_map <E, std::string>() {
         return __etos__;
     }
 
-    operator std::map <std::string, E>() {
+    operator std::unordered_map <std::string, E>() {
         return __stoe__;
     }
 
     std::string get (E enum_entry) const {
-        auto iter = __etos__.find(enum_entry);
-        if (iter == __etos__.end()) return "";
-        else return iter->second;
+        std::string result;
+        try
+        {
+            result = __etos__.at(enum_entry);
+        }
+        catch (...)
+        {
+            throw SyntaxRangeException(enum_entry);
+        }
+        return result;
     }
 
     E get (std::string str_entry) const {
-        auto iter = __stoe__.find(str_entry);
-        if (iter == __stoe__.end()) return (E) 0;
-        else return iter->second;
+        E result;
+        try
+        {
+            result = __stoe__.at(str_entry);
+        }
+        catch (...)
+        {
+            throw InvalidTokenException(str_entry);
+        }
+        return result;
     }
 };
 

@@ -22,11 +22,6 @@ enum MoguTokens{
 	index_changed,
 	hidden_changed,
 	onload,
-	change,
-	add,
-	subtract,
-	multiply,
-	divide,
 	clear,
 	increment,
 	decrement,
@@ -35,8 +30,6 @@ enum MoguTokens{
 	reload,
 	append,
 	replace,
-	slide,
-	pop,
 	fade,
 	emit,
 	count,
@@ -57,10 +50,6 @@ enum MoguTokens{
 	add_widget,
 	store_value,
 	set_text,
-	right,
-	left,
-	up,
-	down,
 	regex,
 	list,
 	string,
@@ -94,7 +83,10 @@ enum MoguTokens{
 };
 
 
-const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
+extern SyntaxMap <MoguTokens> syntaxMap;
+
+void initSyntax() {
+syntaxMap = SyntaxMap <MoguTokens>
 	(__NONE__,"NONE")
 	(self,"self")
 	(parent,"parent")
@@ -116,12 +108,6 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(index_changed,"index_changed")
 	(hidden_changed,"hidden_changed")
 	(onload,"onload")
-	(change,"change")
-	(add,"add")
-	(subtract,"subtract")
-	(subtract,"remove")
-	(multiply,"multiply")
-	(divide,"divide")
 	(clear,"clear")
 	(increment,"increment")
 	(increment,"incr")
@@ -136,8 +122,6 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(reload,"refresh")
 	(append,"append")
 	(replace,"replace")
-	(slide,"slide")
-	(pop,"pop")
 	(fade,"fade")
 	(emit,"emit")
 	(count,"count")
@@ -160,10 +144,6 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(store_value,"store")
 	(store_value,"store_value")
 	(set_text,"set_text")
-	(right,"right")
-	(left,"left")
-	(up,"up")
-	(down,"down")
 	(regex,"regex")
 	(list,"list")
 	(string,"string")
@@ -196,6 +176,6 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(memberlist,"memberlist")
 	(set,"set")
 ;
-
+}
 }//namespace Tokens
 #endif //SYNTAX_H_

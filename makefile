@@ -48,9 +48,9 @@ uninstall:
 
 %.o:
 ifeq ($(dbg),on)
-	$(command) -c -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) $(devel_libs)
+	$(command) -c -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
 else
-	$(command) -DNDEBUG -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) $(devel_libs)
+	$(command) -DNDEBUG -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
 endif
 
 $(turnleft):

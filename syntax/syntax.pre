@@ -24,28 +24,28 @@ onload:onload
 
 
 # Actions
-change:change
-add:add
-subtract:subtract,remove
-multiply:multiply
-divide:divide
+#change:change
+#add:add
+#subtract:subtract,remove
+#multiply:multiply
+#divide:divide
 clear:clear
 increment:increment,incr,increment_index
 decrement:decrement,decr,decrement_index
-test:test,match
+test:test,match,test_text
 email:email
 reload:reload,refresh
 append:append
 replace:replace
-slide:slide
-pop:pop
+#slide:slide
+#pop:pop
 fade:fade
 emit:emit
 count:count
 bubble:bubble
 set_index:set_index
-set_internal_path:set_internal_path
-register_user:register:user
+set_internal_path:set_path
+register_user:register_user
 change_session:change_session
 activate_global:activate_global
 email_user:email_user
@@ -59,13 +59,14 @@ remove_class:remove_class
 add_widget:add_widget,add_child
 store_value:store,store_value
 set_text:set_text
+remove_child:remove_child
 
 
 # Directions
-right:right
-left:left
-up:up
-down:down
+#right:right
+#left:left
+#up:up
+#down:down
 
 # Entities
 regex:regex
@@ -100,3 +101,4 @@ text:text
 image_link:image_link
 memberlist:memberlist
 set:set
+degradation:degradation

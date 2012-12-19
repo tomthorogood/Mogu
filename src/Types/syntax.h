@@ -22,11 +22,6 @@ enum MoguTokens{
 	index_changed,
 	hidden_changed,
 	onload,
-	change,
-	add,
-	subtract,
-	multiply,
-	divide,
 	clear,
 	increment,
 	decrement,
@@ -35,8 +30,6 @@ enum MoguTokens{
 	reload,
 	append,
 	replace,
-	slide,
-	pop,
 	fade,
 	emit,
 	count,
@@ -57,10 +50,6 @@ enum MoguTokens{
 	add_widget,
 	store_value,
 	set_text,
-	right,
-	left,
-	up,
-	down,
 	regex,
 	list,
 	string,
@@ -91,111 +80,11 @@ enum MoguTokens{
 	image_link,
 	memberlist,
 	set,
+	degradation,
+	remove_child
 };
 
-
-const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
-	(__NONE__,"NONE")
-	(self,"self")
-	(parent,"parent")
-	(children,"children")
-	(children,"child")
-	(siblings,"siblings")
-	(siblings,"sibling")
-	(application,"application")
-	(application,"app")
-	(click,"click")
-	(mouseover,"mouseover")
-	(mouseout,"mouseout")
-	(style_changed,"style_changed")
-	(keyup,"keyup")
-	(fail,"fail")
-	(succeed,"succeed")
-	(enter_pressed,"enter_pressed")
-	(enter_pressed,"enter")
-	(index_changed,"index_changed")
-	(hidden_changed,"hidden_changed")
-	(onload,"onload")
-	(change,"change")
-	(add,"add")
-	(subtract,"subtract")
-	(subtract,"remove")
-	(multiply,"multiply")
-	(divide,"divide")
-	(clear,"clear")
-	(increment,"increment")
-	(increment,"incr")
-	(increment,"increment_index")
-	(decrement,"decrement")
-	(decrement,"decr")
-	(decrement,"decrement_index")
-	(test,"test")
-	(test,"match")
-	(email,"email")
-	(reload,"reload")
-	(reload,"refresh")
-	(append,"append")
-	(replace,"replace")
-	(slide,"slide")
-	(pop,"pop")
-	(fade,"fade")
-	(emit,"emit")
-	(count,"count")
-	(bubble,"bubble")
-	(set_index,"set_index")
-	(set_internal_path,"set_internal_path")
-	(register_user,"register:user")
-	(change_session,"change_session")
-	(activate_global,"activate_global")
-	(email_user,"email_user")
-	(reset_password,"reset_password")
-	(set_style,"set_style")
-	(change_group,"change_group")
-	(add_self_to_group,"add_self_to_group")
-	(add_other_to_group,"add_other_to_group")
-	(add_class,"add_class")
-	(remove_class,"remove_class")
-	(add_widget,"add_widget")
-	(add_widget,"add_child")
-	(store_value,"store")
-	(store_value,"store_value")
-	(set_text,"set_text")
-	(right,"right")
-	(left,"left")
-	(up,"up")
-	(down,"down")
-	(regex,"regex")
-	(list,"list")
-	(string,"string")
-	(hash,"hash")
-	(style,"style")
-	(index,"index")
-	(session,"session")
-	(user,"user")
-	(slot,"slot")
-	(javascript,"javascript")
-	(value,"value")
-	(anchor,"link")
-	(image,"image")
-	(submit,"submit")
-	(radio,"radio")
-	(textarea,"textarea")
-	(input,"input")
-	(dropdown,"dropdown")
-	(checkbox,"checkbox")
-	(multi,"multi")
-	(container,"container")
-	(password,"password")
-	(stack,"stack")
-	(stack,"stacked")
-	(foreach,"foreach")
-	(name,"name")
-	(hidden,"hidden")
-	(text,"text")
-	(image_link,"image_link")
-	(memberlist,"memberlist")
-	(set,"set")
-;
+extern SyntaxMap <MoguTokens> syntaxMap;
 
 }//namespace Tokens
 #endif //SYNTAX_H_
