@@ -156,6 +156,7 @@ const static SyntaxMap <MoguTokens> syntaxMap =SyntaxMap <MoguTokens>
 	(add_class,"add_class")
 	(remove_class,"remove_class")
 	(add_widget,"add_widget")
+	(add_widget,"add_child")
 	(store_value,"store")
 	(store_value,"store_value")
 	(set_text,"set_text")

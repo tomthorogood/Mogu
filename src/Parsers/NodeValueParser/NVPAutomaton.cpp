@@ -200,32 +200,43 @@ void NodeValueParser::giveInput(
         /*TODO handle error! */
     }
 
+    NodeValue& iovalue = *__iovalue;
+    std::string iotoken = tokens[0];
+    std::string ioarg;
+    if (tokens.size() > 1) ioarg = tokens[1];
+    NodeValueParser::Outputs output_type = tokenTypes[0];
+    NodeValueParser::Outputs output_arg = tokenTypes[1];
+
     switch (current_state) {
     case NVP_ABCL_F:
-    case NVP_E_TF:
+    case NVP_E_TF:{
         parse_single_static_token(
-            *__iovalue
-            , tokens[0]
-            , tokenTypes[0]);
-        break;
+            iovalue
+            , iotoken
+            , output_type);
+        break;}
 
     case NVP_D_F:
-        parse_widget_state(*__iovalue, tokens[0], tokens[1], __broadcaster);
+        parse_widget_state(
+            iovalue
+            , iotoken
+            , ioarg
+            , __broadcaster);
         break;
     case NVP_F_TF:
-        parse_session_node(*__iovalue, tokens[0]);
+        parse_session_node(iovalue, iotoken);
         break;
     case NVP_J_TF:
-        parse_data_node(*__iovalue, tokens[0]);
+        parse_data_node(iovalue, iotoken);
         break;
     case NVP_GHI_F:
-        if (tokens[0].at(0) == '@')
-            parse_data_node(*__iovalue, tokens[0], tokens[1], tokenTypes[1]);
-        else if (tokens[0].at(0) == '[')
-            parse_session_node(*__iovalue, tokens[0], tokens[1], tokenTypes[1]);
+        if (iotoken.at(0) == '@')
+            parse_data_node(iovalue, iotoken, ioarg, output_arg);
+        else if (iotoken.at(0) == '[')
+            parse_session_node(iovalue, iotoken, ioarg, output_arg);
         break;
     case NVP_M_F:
-        parse_data_node(*__iovalue, tokens[0], tokens[1], tokenTypes[1],
+        parse_data_node(iovalue, iotoken, ioarg, output_arg,
             __broadcaster);
         break;
     default:

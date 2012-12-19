@@ -117,7 +117,7 @@ void EventBindery::handleVoidSignal(
         EventPreprocessor* p = vec[e];
 #ifdef DEBUG
         std::cout << "Using preprocessor " << e;
-        std::cout << " for trigger {" << trigger << "}" << std::endl;
+        std::cout << " for trigger {" << Tokens::syntaxMap.get(trigger) << "}" << std::endl;
 #endif
         BroadcastMessage msg(__broadcaster, p);
         ActionCenter::submitBroadcast(msg);

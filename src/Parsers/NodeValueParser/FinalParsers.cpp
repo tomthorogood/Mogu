@@ -14,6 +14,7 @@
 #include <Redis/RedisCore.h>
 #include <Mogu.h>
 #include <Redis/SessionValueRequest.h>
+#include <Types/syntax.h>
 
 namespace Parsers {
 
@@ -119,20 +120,24 @@ void parse_data_node(
 }
 
 void parse_widget_state(
-    NodeValue& v, std::string widget_identifier, std::string& state,
-    Moldable* broadcaster)
+    NodeValue& v
+    , std::string widget_identifier
+    , std::string& state
+    , Moldable* broadcaster)
 {
     std::string uw_state = state.substr(1, state.length() - 2);
 
+    Tokens::MoguTokens e_token = Tokens::syntaxMap.get(uw_state);
+
     if (widget_identifier == "{self}") {
-        broadcaster->getState(Tokens::syntaxMap.get(uw_state), v);
+        broadcaster->getState(e_token, v);
     }
     else {
         mApp;
         std::string uw_id = widget_identifier.substr(1,
             widget_identifier.length() - 2);
         Moldable* widget = app->registeredWidget(uw_id);
-        widget->getState(Tokens::syntaxMap.get(uw_state), v);
+        widget->getState(e_token, v);
     }
 }
 

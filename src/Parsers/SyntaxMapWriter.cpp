@@ -15,7 +15,7 @@ SyntaxMapWriter::SyntaxMapWriter(
     __ebuf__ << preface << "\nnamespace Tokens {\n"
             << "\n\nenum " << e_type << "{\n";
     __mbuf__ <<
-        "\n\nconst static SyntaxMap <" << e_type << "> " << map_name << " ="
+        "\n\nstatic SyntaxMap <" << e_type << "> " << map_name << " ="
         << "SyntaxMap <" << e_type << ">\n";
 }
 

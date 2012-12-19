@@ -18,13 +18,12 @@ class StoragePolicyLookup
     enum Flags
     {
         exists = 0x1, encrypted = 0x2, set_append = 0x4
-        //datatype = 3 bits
-        ,
-        datatype = 0x20
-        //storagetype = 2 bits
-        ,
-        storagetype = 0x80
     };
+
+    Tokens::MoguTokens
+        __data_type
+        ,__storage_type
+     ;
     std::string getHashEntry(const std::string& node, const std::string& field);
 public:
 
@@ -56,16 +55,12 @@ public:
     }
     inline Tokens::MoguTokens getDataType()
     {
-        uint8_t masked = __flags & 0x38;
-        masked >>= 3;
-        return (Tokens::MoguTokens) masked;
+        return __data_type;
     }
 
     inline Tokens::MoguTokens getStorageType()
     {
-        uint8_t masked = __flags & 0xC0;
-        masked >>= 6;
-        return (Tokens::MoguTokens) masked;
+        return __storage_type;
     }
 };
 

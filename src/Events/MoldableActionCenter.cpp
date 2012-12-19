@@ -58,7 +58,7 @@ void directListeners(
 
 #ifdef DEBUG
     if (broadcast.broadcaster != 0) {
-        std::cout << "Parsing Action " << action << " for ";
+        std::cout << "Parsing Action " << Tokens::syntaxMap.get(action) << " for ";
         std::cout << num_listeners << " listeners from ";
         std::cout << broadcast.broadcaster->getNode() << std::endl;
         std::cout << "Message: ";

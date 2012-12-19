@@ -56,7 +56,7 @@ add_self_to_group:add_self_to_group
 add_other_to_group:add_other_to_group
 add_class:add_class
 remove_class:remove_class
-add_widget:add_widget
+add_widget:add_widget,add_child
 store_value:store,store_value
 set_text:set_text
 

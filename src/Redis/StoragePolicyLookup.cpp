@@ -22,6 +22,7 @@ std::string StoragePolicyLookup::getHashEntry(
     if (redisReply_TRUE)
     {
         app->redisExec(Mogu::Keep, "hget %s %s", node.c_str(), field.c_str());
+        result = redisReply_STRING;
     }
     return result;
 }
@@ -52,24 +53,17 @@ StoragePolicyLookup::StoragePolicyLookup(
         if (v.getInt() > 0) __flags |= set_append;
     }
 
-    uint8_t temp = 0;
-
     str = getHashEntry(node, "data_type");
     if (str != EMPTY) {
         Parsers::NodeValueParser p(str, v);
-        temp |= (uint8_t) v.getInt();
-        temp <<= 3;
-        __flags |= temp;
-        temp = 0;
+        __data_type = (Tokens::MoguTokens) v.getInt();
     }
 
     str = getHashEntry(node, "storage_type");
     if (str != EMPTY) {
-        Parsers::NodeValueParser p(str, v, NULL);
-        temp |= (uint8_t) v.getInt();
-        temp <<= 6;
-        __flags |= temp;
-        temp = 0;
+        Parsers::NodeValueParser p(str, v);
+        __storage_type = (Tokens::MoguTokens) v.getInt();
+
     }
 }
 
