@@ -5,8 +5,9 @@ PARSERS := $(CURDIR)/../src/Parsers
 DEPS := $(PARSERS)/SyntaxReader.cpp $(PARSERS)/SyntaxMapWriter.cpp
 
 all:
+	touch $(CURDIR)/../src/Types/syntax.h
 	g++ -std=c++0x $(INCLUDES) -o $(EXE) $(DEPS) syntax.cpp $(LINKS)
 	./$(EXE)
 
 clean:
-	rm -rf $(EXE)
+	rm -rf $(EXE) syntax.h syntax.txt

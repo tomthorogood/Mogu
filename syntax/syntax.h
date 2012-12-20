@@ -1,5 +1,6 @@
-#ifndef __SYNTAX_H_
-#define __SYNTAX_H_
+#ifndef SYNTAX_H_ 
+#define SYNTAX_H_
+#include <Parsers/SyntaxMap.h>
 #include <Parsers/SyntaxMap.h>
 namespace Tokens {
 
@@ -50,6 +51,7 @@ enum MoguTokens{
 	add_widget,
 	store_value,
 	set_text,
+	remove_child,
 	regex,
 	list,
 	string,
@@ -80,102 +82,10 @@ enum MoguTokens{
 	image_link,
 	memberlist,
 	set,
+	degradation,
 };
 
-
 extern SyntaxMap <MoguTokens> syntaxMap;
-
-void initSyntax() {
-syntaxMap = SyntaxMap <MoguTokens>
-	(__NONE__,"NONE")
-	(self,"self")
-	(parent,"parent")
-	(children,"children")
-	(children,"child")
-	(siblings,"siblings")
-	(siblings,"sibling")
-	(application,"application")
-	(application,"app")
-	(click,"click")
-	(mouseover,"mouseover")
-	(mouseout,"mouseout")
-	(style_changed,"style_changed")
-	(keyup,"keyup")
-	(fail,"fail")
-	(succeed,"succeed")
-	(enter_pressed,"enter_pressed")
-	(enter_pressed,"enter")
-	(index_changed,"index_changed")
-	(hidden_changed,"hidden_changed")
-	(onload,"onload")
-	(clear,"clear")
-	(increment,"increment")
-	(increment,"incr")
-	(increment,"increment_index")
-	(decrement,"decrement")
-	(decrement,"decr")
-	(decrement,"decrement_index")
-	(test,"test")
-	(test,"match")
-	(email,"email")
-	(reload,"reload")
-	(reload,"refresh")
-	(append,"append")
-	(replace,"replace")
-	(fade,"fade")
-	(emit,"emit")
-	(count,"count")
-	(bubble,"bubble")
-	(set_index,"set_index")
-	(set_internal_path,"set_internal_path")
-	(register_user,"register:user")
-	(change_session,"change_session")
-	(activate_global,"activate_global")
-	(email_user,"email_user")
-	(reset_password,"reset_password")
-	(set_style,"set_style")
-	(change_group,"change_group")
-	(add_self_to_group,"add_self_to_group")
-	(add_other_to_group,"add_other_to_group")
-	(add_class,"add_class")
-	(remove_class,"remove_class")
-	(add_widget,"add_widget")
-	(add_widget,"add_child")
-	(store_value,"store")
-	(store_value,"store_value")
-	(set_text,"set_text")
-	(regex,"regex")
-	(list,"list")
-	(string,"string")
-	(hash,"hash")
-	(style,"style")
-	(index,"index")
-	(session,"session")
-	(user,"user")
-	(slot,"slot")
-	(javascript,"javascript")
-	(value,"value")
-	(anchor,"link")
-	(image,"image")
-	(submit,"submit")
-	(radio,"radio")
-	(textarea,"textarea")
-	(input,"input")
-	(dropdown,"dropdown")
-	(checkbox,"checkbox")
-	(multi,"multi")
-	(container,"container")
-	(password,"password")
-	(stack,"stack")
-	(stack,"stacked")
-	(foreach,"foreach")
-	(name,"name")
-	(hidden,"hidden")
-	(text,"text")
-	(image_link,"image_link")
-	(memberlist,"memberlist")
-	(set,"set")
-;
-}
 }//namespace Tokens
+
 #endif //SYNTAX_H_

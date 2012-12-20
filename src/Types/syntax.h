@@ -1,5 +1,6 @@
-#ifndef __SYNTAX_H_
-#define __SYNTAX_H_
+#ifndef SYNTAX_H_ 
+#define SYNTAX_H_
+#include <Parsers/SyntaxMap.h>
 #include <Parsers/SyntaxMap.h>
 namespace Tokens {
 
@@ -50,6 +51,7 @@ enum MoguTokens{
 	add_widget,
 	store_value,
 	set_text,
+	remove_child,
 	regex,
 	list,
 	string,
@@ -81,10 +83,9 @@ enum MoguTokens{
 	memberlist,
 	set,
 	degradation,
-	remove_child
 };
 
 extern SyntaxMap <MoguTokens> syntaxMap;
-
 }//namespace Tokens
+
 #endif //SYNTAX_H_

@@ -39,3 +39,5 @@ from relationships import relate
 
 # find-missing-children
 from find_missing_children import find_missing_children
+
+from check_syntax import check_syntax

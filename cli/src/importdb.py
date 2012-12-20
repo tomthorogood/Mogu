@@ -1,7 +1,7 @@
 from snippets import confirm
 from db_type import *
 from coloring import warn
-from syntax import *
+from syntaxConverter import *
 from sets import Set
 
 

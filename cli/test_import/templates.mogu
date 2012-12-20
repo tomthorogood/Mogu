@@ -1,5 +1,0 @@
-templates["tpl"] = {
-    type    :   text,
-    styles  :   "red"
-}
-

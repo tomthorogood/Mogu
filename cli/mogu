@@ -22,7 +22,8 @@ cli_map = {
         "init"              :   cli.init,
         "relate"            :   cli.relate,
         "create_config"     :   cli.create_config,
-        "find-missing"      :   cli.find_missing_children
+        "find-missing"      :   cli.find_missing_children,
+        "check-syntax"      :   cli.check_syntax
         }
 
 if __name__ == "__main__":

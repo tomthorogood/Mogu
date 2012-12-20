@@ -1,6 +1,0 @@
-widgets["impl1"] = {
-    content :   "hello",
-    template:   "tpl"
-}
-
-tree["wrapper"] = ["impl1"]

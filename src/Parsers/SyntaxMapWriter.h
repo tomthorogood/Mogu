@@ -13,13 +13,17 @@
 #include <sstream>
 
 class SyntaxMapWriter {
-    std::stringstream __mbuf__;
-    std::stringstream __ebuf__;
+    std::stringstream __hbuf__; //header file
+    std::stringstream __tbuf__; //text file
+    std::stringstream __pbuf__; //python file
+    std::string e_type_;
+    std::string map_name_;
 public:
     SyntaxMapWriter(
         const std::string& e_type
         , const std::string& map_name
-        , std::string preface =EMPTY);
+        , std::string prefix =EMPTY
+        , std::string suffix =EMPTY);
     void add_entry(std::pair <std::string, std::vector <std::string> >);
 
 
@@ -32,8 +36,7 @@ public:
             add_entry(pr);
         }
     }
-    void write(const char* outfile);
-
+    void write(std::string outfile_name);
 };
 
 

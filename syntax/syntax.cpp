@@ -2,7 +2,7 @@
 #include <Parsers/SyntaxMapWriter.h>
 
 #define __INFILE__ "syntax.pre"
-#define __OUTFILE__ "syntax.h"
+#define __OUTFILE__ "syntax"
 
 int main()
 {
