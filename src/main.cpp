@@ -70,6 +70,7 @@ SyntaxMap <MoguTokens> syntaxMap = SyntaxMap <MoguTokens>
     (hash,"hash")
     (style,"style")
     (index,"index")
+    (index, "current_index")
     (session,"session")
     (user,"user")
     (slot,"slot")
