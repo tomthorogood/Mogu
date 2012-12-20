@@ -86,6 +86,31 @@ public:
         }
         return result;
     }
+
+    bool test() {
+        bool stoe = true;
+        bool etos = true;
+
+        for (auto iter = __stoe__.begin(); iter != __stoe__.end(); ++iter)
+        {
+            std::string strval = iter->first;
+            if (strval != get(iter->second)) {
+                stoe = false;
+                break;
+            }
+        }
+
+        for (auto iter = __etos__.begin(); iter != __etos__.end(); ++iter)
+        {
+            E enumval = iter->first;
+            if (enumval != get(iter->second)) {
+                etos = false;
+                break;
+            }
+        }
+
+        return (etos && stoe);
+    }
 };
 
 

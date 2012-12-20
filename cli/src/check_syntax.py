@@ -8,6 +8,17 @@ def enums(string):
     regex = "{[a-zA-Z_]+}"
     return re.findall(regex,string)
 
+def states(string):
+    regex = "\$[a-zA-Z_]+\$"
+    tmp = re.findall(regex,string)
+    result = []
+    for string in tmp:
+        l = list(string)
+        l[0] = "{"
+        l[-1] = "}"
+        result.append("".join(l))
+    return result
+
 def check_syntax(args=None, db=Redis()):
     bad_syntax = OrderedDict()
     hashes = [key for key in db.keys("*") if db.type(key) == "hash"]
@@ -15,6 +26,7 @@ def check_syntax(args=None, db=Redis()):
         values = db.hvals(node)
         for value in values:
             syntax = enums(value)
+            syntax.extend(states(value))
             if syntax:
                 for enum in syntax:
                     if enum not in syntaxMapStrings:

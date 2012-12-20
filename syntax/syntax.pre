@@ -4,9 +4,9 @@ __NONE__:NONE
 # Relationships
 self:self
 parent:parent
-children:children,child
-siblings:siblings,sibling
-application:application,app
+children:children
+siblings:siblings
+application:app
 
 # Triggers
 click:click
@@ -16,7 +16,7 @@ style_changed:style_changed
 keyup:keyup
 fail:fail
 succeed:succeed
-enter_pressed:enter_pressed,enter
+enter_pressed:enter
 index_changed:index_changed
 hidden_changed:hidden_changed
 onload:onload
@@ -26,15 +26,15 @@ onload:onload
 # Actions
 #change:change
 #add:add
-#subtract:subtract,remove
+#subtract:subtract
 #multiply:multiply
 #divide:divide
 clear:clear
-increment:increment,incr,increment_index
-decrement:decrement,decr,decrement_index
-test:test,match,test_text
+increment:increment
+decrement:decrement
+test:test
 email:email
-reload:reload,refresh
+reload:reload
 append:append
 replace:replace
 #slide:slide
@@ -50,14 +50,14 @@ change_session:change_session
 activate_global:activate_global
 email_user:email_user
 reset_password:reset_password
-set_style
+set_style:set_style
 change_group:change_group
 add_self_to_group:add_self_to_group
 add_other_to_group:add_other_to_group
 add_class:add_class
 remove_class:remove_class
-add_widget:add_widget,add_child
-store_value:store,store_value
+add_widget:add_child
+store_value:store
 set_text:set_text
 remove_child:remove_child
 
@@ -91,9 +91,8 @@ checkbox:checkbox
 multi:multi
 container:container
 password:password
-stack:stack,stacked
+stack:stack
 foreach:foreach
-index:index
 name:name
 hidden:hidden
 value:value

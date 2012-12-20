@@ -1,0 +1,898 @@
+widgets.ch:2:assessment:1:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:8:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:5:stack:
+	{stacked}
+widgets.ch:5:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:6:option:3.events.2:
+	{increment_index}
+widgets.register:stack:
+	{stacked}
+widgets.ch:2:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:9:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:8:option:1.events.2:
+	{increment_index}
+widgets.firsts_modules_stack:
+	{stacked}
+widgets.ch:8:assessment:1:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:9:option:1.events.2:
+	{increment_index}
+widgets.footer_links_1_1.events.2:
+	{application}
+widgets.ch:3:assessment:1:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:6:stack:
+	{stacked}
+widgets.ch:6:assessment:2:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:10:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.descriptions:
+	{stacked}
+widgets.ch:8:assessment:1:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:9:option:4.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:1:nav:prev.events.2:
+	{decrement_index}
+widgets.ch:7:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:5:nav:prev.events.2:
+	{decrement_index}
+widgets.ch:8:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:8:stack:
+	{stacked}
+widgets.ch:7:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:4:stack:
+	{stacked}
+widgets.ch:1:assessment:1:stack:8:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:10:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:4:nav:next.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:10:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:5:nav:next.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:10:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:9:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:2:stack:
+	{stacked}
+widgets.ch:4:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:9:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:7:option:3.events.2:
+	{increment_index}
+widgets.firsts_module_title:
+	{stacked}
+widgets.ch:7:assessment:1:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:10:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:8:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:9:option:4.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:3:nav:next.events.1:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:1:nav:next.events.1:
+	{increment_index}
+widgets.ch:6:nav:next.events.1:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:10:option:4.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:9:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:3:stack:
+	{stacked}
+widgets.ch:3:assessment:1:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:4:nav:prev.events.2:
+	{decrement_index}
+widgets.ch:1:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:9:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:9:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:8:nav:prev.events.1:
+	{decrement_index}
+widgets.ch:2:assessment:1:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:9:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:9:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:10:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:6:nav:prev.events.1:
+	{decrement_index}
+widgets.ch:1:assessment:1:stack:8:option:4.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:3:nav:prev.events.2:
+	{decrement_index}
+widgets.ch:6:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:1:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:6:option:3.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:7:nav:prev.events.1:
+	{decrement_index}
+widgets.ch:2:assessment:1:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:7:nav:next.events.1:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:1:option:3.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:3:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:5:option:4.events.2:
+	{increment_index}
+widgets.ch:8:assessment:1:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:1:stack:
+	{stacked}
+widgets.ch:8:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:1:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:8:option:2.events.2:
+	{increment_index}
+widgets.register:register:form:pwmatch.events.3:
+	{match}
+widgets.ch:3:assessment:2:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:8:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:2:option:3.events.2:
+	{increment_index}
+widgets.ch:2:nav:prev.events.2:
+	{decrement_index}
+widgets.ch:4:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:8:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:1:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:9:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:5:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:10:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:9:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:1:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:5:assessment:1:stack:6:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:3:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:10:option:3.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:2:option:2.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:6:option:2.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:1:assessment:1:stack:1:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.ch:6:assessment:2:stack:7:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:7:option:2.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:4:option:3.events.2:
+	{increment_index}
+widgets.ch:7:assessment:1:stack:3:option:2.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:2:option:4.events.2:
+	{increment_index}
+widgets.ch:2:nav:next.events.1:
+	{increment_index}
+widgets.ch:2:assessment:2:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:2:assessment:1:stack:6:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:7:option:3.events.2:
+	{increment_index}
+widgets.ch:3:assessment:2:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:4:option:1.events.2:
+	{increment_index}
+widgets.ch:5:assessment:2:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:1:assessment:2:stack:4:option:2.events.2:
+	{increment_index}
+widgets.ch:8:assessment:2:stack:7:option:4.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:5:option:1.events.2:
+	{increment_index}
+widgets.ch:3:assessment:1:stack:4:option:4.events.2:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:2:option:1.events.2:
+	{increment_index}
+widgets.ch:7:stack:
+	{stacked}
+widgets.ch:8:nav:next.events.1:
+	{increment_index}
+widgets.ch:7:assessment:2:stack:5:option:2.events.2:
+	{increment_index}
+widgets.register:reset:form:submit.events.4:
+	{test_text}
+widgets.ch:3:assessment:1:stack:3:option:4.events.2:
+	{increment_index}
+widgets.ch:4:assessment:2:stack:2:option:1.events.2:
+	{increment_index}

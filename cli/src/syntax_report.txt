@@ -1,0 +1,48 @@
+widgets.ch:5:stack.events.1:
+	{current_index}
+widgets.ch:4:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:7:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:7:stack.events.1:
+	{current_index}
+widgets.ch:2:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:3:stack.events.1:
+	{current_index}
+widgets.ch:3:assessment:2:stack.events.1:
+	{current_index}
+widgets.ch:8:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:1:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:6:stack.events.1:
+	{current_index}
+widgets.ch:6:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:1:stack.events.1:
+	{current_index}
+widgets.ch:2:stack.events.1:
+	{current_index}
+widgets.ch:5:assessment:2:stack.events.1:
+	{current_index}
+widgets.ch:4:stack.events.1:
+	{current_index}
+widgets.ch:2:assessment:2:stack.events.1:
+	{current_index}
+widgets.ch:1:assessment:2:stack.events.1:
+	{current_index}
+widgets.ch:5:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:8:assessment:2:stack.events.1:
+	{current_index}
+widgets.ch:4:assessment:2:stack.events.1:
+	{current_index}
+widgets.ch:7:assessment:2:stack.events.1:
+	{current_index}
+widgets.ch:3:assessment:1:stack.events.1:
+	{current_index}
+widgets.ch:8:stack.events.1:
+	{current_index}
+widgets.ch:6:assessment:2:stack.events.1:
+	{current_index}
