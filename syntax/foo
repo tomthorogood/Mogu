@@ -1,0 +1,157 @@
+This is a [working, living] list of mogu keywords. Each of the sub-links details how each keyword is to be used. Note that much of this is for future features, and not currently implemented. Until you read otherwise, use this list with extreme caution. 
+
+Currently, I'm in the process of making the syntax much more fluid, reusable, and easier to understand, so expect a lot of changes on this front.
+
++ [NONE](syn_none)
+
++ [activate_global](syn_activate_global) **deprecated**
+
++ [add](syn_add) **unimplemented**
+
++ [add_child](syn_add_child) **deprecated**
+
++ [add_class](syn_add_class) **deprecated**
+
++ [add_other_to_group](syn_add_other_to_group) **deprecated**
+
++ [add_self_to_group](syn_add_self_to_group) **deprecated**
+
++ [append](syn_append)
+
++ [app](syn_app)
+
++ [bubble](syn_bubble)
+
++ [change](syn_change) **unimplemented**
+
++ [change_group](syn_change_group) **deprecated**
+
++ [change_session](syn_change_session) **deprecated**
+
++ [checkbox](syn_checkbox)
+
++ [children](syn_children)
+
++ [clear](syn_clear)
+
++ [click](syn_click)
+
++ [container](syn_container)
+
++ [count](syn_count) **unimplemented**
+
++ [decrement](syn_decrement)
+
++ [degradation](syn_degredation) **not needed?**
+
++ [dropdown](syn_dropdown)
+
++ [email_user](syn_email_user) **deprecated**
+
++ [email](syn_email)
+
++ [emit](syn_emit)
+
++ [enter](syn_enter)
+
++ [fade](syn_fade) **unimplemented**
+
++ [fail](syn_fail)
+
++ [foreach](syn_foreach)
+
++ [hash](syn_hash)
+
++ [hidden_changed](syn_hidden_changed) **deprecated**
+
++ [hidden](syn_hidden)
+
++ [image_link](syn_image_link)
+
++ [image](syn_image)
+
++ [increment](syn_increment)
+
++ [index_changed](syn_index_changed) **deprecated**
+
++ [index](syn_index)
+
++ [input](syn_input)
+
++ [javascript](syn_javascript)
+
++ [keyup](syn_keyup)
+
++ [link](syn_link)
+
++ [memberlist](syn_memberlist) **deprecated**
+
++ [mouseout](syn_mouseout)
+
++ [mouseover](syn_mouseover)
+
++ [multi](syn_multi)
+
++ [name](syn_name) **not needed?**
+
++ [onload](syn_onload) **deprecate?**
+
++ [parent](syn_parent) 
+
++ [password](syn_password)
+
++ [radio](syn_radio)
+
++ [regex](syn_regex)
+
++ [register_user](syn_register_user)
+
++ [reload](syn_reload)
+
++ [remove_child](syn_remove_child) **deprecated**
+
++ [remove_class](syn_remove_class) **deprecated**
+
++ [replace](syn_replace)
+
++ [reset_password](syn_reset_password) **deprecated**
+
++ [self](syn_self)
+
++ [session](syn_session)
+
++ [set](syn_set)
+
++ [set_index](syn_set_index) **deprecated**
+
++ [set_path](syn_set_path) **deprecated**
+
++ [set_style](syn_set_style) **deprecated**
+
++ [set_text](syn_set_text) **deprecated**
+
++ [siblings](syn_siblings)
+
++ [slot](syn_slot)
+
++ [stack](syn_stack)
+
++ [store](syn_store)
+
++ [string](syn_string)
+
++ [style_changed](syn_style_changed) **deprecate?**
+
++ [submit](syn_submit)
+
++ [succeed](syn_succeed)
+
++ [test](syn_test)
+
++ [textarea](syn_textarea)
+
++ [text](syn_text)
+
++ [user](syn_user)
+
++ [value](syn_value)
