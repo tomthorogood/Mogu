@@ -31,7 +31,7 @@ EventBindery::EventBindery(Moldable* broadcaster)
     std::string node = broadcaster->getNode();
     node += ".events";
     app->redisExec(Mogu::Keep, "get %s", node.c_str());
-    int num_events = atoi(redisReply_STRING.c_str());
+    int num_events = std::stoi(redisReply_STRING);
 
     /* Then, we need to iterate through each of these events. */
     for (int e = 0; e < num_events; e++) {

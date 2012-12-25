@@ -63,7 +63,7 @@ public:
         /*!\brief A value that is interpreted as a generic string within C++ */
         string_value = 0x1    //1
 
-        /*!\brief  A value that will be interpreted using atoi() into a
+        /*!\brief  A value that will be interpreted using stoi() into a
          * C++ integer.
          */
         ,

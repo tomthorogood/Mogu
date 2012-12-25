@@ -21,7 +21,7 @@ void mold(
     mApp;
     std::string spersp = "perspectives." + perspective;
     app->redisExec(Mogu::Keep, "get %s", spersp.c_str());
-    int num_molds = atoi(redisReply_STRING.c_str());
+    int num_molds = std::stoi(redisReply_STRING);
 
     for (int w = 0; w < num_molds; w++) {
         Events::EventPreprocessor preproc(spersp, w);

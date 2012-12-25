@@ -45,7 +45,7 @@ void parse_single_static_token(
 
     switch (tokentype) {
     case NodeValueParser::integer_value:
-        v.setInt(atoi(inputcpy.c_str()));
+        v.setInt(std::stoi(inputcpy));
         return;
     case NodeValueParser::float_value:
         v.setFloat(atof(inputcpy.c_str()));

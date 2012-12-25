@@ -26,12 +26,6 @@ inline std::string ftoa(
     return s.str();
 }
 
-inline int stoi(
-    std::string str)
-{
-    return atoi(str.c_str());
-}
-
 template<typename T, typename U>
 class create_map
 {
