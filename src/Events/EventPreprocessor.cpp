@@ -37,7 +37,7 @@ EventPreprocessor::EventPreprocessor(
     NodeValue v;
 
     MoguNode n_node(node);
-    std::string i_event = itoa(event_num);
+    std::string i_event = std::to_string(event_num);
     std::string s_node = n_node.addSuffix(i_event);
 
     std::string trigger_str = getHashEntry(s_node, "trigger");

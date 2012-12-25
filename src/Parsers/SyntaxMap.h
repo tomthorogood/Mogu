@@ -18,7 +18,7 @@ public:
     SyntaxRangeException(int i) { oor = i;}
     const char* what() const throw()
     {
-        std::string s_oor = itoa(oor);
+        std::string s_oor = std::to_string(oor);
         std::string message = "Syntax Enumerator out of range: ";
         message += s_oor;
         return message.c_str();

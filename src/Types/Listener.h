@@ -54,15 +54,12 @@ public:
     }
 
 private:
-    Moldable* __widget;
-    std::string __string;
-    Type type;
+    Moldable* __widget      =nullptr;
+    std::string __string    =EMPTY;
+    Type type = NOT_SET;
 
     inline void __init__()
     {
-        __widget = NULL;
-        __string = EMPTY;
-        type = NOT_SET;
     }
 };
 

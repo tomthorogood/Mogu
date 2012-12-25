@@ -79,17 +79,17 @@ void StorageRequest::build_command()
         NodeValue varg;
         app->interpreter().giveInput(tokenizer.next(), varg);
         if (varg.getType() == int_value) {
-            varg.setString(itoa(varg.getInt()));
+            varg.setString(std::to_string(varg.getInt()));
         }
         arg = varg.getString();
     }
 
     switch (value.getType()) {
     case int_value:
-        f_value = itoa(value.getInt());
+        f_value = std::to_string(value.getInt());
         break;
     case float_value:
-        f_value = ftoa(value.getFloat());
+        f_value = std::to_string(value.getFloat());
         break;
     default:
         f_value = value.getString();

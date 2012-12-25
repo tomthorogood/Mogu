@@ -30,7 +30,6 @@ BroadcastMessage::BroadcastMessage(
      */
     if (preproc->message.status == preproc->message.delayed) {
 #ifdef DEBUG
-//		assert(_broadcaster != NULL);
         std::cout << "Parsing delayed message: " << preproc->message.original
             << std::endl;
 #endif
@@ -77,7 +76,7 @@ void BroadcastMessage::resolveListeners()
         if (t.next() != EMPTY && t.startsWithString()) {
             mApp;
             iter_widget = app->registeredWidget(str);
-            if (iter_widget == NULL) return;
+            if (iter_widget == nullptr) return;
         }
         else {
             listeners.push_back(new Listener(str));

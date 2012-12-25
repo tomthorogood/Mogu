@@ -150,7 +150,7 @@ public:
         std::map<NVP_States, Automaton::AbstractState*>::iterator iter =
             __states.begin();
         while (iter != __states.end()) {
-            if (iter->second != NULL) delete iter->second;
+            if (iter->second != nullptr) delete iter->second;
             ++iter;
         }
     }
@@ -282,7 +282,7 @@ void parse_data_node(
     , std::string& base
     , std::string arg = EMPTY,
     NodeValueParser::Outputs arg_type = NodeValueParser::string_value,
-    Moldable* broadcaster = NULL);
+    Moldable* broadcaster = nullptr);
 
 /*!\brief Resolves information about a widget currently displayed on the
  * user's screen.

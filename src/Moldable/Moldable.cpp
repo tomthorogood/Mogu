@@ -54,14 +54,14 @@ __style_changed(this)
 
 Moldable::~Moldable()
 {
-    if (__bindery != NULL) delete __bindery;
+    if (__bindery != nullptr) delete __bindery;
 }
 
 void Moldable::__init__ ()
 {
     mApp;
     Parsers::NodeValueParser& nvp = app->interpreter();
-    __bindery = NULL;
+    __bindery = nullptr;
     std::string param;
     NodeValue v;
 

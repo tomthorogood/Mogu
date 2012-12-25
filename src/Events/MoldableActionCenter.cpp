@@ -71,7 +71,7 @@ void directListeners(
         std::cout << "Listeners: ";
         for (size_t i = 0; i < num_listeners; ++i) {
             Listener* listener = broadcast.listeners[i];
-            if (&(listener->getWidget()) != NULL) {
+            if (&(listener->getWidget()) != nullptr) {
                 std::cout << listener->getWidget().getNode();
             }
             else {

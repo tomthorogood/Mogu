@@ -10,22 +10,6 @@
 
 #include <sstream>
 
-inline std::string itoa(
-    int i)
-{
-    std::stringstream s;
-    s << i;
-    return s.str();
-}
-
-inline std::string ftoa(
-    double d)
-{
-    std::stringstream s;
-    s << d;
-    return s.str();
-}
-
 template<typename T, typename U>
 class create_map
 {

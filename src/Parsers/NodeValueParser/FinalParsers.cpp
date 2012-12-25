@@ -23,7 +23,7 @@ inline std::string convert_nv_to_string(
 {
     switch (v.getType()) {
     case int_value:
-        return itoa(v.getInt());
+        return std::to_string(v.getInt());
     default:
         return v.getString();
     }

@@ -89,7 +89,7 @@ public:
         std::string host, int port, std::string auth = EMPTY, size_t dbnum = 0)
     {
         redisContext* context = redisContext(host.c_str(), port);
-        redisReply* reply = NULL;
+        redisReply* reply = nullptr;
         if (auth != EMPTY) {
             reply = (redisReply*) redisCommand(context, "auth %s", auth);
             freeReplyObject(reply);
@@ -113,7 +113,7 @@ public:
         size_t connection_number)
     {
         TemporaryConnection* c = __connections[connection_number];
-        if (c != NULL) {
+        if (c != nullptr) {
             delete c;
         }
         __connections.erase(connection_number);
@@ -124,7 +124,7 @@ public:
         std::map<size_t, TemporaryConnection*>::iterator iter =
             __connections.begin();
         while (iter != __connections.end()) {
-            if (iter->second != NULL) delete iter->second;
+            if (iter->second != nullptr) delete iter->second;
             ++iter;
         }
     }

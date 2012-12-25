@@ -25,7 +25,7 @@ void mold(
 
     for (int w = 0; w < num_molds; w++) {
         Events::EventPreprocessor preproc(spersp, w);
-        Events::BroadcastMessage msg(NULL, &preproc);
+        Events::BroadcastMessage msg(nullptr, &preproc);
         Events::ActionCenter::submitBroadcast(msg);
     }
 }
