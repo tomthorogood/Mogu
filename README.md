@@ -107,8 +107,8 @@ using Python syntax, even though you *do not need to know Python*.
 To create hello world, all you need is this:
 
     widgets['hello_world'] = {
-        type    :   "text",  
-        content :   "Hello, World!"
+        "type"    :   "text",  
+        "content" :   "Hello, World!"
     }
     tree['wrapper'] = ['hello_world']
 
