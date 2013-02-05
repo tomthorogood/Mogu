@@ -1,0 +1,39 @@
+widget side_firsts
+    type    :   container
+    css     :   "menuoption optionfirsts",
+
+    events
+        when mouseout {
+            reset own css 
+        }
+
+        when mouseover {
+            set own css to "menuoption optionFirsts_on"
+        }
+
+        when clicked {
+            set widget sidemenu syle to "sidemenu oFirsts"
+            set path to "/firsts"
+            set widget main_display index to 2
+        }
+    end events
+end widget
+
+data some_data
+    "something goes here"
+    "something else"
+    "here's a thing"
+    1234
+end data
+
+perspective firsts
+    set widget main_display index to 2
+    set widget sidemenu style to "sidemenu oFirsts"
+end perspective
+
+policy contact_info
+    encryption  :   on
+    type        :   hash
+    mode        :   replace
+    data        :   string
+end policy

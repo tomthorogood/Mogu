@@ -79,3 +79,7 @@ syntaxMapStrings = [
 	"{set}",
 	"{degradation}",
 ]
+syntax = dict.fromkeys(syntaxMapStrings, (0,""))
+def as_integer(string):
+    global syntaxMapStrings
+    return syntaxMapStrings.index(string)
