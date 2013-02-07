@@ -1,0 +1,47 @@
+widget a_widget
+    definitions go here
+end widget
+
+events
+    events go here
+end events
+
+template a_template
+    definitions go here
+end template
+
+policy a_policy
+    definitions go here
+end policy
+
+data some_data
+    data goes here
+end data
+
+validator a_validator
+    validation goes here
+end validator
+
+children
+    children go here
+end children
+
+when clicked {
+    do something here
+}
+
+type :  container
+
+css :   "some styles"
+
+content : "content goes here"
+
+location : "http://link.com"
+
+template : my_widget
+
+data : set
+
+reset my_widget
+
+set own css to "foo style"

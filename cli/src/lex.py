@@ -2,6 +2,7 @@ import pyRex
 import syntax
 from regexlib import regexlib
 from lex_functions import *
+import re
 # This file contains information for use in PyRex to lex
 # *.mogu files
 
@@ -9,7 +10,13 @@ IGNORE = pyRex.Lexer.ParseMap.IGNORE #alias for ease of reading
 LITERAL = pyRex.Lexer.ParseMap.LITERAL #alias for ease of reading
 
 def valid_options (string):
-    return [key for key in syntax.syntax if string in syntax.syntax[key][1]]
+    return [key for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
+
+def trim(string):
+    return string.strip()
+
+def everything_until(string):
+    return "((.*\n)+)(?=%s)" % string
 
 # a valid identifier for use in mogu will follow
 # standard programming identifier conventions:
@@ -43,55 +50,57 @@ def valid_options (string):
 # where '...' represents everything until 'end widget' is reached as the
 # only entry on a line.
 
+
+NEWLINES = pyRex.Lexer.ParseMap([("newline","\n",IGNORE)])
+
 WIDGET_BLOCK = pyRex.Lexer.ParseMap ((
-        ( "begin",          "widget ",              IGNORE),
-        ( "identifier",     IDENTIFIER,             LITERAL),
-        ( "widget_def",     "[^(\nend widget\n)]",  register_widget),
-        ( "end",            "\nend widget\n",       IGNORE)
+        ( "begin",          "widget ",                          IGNORE),
+        ( "identifier",     regexlib["identifier"],              register_widget),
+        ("widget_def",      everything_until("end widget\n"),   trim),
+        ( "end",            r"end widget\n",                     IGNORE)
 ))
 
 EVENT_BLOCK = pyRex.Lexer.ParseMap ((
-    ("begin",           "%(whitespace)s*events[ \t]*\n" % regexlib,     IGNORE),
-        ("block",           "[^(end events\n)]",                        LITERAL),
-        ("end",             "end events\n",                             IGNORE)
+    ("begin",           "%(whitespace)s*events%(whitespace)s*\n" % regexlib,    IGNORE),
+    ("block",           everything_until("end events\n"),                       trim),
+    ("end",             "end events\n",                                         IGNORE)
 ))
 
 TEMPLATE_BLOCK = pyRex.Lexer.ParseMap((
         ("begin",           "%(whitespace)s*template " % regexlib,      IGNORE),
-        ("identifier",      IDENTIFIER,                                 register_template),
-        ("template_def",    "[^(\nend template\n)]",                    LITERAL),
-        ("end",             "\nend template\n",                         IGNORE)
+        ("identifier",      regexlib["identifier"],                     register_template),
+        ("template_def",    everything_until("end template\n"),         trim),
+        ("end",             "end template\n",                           IGNORE)
 ))
 
 POLICY_BLOCK = pyRex.Lexer.ParseMap((
         ("begin",           "%(whitespace)s*policy " % regexlib,        IGNORE),
-        ("identifier",      IDENTIFIER,                                 register_policy),
-        ("policy_def",      "[^(\nend policy\n)]",                      LITERAL),
-        ("end",             "\nend policy\n",                           IGNORE)
+        ("identifier",      regexlib["identifier"],                     register_policy),
+        ("policy_def",      everything_until("end policy\n"),           trim),
+        ("end",             "end policy\n",                             IGNORE)
 ))
 
 DATA_BLOCK = pyRex.Lexer.ParseMap((
         ("begin",           "%(whitespace)s*data " % regexlib,          IGNORE),
-        ("identifier",      IDENTIFIER,                                 register_data),
-        ("data_def",        "[^(\nend data\n)]",                        LITERAL),
-        ("end",             "\nend data\n",                             IGNORE)
+        ("identifier",      regexlib["identifier"],                     register_data),
+        ("data_def",        everything_until("end data\n"),             trim),
+        ("end",             "end data\n",                               IGNORE)
 ))
 
 VALIDATOR_BLOCK = pyRex.Lexer.ParseMap((
         ("begin",           "%(whitespace)s*validator " % regexlib,     IGNORE),
-        ("identifier",      IDENTIFIER,                                 register_validator),
-        ("validator_def",   "[^(\nend validator\n)]",                   LITERAL),
-        ("end",             "\nend validator\n",                        IGNORE)
+        ("identifier",      regexlib["identifier"],                     register_validator),
+        ("validator_def",   everything_until("end validator\n"),        trim),
+        ("end",             "end validator\n",                          IGNORE)
 ))
 
 CHILDREN_BLOCK = pyRex.Lexer.ParseMap((
-        ("begin",           "%(whitespace)s*children$(whitespace)s*\n", IGNORE),
-        ("block",           "*([ \t]*%s[ \t]*\n)+" % IDENTIFIER,        LITERAL),
-        ("end",             "end children\n",                           IGNORE)
+        ("begin",           r"%(whitespace)s*children%(whitespace)s*\n" % regexlib,  IGNORE),
+        ("block",           everything_until("end children\n"),                     trim),
+        ("end",             "end children\n",                                       IGNORE)
 ))
 
 VALID_EVENT_TRIGGERS = "(%s)" % "|".join(valid_options("event trigger"))
-
 
 # a "when" block looks like this:
 # when triggered {
@@ -100,11 +109,11 @@ VALID_EVENT_TRIGGERS = "(%s)" % "|".join(valid_options("event trigger"))
 #   and this
 # }
 WHEN_BLOCK = pyRex.Lexer.ParseMap ((
-        ("begin",       "%(whitespace)s*when%(whitespace)s*",           IGNORE),
+        ("begin",       "\s*when\s+",                                   IGNORE),
         ("trigger",     VALID_EVENT_TRIGGERS,                           syntax.as_integer),
-        ("block_begin", "$(whitespace)s*\{",                            IGNORE),
-        ("block",       "[^(\}\n)]+",                                   LITERAL),
-        ("block_end",   "[ \t]*\}[ \t]*\n",                             IGNORE)
+        ("block_begin", "\s*{",                                         IGNORE),
+        ("block",       everything_until("\}"),                         trim),
+        ("block_end",   "\}\s*\n",                                      IGNORE)
 ))
 
 ########################
@@ -138,8 +147,10 @@ WHEN_BLOCK = pyRex.Lexer.ParseMap ((
 
 
 def DIRECTIVE_START(token):
-    return r"[\n\t ]*%s[\t ]*:[\t ]*" % token
-DIRECTIVE_END = "[\t ]*\n"
+    d =  r"\s*%s\s*:\s*" % token
+    return d
+
+DIRECTIVE_END = "\s*"
 
 # Widget Type #
 
@@ -163,11 +174,10 @@ WIDGET_TYPE = pyRex.Lexer.ParseMap((
 #   css :   "foo"
 
 # where "foo" represents at least one valid css class
-VALID_CSS_CLASSES = "((%s ) +)+" % IDENTIFIER
 
 WIDGET_STYLE = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("css")          , IGNORE),
-        ("css_classes", VALID_CSS_CLASSES               , LITERAL),
+        ("css_classes", "[^\n]+"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
@@ -182,19 +192,19 @@ WIDGET_STYLE = pyRex.Lexer.ParseMap((
 
 WIDGET_CONTENT = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("content")      , IGNORE),
-        ("content",     "[^\n]*"                        , LITERAL),
+        ("content",     "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
 WIDGET_SOURCE = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("source")       , IGNORE),
-        ("source",      "[^\n]*"                        , LITERAL),
+        ("source",      "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
 WIDGET_LOCATION = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("location")     , IGNORE),
-        ("location",    "[^\n]*"                        , LITERAL),
+        ("location",    "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
@@ -206,21 +216,21 @@ WIDGET_LOCATION = pyRex.Lexer.ParseMap((
 
 WIDGET_TEMPLATE = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("template")     , IGNORE),
-        ("template",    IDENTIFIER                      , check_template_exists),
+        ("template",    regexlib["identifier"]          , check_template_exists),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
 POLICY_MODE  = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("mode")         , IGNORE),
-        ("mode",        IDENTIFIER                      , check_policy_exists),
+        ("mode",        regexlib["identifier"]          , check_policy_exists),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
 regexlib["datatype"] = "(%s)" % ("|".join(valid_options("datatype")))
 POLICY_DATA = pyRex.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("data")         , IGNORE),
-        ("data",        regexlib["datatype"]            , LITERAL),
-        ("end",         DIRECTIVE_END                   , IGNORE)
+        ("begin",           DIRECTIVE_START("data")         , IGNORE),
+        ("datatype",        regexlib["datatype"]            , trim),
+        ("end",             DIRECTIVE_END                   , IGNORE)
 ))
 
 #################
@@ -254,19 +264,46 @@ POLICY_DATA = pyRex.Lexer.ParseMap((
 regexlib["action"]      = "(%s)" % ("|".join(valid_options("action")))
 regexlib["object"]      = "(%s)" % ("|".join(valid_options("object")))
 regexlib["attribute"]   = "(%s)" % ("|".join(valid_options("attribute")))
-regexlib["preposition"] = "(%s)" % ("|".join(valid_options("prepositions")))
+regexlib["preposition"] = "(%s)" % ("|".join(valid_options("preposition")))
+regexlib["object_set"] = "(%(object)s|%(identifier)s)(\s+%(attribute)s)?" % regexlib
 
-# Now, a value can be any of the following:
-#   IDENTIFIER
-#   VALID_OBJECT
-#   VALID_OBJECT > VALID_ATTR
-regexlib["value"] = "(%(identifier)s|$(object)s[[ \t]*[ \t]*%(attribute)s]?|%(string_literal)s)" % regexlib 
-
-
-# And then we can bring all of this in together:
 MOGU_CMD = pyRex.Lexer.ParseMap((
-    ("begin"    ,   "%(whitespace)s" % regexlib,                IGNORE),
-    ("action"   ,   "%(action)s" % regexlib   ,                 syntax.as_integer),
-    ("dir_obj"  ,   "%(value)s" % regexlib    ,                 LITERAL),
-    ("opt_arg"  ,   "(%(preposition)s %(value)s)?" % regexlib,  LITERAL)
+    ("begin"    ,   "\s*"                                                                           , IGNORE),
+    ("action"   ,   "%(action)s" %regexlib                                                          , syntax.as_integer),
+    ("ws"       ,   "\s+"                                                                           , IGNORE),
+    ("dir_obj"  ,   "%(object_set)s" %regexlib                                                      , trim),
+    ("opt_end"  ,   "(\s+%(preposition)s\s+(%(object_set)s|%(string_literal)s|[0-9]+))?"%regexlib , trim),
+    ("end"      ,   "\s*"                                                                           , IGNORE)
 ))
+
+if __name__ == "__main__":
+    pyRex.Lexer.VERBAL = True
+    to_test = [
+        WIDGET_BLOCK,
+        EVENT_BLOCK,
+        TEMPLATE_BLOCK,
+        POLICY_BLOCK,
+        DATA_BLOCK,
+        VALIDATOR_BLOCK,
+        CHILDREN_BLOCK,
+        WHEN_BLOCK,
+        WIDGET_TYPE,
+        WIDGET_STYLE,
+        WIDGET_CONTENT,
+        WIDGET_SOURCE,
+        WIDGET_LOCATION,
+        WIDGET_TEMPLATE,
+        POLICY_MODE,
+        POLICY_DATA,
+        MOGU_CMD,
+        NEWLINES
+    ]
+
+    test_consumer = pyRex.Consumer.Consumer(to_test)
+    input_string = ""
+    with open("syntax_test.mogu") as f:
+        input_string = f.read()
+    results = test_consumer.parse(input_string)
+    for result in results:
+        print(result[0])
+

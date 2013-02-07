@@ -1,5 +1,6 @@
 
 IDENTIFIER = "[:a-zA-Z_][:a-zA-Z_0-9]*"
+
 STRLIT = r'''(?x)   # verbose mode
     (?<!\\)    # not preceded by a backslash
     "          # a literal double-quote
@@ -7,7 +8,8 @@ STRLIT = r'''(?x)   # verbose mode
     (?<!\\)    # not preceded by a backslash
     "          # a literal double-quote
     ''' 
-WHITESPACE = "[ \t]"
+STRLIT = r'''(?<!\\)".*?(?<!\\)"'''
+WHITESPACE = r"\s"
 regexlib = {
         "identifier"    :   IDENTIFIER,
         "whitespace"    :   WHITESPACE,
