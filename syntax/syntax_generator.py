@@ -23,6 +23,12 @@ import sys
 # borrow some basic regular expressions
 from regexlib import regexlib
 
+PY_ADDITIONS = """
+def as_integer(string):
+    global MoguSyntax
+    return MoguSyntax[string.strip()][0]
+"""
+
 def spaces(s1,s2):
     """
     For pretty formatting of output files. Ensures proper
@@ -201,7 +207,7 @@ for line in lines:
         sys.stderr.write("Could not parse line: %s" % line)
         continue
 
-py_out = generate_py("MoguSyntax",py_entries)
+py_out = generate_py("MoguSyntax",py_entries) + PY_ADDITIONS
 cpp_out = generate_cpp("MoguSyntax",cpp_entries)
 
 with open(OUTPUT_PY,"w") as f:
