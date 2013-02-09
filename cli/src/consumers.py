@@ -22,6 +22,39 @@ WidgetConsumer = Consumer.Consumer([
     NEWLINES
 ])
 
+TemplateConsumer = Consumer.Consumer([
+    WIDGET_TYPE,
+    WIDGET_CONTENT,
+    WIDGET_SOURCE,
+    WIDGET_LOCATION,
+    WIDGET_STYLE,
+    EVENT_BLOCK,
+    CHILDREN_BLOCK,
+    NEWLINES
+])
+
+PolicyConsumer = Consumer.Consumer([
+    POLICY_MODE,
+    POLICY_DATA,
+    NEWLINES
+])
+
+ValidatorBlock = Consumer.Consumer([
+    VALIDATOR_TYPE,
+    VALIDATOR_TEST,
+    NEWLINES
+
+])
+
+DataConsumer = Consumer.Consumer([
+    HASH_BLOCK,
+    LIST_BLOCK,
+    VALUE_DEFINITION,
+    NEWLINES
+])
+
+
+
 if __name__ == "__main__":
     results = None
     pyRex.Lexer.VERBAL = True

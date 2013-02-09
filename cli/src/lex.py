@@ -60,6 +60,18 @@ WIDGET_BLOCK = pyRex.Lexer.ParseMap ((
         ( "end",            r"end widget",                      IGNORE)
 ))
 
+HASH_BLOCK = pyRex.Lexer.ParseMap ((
+        ("begin",           "hash",                             IGNORE),
+        ("hash_def",        everything_until("end hash"),       trim),
+        ("end",             "end hash",                         IGNORE)
+))
+
+LIST_BLOCK = pyRex.Lexer.ParseMap ((
+        ("begin",           "list",                             IGNORE),
+        ("list_def",        everything_until("end list"),       trim),
+        ("end",             "end list",                         IGNORE)
+))
+
 EVENT_BLOCK = pyRex.Lexer.ParseMap ((
     ("begin",           r"\s*events\s*"                      , IGNORE),
     ("block",           everything_until(r"end events")      , trim),
@@ -234,6 +246,21 @@ POLICY_DATA = pyRex.Lexer.ParseMap((
         ("end",             DIRECTIVE_END                   , IGNORE)
 ))
 
+regexlib["validator_type"] = "(%s)" % ("|".join(valid_options("valiator type")))
+
+VALIDATOR_TYPE = pyRex.Lexer.ParseMap((
+    ("begin",           DIRECTIVE_START("type")         , IGNORE),
+    ("type",            regexlib["validator_type"]      , LITERAL),
+    ("end",             DIRECTIVE_END                   , IGNORE)
+))
+
+VALIDATOR_TEST = pyRex.Lexer.ParseMap((
+    ("begin",           DIRECTIVE_START("test")         , IGNORE),
+    ("test",            regexlib["string_literal"]      , LITERAL),
+    ("end",             DIRECTIVE_END                   , IGNORE)
+))
+
+
 #################
 # MOGU COMMANDS #
 #################
@@ -278,7 +305,10 @@ MOGU_CMD = pyRex.Lexer.ParseMap((
     ("end"      ,   "\s*"                                                                           , IGNORE)
 ))
 
-
+VALUE_DEFINITION = pyRex.Lexer.ParseMap((
+    ("value_def",   regexlib["value"]   , LITERAL),
+    ("end",         DIRECTIVE_END       , IGNORE)
+))
 
 if __name__ == "__main__":
     pyRex.Lexer.VERBAL = True
