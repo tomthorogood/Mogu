@@ -246,7 +246,7 @@ POLICY_DATA = pyRex.Lexer.ParseMap((
         ("end",             DIRECTIVE_END                   , IGNORE)
 ))
 
-regexlib["validator_type"] = "(%s)" % ("|".join(valid_options("valiator type")))
+regexlib["validator_type"] = "(%s)" % ("|".join(valid_options("validator type")))
 
 VALIDATOR_TYPE = pyRex.Lexer.ParseMap((
     ("begin",           DIRECTIVE_START("type")         , IGNORE),

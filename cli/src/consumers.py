@@ -39,7 +39,7 @@ PolicyConsumer = Consumer.Consumer([
     NEWLINES
 ])
 
-ValidatorBlock = Consumer.Consumer([
+ValidatorConsumer = Consumer.Consumer([
     VALIDATOR_TYPE,
     VALIDATOR_TEST,
     NEWLINES
@@ -57,7 +57,7 @@ DataConsumer = Consumer.Consumer([
 
 if __name__ == "__main__":
     results = None
-    pyRex.Lexer.VERBAL = True
+    #pyRex.Lexer.VERBAL = True
     with open("syntax_test.mogu") as f:
         results = RootConsumer.parse(f.read())
 
@@ -68,3 +68,20 @@ if __name__ == "__main__":
             wresult = WidgetConsumer.parse(result[0]["widget_def"])
             for w in wresult:
                 print w[0]
+        elif result[1] is TEMPLATE_BLOCK:
+            tresult = TemplateConsumer.parse(result[0]["template_def"])
+            for t in tresult:
+                print t[1]
+        elif result[1] is POLICY_BLOCK:
+            presult = PolicyConsumer.parse(result[0]["policy_def"])
+            for p in presult:
+                print p[1]
+        elif result[1] is DATA_BLOCK:
+            dresult = DataConsumer.parse(result[0]["data_def"])
+            for d in dresult:
+                print d[1]
+        elif result[1] is VALIDATOR_BLOCK:
+            vresult = ValidatorConsumer.parse(result[0]["validator_def"])
+            for v in vresult:
+                print v[1]
+
