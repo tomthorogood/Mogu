@@ -44,16 +44,13 @@ def replace_syntax(string):
     return working
 
 if __name__ == "__main__":
-    import random
-    literals = ['"hello"','"goodbye"','"doctordonna"','"tardis"','"bad wolf"']
-    def create_string(num=4):
-        string = ""
-        for i in range(num):
-            string += "%s %s " % (random.choice(literals),random.choice([key for key in syntax.MoguSyntax]))
-        return string.strip()
+    strings = (
+            'set own css to "new css"',
+            'add "widget name" to own',
+            'reset widget "foo"',
+            'set own content to widget "other widget" content',
+            )
 
-    rstring = create_string()
-    print(rstring)
-    print(replace_syntax(rstring))
-    print(replace_syntax("set own css to \"new css\""))
-    print(replace_syntax('"this is a test string" image link'))
+
+    for string in strings:
+        print "%s   >>  %s" % (string,replace_syntax(string))

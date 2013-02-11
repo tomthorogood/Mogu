@@ -1,6 +1,7 @@
 MoguSyntax = {
 	"None"                           : (0,"null bit"),
 	"own"                              : (1,"object"),
+	"self"                             : (1,"object"),
 	"parent"                           : (2,"object"),
 	"children"                         : (3,"object"),
 	"siblings"                         : (4,"object"),
@@ -61,6 +62,7 @@ MoguSyntax = {
 	"image link"                 : (54,"widget type"),
 	"to"                         : (55,"preposition"),
 	"as"                         : (56,"preposition"),
+	"widget"                        : (57,"mogutype"),
 } # END MoguSyntax
 
 def as_integer(string):
