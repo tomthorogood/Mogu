@@ -1,6 +1,9 @@
 from lex import *
 from pyRex import Consumer
 
+# LEVEL 0 CONSUMER 
+# A basic mogu document's outer blocks
+
 RootConsumer = Consumer.Consumer([
     WIDGET_BLOCK,
     TEMPLATE_BLOCK,
@@ -9,6 +12,8 @@ RootConsumer = Consumer.Consumer([
     VALIDATOR_BLOCK,
     NEWLINES,
 ])
+
+# LEVEL 1 CONSUMERS
 
 WidgetConsumer = Consumer.Consumer([
     WIDGET_TYPE,
@@ -53,7 +58,19 @@ DataConsumer = Consumer.Consumer([
     NEWLINES
 ])
 
+# LEVEL 2 CONSUMERS 
 
+EventConsumer = Consumer.Consumer([
+    WHEN_BLOCK,
+    NEWLINES
+])
+
+# LEVEL 3 CONSUMERS
+
+WhenConsumer = Consumer.Consumer([
+    MOGU_CMD,
+    NEWLINES
+])
 
 if __name__ == "__main__":
     results = None
