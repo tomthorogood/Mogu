@@ -46,9 +46,11 @@ def replace_syntax(string):
 if __name__ == "__main__":
     strings = (
             'set own css to "new css"',
-            'add "widget name" to own',
+            'append "widget name" to self',
+            'append retrieve widget "entry:name" to self',
             'reset widget "foo"',
             'set own content to widget "other widget" content',
+            'store own contents at user "first_name"'
             )
 
 
