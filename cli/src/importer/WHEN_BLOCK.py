@@ -12,9 +12,9 @@ from WhenConsumer import WhenConsumer
 #   and this
 # }
 WHEN_BLOCK = pyRex.Lexer.ParseMap ((
-        ("begin",       "\s*when\s+",               IGNORE),
+        ("begin",       r"\s*when\s+",              IGNORE),
         ("trigger",     regexlib["event_triggers"], syntax.as_integer),
-        ("block_begin", "\s*{",                     IGNORE),
+        ("block_begin", r"\s*{",                    IGNORE),
         ("block",       everything_until("\}"),     WhenConsumer.parse),
-        ("block_end",   "\}\s*\n",                  IGNORE)
+        ("block_end",   r"\}\s*",                   IGNORE)
 ))
