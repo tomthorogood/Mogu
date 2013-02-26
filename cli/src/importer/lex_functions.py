@@ -32,7 +32,7 @@ def trim(string):
     return string.strip()
 
 def everything_until(string):
-    return r"(.|\n)+(?=%s)" % string
+    return r"(.|\n)+?(?=%s)" % string
 
 def newline_list(string):
     nl_list = string.split("\n")

@@ -5,10 +5,12 @@ widget test_widget
     events
         when clicked {
             set own css to "clicked_style"
+            reset widget "a_widget_name"
         }
     end events
     children
         test_child
+        another child
     end children
 end widget
 
@@ -25,3 +27,23 @@ validator a_validator
     type    :   regex
     test    :   "foobarbaz"
 end validator
+
+data test_datalist
+    list
+        "monkey"
+        "zebra"
+        "gorilla"
+    end list
+end data
+
+data test_datahash
+    hash
+        cute    :  "monkey",
+        striped :  "zebra",
+        large   :  "gorilla"
+    end hash
+end data
+
+data test_datavalue
+    42
+end data

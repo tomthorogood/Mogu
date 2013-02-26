@@ -8,6 +8,6 @@ from DataConsumer import DataConsumer
 DATA_BLOCK = pyRex.Lexer.ParseMap((
         ("begin",           "\s*data ",                                 IGNORE),
         ("identifier",      regexlib["identifier"],                     register_data),
-        ("data_def",        everything_until("end data"),               DataConsumer.parse),
-        ("end",             "end data",                                 IGNORE)
+        ("data_def",        everything_until(r"end data"),              DataConsumer.parse),
+        ("end",             r"end data",                                IGNORE)
 ))

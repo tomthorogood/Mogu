@@ -15,17 +15,19 @@ regexlib["action"]      = "(%s)" % ("|".join(valid_options("action")))
 regexlib["object"]      = "(%s)" % ("|".join(valid_options("object")))
 regexlib["attribute"]   = "(%s)" % ("|".join(valid_options("attribute")))
 regexlib["preposition"] = "(%s)" % ("|".join(valid_options("preposition")))
-regexlib["object_set"]  = "(%(object)s|%(identifier)s)(\s+%(attribute)s)?" % regexlib
+regexlib["object_set"]  = "%(object)s\s*(%(identifier)s|%(string_literal)s)?(\s+%(attribute)s)?" % regexlib
 regexlib["value"]       = "(%(object_set)s|%(string_literal)s|[0-9]+)" % regexlib 
 
 HASH_DEFINITION = pyRex.Lexer.ParseMap((
         ("key",             everything_until(":")   ,   trim),
         ("delim",           ":",                        IGNORE),
-        ("value",           everything_until("\n")  ,   trim)
+        ("value",           everything_until(r"\n") ,   trim),
+        ("end",             r"\n\s*"                ,   IGNORE)
 ))
 
 LIST_DEFINITION = pyRex.Lexer.ParseMap([
-        ("entry",           everything_until("\n"),     trim)
+        ("entry",           everything_until(r"\n\s*"),     trim),
+        ("end",             r"\n\s*"                  ,     IGNORE)
 ])
 
 ########################
