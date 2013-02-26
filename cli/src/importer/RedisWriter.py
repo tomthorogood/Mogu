@@ -23,7 +23,6 @@ class RedisWriter(object):
 
             elif isinstance(obj, RedisObjects.RedisHash):
                 for value in obj.data:
-                    print("Node:\t(%s)%s\nKey:\t(%s)%s\nValue:\t(%s)%s\n"%(type(obj.node),obj.node, type(value),value, type(obj.data[value]),obj.data[value]))
                     self.db.hset(obj.node,value,obj.data[value])
 
             elif isinstance(obj, RedisObjects.RedisSet):

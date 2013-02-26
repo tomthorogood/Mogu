@@ -3,6 +3,7 @@ import pyRex
 from regexlib import *
 from lex_functions import *
 
+pyRex.Lexer.VERBAL = False
 
 IGNORE = pyRex.Lexer.ParseMap.IGNORE #alias for ease of reading
 LITERAL = pyRex.Lexer.ParseMap.LITERAL #alias for ease of reading

@@ -1,6 +1,6 @@
 import pyRex 
 import syntax 
-
+import SyntaxReplacer
 from lex_base import IGNORE
 from lex_base import regexlib
 from lex_functions import trim
@@ -38,7 +38,7 @@ MOGU_CMD = pyRex.Lexer.ParseMap((
     ("begin"    ,   "\s*"                                                                           , IGNORE),
     ("action"   ,   "%(action)s" %regexlib                                                          , syntax.as_integer),
     ("ws"       ,   "\s+"                                                                           , IGNORE),
-    ("dir_obj"  ,   "%(object_set)s" %regexlib                                                      , trim),
-    ("opt_end"  ,   "(\s+%(preposition)s\s+%(value)s)?"%regexlib , trim),
+    ("dir_obj"  ,   "%(object_set)s" %regexlib                                                      , SyntaxReplacer.replace_syntax),
+    ("opt_end"  ,   "(\s+%(preposition)s\s+%(value)s)?"%regexlib                                    , SyntaxReplacer.replace_syntax),
     ("end"      ,   "\s*"                                                                           , IGNORE)
 ))

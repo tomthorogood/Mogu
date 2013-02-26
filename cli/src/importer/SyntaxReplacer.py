@@ -5,7 +5,7 @@ import syntax # Syntax/Integer Map
 from pyRex import Consumer
 from pyRex import Lexer
 from regexlib import regexlib # Basic regular expressions
-from lex import everything_until
+from lex_functions import everything_until
 import re
 
 def find_syntax_tokens(string):
@@ -53,6 +53,3 @@ if __name__ == "__main__":
             'store own contents at user "first_name"'
             )
 
-
-    for string in strings:
-        print "%s   >>  %s" % (string,replace_syntax(string))
