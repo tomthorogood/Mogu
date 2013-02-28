@@ -5,12 +5,12 @@ widget test_widget
     events
         when clicked {
             set own css to "clicked_style"
-            reset widget "a_widget_name"
+            reset widget a_widget_name
         }
     end events
     children
         test_child
-        another child
+        another_child
     end children
 end widget
 
