@@ -19,3 +19,4 @@ def parse_root(filename):
 def import_file(filename):
     SharedData.ActiveFile = filename
     root_results = parse_root(filename)
+    return root_results
