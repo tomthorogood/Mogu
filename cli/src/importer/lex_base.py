@@ -92,13 +92,13 @@ WIDGET_LOCATION = pyRex.Lexer.ParseMap((
 
 WIDGET_TEMPLATE = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("template")     , IGNORE),
-        ("template",    regexlib["identifier"]          , check_template_exists),
+        ("template",    regexlib["identifier"]          , reference_template),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
 POLICY_MODE  = pyRex.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("mode")         , IGNORE),
-        ("mode",        regexlib["identifier"]          , check_policy_exists),
+        ("mode",        regexlib["identifier"]          , LITERAL),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
@@ -119,8 +119,5 @@ VALIDATOR_TEST = pyRex.Lexer.ParseMap((
     ("test",            regexlib["string_literal"]      , LITERAL),
     ("end",             DIRECTIVE_END                   , IGNORE)
 ))
-
-
-
 
 NEWLINES = pyRex.Lexer.ParseMap([("newline","\n",IGNORE)])

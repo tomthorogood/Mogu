@@ -52,8 +52,12 @@ class SymbolReferenceTracker(object):
             self.__dict__["references"] = []
 
     def __str__(self):
-        return "SymbolReferenceTracker (%s defined by %s, referenced by %s)" % (
-                self.symbol, self.definition, ", ".join(self.references))
+        if self.definition:
+            return "SymbolReferenceTracker for %s defined in %s, with %d references" % (
+                    self.symbol, self.definition, len(self))
+
+        else:
+            return "Undefined symbol %s with %d references" % (self.symbol, len(self))
 
     def __repr__(self):
         return "SymbolReferenceTracker(dict={\"symbol\" : \"%s\", \"definition\" : \"%s\" , \"references\" : %s})"\
@@ -76,7 +80,7 @@ class SymbolReferenceTracker(object):
             return self.symbol != val
 
     def __nonzero__(self):
-        return (self.symbol and self.definition)
+        return (self.symbol is not None and self.definition is not None)
 
     def __len__(self):
         return len(self.references)
@@ -99,7 +103,7 @@ class SymbolReferenceTracker(object):
         """
         if not self.definition:
             if not filename.endswith(".mogu"):
-                raise TypeError("Attempted to define %s in non-mogu file %s" % self.symbol, filename)
+                raise TypeError("Attempted to define %s in non-mogu file %s" % (self.symbol, filename))
             self.__dict__["definition"] = filename
         else:
             raise AttributeError("Cannot redefine symbol %s in %s - Currently defined in %s" % (
@@ -110,8 +114,9 @@ class SymbolReferenceTracker(object):
 
 
 class SymbolRegistry(object):
-    def __init__(self, label=None, dict={}):
-        self.symbols = dict
+    def __init__(self, label=None, dict=None):
+        if not dict:
+            self.symbols = {}
         self.label = label
 
     def __len__(self):
@@ -163,10 +168,9 @@ class SymbolRegistry(object):
             raise TypeError
 
     def __getitem__(self, key):
-        if key in self:
-            return self.symbols[key]
-        else:
-            raise KeyError
+        if key not in self:
+            self.symbols[key] = SymbolReferenceTracker(key)
+        return self.symbols[key]
 
     def __nonzero__(self):
         """
@@ -199,11 +203,11 @@ class SymbolRegistry(object):
                 nonrefs.append(key)
         return nonrefs
 
-widgetRegistry      = SymbolRegistry()
-templateRegistry    = SymbolRegistry()
-dataRegistry        = SymbolRegistry()
-validatorRegistry   = SymbolRegistry()
-policyRegistry      = SymbolRegistry()
+widgetRegistry      = SymbolRegistry("widgets")
+templateRegistry    = SymbolRegistry("templates")
+dataRegistry        = SymbolRegistry("data")
+validatorRegistry   = SymbolRegistry("validators")
+policyRegistry      = SymbolRegistry("policies")
 
 # TESTING #
 if __name__ == "__main__":

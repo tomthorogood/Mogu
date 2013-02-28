@@ -1,28 +1,55 @@
 import syntax
+import SymbolRegistry
+import SharedData
 
 def DIRECTIVE_START(token):
     d =  r"\s*%s\s*:\s*" % token
     return d
 
 def register_widget(string):
+    SymbolRegistry.widgetRegistry[string] = SharedData.ActiveFile
     return string
 
 def register_template(string):
+    SymbolRegistry.templateRegistry[string]= SharedData.ActiveFile
     return string
 
 def register_data(string):
+    SymbolRegistry.dataRegistry[string] = SharedData.ActiveFile
     return string
 
 def register_validator(string):
+    SymbolRegistry.validatorRegistry[string] = SharedData.ActiveFile
     return string
 
 def register_policy(string):
+    SymbolRegistry.policyRegistry[string] = SharedData.ActiveFile
     return string
 
-def check_template_exists(string):
+def reference_widget(string):
+    SymbolRegistry.widgetRegistry[string].append(SharedData.ActiveFile)
     return string
 
-def check_policy_exists(string):
+def reference_widget_list(string):
+    w_list = newline_list(string)
+    for w in w_list:
+        reference_widget(w)
+    return w_list
+
+def reference_template(string):
+    SymbolRegistry.templateRegistry[string].append(SharedData.ActiveFile)
+    return string
+
+def reference_data(string):
+    SymbolRegistry.dataRegistry[string].append(SharedData.ActiveFile)
+    return string
+
+def reference_validator(string):
+    SymbolRegistry.validatorRegistry[string].append(SharedData.ActiveFile)
+    return string
+
+def reference_policy(string):
+    SymbolRegistry.policyRegistry[string].append(SharedData.ActiveFile)
     return string
 
 def valid_options (string):
@@ -36,5 +63,5 @@ def everything_until(string):
 
 def newline_list(string):
     nl_list = string.split("\n")
-    nl_list = [entry.strip() for entry in nl_list if entry is not ""]
+    nl_list = [e for e in [entry.strip() for entry in nl_list if entry] if e]
     return nl_list
