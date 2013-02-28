@@ -16,7 +16,11 @@ def parse_root(filename):
             raise e
 
 
-def import_file(filename):
+def import_file(filename, verbal=False):
     SharedData.ActiveFile = filename
+    if verbal:
+        sys.stderr.write("Importing %s ... " % filename)
     root_results = parse_root(filename)
+    if verbal:
+        sys.stderr.write(" DONE!\n")
     return root_results
