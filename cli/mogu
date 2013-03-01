@@ -5,26 +5,17 @@ from src import cli
 
 args,conf = cli.getCLIArgs()
 command = args.command[0]
-db = Redis(args.redis_host, args.redis_port, args.redis_db, args.redis_auth)
 args.conf = conf
 
 cli_map = {
-        "import"            :   cli.import_,
-        "import-directory"  :   cli.import_directory,
-        "find-orphans"      :   cli.find_orphans,
-        "merge-sessions"    :   cli.merge_sessions,
-        "export"            :   cli.export_all,
-        "export-widget"     :   cli.export_widget,
-        "start"             :   cli.start,
-        "newfile"           :   cli.newfile,
-        "purge-sessions"    :   cli.purge_sessions,
-        "delete"            :   cli.delete,
-        "init"              :   cli.init,
-        "relate"            :   cli.relate,
-        "create_config"     :   cli.create_config,
-        "find-missing"      :   cli.find_missing_children,
-        "check-syntax"      :   cli.check_syntax
-        }
-
+    "import"            :   cli.mogu_import,
+    "merge-sessions"    :   cli.merge_sessions,
+    "export"            :   cli.export_all,
+    "export-widget"     :   cli.export_widget,
+    "start"             :   cli.start,
+    "purge-sessions"    :   cli.purge_sessions,
+    "init"              :   cli.init,
+    "create_config"     :   cli.create_config,
+}
 if __name__ == "__main__":
-    cli_map[command](args, db)
+    cli_map[command](args)

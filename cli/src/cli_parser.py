@@ -23,15 +23,6 @@ def getCLIArgs():
             action="store", 
             help="The command you want to run (see readme for available commands")
 
-#Mogu specific variables
-    parser.add_argument(
-            "--node-type", 
-            dest="node",
-            type=str, 
-            action="store", 
-            help="The sort of node you're interacting with (event/widget)")
-
-
 # Options for configuring your Redis connection
     parser.add_argument(
             "--redis-select", 
@@ -56,6 +47,13 @@ def getCLIArgs():
             help="Optional Redis host (default is read from config file")
 
     parser.add_argument(
+            "--verbal",
+            dest = "v",
+            action = "store_true",
+            default=False,
+            help="Mogu will talk to you more if you turn on this flag.")
+
+    parser.add_argument(
             "--redis-auth", 
             type=str, 
             dest="redis_auth", 
@@ -72,10 +70,6 @@ def getCLIArgs():
             dest="yes", action="store_true", default=False, 
             help="Will assume yes to all questions. EXTRA CAREFUL!")
 
-    parser.add_argument("--single-file", 
-            dest="single", action="store_true", default=False, 
-            help="Will export the entire database to a single file rather than a package.")
-
     parser.add_argument("-v", "--verbose",
             dest="verbose", action="store_true", default=False,
             help="Will make the import command more verbose when assuming yes")
@@ -83,10 +77,6 @@ def getCLIArgs():
     parser.add_argument("--test-only", 
             dest="testing", action="store_true", default=False, 
             help="Displays various information depending on the command, making no changes to your database.")
-
-    parser.add_argument("--filename", 
-            dest="filename", action="store", default=None, 
-            help="The filename that will be used by some commands, such as for importing or exporting. See the readme for extra information.")
 
     parser.add_argument("--merge",
             dest="merge", action="store_true", default=False,
