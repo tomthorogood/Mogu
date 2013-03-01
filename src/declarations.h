@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <Config/inline_utils.h>
 #include <iostream>
-#include <Types/syntax.h>
 
 #include <Config/forward_declarations.h>
 #include <Config/typedefs.h>
