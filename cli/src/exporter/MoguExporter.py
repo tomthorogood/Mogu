@@ -42,14 +42,14 @@ class AbstractWidget(KeyspaceExporter):
                 }
 
         if (self.has_events):
-            events = EventBlock(self.identifier, db)
+            events = EventBlock(self.identifier, self.db)
             output["events"] = events.export()
         if (self.has_children):
             children_key = Keyspace.zipstring(self.keyspace, "children")
-            num_children = db.llen(children_key)
-            children = Translators.ExportList(db.lrange(children_key, 0, num_children), tabs=2)
-            output["children"] = "    children\n%s\n    end children" % str(children)
-        output = "%(type)s %(identifier)s\n%(attributes)s\n%(events)s\n%(children)s\nend %(type)s" % output
+            num_children = self.db.llen(children_key)
+            children = Translators.ExportList(self.db.lrange(children_key, 0, num_children), tabs=2)
+            output["children"] = "    children\n%s\n    end children\n" % str(children)
+        output = "\n%(type)s %(identifier)s\n%(attributes)s\n%(events)s%(children)send %(type)s\n" % output
 
         return output
 
@@ -70,7 +70,7 @@ class EventBlock(KeyspaceExporter):
     def get_when_blocks(self):
         when_blocks = []
         for trigger in self.triggers:
-            when = WhenBlock(self.identifier, trigger, db)
+            when = WhenBlock(self.identifier, trigger, self.db)
             when_blocks.append(when.export())
         return when_blocks
 
@@ -78,7 +78,7 @@ class EventBlock(KeyspaceExporter):
         output = {
                 "when_blocks" : "\n".join(self.get_when_blocks())
                 }
-        output = "    events\n%(when_blocks)s\n    end events" % output
+        output = "    events\n%(when_blocks)s\n    end events\n" % output
         return output
 
 class WhenBlock(KeyspaceExporter):
@@ -106,7 +106,7 @@ class Validator(KeyspaceExporter):
                 "identifier" : self.identifier,
                 "attributes" : str(self.attributes)
                 }
-        return "validator %(identifier)s\n%(attributes)s\nend validator\n" % output
+        return "\nvalidator %(identifier)s\n%(attributes)s\nend validator\n" % output
 
 class Policy(KeyspaceExporter):
     def __init__(self, keyspace, db):
@@ -118,7 +118,7 @@ class Policy(KeyspaceExporter):
                 "identifier" : self.identifier,
                 "attributes" : str(self.attributes)
                 }
-        return "policy %(identifier)s\n%(attributes)s\nend policy\n" % output
+        return "\npolicy %(identifier)s\n%(attributes)s\nend policy\n" % output
 
 class ListData(KeyspaceExporter):
     def __init__(self, keyspace, db):
@@ -174,7 +174,7 @@ class Data(KeyspaceExporter):
                 print(output)
         else:
             output["block"] = output['data']
-        return "data %(identifier)s\n%(block)s\nend data" % output
+        return "\ndata %(identifier)s\n%(block)s\nend data\n" % output
 
 # TESTING
 if __name__ == "__main__":

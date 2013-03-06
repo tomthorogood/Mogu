@@ -103,7 +103,7 @@ POLICY_MODE  = pyRex.Lexer.ParseMap((
 ))
 
 POLICY_DATA = pyRex.Lexer.ParseMap((
-        ("begin",           DIRECTIVE_START("data")         , IGNORE),
+        ("begin",           DIRECTIVE_START("data|type")         , IGNORE),
         ("datatype",        regexlib["datatype"]            , trim),
         ("end",             DIRECTIVE_END                   , IGNORE)
 ))

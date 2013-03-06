@@ -10,8 +10,7 @@ args.conf = conf
 cli_map = {
     "import"            :   cli.mogu_import,
     "merge-sessions"    :   cli.merge_sessions,
-    "export"            :   cli.export_all,
-    "export-widget"     :   cli.export_widget,
+    "export"            :   cli.export,
     "start"             :   cli.start,
     "purge-sessions"    :   cli.purge_sessions,
     "init"              :   cli.init,
