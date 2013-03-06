@@ -13,9 +13,6 @@ from exporter import export
 # start
 from start import start
 
-# newfile
-from newfile import newfile
-
 # purge-sessions
 from session_purge import purge_sessions
 
