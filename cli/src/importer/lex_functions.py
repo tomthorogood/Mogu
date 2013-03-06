@@ -3,7 +3,7 @@ import SymbolRegistry
 import SharedData
 
 def DIRECTIVE_START(token):
-    d =  r"\s*%s\s*:\s*" % token
+    d =  r"\s*(%s)\s*:\s*" % token
     return d
 
 def register_widget(string):

@@ -57,6 +57,7 @@ def mogu_import(args):
             db = args.redis_db,
             port = args.redis_port,
             host = args.redis_host,
+            verbal = args.v
         )
         if args.flushdb:
             i = None
@@ -69,4 +70,3 @@ def mogu_import(args):
         if (args.v):
             sys.stderr.write("Writing imported files to database!\n")
         writer.write(redis_objects)
-

@@ -73,7 +73,7 @@ WIDGET_STYLE = pyRex.Lexer.ParseMap((
 ))
 
 WIDGET_CONTENT = pyRex.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("content")      , IGNORE),
+        ("begin",       DIRECTIVE_START("content|text")      , IGNORE),
         ("content",     "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
