@@ -82,4 +82,8 @@ def getCLIArgs():
             dest="merge", action="store_true", default=False,
             help="Will not delete nodes before setting values, which could result in unexpected behaviour, but can make things easier when adding one-offs.")
 
+    parser.add_argument("-o",
+            dest="output", action="store", default=None,
+            help="Will write to this file on export if defined, otherwise will write to stderr")
+
     return parser.parse_args(), config

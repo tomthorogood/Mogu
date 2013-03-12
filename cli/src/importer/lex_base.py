@@ -73,7 +73,7 @@ WIDGET_STYLE = pyRex.Lexer.ParseMap((
 ))
 
 WIDGET_CONTENT = pyRex.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("content")      , IGNORE),
+        ("begin",       DIRECTIVE_START("content|text")      , IGNORE),
         ("content",     "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
@@ -103,7 +103,7 @@ POLICY_MODE  = pyRex.Lexer.ParseMap((
 ))
 
 POLICY_DATA = pyRex.Lexer.ParseMap((
-        ("begin",           DIRECTIVE_START("data")         , IGNORE),
+        ("begin",           DIRECTIVE_START("data|type")         , IGNORE),
         ("datatype",        regexlib["datatype"]            , trim),
         ("end",             DIRECTIVE_END                   , IGNORE)
 ))

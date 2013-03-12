@@ -214,10 +214,10 @@ class PythonObjectConverter(object):
             {"widgets.[identifier].events.[trigger]" : [cmd A ... cmd Z], }
         """
         event_dict = OrderedDict()
-        num_events = 0
+        triggers = []
         for result_tuple in result_list:
             result = result_tuple[0]
-            num_events += 1
+            triggers.append(result['trigger'])
             key = "%s.events.%d" % (prefix, result['trigger'])
             when_commands = []
             block = result['block']
@@ -226,5 +226,5 @@ class PythonObjectConverter(object):
                 command = " ".join([str(value) for value in command_dict.values()])
                 when_commands.append(command)
             event_dict[key] = when_commands
-        event_dict["%s.events" % prefix] = num_events
+        event_dict["%s.events" % prefix] = triggers
         return event_dict
