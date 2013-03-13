@@ -7,7 +7,7 @@ all:
 	python syntax_generator.py
 
 install:
-	cp syntax.py $(PY_SYN_DIR)/
+	ln -s $(CURDIR)/syntax.py $(PY_SYN_DIR)/syntax.py
 	cp syntax.h $(CP_SYN_DIR)/
 
 test:
