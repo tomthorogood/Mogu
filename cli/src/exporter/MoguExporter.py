@@ -60,7 +60,7 @@ class AbstractWidget(KeyspaceExporter):
             output = "\n%(type)s %(identifier)s\n%(attributes)s\n%(events)s%(children)send %(type)s\n" % output
 
             return output
-        except redis.Exceptions.ResponseError:
+        except redis.ResponseError:
             raise ExportError("Cannot export %s at %s" % (self.db_prefix,self.keyspace))
 
 class Widget(AbstractWidget):
@@ -91,7 +91,7 @@ class EventBlock(KeyspaceExporter):
                     }
             output = "    events\n%(when_blocks)s\n    end events\n" % output
             return output
-        except redis.Exceptions.ResponseError:
+        except redis.ResponseError:
             raise ExportError("Cannot export event block: %s" % self.keyspace)
 
 class WhenBlock(KeyspaceExporter):
@@ -109,7 +109,7 @@ class WhenBlock(KeyspaceExporter):
                     }
             output = "        when %(trigger)s {\n%(commands)s\n        }" % output
             return output
-        except redis.Exceptions.ResponseError:
+        except redis.ResponseError:
             raise ExportError("Cannot export when block: %s" % self.keyspace)
 
 class Validator(KeyspaceExporter):
@@ -124,7 +124,7 @@ class Validator(KeyspaceExporter):
                     "attributes" : str(self.attributes)
                     }
             return "\nvalidator %(identifier)s\n%(attributes)s\nend validator\n" % output
-        except redis.Exceptions.ResponseError:
+        except redis.ResponseError:
             raise ExportError("Cannot export validators: %s" % self.keyspace)
 
 class Policy(KeyspaceExporter):
@@ -139,7 +139,7 @@ class Policy(KeyspaceExporter):
                     "attributes" : str(self.attributes)
                     }
             return "\npolicy %(identifier)s\n%(attributes)s\nend policy\n" % output
-        except redis.Exceptions.ResponseError:
+        except redis.ResponseError:
             raise ExportError("Cannot export policy %s" % self.keyspace)
 
 class ListData(KeyspaceExporter):
@@ -198,7 +198,7 @@ class Data(KeyspaceExporter):
             else:
                 output["block"] = output['data']
             return "\ndata %(identifier)s\n%(block)s\nend data\n" % output
-        except redis.Exceptions.ResponseError:
+        except redis.ResponseError:
             raise ExportError("Cannot export data: %s" % self.keyspace)
 
 # TESTING
