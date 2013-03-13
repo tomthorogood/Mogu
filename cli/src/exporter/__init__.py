@@ -31,7 +31,11 @@ def export(args):
         cls = prefix_index[prefix(root)]
         obj = cls(root,db)
         if not args.output:
-            sys.stderr.write(obj.export())
+            try:
+                sys.stderr.write(obj.export())
+            except redis.exceptions.ResponseError as e:
+                sys.stderr.write("Cannot export root: %s" % root)
+                raise e
         else:
             with open(args.output,"a") as f:
                 f.write(obj.export())
