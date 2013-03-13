@@ -1,6 +1,13 @@
 import Keyspace
+import redis
 import Translators
 import sys
+
+class ExportError(Exception):
+    def __init__(self,msg=""):
+        self.value = "MoguExportError: %s" % msg
+    def __str__(self):
+        return self.value
 
 class Exports(object):
     def export(self):
@@ -33,25 +40,28 @@ class AbstractWidget(KeyspaceExporter):
         self.attributes = Translators.ExportDict(db.hgetall(self.keyspace))
 
     def export(self):
-        output = {
-                "type"          :   self.script_type,
-                "identifier"    :   self.identifier,
-                "attributes"    :   str(self.attributes),
-                "events"        :   "",
-                "children"      :   ""
-                }
+        try:
+            output = {
+                    "type"          :   self.script_type,
+                    "identifier"    :   self.identifier,
+                    "attributes"    :   str(self.attributes),
+                    "events"        :   "",
+                    "children"      :   ""
+                    }
 
-        if (self.has_events):
-            events = EventBlock(self.identifier, self.db)
-            output["events"] = events.export()
-        if (self.has_children):
-            children_key = Keyspace.zipstring(self.keyspace, "children")
-            num_children = self.db.llen(children_key)
-            children = Translators.ExportList(self.db.lrange(children_key, 0, num_children), tabs=2)
-            output["children"] = "    children\n%s\n    end children\n" % str(children)
-        output = "\n%(type)s %(identifier)s\n%(attributes)s\n%(events)s%(children)send %(type)s\n" % output
+            if (self.has_events):
+                events = EventBlock(self.identifier, self.db)
+                output["events"] = events.export()
+            if (self.has_children):
+                children_key = Keyspace.zipstring(self.keyspace, "children")
+                num_children = self.db.llen(children_key)
+                children = Translators.ExportList(self.db.lrange(children_key, 0, num_children), tabs=2)
+                output["children"] = "    children\n%s\n    end children\n" % str(children)
+            output = "\n%(type)s %(identifier)s\n%(attributes)s\n%(events)s%(children)send %(type)s\n" % output
 
-        return output
+            return output
+        except redis.Exceptions.ResponseError:
+            raise ExportError("Cannot export %s at %s" % (self.db_prefix,self.keyspace))
 
 class Widget(AbstractWidget):
     def __init__(self, keyspace, db):
@@ -75,11 +85,14 @@ class EventBlock(KeyspaceExporter):
         return when_blocks
 
     def export(self):
-        output = {
-                "when_blocks" : "\n".join(self.get_when_blocks())
-                }
-        output = "    events\n%(when_blocks)s\n    end events\n" % output
-        return output
+        try:
+            output = {
+                    "when_blocks" : "\n".join(self.get_when_blocks())
+                    }
+            output = "    events\n%(when_blocks)s\n    end events\n" % output
+            return output
+        except redis.Exceptions.ResponseError:
+            raise ExportError("Cannot export event block: %s" % self.keyspace)
 
 class WhenBlock(KeyspaceExporter):
     def __init__(self, keyspace, trigger, db):
@@ -89,12 +102,15 @@ class WhenBlock(KeyspaceExporter):
                 self.db.lrange(self.keyspace, 0, self.db.llen(self.keyspace)), tabs=3)
 
     def export(self):
-        output = {
-                "trigger" : Translators.GenericTranslator.translate(self.trigger), 
-                "commands": str(self.commands)
-                }
-        output = "        when %(trigger)s {\n%(commands)s\n        }" % output
-        return output
+        try:
+            output = {
+                    "trigger" : Translators.GenericTranslator.translate(self.trigger), 
+                    "commands": str(self.commands)
+                    }
+            output = "        when %(trigger)s {\n%(commands)s\n        }" % output
+            return output
+        except redis.Exceptions.ResponseError:
+            raise ExportError("Cannot export when block: %s" % self.keyspace)
 
 class Validator(KeyspaceExporter):
     def __init__(self, keyspace, db):
@@ -102,11 +118,14 @@ class Validator(KeyspaceExporter):
         self.attributes = Translators.ExportDict(self.db.hgetall(self.keyspace))
 
     def export(self):
-        output = {
-                "identifier" : self.identifier,
-                "attributes" : str(self.attributes)
-                }
-        return "\nvalidator %(identifier)s\n%(attributes)s\nend validator\n" % output
+        try:
+            output = {
+                    "identifier" : self.identifier,
+                    "attributes" : str(self.attributes)
+                    }
+            return "\nvalidator %(identifier)s\n%(attributes)s\nend validator\n" % output
+        except redis.Exceptions.ResponseError:
+            raise ExportError("Cannot export validators: %s" % self.keyspace)
 
 class Policy(KeyspaceExporter):
     def __init__(self, keyspace, db):
@@ -114,11 +133,14 @@ class Policy(KeyspaceExporter):
         self.attributes = Translators.ExportDict(self.db.hgetall(self.keyspace))
 
     def export(self):
-        output = {
-                "identifier" : self.identifier,
-                "attributes" : str(self.attributes)
-                }
-        return "\npolicy %(identifier)s\n%(attributes)s\nend policy\n" % output
+        try:
+            output = {
+                    "identifier" : self.identifier,
+                    "attributes" : str(self.attributes)
+                    }
+            return "\npolicy %(identifier)s\n%(attributes)s\nend policy\n" % output
+        except redis.Exceptions.ResponseError:
+            raise ExportError("Cannot export policy %s" % self.keyspace)
 
 class ListData(KeyspaceExporter):
     def __init__(self, keyspace, db):
@@ -144,37 +166,40 @@ class Data(KeyspaceExporter):
         self.datatype = self.db.type(self.keyspace)
 
     def export(self):
-        output = {
-                "type" : self.datatype,
-                "identifier" : self.identifier,
-                "wrap_start" : None,
-                "wrap_end"   : None,
-                "block"      : None
-        }
-        
-        if self.datatype == "hash":
-            data = HashData(self.keyspace, self.db)
-            output["data"] = data.export()
-        elif self.datatype == "list":
-            data = ListData(self.keyspace, self.db)
-            output["data"] = data.export()
-        elif self.datatype == "string":
-            del output['type']
-            output['data'] = "%s%s" % ("    "*2, self.db.get(self.keyspace))
-        elif self.datatype == "set":
-            pass
-        if "type" in output:
-            output["wrap_start"] = output["type"]
-            output["wrap_end"] = "end %s" % (output['type'])
-        if output["wrap_start"]:
-            tabs = "    "
-            try:
-                output["block"] = tabs + "%s\n%s\n" % (output["wrap_start"],output["data"])+ tabs + output["wrap_end"]
-            except KeyError:
-                print(output)
-        else:
-            output["block"] = output['data']
-        return "\ndata %(identifier)s\n%(block)s\nend data\n" % output
+        try:
+            output = {
+                    "type" : self.datatype,
+                    "identifier" : self.identifier,
+                    "wrap_start" : None,
+                    "wrap_end"   : None,
+                    "block"      : None
+            }
+            
+            if self.datatype == "hash":
+                data = HashData(self.keyspace, self.db)
+                output["data"] = data.export()
+            elif self.datatype == "list":
+                data = ListData(self.keyspace, self.db)
+                output["data"] = data.export()
+            elif self.datatype == "string":
+                del output['type']
+                output['data'] = "%s%s" % ("    "*2, self.db.get(self.keyspace))
+            elif self.datatype == "set":
+                pass
+            if "type" in output:
+                output["wrap_start"] = output["type"]
+                output["wrap_end"] = "end %s" % (output['type'])
+            if output["wrap_start"]:
+                tabs = "    "
+                try:
+                    output["block"] = tabs + "%s\n%s\n" % (output["wrap_start"],output["data"])+ tabs + output["wrap_end"]
+                except KeyError:
+                    print(output)
+            else:
+                output["block"] = output['data']
+            return "\ndata %(identifier)s\n%(block)s\nend data\n" % output
+        except redis.Exceptions.ResponseError:
+            raise ExportError("Cannot export data: %s" % self.keyspace)
 
 # TESTING
 if __name__ == "__main__":
