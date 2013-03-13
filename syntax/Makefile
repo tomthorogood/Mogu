@@ -8,6 +8,7 @@ all:
 
 install:
 	ln -s $(CURDIR)/syntax.py $(PY_SYN_DIR)/syntax.py
+	ln -s $(CURDIR)/syntax.py $(PY_SYN_DIR)/../exporter/syntax.py
 	cp syntax.h $(CP_SYN_DIR)/
 
 test:
@@ -17,4 +18,6 @@ test:
 clean:
 	unlink pyRex
 	unlink regexlib.py
+	unlink $(PY_SYN_DIR)/syntax.py
+	unlink $(PY_SYN_DIR)/../exporter/syntax.py
 	rm -rf syntax.h syntax.py
