@@ -10,6 +10,8 @@
 #include <Parsers/MathParser.h>
 #include <iostream>
 #include <string>
+#include <sstream>
+
 
 using namespace Parsers;
 using namespace std;
@@ -17,14 +19,15 @@ using namespace std;
 int main()
 {
 	MathParser m;
-	
+	std::stringstream ss;
+
 	vector<string> input;
-	input.push_back(to_string(MATHSYNTAX_OPENPAREN));
+	input.push_back("2147483642");
 	input.push_back("4");
-	input.push_back(to_string(MATHSYNTAX_PLUS));
+	input.push_back("2147483644");
 	input.push_back("3");
-	input.push_back(to_string(MATHSYNTAX_CLOSEPAREN));
-	input.push_back(to_string(MATHSYNTAX_DIVIDE));
+	input.push_back("2147483643");
+	input.push_back("2147483647");
 	input.push_back("7");
 
 	cout << "input vector:" << endl;

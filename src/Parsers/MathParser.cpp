@@ -7,6 +7,7 @@
 
 #include <Parsers/MathParser.h>
 #include <cassert>
+#include <string>
 
 
 namespace Parsers {
@@ -16,7 +17,7 @@ MathParser::MathParser()
 
 }
 
-int evaluate(std::vector<std::string>& infixExpression)
+int MathParser::evaluate(std::vector<std::string>& infixExpression)
 {
 	__reset__();
 
@@ -35,7 +36,7 @@ int evaluate(std::vector<std::string>& infixExpression)
 			switch(currToken)
 			{
 				case MATHSYNTAX_OPENPAREN:
-					opStack.push_back(currToken);
+					opStack.push(currToken);
 					break;
 
 				case MATHSYNTAX_CLOSEPAREN:
@@ -81,9 +82,9 @@ int evaluate(std::vector<std::string>& infixExpression)
 		}
 		else						//operator
 		{
-			int op1 = __operstandStack.top();
+			int op1 = __operandStack.top();
 			__operandStack.pop();
-			int op2 = __operstandStack.top();
+			int op2 = __operandStack.top();
 			__operandStack.pop();
 
 			int opResult;
@@ -111,7 +112,7 @@ int evaluate(std::vector<std::string>& infixExpression)
 }
 
 // read: has STRICTLY higher precedence
-bool hasHigherPrecedence(int op1, int op2)
+bool MathParser::hasHigherPrecedence(int op1, int op2)
 {
 	if(op1 == MATHSYNTAX_MULTIPLY || op1 == MATHSYNTAX_DIVIDE)
 		if(op2 == MATHSYNTAX_PLUS || op2 == MATHSYNTAX_MINUS)
@@ -120,10 +121,11 @@ bool hasHigherPrecedence(int op1, int op2)
 	return false;
 }
 
-void __reset__()
+void MathParser::__reset__()
 {
 	__postfixExpression.clear();
-	__operandStack.clear();
+	while(!__operandStack.empty())
+		__operandStack.pop();
 }
 
 
