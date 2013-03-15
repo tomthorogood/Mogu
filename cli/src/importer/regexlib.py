@@ -1,7 +1,3 @@
-import syntax
-
-reserved_words = syntax.MoguSyntax.keys()
-
 IDENTIFIER = "[:a-zA-Z_][:a-zA-Z_0-9]+"
 
 #STRLIT = r'''(?x)   # verbose mode

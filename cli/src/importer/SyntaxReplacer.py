@@ -113,7 +113,7 @@ if __name__ == "__main__":
             )
     for string in strings:
         try:
-            print(replace_syntax(string))
+            print("%s => %s" % (string,replace_syntax(string)))
         except ValueError as e:
             print("ERROR ENCOUNTERED WHEN ATTEMPTING: %s" % string)
             print(e)
