@@ -11,6 +11,8 @@
 # BASIC SETUP #
 ###############
 
+import os
+
 INPUT_FILE  = "syntax.pre"
 OUTPUT_PY   = "syntax.py"
 OUTPUT_H    = "syntax.h"
@@ -178,11 +180,11 @@ def generate_cpp(enum_name, entries):
     string of C++ syntax.
     """
     start = CppEnumOpen(enum_name)
-    end = CppEnumClose(enum_name)
+#    end = CppEnumClose(enum_name)
     output = str(start)
     for entry in entries:
         output += str(entry)
-    output += str(end)
+    #output += str(end)
     return output
 
 lines = None
@@ -210,8 +212,16 @@ for line in lines:
 py_out = generate_py("MoguSyntax",py_entries) + PY_ADDITIONS
 cpp_out = generate_cpp("MoguSyntax",cpp_entries)
 
+
+
 with open(OUTPUT_PY,"w") as f:
     f.write(py_out)
 
 with open(OUTPUT_H,"w") as f:
     f.write(cpp_out)
+
+os.system("./operators")
+
+with open(OUTPUT_H,"a") as f:
+    cl = CppEnumClose("MoguSyntax");
+    f.write("\n%s" % str(cl))
