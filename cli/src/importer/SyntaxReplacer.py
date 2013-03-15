@@ -15,6 +15,9 @@ import SharedData
 import SymbolRegistry
 import re
 
+def nonempty(string):
+    return string != ""
+
 def is_integer(string):
     try:
         int(string)
@@ -66,14 +69,17 @@ def find_syntax_tokens(string):
     length first to be sure that the largest inputs are found
     first.
     """
-    ltokens = ["(^%s|\s+%s)"%(key,key) for key in syntax.MoguSyntax]
-    ltokens = sorted(ltokens,key=len)
-    ltokens.reverse()
-    tokens = "(%s)" % ("|".join(ltokens))
-    found = re.findall(tokens,string)
-    for index,token in enumerate(found):
-        if isinstance(token,tuple):
-            found[index] = token[0].strip()
+    spl = string.split(" ")
+    spl = filter(nonempty,spl)
+    reserved = syntax.MoguSyntax.keys()
+    regex = "^(%s)$" % "|".join(reserved)
+    found = []
+    for token in spl:
+        r = re.match(regex,token.strip())
+        if r is not None:
+            found.append(str(syntax.MoguSyntax[r.group()][0]))
+        else:
+            found.append(token)
     return found
 
 def filter_string_literals (string):
@@ -91,8 +97,7 @@ def filter_string_literals (string):
 def replace_syntax(string):
     working, literals = filter_string_literals(string)
     tokens = find_syntax_tokens(working)
-    for token in tokens:
-        working = working.replace(token,str(syntax.as_integer(token))+" ")
+    working = " ".join(tokens)
     working = working % tuple(literals)
     working = working.strip()
     create_references(working)
@@ -101,10 +106,14 @@ def replace_syntax(string):
 if __name__ == "__main__":
     strings = (
             'set own css to "new css"',
-            'append widget "widget name" to self',
-            'append retrieve widget "entry:name" to self',
+            'append widget widget_name to self',
             'reset widget "foo"',
-            'set own content to widget "other widget" content',
-            'store own contents at user "first_name"'
+            'set own content to widget other_widget content',
+            'store own content at user first_name'
             )
-
+    for string in strings:
+        try:
+            print(replace_syntax(string))
+        except ValueError as e:
+            print("ERROR ENCOUNTERED WHEN ATTEMPTING: %s" % string)
+            print(e)
