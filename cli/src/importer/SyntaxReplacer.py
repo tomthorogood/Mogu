@@ -66,12 +66,15 @@ def find_syntax_tokens(string):
     length first to be sure that the largest inputs are found
     first.
     """
-    ltokens = [key+"\s+" for key in syntax.MoguSyntax]
+    ltokens = ["(^%s|\s+%s)"%(key,key) for key in syntax.MoguSyntax]
     ltokens = sorted(ltokens,key=len)
     ltokens.reverse()
     tokens = "(%s)" % ("|".join(ltokens))
     found = re.findall(tokens,string)
-    return re.findall(tokens,string)
+    for index,token in enumerate(found):
+        if isinstance(token,tuple):
+            found[index] = token[0].strip()
+    return found
 
 def filter_string_literals (string):
     """

@@ -16,7 +16,16 @@ regexlib["action"]      = "(%s)" % ("|".join(valid_options("action")))
 regexlib["object"]      = "(%s)" % ("|".join(valid_options("object")))
 regexlib["attribute"]   = "(%s)" % ("|".join(valid_options("attribute")))
 regexlib["preposition"] = "(%s)" % ("|".join(valid_options("preposition")))
-regexlib["object_set"]  = "%(object)s\s*(%(identifier)s|%(string_literal)s)?(\s+%(attribute)s)?" % regexlib
+# Examples of valid object sets:
+#
+#   data foo
+#   data foo bar
+#   widget foo css
+#   user foo bar
+#   group foo
+#   group foo bar
+regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(identifier)s(?<!%(preposition)s)|%(attribute)s)?" % regexlib
+#regexlib["object_set"]  = "%(object)s\s*(%(identifier)s|%(string_literal)s)?(\s+%(attribute)s)?" % regexlib
 regexlib["value"]       = "(%(object_set)s|%(string_literal)s|[0-9]+)" % regexlib 
 
 HASH_DEFINITION = pyRex.Lexer.ParseMap((
