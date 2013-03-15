@@ -1,53 +1,89 @@
 /*
- * Math.h
+ * MathParser.h
  *
  *  Created on: March 12th, 2013
  *      Author: cameron
  */
 
+#ifndef MATHPARSER_H_
+#define MATHPARSER_H_
+
+#include <vector>
+#include <stack>
+#include <string>
+#include <climits>
+
+#define LOWEST_OP_ENUM (INT_MAX - 5)
+#define isOperator(a) ( (a) >= LOWEST_OP_ENUM )
+
+// these are temporary macros, when the math symbols get added
+// to the syntax on the python side these would be replaced with
+// MoguSyntax::plus, MoguSyntax::openParen, etc.
+//
+// defining them here so our test program has access to these symbols.
+#define MATHSYNTAX_OPENPAREN (INT_MAX - 5)
+#define MATHSYNTAX_CLOSEPAREN (INT_MAX - 4)
+#define MATHSYNTAX_PLUS (INT_MAX - 3)
+#define MATHSYNTAX_MINUS (INT_MAX - 2)
+#define MATHSYNTAX_MULTIPLY (INT_MAX - 1)
+#define MATHSYNTAX_DIVIDE (INT_MAX)
 
 namespace Parsers {
 
-/*
- * let's assume that the python interpreter will do the following:
- * (enumerated values are just examples)
- *  	input (.mogu file): ((49 + 5) / 2) - 2
- *  	output (to db)    : "17 17 49 31 5 17 26 2 17 84 2"
- * 
- * 	we have a problem here.  how do we differentiate between the
- * 	enumerated values, and the integers themselves?  we either have to
- * 	mark the numbers before they go to the database, or the
- * 	mathematical symbols.  OR if we remove the possibility of
- * 	parentheses, we can assume that the first token is a number, the
- * 	second is an operation, the third is a number, etc., but I don't
- * 	like this approach.
+/* since everything coming through the database is going to look like
+ * an integer (or at least the mathematical symbols will), we need a
+ * way to distinguish the mathematical symbols (+,-,*,/) from their operands.
  *
- * 	let's assume that we're marking the mathematical symbols for now -
- * 	there are fewer possibilities for those, and we know that anytime
- * 	they're used the string in question should be passing through
- * 	MathParser. 
+ * this implementation assumes that we designate our largest enum
+ * values in MoguSyntax as the mathematical symbols.  this way, we
+ * don't need to mark the symbols in any special way when we put them
+ * in the database, and all we lose is the use of a few numbers that
+ * the average content creator would never use anyway.
  *
- * 	so the input into MathParser would look something like this:
- * 		input (from db): ^17 ^17 49 ^31 5 ^17 ^26 2 ^17 ^84 2
- * 				 output: 25
+ * after doing quite a bit of research, it seems like the fastest
+ * general method for parsing a mathematical infix expression is to
+ * first convert that expression to postfix notation and then evaluate the
+ * postfix expression.  this saves you from scanning the entire string
+ * for the highest precedence operator after each operator evaluation. 
  *
- * basically do order-of-operations, and resolve parentheses.
- * can we leverage the fact that c++ already knows how to do
- * all of this?
+ * i'm concerned though, because although this may be the fastest general
+ * method for infix parsing, our average use-case might just be in the
+ * simple form 'database_value / 2' or something similar, in which
+ * case all this extra processing overhead for converting to postfix
+ * might be silly.  in order to have the power to do serious math,
+ * though, we need this extra processing.  might need to optimize
+ * later if this is slowing us down.
  *
- * 1. 
+ * this parser assumes that its input is well-formed (matching parens,
+ * valid infix expression) and that the all the strings in the input
+ * vector can be properly converted to integers using stoi()
  *
  */
-	
 class MathParser
 {
 	public:
+		// empty constructor
 		MathParser();
+
+		// convert the input tokens into postfix, and then evaluate
+		// the postfix expression.
+		int evaluate(std::vector<std::string>& infixExpression);
 	
 	private:
-		std::vector<std::string> __mathTokens;
-		
+		// vector to build/store our equivalent postfix expression
+		std::vector<int> __postfixExpression;
 
-}
+		// stack used for postfix evaluation
+		std::stack<int> __operandStack;
+
+		// compare precedence to do proper order-of-operations
+		// returns true if op1 has higher precedence than op2
+		bool hasHigherPrecedence(int op1, int op2);
+
+		// reset the parser so we're ready for the next input
+		void __reset__();
+};
 
 }	// namespace Parsers
+
+#endif /* MATHPARSER_H_ */
