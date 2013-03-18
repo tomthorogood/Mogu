@@ -13,8 +13,4 @@ RootConsumer = Consumer.Consumer([
     DATA_BLOCK,
     VALIDATOR_BLOCK,
     NEWLINES,
-])
-
-
-
-
+    ], help="Basic Mogu syntax in the form of object blocks. See http://www.github.com/tomthorogood/gomogu for more assistance.")

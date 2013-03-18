@@ -6,6 +6,7 @@ widget test_widget
         when clicked {
             set own css to "clicked_style"
             reset widget another_child
+            set widget another_child text to (17+4)
         }
     end events
     children

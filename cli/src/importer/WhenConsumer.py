@@ -5,4 +5,4 @@ from lex_base import NEWLINES
 WhenConsumer = Consumer.Consumer([
     MOGU_CMD,
     NEWLINES
-])
+],help="action [object [identifier|attribute]] [preposition value] (on one line)")
