@@ -81,13 +81,13 @@ class TokenNotes(ParsedInput):
 
 class SyntaxTableRow(object):
     parser = Lexer.ParseMap((
-        ("begin",   "\(%(whitespace)s*" % regexlib,                 Lexer.ParseMap.IGNORE),
+        ("begin",   "\(\s*" % regexlib,                 Lexer.ParseMap.IGNORE),
         ("human",   "[^,]+",                                        Lexer.ParseMap.LITERAL),
-        ("delim",   "%(whitespace)s*,%(whitespace)s*" % regexlib,   Lexer.ParseMap.IGNORE),
+        ("delim",   "\s*,\s*" % regexlib,   Lexer.ParseMap.IGNORE),
         ("enum",    "[^,]+",                                        Lexer.ParseMap.LITERAL),
-        ("delim",   "%(whitespace)s*,%(whitespace)s*" % regexlib,   Lexer.ParseMap.IGNORE),
+        ("delim",   "\s*,\s*" % regexlib,   Lexer.ParseMap.IGNORE),
         ("notes",   "[^\)]+",                                       Lexer.ParseMap.LITERAL),
-        ("end",     "\)%(whitespace)s*"  % regexlib,                Lexer.ParseMap.IGNORE)
+        ("end",     "\)\s*"  % regexlib,                Lexer.ParseMap.IGNORE)
     ))
     def __init__(self, row_text):
         parsed_input = SyntaxTableRow.parser.parse(row_text)

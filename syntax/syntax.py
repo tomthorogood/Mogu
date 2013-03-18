@@ -34,9 +34,9 @@ MoguSyntax = {
 	"css"                  : (27,"attribute hashkey"),
 	"group"                           : (28,"object"),
 	"remove"                          : (29,"action"),
-	"text"                 : (30,"attribute hashkey"),
-	"content"              : (30,"attribute hashkey"),
-	"contents"             : (30,"attribute hashkey"),
+	"text"     : (30,"attribute hashkey widget type"),
+	"content"  : (30,"attribute hashkey widget type"),
+	"contents" : (30,"attribute hashkey widget type"),
 	"store"                           : (31,"action"),
 	"child"                           : (32,"object"),
 	"regex"         : (33,"attribute validator type"),
@@ -64,16 +64,26 @@ MoguSyntax = {
 	"image link"                 : (55,"widget type"),
 	"to"                         : (56,"preposition"),
 	"as"                         : (57,"preposition"),
-	"widget"                          : (58,"object"),
-	"retrieve"                        : (59,"action"),
-	"get"                             : (59,"action"),
-	"type"                           : (60,"hashkey"),
-	"mode"                           : (61,"hashkey"),
-	"source"                         : (62,"hashkey"),
-	"location"                       : (63,"hashkey"),
-	"template"                       : (64,"hashkey"),
+	"at"                         : (58,"preposition"),
+	"widget"                          : (59,"object"),
+	"retrieve"                        : (60,"action"),
+	"get"                             : (60,"action"),
+	"type"                           : (61,"hashkey"),
+	"mode"                           : (62,"hashkey"),
+	"source"                         : (63,"hashkey"),
+	"location"                       : (64,"hashkey"),
+	"template"                       : (65,"hashkey"),
 } # END MoguSyntax
 
 def as_integer(string):
     global MoguSyntax
     return MoguSyntax[string.strip()][0]
+
+# Begin mathematic operator constants
+MoguOperators = {}
+MoguOperators['('] = 2147483642
+MoguOperators[')'] = 2147483643
+MoguOperators['*'] = 2147483646
+MoguOperators['+'] = 2147483644
+MoguOperators['-'] = 2147483645
+MoguOperators['/'] = 2147483647

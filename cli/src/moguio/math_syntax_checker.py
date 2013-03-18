@@ -2,13 +2,11 @@ import re
 import syntax
 import lex_base
 
-def MalformedExpressionError(Exception):
+class MalformedExpressionError(Exception):
     def __init__(self, expression, expecting):
         self.value = "MalformedExpression \"%s\", expecting %s" %(expression,expecting)
-    def __str__(self):
-        return self.value
 
-    def __repr__(self):
+    def __str__(self):
         return self.value
 
 def strip_string_literals(inputstr):
@@ -28,7 +26,7 @@ def validate_math(inputstr):
         inputstr = inputstr.replace(")","")
     if ("__STRLIT__" in inputstr):
         raise MalformedExpressionError(orig, "no string literals")
-    
+    inputstr = "(%s)"%(inputstr) 
     res = re.search(lex_base.regexlib['math_expr'], inputstr)
     if res.group() != inputstr:
         raise MalformedExpressionError(inputstr, "mathematical syntax")
@@ -42,4 +40,10 @@ def check_syntax(inputstr):
     math_expr = re.findall(lex_base.regexlib['math_gen_expr'],inputstr)
     if not math_expr:
         return True
-    
+    for expr in math_expr:
+        try:
+            validate_math(expr)        
+        except MalformedExpressionError as e:
+            print(expr)
+            raise e 
+    return True

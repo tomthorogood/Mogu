@@ -41,9 +41,10 @@ install: mogu.conf
 	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
 	ln -s /etc/mogu/mogu /usr/bin/mogu
 
-install-cli: mogu.conf | $(syntax)
+install-cli: mogu.conf
 	cd cli/c && $(MAKE)
-	cp syntax/syntax.py cli/src/syntax.py
+	cd syntax && $(MAKE)
+	cd syntax && $(MAKE) install
 	cp -r cli/* /etc/mogu
 	cp mogu.conf /etc/mogu
 

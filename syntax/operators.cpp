@@ -14,9 +14,9 @@ int main() {
     filestr.open("syntax.py", std::ios::out | std::ios::app);
     filestr << std::endl << "# Begin mathematic operator constants" << std::endl;
     auto iter = op_map.begin();
+    filestr << "MoguOperators = {}" << std::endl;
     for (; iter !=  op_map.end(); ++iter) {
-        filestr << "MoguSyntax['"<< iter->first << "'] = (" 
-            << iter->second << ", 'operator')" << std::endl;
+        filestr << "MoguOperators['"<< iter->first << "'] = " << iter->second << std::endl;
     }
     filestr.close();
 
