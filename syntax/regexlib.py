@@ -1,1 +1,1 @@
-/home/tom/dev/Mogu/syntax/../cli/src/importer/regexlib.py
+../cli/src/moguio/regexlib.py
