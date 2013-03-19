@@ -7,8 +7,8 @@ from session_merge import merge_all as merge_sessions
 # write_config_file
 from config_generator import create_file as create_config
 
-from importer import mogu_import
-from exporter import export
+from moguio import mogu_import
+from moguio import export
 
 # start
 from start import start

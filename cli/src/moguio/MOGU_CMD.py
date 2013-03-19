@@ -4,7 +4,7 @@ import SyntaxReplacer
 from lex_base import IGNORE
 from lex_base import regexlib
 from lex_functions import trim
-
+import re
 
 #################
 # MOGU COMMANDS #
@@ -35,10 +35,10 @@ from lex_functions import trim
 # valid actions.
 
 MOGU_CMD = pyRex.Lexer.ParseMap((
-    ("begin"    ,   "\s*"                                                                           , IGNORE),
+    ("begin"    ,   "^"                                                                           , IGNORE),
     ("action"   ,   "%(action)s" %regexlib                                                          , syntax.as_integer),
     ("ws"       ,   "\s+"                                                                           , IGNORE),
     ("dir_obj"  ,   "%(object_set)s" %regexlib                                                      , SyntaxReplacer.replace_syntax),
-    ("opt_end"  ,   "(\s+%(preposition)s\s+%(value)s)?"%regexlib                                    , SyntaxReplacer.replace_syntax),
-    ("end"      ,   "\s*"                                                                           , IGNORE)
-))
+    ("opt_end"  ,   "(\s*%(preposition)s\s+%(value)s)?"%regexlib                                    , SyntaxReplacer.replace_syntax),
+    ("end"      ,   "$"                                                                           , IGNORE)
+), strip=True, flags=re.M)

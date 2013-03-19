@@ -3,21 +3,69 @@ import pyRex
 from regexlib import *
 from lex_functions import *
 
+# Control of debugging vomit
+# Can be changed in higher level modules
 pyRex.Lexer.VERBAL = False
 
 IGNORE = pyRex.Lexer.ParseMap.IGNORE #alias for ease of reading
 LITERAL = pyRex.Lexer.ParseMap.LITERAL #alias for ease of reading
 
-regexlib["event_triggers"] = "(%s)" % "|".join(valid_options("event trigger"))
-regexlib["widget_types"] = "(%s)" % "|".join(valid_options("widget type"))
-regexlib["datatype"] = "(%s)" % ("|".join(valid_options("datatype")))
-regexlib["validator_type"] = "(%s)" % ("|".join(valid_options("validator type")))
-regexlib["action"]      = "(%s)" % ("|".join(valid_options("action")))
-regexlib["object"]      = "(%s)" % ("|".join(valid_options("object")))
-regexlib["attribute"]   = "(%s)" % ("|".join(valid_options("attribute")))
-regexlib["preposition"] = "(%s)" % ("|".join(valid_options("preposition")))
-regexlib["object_set"]  = "%(object)s\s*(%(identifier)s|%(string_literal)s)?(\s+%(attribute)s)?" % regexlib
-regexlib["value"]       = "(%(object_set)s|%(string_literal)s|[0-9]+)" % regexlib 
+def option_list(grammar_type):
+    return "(%s)" % "|".join(valid_options(grammar_type))
+
+regexlib["event_triggers"]  = option_list("event trigger")
+regexlib["widget_types"]    = option_list("widget type")
+regexlib["datatype"]        = option_list("datatype")
+regexlib["validator_type"]  = option_list("validator type")
+regexlib["action"]          = option_list("action")
+regexlib["object"]          = option_list("object")
+regexlib["attribute"]       = option_list("attribute")
+regexlib["preposition"]     = option_list("preposition")
+
+# Math in Mogu syntax must be enclosed in parentheses.
+#
+# widget age
+#   type    :   text
+#   content :   (2013 - user dob year)
+#   
+
+regexlib["math_gen_expr"]        = "\(.*\)"
+
+# OBJECT SET
+#   An object set is a phrase which can resolve to an
+#   object within the system, consisting of an object
+#   type, an identifier, and an attribute of that object
+#
+#   There are some exceptions, for example the keyword 'own',
+#   which acts upon the object using it, and does not require
+#   an identifier.
+# Examples of valid object sets:
+#   data foo
+#   data foo bar
+#   widget foo css
+#   user foo bar
+#   group foo
+#   group foo bar
+#   own content
+regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(identifier)s(?<!%(preposition)s)|%(attribute)s)?" % regexlib
+
+regexlib["signed_obj"] = "-?\s*(%(object_set)s|[0-9\.]+)" % regexlib
+regexlib["math_oper"] = "(\*|\+|\-|\/)"
+
+regexlib["math_expr"] = "\(%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(math_oper)s\s*)*\s*%(signed_obj)s\)" % regexlib
+
+# VALUE
+#   A value in Mogu can consist of any object set, string literal, or integer literal.
+#   The object set must resolve to something which can be turned into a string at runtime.
+#
+# Examples of valid values:
+#   17
+#   "a literal string!"
+#   own content
+#   data stringdata somestring
+#   user name first
+#
+regexlib["value"]       = "(%(object_set)s|%(string_literal)s|%(math_expr)s|-?[0-9]+)" % regexlib 
 
 HASH_DEFINITION = pyRex.Lexer.ParseMap((
         ("key",             everything_until(":")   ,   trim),
