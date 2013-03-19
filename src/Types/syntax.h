@@ -28,7 +28,7 @@ enum MoguSyntax {
 	,reset                                 = 26
 	,style                                 = 27
 	,group                                 = 28
-	,remove                                = 29
+	,remove_                                = 29
 	,text                                  = 30
 	,store                                 = 31
 	,child                                 = 32
@@ -64,7 +64,7 @@ enum MoguSyntax {
 	,mode                                  = 62
 	,source                                = 63
 	,location                              = 64
-	,template                              = 65
+	,template_                              = 65
 	,OPER_OPPAREN				=2147483642
 	,OPER_CLPAREN				=2147483643
 	,OPER_PLUS				=2147483644
