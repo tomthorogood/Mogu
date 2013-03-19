@@ -6,6 +6,7 @@
  */
 
 #include <Parsers/MathParser.h>
+#include <Types/syntax.h>
 #include <cassert>
 
 
@@ -31,20 +32,20 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 
 		if(isOperator(currToken)) {
 			switch(currToken) {
-			case MATHSYNTAX_OPENPAREN:
+				case MoguSyntax::OPER_OPPAREN:
 				opStack.push(currToken);
 				break;
 
-			case MATHSYNTAX_CLOSEPAREN:
-				while(opStack.top() != MATHSYNTAX_OPENPAREN) {
+				case MoguSyntax::OPER_CLPAREN:
+				while(opStack.top() != MoguSyntax::OPER_OPPAREN) {
 					__postfixExpression.push_back(opStack.top());
 					opStack.pop();
 				}
 				opStack.pop();	//remove open parens
 				break;
 
-			default:
-			//we have a +,-,* or /
+				default:
+				//we have a +,-,* or /
 				while(!hasHigherPrecedence(currToken, opStack.top())) {
 					__postfixExpression.push_back(opStack.top());
 					opStack.pop();
@@ -79,16 +80,16 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 
 			int opResult;
 			switch(currToken) {
-			case MATHSYNTAX_PLUS:
+				case MoguSyntax::OPER_PLUS:
 				opResult = op1 + op2;
 				break;
-			case MATHSYNTAX_MINUS:
+				case MoguSyntax::OPER_MINUS:
 				opResult = op1 - op2;
 				break;
-			case MATHSYNTAX_MULTIPLY:
+				case MoguSyntax::OPER_MULT:
 				opResult = op1 * op2;
 				break;
-			case MATHSYNTAX_DIVIDE:
+				case MoguSyntax::OPER_DIV:
 				opResult = op1 / op2;
 				break;
 			}
@@ -103,8 +104,8 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 // read: has STRICTLY higher precedence
 bool MathParser::hasHigherPrecedence(int op1, int op2)
 {
-	if(op1 == MATHSYNTAX_MULTIPLY || op1 == MATHSYNTAX_DIVIDE)
-		if(op2 == MATHSYNTAX_PLUS || op2 == MATHSYNTAX_MINUS)
+	if(op1 == MoguSyntax::OPER_MULT || op1 == MoguSyntax::OPER_DIV)
+		if(op2 == MoguSyntax::OPER_PLUS || op2 == MoguSyntax::OPER_MINUS)
 			return true;
 
 	return false;

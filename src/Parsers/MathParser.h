@@ -16,17 +16,6 @@
 #define LOWEST_OP_ENUM (INT_MAX - 5)
 #define isOperator(a) ( (a) >= LOWEST_OP_ENUM )
 
-// these are temporary macros, when the math symbols get added
-// to the syntax on the python side these would be replaced with
-// MoguSyntax::plus, MoguSyntax::openParen, etc.
-//
-// defining them here so our test program has access to these symbols.
-#define MATHSYNTAX_OPENPAREN (INT_MAX - 5)
-#define MATHSYNTAX_CLOSEPAREN (INT_MAX - 4)
-#define MATHSYNTAX_PLUS (INT_MAX - 3)
-#define MATHSYNTAX_MINUS (INT_MAX - 2)
-#define MATHSYNTAX_MULTIPLY (INT_MAX - 1)
-#define MATHSYNTAX_DIVIDE (INT_MAX)
 
 namespace Parsers {
 
