@@ -1,4 +1,4 @@
-PY_SYN_DIR := $(CURDIR)/../cli/src/importer
+PY_SYN_DIR := $(CURDIR)/../cli/src/moguio
 CP_SYN_DIR := $(CURDIR)/../src/Types
 
 all: operators
@@ -8,7 +8,6 @@ all: operators
 
 install:
 	ln -s $(CURDIR)/syntax.py $(PY_SYN_DIR)/syntax.py
-	ln -s $(CURDIR)/syntax.py $(PY_SYN_DIR)/../exporter/syntax.py
 	cp syntax.h $(CP_SYN_DIR)/
 
 test:
