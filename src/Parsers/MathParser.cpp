@@ -7,7 +7,6 @@
 
 #include <Parsers/MathParser.h>
 #include <cassert>
-#include <string>
 
 
 namespace Parsers {
