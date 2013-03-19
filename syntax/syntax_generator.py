@@ -225,3 +225,6 @@ os.system("./operators")
 with open(OUTPUT_H,"a") as f:
     cl = CppEnumClose("MoguSyntax");
     f.write("\n%s" % str(cl))
+
+os.system('sed -i "s/template/template_/g" syntax.h')
+os.system('sed -i "s/remove/remove_/g" syntax.h')
