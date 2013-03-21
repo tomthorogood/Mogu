@@ -1,4 +1,3 @@
-syntax := src/Types/syntax.h src/syntax.txt
 
 source_files := src
 branch_subs := Events Factories Moldable Redis FiniteAutomaton Parsers Parsers/NodeValueParser Types Perspectives crypt Sessions Validators Security Config
@@ -18,15 +17,13 @@ flags := -std=c++0x
 command := g++ $(flags) -Wall -O$(o) 
 
 
-all: $(syntax) $(objects) | $(turnleft) 
+all: $(objects) | $(turnleft) 
 ifeq ($(dbg),on)
 	g++ $(flags) -Wall -DDEBUG -DTERM_ENABLED -g -pg -o $(executable) $(objects) $(devel_libs)
 else
 	g++ $(flags) -Wall -DNDEBUG -o $(executable) $(objects) $(devel_libs)
 endif
 
-syntax: $(syntax)
-	@echo "Syntax files generated."
 
 upgrade-database: db_upgrade.cpp $(objects) | $(turnleft)
 	g++ $(flags) -Wall $(includes) -o $@ $(objects_no_exe) db_upgrade.cpp $(devel_libs)
@@ -35,19 +32,9 @@ install: mogu.conf
 	$(MAKE) uninstall
 	mkdir -p /etc/mogu
 	cp $< /etc/mogu
-	cd cli/c && $(MAKE)
-	cp -r cli/* /etc/mogu
 	cp -r resources/ /etc/mogu
 	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
 	ln -s /etc/mogu/mogu /usr/bin/mogu
-
-install-cli: mogu.conf
-	cd cli/c && $(MAKE)
-	cd syntax && $(MAKE)
-	cd syntax && $(MAKE) install
-	cp -r cli/* /etc/mogu
-	cp mogu.conf /etc/mogu
-
 
 uninstall:
 	rm -f /usr/bin/mogu-server
@@ -66,17 +53,6 @@ $(turnleft):
 	cd TurnLeftLib && $(MAKE) && sudo $(MAKE) install
 	rm -rf TurnLeftLib
 
-src/Types/syntax.h: syntax/syntax.h 
-	cp $< $@
-
-src/syntax.txt: syntax/syntax.txt
-	cp $< $@
-
-syntax/syntax.h:
-	cd syntax && $(MAKE)
-
-syntax/syntax.txt:
-	cd syntax && $(MAKE)
 
 upgrade:
 	$(MAKE) uninstall
