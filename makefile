@@ -15,6 +15,8 @@ objects := $(patsubst %.cpp, %.o, $(cpp_files))
 objects_no_exe := $(patsubst src/main.o, , $(objects))
 flags := -std=c++0x
 command := g++ $(flags) -Wall -O$(o) 
+MOGUIO_DIR = $(CURDIR)/cli/src/moguio
+SYNTAX_PY := $(MOGUIO_DIR)/moguio/syntax.py
 
 
 all: $(objects) | $(turnleft) 
@@ -59,7 +61,11 @@ upgrade:
 	$(MAKE)
 	$(MAKE) install
 
+$(SYNTAX_PY):
+	cd syntax && $(MAKE)
+
 clean:
+	cd $(MOGUIO_DIR) && $(MAKE) clean
 	rm -rf $(objects) $(syntax)
 	rm -rf *.pyc
 	cd syntax && $(MAKE) clean
@@ -71,3 +77,5 @@ purge: clean
 mogu.conf:
 	sudo python $(gen_config)
 
+moguio: $(SYNTAX_PY)
+	cd $(MOGUIO_DIR) && python setup.py install
