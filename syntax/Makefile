@@ -2,7 +2,6 @@ PY_SYN_DIR := $(CURDIR)/../cli/src/moguio
 CP_SYN_DIR := $(CURDIR)/../src/Types
 
 all: operators
-	ln -s $(PY_SYN_DIR)/pyRex pyRex
 	ln -s $(PY_SYN_DIR)/regexlib.py regexlib.py
 	python syntax_generator.py
 
@@ -15,7 +14,6 @@ test:
 	@echo $(CP_SYN_DIR)
 
 clean:
-	unlink pyRex
 	unlink regexlib.py
 	unlink $(PY_SYN_DIR)/syntax.py
 	rm -rf syntax.h syntax.py

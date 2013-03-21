@@ -1,1 +1,0 @@
-/home/tom/dev/Mogu/syntax/../cli/src/moguio/regexlib.py
