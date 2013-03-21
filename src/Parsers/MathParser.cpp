@@ -77,10 +77,10 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 		opStack.pop();
 	}
 
-	std::cout << "converted to PostFix: ";
-	for(int i=0; i<__postfixExpression.size(); i++)
-		std::cout << __postfixExpression[i] << " ";
-	std::cout << std::endl;
+	//std::cout << "converted to PostFix: ";
+	//for(int i=0; i<__postfixExpression.size(); i++)
+		//std::cout << __postfixExpression[i] << " ";
+	//std::cout << std::endl;
 
 	// *** EVALUATE POSTFIX EXPRESSION ***
 	for(int i=0; i<__postfixExpression.size(); i++) {
@@ -91,9 +91,9 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 			__operandStack.push(currToken);
 		}
 		else {							//operator
-			int op1 = __operandStack.top();
-			__operandStack.pop();
 			int op2 = __operandStack.top();
+			__operandStack.pop();
+			int op1 = __operandStack.top();
 			__operandStack.pop();
 
 			int opResult;
