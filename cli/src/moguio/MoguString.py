@@ -26,7 +26,7 @@ class MoguString(MultiString):
     ]
 
     ReferenceTables = [
-            SymbolRegistry.widgetRegistery,
+            SymbolRegistry.widgetRegistry,
             SymbolRegistry.dataRegistry,
             SymbolRegistry.policyRegistry,
             SymbolRegistry.policyRegistry
@@ -37,7 +37,7 @@ class MoguString(MultiString):
         integral = int(integral)
         for index,repr_type in enumerate(MoguString.ReferencedTypes):
             if integral == repr_type:
-                referenceTables[index][symbol].append(SharedData.ActiveFile)
+                MoguString.ReferenceTables[index][symbol].append(SharedData.ActiveFile)
 
     @staticmethod
     def filter_empty(item):
@@ -275,8 +275,7 @@ class MoguString(MultiString):
         protected = MoguString('script', self.active())
         protected.translate('integral')
         protected.active('integral')
-        protected.translate('script', OVERWRITE_STORED_VALUE)
-        protected.active('script')
+        protected.translate('script', MoguString.OVERWRITE_STORED_VALUE)
         splitsafe = protected.separate_string_literals()
         tokens = splitsafe.split(' ')
         for index,token in enumerate(tokens):
@@ -284,4 +283,9 @@ class MoguString(MultiString):
                 if (int(tokens[index-1]) in MoguString.ReferencedTypes):
                     MoguString.reference(tokens[index-1],token)
 
-
+def importString(script):
+    if not script: return script 
+    mogustring = MoguString('script',script)
+    integral = mogustring.translate('integral')
+    mogustring.create_references()
+    return integral

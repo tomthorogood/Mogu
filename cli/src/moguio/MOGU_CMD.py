@@ -1,6 +1,6 @@
 import pyboro 
 import syntax 
-import SyntaxReplacer
+import MoguString
 from lex_base import IGNORE
 from lex_base import regexlib
 from lex_functions import trim
@@ -38,7 +38,7 @@ MOGU_CMD = pyboro.Lexer.ParseMap((
     ("begin"    ,   "^"                                                                           , IGNORE),
     ("action"   ,   "%(action)s" %regexlib                                                          , syntax.as_integer),
     ("ws"       ,   "\s+"                                                                           , IGNORE),
-    ("dir_obj"  ,   "%(object_set)s" %regexlib                                                      , SyntaxReplacer.replace_syntax),
-    ("opt_end"  ,   "(\s*%(preposition)s\s+%(value)s)?"%regexlib                                    , SyntaxReplacer.replace_syntax),
+    ("dir_obj"  ,   "%(object_set)s" %regexlib                                                      , MoguString.importString),
+    ("opt_end"  ,   "(\s*%(preposition)s\s+%(value)s)?"%regexlib                                    , MoguString.importString),
     ("end"      ,   "$"                                                                           , IGNORE)
 ), strip=True, flags=re.M)
