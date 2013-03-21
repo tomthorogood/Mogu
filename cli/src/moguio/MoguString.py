@@ -5,7 +5,14 @@ import syntax
 import re
 
 class MoguString(MultiString):
-    Integrals = [val[0] for val in syntax.MoguSyntax.values()].extend(syntax.MoguOperators.values())
+    ReverseLookup = {}
+    for keyword in syntax.MoguSyntax:
+        value = syntax.MoguSyntax[keyword][0]
+        ReverseLookup[str(value)] = keyword
+    for op in syntax.MoguOperators:
+        value = syntax.MoguOperators[op]
+        ReverseLookup[str(value)] = op
+
     ReservedWords = syntax.MoguSyntax.keys()
     Operators = syntax.MoguOperators.keys()
 
@@ -41,11 +48,19 @@ class MoguString(MultiString):
     @staticmethod
     def getIntegral(keyword):
         if keyword in MoguString.ReservedWords:
-            return syntax.as_integer(keyword)
+            return str(syntax.as_integer(keyword))
         elif keyword in MoguString.Operators:
-            return syntax.MoguOperators[keyword]
+            return str(syntax.MoguOperators[keyword])
         else:
             return 0
+
+    @staticmethod
+    def is_integer(token):
+        try:
+            int(token)
+            return True
+        except:
+            return False
 
     class UnrecognizedContextException(Exception):
         def __init__(self, context):
@@ -54,7 +69,19 @@ class MoguString(MultiString):
         def __str__(self):
             return "%(badcontext)s is unrecognized. Mogu contexts must be either 'script' or 'integral'" % self.__dict__
 
-    def __init__(self, context, initstr=None):
+    class AlgorithmException(Exception):
+        def __init__(self,state):
+            self.state = state
+        def __str__(self):
+            return """
+            An error was encountered keeping this program from continuing. This is not your fault, and should be
+            reported to the Mogu team.
+
+            Please send the following information:
+            %(state)s
+            """ % self.__dict__
+
+    def __init__(self, context, initstr=None, prefs=None):
         """
         When created, MoguStrings must pass a default context. A string is optional.
         """
@@ -68,6 +95,7 @@ class MoguString(MultiString):
 
         self.addTranslation('script','integral',self.script_to_integral)
         self.addTranslation('integral','script',self.integral_to_script)
+        self.preferences = prefs if prefs is not None else {} 
         self.string_literals = []
         self.maths = []
 
@@ -97,7 +125,7 @@ class MoguString(MultiString):
 
         for index,token in enumerate(tokens):
             if token in (MoguString.ReservedWords) or (token in MoguString.Operators):
-                tokens[index] = str(MoguString.getIntegral(token))
+                tokens[index] = MoguString.getIntegral(token)
 
         translated = " ".join(tokens)
 
@@ -113,10 +141,10 @@ class MoguString(MultiString):
         """
         self.maths = re.findall(regexlib['math_gen_expr'],string)
         return len(self.maths) > 0
-        
+
     def separate_string_literals(self):
         """
-            Separates string literals from the 'script' context, 
+            Separates string literals from the active context, 
             replacing them with '%s' so they can be re-integrated.
 
             The literals themselves are stored in a 
@@ -131,8 +159,7 @@ class MoguString(MultiString):
             temp = re.sub(result, '%s', temp)
         return temp
 
-
-    def integral_to_script(integral):
+    def integral_to_script(self, original_integral):
         """
         Converts integral commands to human-readable MoguScript. 
         For instance, "2 58 foo 6 26 58 bar 6" would be translated to:
@@ -153,16 +180,64 @@ class MoguString(MultiString):
         
         will use the word "content" whenever this ambiguity is encountered.
         """
-        pass
+        
+        # First, we must separate the string literals out of the equation, 
+        # since they will not be changed in any way.
+        integral = self.separate_string_literals()
 
+        # We can then safely explode the integral string, since
+        # they are guaranteed by the script -> integral conversion
+        # to be space-delimited, so long a there are no string literals.
+        tokens = integral.split(' ')
 
-    def getKeyword(integral):
-        if integral in MoguString.Integrals:
-            try:
-                return self.preferences[integral]
-            except KeyError:
-                for keyword in MoguString.ReservedWords:
-                    i = syntax.as_integer(keyword)
-                    if i == integral:
-                        return keyword
+        # In case there are mathematical expressions, we must first
+        # resolve any syntax that may be confused with numbers. This
+        # is done by reversing the string, finding tokens that are not
+        # integers, and then finding the next integral token, which must
+        # necessarily be a syntactical integral.
+        tokens.reverse()
+
+        searching = False
+        for index,token in enumerate(tokens):
+            if not MoguString.is_integer(token):
+                searching = True
+            elif searching is True:
+                tokens[index] = self.getKeyword(token)
+                searching = False
+
+        tokens.reverse()    # Put the tokens back in ltr order.
+
+        # Next we need to do a search and replace for Mathematical 
+        # operators, since they will not be conflicting with any
+        # integer literals.
+        op_integrals = [self.getIntegral(op) for op in MoguString.Operators]
+        for index,token in enumerate(tokens):
+            if token in op_integrals:
+                tokens[index] = self.getKeyword(token)
+
+        # At this point, any mathematical expressions have been fully realised.
+        # We can then replace any syntactical integers outside of parentheses.
+
+        paren_level = 0
+        for index,token in enumerate(tokens):
+            if token == '(':
+                paren_level += 1
+            elif token == ')':
+                paren_level -= 1
+            elif MoguString.is_integer(token):
+                if paren_level == 0:
+                    tokens[index] = self.getKeyword(token)
+
+        translated = " ".join(tokens)
+
+        if self.string_literals:
+            return translated % tuple(self.string_literals)
+        else:
+            return translated
+
+    def getKeyword(self, integral):
+        if int(integral) in self.preferences:
+            return self.preferences[int(integral)]
+        if str(integral) in MoguString.ReverseLookup:
+            return MoguString.ReverseLookup[integral]
         return "None"
