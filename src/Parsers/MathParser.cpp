@@ -8,6 +8,10 @@
 #include <Parsers/MathParser.h>
 #include <Types/syntax.h>
 #include <cassert>
+#include <cstdlib>
+
+#include <iostream>
+
 
 
 namespace Parsers {
@@ -28,7 +32,7 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 	std::stack<int> opStack;
 
 	for(int i=0; i<infixExpression.size(); i++) {
-		int currToken = stoi(infixExpression[i]);
+		int currToken = atoi(infixExpression[i].c_str());
 
 		if(isOperator(currToken)) {
 			switch(currToken) {
@@ -46,9 +50,18 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 
 				default:
 				//we have a +,-,* or /
+				if(opStack.empty())
+				{
+					opStack.push(currToken);
+					break;
+				}
+						
 				while(!hasHigherPrecedence(currToken, opStack.top())) {
 					__postfixExpression.push_back(opStack.top());
 					opStack.pop();
+
+					if(opStack.empty())
+						break;
 				}
 				opStack.push(currToken);
 				break;
@@ -63,6 +76,11 @@ int MathParser::evaluate(std::vector<std::string>& infixExpression)
 		__postfixExpression.push_back(opStack.top());
 		opStack.pop();
 	}
+
+	std::cout << "converted to PostFix: ";
+	for(int i=0; i<__postfixExpression.size(); i++)
+		std::cout << __postfixExpression[i] << " ";
+	std::cout << std::endl;
 
 	// *** EVALUATE POSTFIX EXPRESSION ***
 	for(int i=0; i<__postfixExpression.size(); i++) {
@@ -107,6 +125,9 @@ bool MathParser::hasHigherPrecedence(int op1, int op2)
 	if(op1 == MoguSyntax::OPER_MULT || op1 == MoguSyntax::OPER_DIV)
 		if(op2 == MoguSyntax::OPER_PLUS || op2 == MoguSyntax::OPER_MINUS)
 			return true;
+
+	if(op2 == MoguSyntax::OPER_OPPAREN)
+		return true;
 
 	return false;
 }
