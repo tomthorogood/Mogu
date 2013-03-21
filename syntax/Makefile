@@ -18,7 +18,6 @@ clean:
 	unlink pyRex
 	unlink regexlib.py
 	unlink $(PY_SYN_DIR)/syntax.py
-	unlink $(PY_SYN_DIR)/../exporter/syntax.py
 	rm -rf syntax.h syntax.py
 	rm -rf operators
 
