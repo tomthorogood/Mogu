@@ -1,5 +1,5 @@
 from lex_base import *
-from pyRex import Consumer
+from pyboro import Consumer
 # Base consumers are made up of ParseMaps that do not
 # refer to other consumers.
 

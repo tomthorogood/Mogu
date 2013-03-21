@@ -1,4 +1,4 @@
-from pyRex import Consumer
+from pyboro import Consumer
 from lex_base import *
 from EVENT_BLOCK import EVENT_BLOCK
 from CHILDREN_BLOCK import CHILDREN_BLOCK

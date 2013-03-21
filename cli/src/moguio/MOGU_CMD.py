@@ -1,4 +1,4 @@
-import pyRex 
+import pyboro 
 import syntax 
 import SyntaxReplacer
 from lex_base import IGNORE
@@ -34,7 +34,7 @@ import re
 # Therefore, the first thing we have to do is get a list of 
 # valid actions.
 
-MOGU_CMD = pyRex.Lexer.ParseMap((
+MOGU_CMD = pyboro.Lexer.ParseMap((
     ("begin"    ,   "^"                                                                           , IGNORE),
     ("action"   ,   "%(action)s" %regexlib                                                          , syntax.as_integer),
     ("ws"       ,   "\s+"                                                                           , IGNORE),

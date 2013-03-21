@@ -1,4 +1,4 @@
-from pyRex import Consumer
+from pyboro import Consumer
 from WIDGET_BLOCK import WIDGET_BLOCK
 from WIDGET_BLOCK import TEMPLATE_BLOCK
 from POLICY_BLOCK import POLICY_BLOCK

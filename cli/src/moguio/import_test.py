@@ -3,8 +3,8 @@ import PythonObjectConverter
 import RedisWriter
 import SharedData
 import SymbolRegistry
-import pyRex
-pyRex.Lexer.VERBAL = True
+import pyboro
+pyboro.Lexer.VERBAL = True
 from WIDGET_BLOCK import WIDGET_BLOCK
 SharedData.ActiveFile = "syntax_text.mogu"
 f = open("syntax_test.mogu")

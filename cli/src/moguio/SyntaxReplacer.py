@@ -3,8 +3,8 @@
 
 import syntax # Syntax/Integer Map
 from sets import Set
-from pyRex import Consumer
-from pyRex import Lexer
+from pyboro import Consumer
+from pyboro import Lexer
 from regexlib import regexlib # Basic regular expressions
 from lex_functions import reference_widget
 from lex_functions import reference_data

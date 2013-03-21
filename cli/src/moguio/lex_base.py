@@ -1,14 +1,14 @@
 import re
-import pyRex
+import pyboro
 from regexlib import *
 from lex_functions import *
 
 # Control of debugging vomit
 # Can be changed in higher level modules
-pyRex.Lexer.VERBAL = False
+pyboro.Lexer.VERBAL = False
 
-IGNORE = pyRex.Lexer.ParseMap.IGNORE #alias for ease of reading
-LITERAL = pyRex.Lexer.ParseMap.LITERAL #alias for ease of reading
+IGNORE = pyboro.Lexer.ParseMap.IGNORE #alias for ease of reading
+LITERAL = pyboro.Lexer.ParseMap.LITERAL #alias for ease of reading
 
 def option_list(grammar_type):
     return "(%s)" % "|".join(valid_options(grammar_type))
@@ -67,14 +67,14 @@ regexlib["math_expr"] = "\(%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(mat
 #
 regexlib["value"]       = "(%(object_set)s|%(string_literal)s|%(math_expr)s|-?[0-9]+)" % regexlib 
 
-HASH_DEFINITION = pyRex.Lexer.ParseMap((
+HASH_DEFINITION = pyboro.Lexer.ParseMap((
         ("key",             everything_until(":")   ,   trim),
         ("delim",           ":",                        IGNORE),
         ("value",           everything_until(r"\n") ,   trim),
         ("end",             r"\n\s*"                ,   IGNORE)
 ))
 
-LIST_DEFINITION = pyRex.Lexer.ParseMap([
+LIST_DEFINITION = pyboro.Lexer.ParseMap([
         ("entry",           everything_until(r"\n\s*"),     trim),
         ("end",             r"\n\s*"                  ,     IGNORE)
 ])
@@ -108,64 +108,64 @@ LIST_DEFINITION = pyRex.Lexer.ParseMap([
 #   end events
 # end widget
 
-WIDGET_TYPE = pyRex.Lexer.ParseMap((
+WIDGET_TYPE = pyboro.Lexer.ParseMap((
         ("begin",   DIRECTIVE_START("type")     , IGNORE),
         ("type",    regexlib["widget_types"]    , syntax.as_integer),
         ("end",     DIRECTIVE_END               , IGNORE)
 ))
 
-WIDGET_STYLE = pyRex.Lexer.ParseMap((
+WIDGET_STYLE = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("css")          , IGNORE),
         ("css_classes", "[^\n]+"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
-WIDGET_CONTENT = pyRex.Lexer.ParseMap((
+WIDGET_CONTENT = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("content|text")      , IGNORE),
         ("content",     "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
-WIDGET_SOURCE = pyRex.Lexer.ParseMap((
+WIDGET_SOURCE = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("source")       , IGNORE),
         ("source",      "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
-WIDGET_LOCATION = pyRex.Lexer.ParseMap((
+WIDGET_LOCATION = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("location")     , IGNORE),
         ("location",    "[^\n]*"                        , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
-WIDGET_TEMPLATE = pyRex.Lexer.ParseMap((
+WIDGET_TEMPLATE = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("template")     , IGNORE),
         ("template",    regexlib["identifier"]          , reference_template),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
-POLICY_MODE  = pyRex.Lexer.ParseMap((
+POLICY_MODE  = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("mode")         , IGNORE),
         ("mode",        regexlib["identifier"]          , LITERAL),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
 
-POLICY_DATA = pyRex.Lexer.ParseMap((
+POLICY_DATA = pyboro.Lexer.ParseMap((
         ("begin",           DIRECTIVE_START("data|type")         , IGNORE),
         ("datatype",        regexlib["datatype"]            , trim),
         ("end",             DIRECTIVE_END                   , IGNORE)
 ))
 
-VALIDATOR_TYPE = pyRex.Lexer.ParseMap((
+VALIDATOR_TYPE = pyboro.Lexer.ParseMap((
     ("begin",           DIRECTIVE_START("type")         , IGNORE),
     ("type",            regexlib["validator_type"]      , LITERAL),
     ("end",             DIRECTIVE_END                   , IGNORE)
 ))
 
-VALIDATOR_TEST = pyRex.Lexer.ParseMap((
+VALIDATOR_TEST = pyboro.Lexer.ParseMap((
     ("begin",           DIRECTIVE_START("test")         , IGNORE),
     ("test",            regexlib["string_literal"]      , LITERAL),
     ("end",             DIRECTIVE_END                   , IGNORE)
 ))
 
-NEWLINES = pyRex.Lexer.ParseMap([("newline","\n",IGNORE)])
+NEWLINES = pyboro.Lexer.ParseMap([("newline","\n",IGNORE)])

@@ -1,4 +1,4 @@
-import pyRex
+import pyboro
 import syntax
 from lex_base import IGNORE
 from lex_base import regexlib
@@ -12,7 +12,7 @@ import re
 #   and this
 #   and this
 # }
-WHEN_BLOCK = pyRex.Lexer.ParseMap ((
+WHEN_BLOCK = pyboro.Lexer.ParseMap ((
         ("begin",       r"^when\s+",                IGNORE),
         ("trigger",     regexlib["event_triggers"], syntax.as_integer),
         ("block_begin", r"\s*{",                    IGNORE),

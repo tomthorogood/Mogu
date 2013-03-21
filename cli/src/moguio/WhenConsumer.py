@@ -1,4 +1,4 @@
-from pyRex import Consumer
+from pyboro import Consumer
 from MOGU_CMD import MOGU_CMD
 from lex_base import NEWLINES
 
