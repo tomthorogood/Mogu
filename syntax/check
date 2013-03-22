@@ -1,0 +1,7 @@
+#!/usr/bin/env python
+
+try:
+    import pyboro
+except ImportError:
+    import os
+    os.system("sudo pip install pyboro")

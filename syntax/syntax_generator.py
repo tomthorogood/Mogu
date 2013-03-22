@@ -19,7 +19,7 @@ OUTPUT_H    = "syntax.h"
 
 global_aggregator = 0
 
-from pyRex import Lexer
+from pyboro import Lexer
 import sys
 
 # borrow some basic regular expressions

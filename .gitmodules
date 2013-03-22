@@ -1,3 +1,0 @@
-[submodule "cli/src/moguio/pyRex"]
-	path = cli/src/moguio/pyRex
-	url = git://github.com/tomthorogood/pyRex.git
