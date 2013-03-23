@@ -41,7 +41,7 @@ int main()
 	cout << endl;
 
 	cout << "*** output value: ";
-	cout << m.evaluate(input) << endl;
+	cout << m.evaluate(input) << endl << endl;
 
 	// TEST 2
 	input.clear();
@@ -57,7 +57,7 @@ int main()
 	cout << endl;
 
 	cout << "*** output value: ";
-	cout << m.evaluate(input) << endl;
+	cout << m.evaluate(input) << endl << endl;
 
 
 	// TEST 3
@@ -92,7 +92,7 @@ int main()
 	cout << endl;
 
 	cout << "*** output value: ";
-	cout << m.evaluate(input) << endl;
+	cout << m.evaluate(input) << endl << endl;
 	
 
 	return 0;
