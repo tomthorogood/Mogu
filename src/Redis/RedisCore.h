@@ -18,6 +18,7 @@
 
 #include <declarations.h>
 #include <hiredis/hiredis.h>
+#include "QuerySet.h"
 
 namespace Redis {
 
