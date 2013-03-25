@@ -43,12 +43,12 @@ class Mogu: public Wt::WApplication
 
     Parsers::NodeValueParser __interpreter;
 
-    std::string __session;
-    std::string __group;
+    std::string __session;  //!< Currently active user session
+    std::string __group;    //!< Currently active user group
     std::string __auth_token;
     std::string __instanceid;
-    redisContext* __redis;
-    redisReply* __reply;
+    redisContext* __redis;  //!< Database connection
+    redisReply* __reply;    //!< State of last database query
 
     ApplicationManager manager;
     Security::UserManager userManager;
@@ -100,8 +100,8 @@ public:
     /*!\brief Returns a widget from the registry based on its name. */
     inline Moldable* registeredWidget(
         std::string name)
-    {
-        return widgetRegister[name];
+    {      
+       return widgetIsRegistered(name) ? widgetRegister.at(name) : NULL; 
     }
 
     /*!\brief Removes a widget from the registry. */

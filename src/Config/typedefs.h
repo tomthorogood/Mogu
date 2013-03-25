@@ -7,12 +7,8 @@
 
 #ifndef TYPEDEFS_H_
 #define TYPEDEFS_H_
+#include <unordered_map>
 
-namespace Bayes {
-class Node;
-typedef void (*NodeManipulator)(
-    Node*, Node*);
-}
 
 namespace Redis {
 typedef std::vector<std::string> strvector;
@@ -22,7 +18,7 @@ typedef std::map<std::string, std::string> Strings;
 }
 
 typedef TurnLeft::Utils::HungryVector<char> CharVector;
-typedef std::map<std::string, Moldable*> WidgetRegister;
+typedef std::unordered_map<std::string, Moldable*> WidgetRegister;
 
 typedef std::vector<std::pair<char, char> > CharCouplets;
 
