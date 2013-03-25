@@ -7,7 +7,7 @@ docs:
 	cd docs && $(MAKE) clean
 
 clean:
-	rm -rf pyRex.egg-info
+	rm -rf moguio.egg-info
 	rm -rf dist/
 	rm -rf build/
 	rm -rf *.pyc
