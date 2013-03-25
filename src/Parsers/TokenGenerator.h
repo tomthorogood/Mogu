@@ -192,6 +192,11 @@ public:
         return __orig;
     }
 
+    inline bool hasNext()
+    {
+        return epsilon() != EMPTY;
+    }
+
     virtual ~TokenGenerator()
     {
     }

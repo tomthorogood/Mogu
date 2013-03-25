@@ -8,7 +8,9 @@
  *      of the AttributeParser class.
  */
 #include <Parsers/AttributeParser.h>
+#include <Types/NodeValue.h>
 #include <iostream>
+
 
 
 using namespace Parsers;
@@ -17,9 +19,8 @@ using namespace std;
 int main()
 {
 	AttributeParser a;
-	a.giveInput("haha these are some tokens.");
-
-	cout << "This is a test." << endl;
+	NodeValue v;
+	a.giveInput("haha these are \"some tokens.\"", v);
 
 	return 0;
 }

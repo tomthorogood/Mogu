@@ -5,9 +5,9 @@
  *      Author: cameron
  */
 
+#include <declarations.h>
 #include <Parsers/TokenGenerator.h>
 #include <Types/NodeValue.h>
-#include <string>
 #include <vector>
 
 namespace Parsers {
@@ -25,7 +25,7 @@ class AttributeParser
 		inline void reset()
 		{
 			__tokenizer.reset();
-			tokens.clear();
+			__tokens.clear();
 			__iovalue = 0;
 		}
 	
@@ -34,6 +34,6 @@ class AttributeParser
 		std::vector<std::string> __tokens;
 		NodeValue* __iovalue;
 
-}
+};
 
 }	// namespace Parsers
