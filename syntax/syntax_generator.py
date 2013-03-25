@@ -29,6 +29,14 @@ PY_ADDITIONS = """
 def as_integer(string):
     global MoguSyntax
     return MoguSyntax[string.strip()][0]
+
+def as_string(integer):
+    global MoguSyntax
+    reverseDict = dict.fromkeys(MoguSyntax,None)
+    for key in MoguSyntax:
+        ival = MoguSyntax[key][0]
+        reverseDict[ival] = key
+    return reverseDict[int(integer)]
 """
 
 def spaces(s1,s2):
@@ -209,7 +217,7 @@ for line in lines:
         sys.stderr.write("Could not parse line: %s" % line)
         continue
 
-py_out = generate_py("MoguSyntax",py_entries) + PY_ADDITIONS
+py_out = generate_py("MoguSyntax",py_entries) 
 cpp_out = generate_cpp("MoguSyntax",cpp_entries)
 
 
@@ -221,6 +229,9 @@ with open(OUTPUT_H,"w") as f:
     f.write(cpp_out)
 
 os.system("./operators")
+
+with open(OUTPUT_PY, "a") as f:
+    f.write(PY_ADDITIONS)
 
 with open(OUTPUT_H,"a") as f:
     cl = CppEnumClose("MoguSyntax");
