@@ -13,9 +13,13 @@
 namespace Parsers {
 	
 /*
- * i'm assuming that we don't need to store any broadcaster data,
- * because the parsed data isn't going to be stored as an event.
- *
+ * TODO:
+ * 	- add logic to detect what type of node we are dealing with
+ *	- accomodate possibility of db node being a list
+ *	- use redisExec instead of redisCommand
+ *	- prepare AttributeParser to access widget data (pending update)
+ *	- figure out how to access slot data
+ *	- actually use the github issue tracker instead of this
  */
 class AttributeParser
 {

@@ -43,8 +43,8 @@ void AttributeParser::giveInput(std::string input, NodeValue& v)
 		if(__tokenizer.isWrapped(__tokens[0]))
 			v.setString(__tokens[0].substr(1, __tokens[0].length()-2));
 		else
-			// assumes only other single-token input possibility is an enumerated
-			// value!
+			// assumes only other single-token input 
+			// possibility is an enumerated value!
 			v.setInt(std::stoi(__tokens[0]));
 		return;
 	}
@@ -58,7 +58,7 @@ void AttributeParser::giveInput(std::string input, NodeValue& v)
 		// group keyspace: g.key
 		// data keyspace: data.key
 
-		std::string db_keyspace;
+		std::string db_keyspace, queryResult;
 		switch(std::stoi(__tokens[0])) {
 		case MoguSyntax::user:
 			db_keyspace = __PREFIX_SESSION;
@@ -79,32 +79,37 @@ void AttributeParser::giveInput(std::string input, NodeValue& v)
 		const char *cnode = db_node.c_str();
 
 		if(__tokens.size() == 2) {
-			app->redisCommand("get %s", cnode);
+			app->redisExec(Mogu::Keep, "get %s", cnode);
+			queryResult = redisReply_STRING;
 		}
 
 
 		else {
+			// assuming __tokens.size()==3, is a hash or list?
+			std::string nodeType;
+			app->redisExec(Mogu::Keep, "type %s", cnode);
+			nodeType = redisReply_STRING;
+
 			const char *carg = __tokens[2].c_str();
-			app->redisCommand("hget %s %s", cnode, carg);
+			if(nodeType == "hash")
+				app->redisExec(Mogu::Keep, "hget %s %s", cnode, carg);
+
+			else if(nodeType == "list")
+				app->redisExec(Mogu::Keep,"lindex %s %s", cnode, carg);
+
+			else {
+				// unsupported node type or key doesn't exist!
+				v.setString("ERROR: unsupported key of type '" 
+							+ nodeType + "'");
+				return;
+			}
+
+			queryResult = redisReply_STRING;
+			v.setString(queryResult);
 		}
 
-		// TODO: process the redis reply here, convert it to an int
-		// if appropriate, and store the result in NodeValue v.
-
 	}
-
-
-
-	// DEBUG
-	std::cout << "tokens are as follows:" << std::endl << "************" << std::endl;
-	for(int i=0; i<__tokens.size(); i++)
-		std::cout << __tokens[i] << std::endl;
-	std::cout << std::endl;
-
-	std::cout << "original string" << std::endl << "************" << std::endl;
-	std::cout << __tokenizer.getOriginal() << std::endl;
 }
-
 
 
 }	// namespace Parsers
