@@ -4,10 +4,8 @@ import SymbolRegistry
 import PythonObjectConverter
 import RedisWriter
 import sys
-import MoguExporter
 import redis
 import re
-
 
 def display_undefined_symbols(registry):
     for symbol in registry:
