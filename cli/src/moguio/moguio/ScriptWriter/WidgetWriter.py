@@ -40,7 +40,7 @@ class ChildrenWriter(object):
         for more readable shorthand.
 
         If widgetfoo:childalpha is passed in, and 'widgetfoo'
-        is identified as the parent, only ':childalpha' will be
+        is identified as thechildren= parent, only ':childalpha' will be
         written in the output.
     """
     @staticmethod
@@ -125,7 +125,7 @@ class AbstractWidgetWriter(object):
 """
 %(tab)s%(type)s %(identifier)s
 %(inner)s
-%(tab)s end %(type)s
+%(tab)send %(type)s
 """
         self.dict['tab'] = IndentTracker.TAB * IndentTracker.INDENT_LEVEL
         self.dict['inner'] = ""
@@ -136,7 +136,7 @@ class AbstractWidgetWriter(object):
         if 'events' in self.dict and self.dict['events'] is not None:
             eventWriter = EventWriter(self.dict['events'])
             self.dict['inner'] += str(eventWriter)
-        if 'children' in self.dict and self.dict['events'] is not None:
+        if 'children' in self.dict and self.dict['children'] is not None:
             childrenWriter = ChildrenWriter(self.dict['children'], self.dict['identifier'])
             self.dict['inner'] += str(childrenWriter)
         return outer % self.dict

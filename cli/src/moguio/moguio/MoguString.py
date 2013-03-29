@@ -276,10 +276,16 @@ class MoguString(MultiString):
         protected.translate('integral')
         protected.active('integral')
         protected.translate('script', MoguString.OVERWRITE_STORED_VALUE)
+
+        
         splitsafe = protected.separate_string_literals()
+        
+        # We have now ensured spacing and removed string literals.
         tokens = splitsafe.split(' ')
         for index,token in enumerate(tokens):
-            if not MoguString.is_integer(token) and index != 0:
+            if (not MoguString.is_integer(token) and \
+                    MoguString.is_integer(tokens[index-1])) \
+                    and index != 0:
                 if (int(tokens[index-1]) in MoguString.ReferencedTypes):
                     MoguString.reference(tokens[index-1],token)
 

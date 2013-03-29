@@ -1,1 +1,2 @@
 ActiveFile = None
+ActiveIdentifier = None

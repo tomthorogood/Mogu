@@ -5,7 +5,6 @@
 #endif
 #include <Types/syntax.h>
 
-#include "../syntax/syntax.txt"
 
 Wt::WApplication* createApplication(
     const Wt::WEnvironment& env)
@@ -16,9 +15,7 @@ Wt::WApplication* createApplication(
 int main(
     int argc, char** argv)
 {
-#ifdef DEBUG
-    assert(Tokens::syntaxMap.test());
-#endif
+
     Wt::ApplicationCreator fn = &createApplication;
     return Wt::WRun(argc, argv, fn);
 }

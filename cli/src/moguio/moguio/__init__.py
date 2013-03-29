@@ -73,14 +73,6 @@ def mogu_import(args):
         writer.write(redis_objects)
 
 
-prefix_index = {
-    "widgets"       :   MoguExporter.Widget,
-    "templates"     :   MoguExporter.Template,
-    "policies"      :   MoguExporter.Policy,
-    "validators"    :   MoguExporter.Validator,
-    "data"          :   MoguExporter.Data
-        }
-
 def is_root(string):
     return len(re.findall("\.",string)) == 1
 

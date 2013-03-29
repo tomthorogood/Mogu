@@ -1,4 +1,9 @@
-IDENTIFIER = "[:a-zA-Z_][:a-zA-Z_0-9]+"
+import syntax
+import re
+
+reserved_words = "(%s)" % "|".join(syntax.MoguSyntax.keys())
+IDENTIFIER = "(?!(?:%s))[:a-zA-Z_][:a-zA-Z_0-9]+" % reserved_words[1:-1]
+#IDENTIFIER = "[:a-zA-Z_][:a-zA-Z_0-9]+" 
 
 #STRLIT = r'''(?x)   # verbose mode
 #    (?<!\\)    # not preceded by a backslash
@@ -25,7 +30,8 @@ regexlib = {
         "string_literal":   STRLIT,
         "math_operator" :   math_op,
         "math_begin"    :   math_bg,
-        "math_end"      :   math_en
+        "math_end"      :   math_en,
+        "reserved"      :   reserved_words
         }
 
 DIRECTIVE_END = "\s*"

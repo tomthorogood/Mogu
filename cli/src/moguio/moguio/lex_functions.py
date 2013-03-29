@@ -8,6 +8,7 @@ def DIRECTIVE_START(token):
 
 def register_widget(string):
     SymbolRegistry.widgetRegistry[string] = SharedData.ActiveFile
+    SharedData.ActiveIdentifier = string
     return string
 
 def register_template(string):
@@ -16,6 +17,7 @@ def register_template(string):
 
 def register_data(string):
     SymbolRegistry.dataRegistry[string] = SharedData.ActiveFile
+    SharedData.ActiveIdentifier = string
     return string
 
 def register_validator(string):
@@ -32,6 +34,9 @@ def reference_widget(string):
 
 def reference_widget_list(string):
     w_list = newline_list(string)
+    for index,entry in enumerate(w_list):
+        if entry[0] == ':':
+            w_list[index] = SharedData.ActiveIdentifier+entry
     for w in w_list:
         reference_widget(w)
     return w_list

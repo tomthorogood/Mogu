@@ -22,8 +22,8 @@ global_aggregator = 0
 from pyboro import Lexer
 import sys
 
-# borrow some basic regular expressions
-from regexlib import regexlib
+
+Lexer.VERBAL = False
 
 PY_ADDITIONS = """
 def as_integer(string):
@@ -89,13 +89,13 @@ class TokenNotes(ParsedInput):
 
 class SyntaxTableRow(object):
     parser = Lexer.ParseMap((
-        ("begin",   "\(\s*" % regexlib,                 Lexer.ParseMap.IGNORE),
-        ("human",   "[^,]+",                                        Lexer.ParseMap.LITERAL),
-        ("delim",   "\s*,\s*" % regexlib,   Lexer.ParseMap.IGNORE),
-        ("enum",    "[^,]+",                                        Lexer.ParseMap.LITERAL),
-        ("delim",   "\s*,\s*" % regexlib,   Lexer.ParseMap.IGNORE),
-        ("notes",   "[^\)]+",                                       Lexer.ParseMap.LITERAL),
-        ("end",     "\)\s*"  % regexlib,                Lexer.ParseMap.IGNORE)
+        ("begin",   "\(\s*",    Lexer.ParseMap.IGNORE),
+        ("human",   "[^,]+",    Lexer.ParseMap.LITERAL),
+        ("delim",   "\s*,\s*",  Lexer.ParseMap.IGNORE),
+        ("enum",    "[^,]+",    Lexer.ParseMap.LITERAL),
+        ("delim",   "\s*,\s*",  Lexer.ParseMap.IGNORE),
+        ("notes",   "[^\)]+",   Lexer.ParseMap.LITERAL),
+        ("end",     "\)\s*",    Lexer.ParseMap.IGNORE)
     ))
     def __init__(self, row_text):
         parsed_input = SyntaxTableRow.parser.parse(row_text)
@@ -214,7 +214,7 @@ for line in lines:
                 CppEnumEntry(parsed.enumerated,global_aggregator))
         global_aggregator += 1
     except Lexer.InputMatchError as e:
-        sys.stderr.write("Could not parse line: %s" % line)
+        #sys.stderr.write("Could not parse line: %s" % line)
         continue
 
 py_out = generate_py("MoguSyntax",py_entries) 
