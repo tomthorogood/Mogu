@@ -12,14 +12,12 @@ test:
 	@echo $(CP_SYN_DIR)
 
 clean:
-	unlink regexlib.py
 	unlink $(PY_SYN_DIR)/syntax.py
 	rm -rf syntax.h syntax.py
 	rm -rf operators
 
 syntax.py : operators
 	$(CURDIR)/check
-	ln -s $(PY_SYN_DIR)/regexlib.py regexlib.py
 	python syntax_generator.py
 
 operators:

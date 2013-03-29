@@ -47,7 +47,10 @@ regexlib["math_gen_expr"]        = "\(.*\)"
 #   group foo
 #   group foo bar
 #   own content
-regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(identifier)s(?<!%(preposition)s)|%(attribute)s)?" % regexlib
+#regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(identifier)s(?<!%(preposition)s)|%(attribute)s)?" % regexlib
+
+regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(attribute)s|%(identifier)s)?" % regexlib
+regexlib["object_set"]  = "(%(object_set)s)+" % regexlib
 
 regexlib["signed_obj"] = "-?\s*(%(object_set)s|[0-9\.]+)" % regexlib
 regexlib["math_oper"] = "(\*|\+|\-|\/)"
@@ -115,10 +118,11 @@ WIDGET_TYPE = pyboro.Lexer.ParseMap((
 ))
 
 WIDGET_STYLE = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("css")          , IGNORE),
-        ("css_classes", "[^\n]+"                        , trim),
+        ("begin",       DIRECTIVE_START("css|style")    , IGNORE),
+        ("css_classes", regexlib['string_literal']      , trim),
         ("end",         DIRECTIVE_END                   , IGNORE)
 ))
+
 
 WIDGET_CONTENT = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START("content|text")      , IGNORE),

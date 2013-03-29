@@ -12,5 +12,5 @@ clean:
 	rm -rf build/
 	rm -rf *.pyc
 
-intall:
+install:
 	sudo python setup.py install

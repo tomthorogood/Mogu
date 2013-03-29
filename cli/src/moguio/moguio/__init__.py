@@ -4,10 +4,8 @@ import SymbolRegistry
 import PythonObjectConverter
 import RedisWriter
 import sys
-import MoguExporter
 import redis
 import re
-
 
 def display_undefined_symbols(registry):
     for symbol in registry:
@@ -74,14 +72,6 @@ def mogu_import(args):
             sys.stderr.write("Writing imported files to database!\n")
         writer.write(redis_objects)
 
-
-prefix_index = {
-    "widgets"       :   MoguExporter.Widget,
-    "templates"     :   MoguExporter.Template,
-    "policies"      :   MoguExporter.Policy,
-    "validators"    :   MoguExporter.Validator,
-    "data"          :   MoguExporter.Data
-        }
 
 def is_root(string):
     return len(re.findall("\.",string)) == 1
