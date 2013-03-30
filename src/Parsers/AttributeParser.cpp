@@ -6,8 +6,9 @@
  */
 
 #include <Parsers/AttributeParser.h>
-#include <Types/syntax.h>
 #include <cassert>
+
+#include <Wt/WApplication>
 
 namespace Parsers {
 
