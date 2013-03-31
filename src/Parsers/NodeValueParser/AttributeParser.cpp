@@ -8,8 +8,6 @@
 #include <Parsers/AttributeParser.h>
 #include <cassert>
 
-#include <Wt/WApplication>
-
 namespace Parsers {
 
 AttributeParser::AttributeParser()
@@ -21,9 +19,24 @@ void AttributeParser::giveInput(std::string input, NodeValue& v)
 {
 	/*
 	 * three possibilities:
-	 * 	input is a string literal -> remove the double quotes, return
-	 * 	input is a single enumerated value -> return the integer
-	 * 	input is a parseable command -> parse and return string
+	 * 	1.  input is a string literal -> remove the double quotes, return
+	 * 	2.  input is a single enumerated value -> return the integer
+	 * 	3.  input is a parseable command -> parse and return string
+	 *
+	 * 	for possibility #3, we might need to fetch the required
+	 * 	information from the database (user|group|data), the widget
+	 * 	registry (widget), or a slot (slot).
+	 *
+	 * 	need to clean up the flow of this method; right now we kind of
+	 * 	have a jumbled conglomeration of nested conditionals
+	 *
+	 *	also, something to think about; when we fetch data from
+	 *	the database, we're getting a string representation of several
+	 *	tokens, some that are supposed to be interpreted as integers.
+	 *	we want to convert those tokens to integers as soon as
+	 *	possible to make decisions on the command, but when we pass
+	 *	the command string between the different parsers we currently
+	 *	pass it as a string. figure out a good way to address this. 
 	 */	
 
 	mApp;
@@ -87,7 +100,7 @@ void AttributeParser::giveInput(std::string input, NodeValue& v)
 
 
 		else {
-			// assuming __tokens.size()==3, is a hash or list?
+			// assuming __tokens.size() == 3, is a hash or list?
 			std::string nodeType;
 			app->redisExec(Mogu::Keep, "type %s", cnode);
 			nodeType = redisReply_STRING;

@@ -5,11 +5,14 @@
  *      Author: cameron
  */
 
+#ifndef COMMANDPARSER_H_
+#define COMMANDPARSER_H_
+
 #include <FiniteAutomaton/FiniteAutomaton.h>
 #include <Parsers/TokenGenerator.h>
 
 namespace Parsers {
 
 }	// namespace Parsers
-
+#endif /* COMMANDPARSER_H_ */
 

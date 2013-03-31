@@ -74,5 +74,4 @@ class MathParser
 };
 
 }	// namespace Parsers
-
 #endif /* MATHPARSER_H_ */

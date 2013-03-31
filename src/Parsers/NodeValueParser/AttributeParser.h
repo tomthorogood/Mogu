@@ -5,6 +5,9 @@
  *      Author: cameron
  */
 
+#ifndef ATTRIBUTEPARSER_H_
+#define ATTRIBUTEPARSER_H_
+
 #include <declarations.h>
 #include <Parsers/TokenGenerator.h>
 #include <Types/NodeValue.h>
@@ -17,9 +20,9 @@ namespace Parsers {
  * 	- add logic to detect what type of node we are dealing with
  *	- accomodate possibility of db node being a list
  *	- use redisExec instead of redisCommand
- *	- prepare AttributeParser to access widget data (pending update)
+ *	- use provided API to handle return of widget attributes
  *	- figure out how to access slot data
- *	- actually use the github issue tracker instead of this
+ *
  */
 class AttributeParser
 {
@@ -41,3 +44,4 @@ class AttributeParser
 };
 
 }	// namespace Parsers
+#endif /* ATTRIBUTEPARSER_H_ */

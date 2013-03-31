@@ -12,8 +12,6 @@
 
 #include <iostream>
 
-
-
 namespace Parsers {
 
 MathParser::MathParser()
