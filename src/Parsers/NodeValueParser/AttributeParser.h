@@ -29,7 +29,7 @@ class AttributeParser
 	public:
 		AttributeParser();
 		void giveInput(std::string input, NodeValue& v);
-		inline void reset()
+		inline void __reset__()
 		{
 			__tokenizer.reset();
 			__tokens.clear();

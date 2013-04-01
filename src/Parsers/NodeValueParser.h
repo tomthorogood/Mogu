@@ -8,6 +8,16 @@
 #ifndef NODEVALUEPARSER_H_
 #define NODEVALUEPARSER_H_
 
+class StateParser;
+class MathParser;
+class AttributeParser;
+class CommandParser;
+class TokenGenerator;
+class NodeValue;
+
+#include <vector>
+#include <string>
+
 namespace Parsers {
 
 /* take an input (a string from the database), tokenize it, convert
@@ -19,6 +29,27 @@ namespace Parsers {
  */
 class NodeValueParser 
 {
+	public:
+		NodeValueParser(std::string input, NodeValue &v);
+		void giveInput();
+
+	private:
+		// PARSERS
+		TokenGenerator __tokenizer;
+		StateParser __stateParser;
+		MathParser __mathParser;
+		AttributeParser __attParser;
+		CommandParser __cmdParser;
+
+		// DATA
+		std::vector<NodeValue> __tokens;
+
+		// METHODS
+		bool hasStates();	//the "do we need to invoke StateParser?" type of states
+		void evaluateMath();
+		bool detectEventCommand();
+		void __reset__();
+
 
 
 };
