@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 
-import RootConsumer
+from Lex import RootConsumer
 import SharedData
 import sys
 
+def filter_comment(string):
+    return string.strip()[0] != "#"
+
 def parse_root(filename):
     with open(filename,"r") as f:
-        text = f.read()
+        text = f.readlines()
+        # Strip comments out of the file.
+        text = filter(filter_comment,text)
+        text = "\n".join(text)
         try:
             return RootConsumer.RootConsumer.parse(text)
         except Exception as e:

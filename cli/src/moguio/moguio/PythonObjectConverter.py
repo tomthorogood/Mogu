@@ -1,16 +1,8 @@
 import RedisObjects
-from lex_base import *
-from EVENT_BLOCK import EVENT_BLOCK
-from CHILDREN_BLOCK import CHILDREN_BLOCK
-from POLICY_BLOCK import POLICY_BLOCK
-from DATA_BLOCK import DATA_BLOCK
-from VALIDATOR_BLOCK import VALIDATOR_BLOCK
-from WIDGET_BLOCK import WIDGET_BLOCK
-from WIDGET_BLOCK import TEMPLATE_BLOCK
-from data_blocks import *
 from collections import OrderedDict
 import syntax
-
+import lex_base
+import Lex
 class PythonObjectConverter(object):
     """
     Each entry passed into this converter must be a tuple
@@ -39,15 +31,15 @@ class PythonObjectConverter(object):
         lexed_results = obj[0]
         assert(isinstance(lexed_results,OrderedDict))
         lex_map = obj[1]
-        if lex_map is WIDGET_BLOCK:
+        if lex_map is Lex.WIDGET_BLOCK:
             return self.convert_widget(lexed_results)
-        elif lex_map is TEMPLATE_BLOCK:
+        elif lex_map is Lex.TEMPLATE_BLOCK:
             return self.convert_widget(lexed_results, prefix="templates")
-        elif lex_map is POLICY_BLOCK:
+        elif lex_map is Lex.POLICY_BLOCK:
             return self.convert_policy(lexed_results)
-        elif lex_map is DATA_BLOCK:
+        elif lex_map is Lex.DATA_BLOCK:
             return self.convert_data(lexed_results)
-        elif lex_map is VALIDATOR_BLOCK:
+        elif lex_map is Lex.VALIDATOR_BLOCK:
             return self.convert_validator(lexed_results)
         else:
             raise TypeError
@@ -69,11 +61,11 @@ class PythonObjectConverter(object):
         assert(len(params) == 1)
         lexed_data = params[0][0]
         lexed_data_type = params[0][1]
-        if lexed_data_type is HASH_BLOCK:
+        if lexed_data_type is Lex.HASH_BLOCK:
             master_dict[master_key] = self.convert_hash_block(lexed_data)
-        elif lexed_data_type is LIST_BLOCK:
+        elif lexed_data_type is Lex.LIST_BLOCK:
             master_dict[master_key] = self.convert_list_block(lexed_data)
-        elif lexed_data_type is VALUE_DEFINITION:
+        elif lexed_data_type is Lex.VALUE_DEFINITION:
             master_dict[master_key] = lexed_data["value_def"]
 
         for entry in master_dict:
@@ -127,9 +119,9 @@ class PythonObjectConverter(object):
         for param in params:
             o_dict = param[0]
             parsemap = param[1]
-            if parsemap is VALIDATOR_TEST:
+            if parsemap is lex_base.VALIDATOR_TEST:
                 master_dict[master_key][syntax.as_integer("test")] = o_dict["test"]
-            elif parsemap is VALIDATOR_TYPE:
+            elif parsemap is lex_base.VALIDATOR_TYPE:
                 master_dict[master_key][syntax.as_integer("type")] = o_dict["type"]
         
         for entry in master_dict:
@@ -152,9 +144,9 @@ class PythonObjectConverter(object):
         for param in params:
             o_dict = param[0]
             parsemap = param[1]
-            if parsemap is POLICY_MODE:
+            if parsemap is lex_base.POLICY_MODE:
                 master_dict[master_key][syntax.as_integer("mode")] = o_dict["mode"]
-            if parsemap is POLICY_DATA:
+            if parsemap is lex_base.POLICY_DATA:
                 master_dict[master_key][syntax.as_integer("type")] = o_dict["datatype"]
         for entry in master_dict:
             redis_objects.append(self.convert_to_redis_object(entry, master_dict[entry]))
@@ -181,22 +173,22 @@ class PythonObjectConverter(object):
             o_dict = param[0]
             parsemap = param[1]
 
-            if parsemap is WIDGET_TYPE:
+            if parsemap is lex_base.WIDGET_TYPE:
                 master_dict[master_key][syntax.as_integer("type")] = o_dict["type"]
-            elif parsemap is WIDGET_CONTENT:
+            elif parsemap is lex_base.WIDGET_CONTENT:
                 master_dict[master_key][syntax.as_integer("content")] = o_dict["content"]
-            elif parsemap is WIDGET_SOURCE:
+            elif parsemap is lex_base.WIDGET_SOURCE:
                 master_dict[master_key][syntax.as_integer("source")] = o_dict["source"]
-            elif parsemap is WIDGET_LOCATION:
+            elif parsemap is lex_base.WIDGET_LOCATION:
                 master_dict[master_key][syntax.as_integer("location")] = o_dict["location"]
-            elif parsemap is WIDGET_TEMPLATE:
+            elif parsemap is lex_base.WIDGET_TEMPLATE:
                 master_dict[master_key][syntax.as_integer("template")] = o_dict["template"]
-            elif parsemap is WIDGET_STYLE:
+            elif parsemap is lex_base.WIDGET_STYLE:
                 master_dict[master_key][syntax.as_integer("css")] = o_dict["css_classes"]
-            elif parsemap is EVENT_BLOCK:
+            elif parsemap is Lex.EVENT_BLOCK:
                 event_o_dict = self.convert_events(master_key, o_dict["block"])
                 master_dict.update(event_o_dict)
-            elif parsemap is CHILDREN_BLOCK:
+            elif parsemap is lex_base.CHILDREN_BLOCK:
                 master_dict["%s.children" % master_key] = [val for val in o_dict['block'] if val]
         for entry in master_dict:
             redis_objects.append(self.convert_to_redis_object(entry, master_dict[entry]))
