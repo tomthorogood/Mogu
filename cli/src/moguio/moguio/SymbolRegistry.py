@@ -165,7 +165,7 @@ class SymbolRegistry(object):
         elif isinstance(val,SymbolReferenceTracker) and key not in self:
             self.symbols[key] = val
         else:
-            raise TypeError
+            raise TypeError("%s%s"%(key,val))
 
     def __getitem__(self, key):
         if key not in self:

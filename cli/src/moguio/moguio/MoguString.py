@@ -162,7 +162,7 @@ class MoguString(MultiString):
             If it finds them, it adds them to the instance list self.maths.
             Returns True if expressions are found, False otherwise.
         """
-        self.maths = re.findall(regexlib['math_gen_expr'],string)
+        self.maths = re.findall("\(.*\)",string)
         return len(self.maths) > 0
 
     def separate_string_literals(self):

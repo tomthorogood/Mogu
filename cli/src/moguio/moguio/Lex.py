@@ -39,12 +39,12 @@ import re
 ################################
 
 MOGU_CMD = Lexer.ParseMap((
-    ("begin"    ,   "^"                                                                           , IGNORE),
-    ("action"   ,   "%(action)s" %regexlib                                                          , syntax.as_integer),
-    ("ws"       ,   "\s+"                                                                           , IGNORE),
-    ("dir_obj"  ,   "%(object_set)s" %regexlib                                                      , MoguString.importString),
-    ("opt_end"  ,   "(\s*%(preposition)s\s+%(value)s)?"%regexlib                                    , MoguString.importString),
-    ("end"      ,   "$"                                                                           , IGNORE)
+    ("begin"    ,   "^"                                            , IGNORE),
+    ("action"   ,   "%(action)s" %regexlib                         , LITERAL),
+    ("ws"       ,   "\s+"                                          , IGNORE),
+    ("dir_obj"  ,   "%(object_set)s" %regexlib                     , LITERAL),
+    ("opt_end"  ,   "(\s*%(preposition)s\s+%(value)s)?"%regexlib   , LITERAL),
+    ("end"      ,   "$"                                            , IGNORE)
 ), strip=True, flags=re.M)
 
 
@@ -97,16 +97,18 @@ WhenConsumer = Consumer.Consumer([
 # BEGIN NEXT TIER OF PARSE MAPS #
 #################################
 
+t = syntax.as_integer("hash")
 HASH_BLOCK = Lexer.ParseMap ((
-        ("begin",           "\s*hash",                     IGNORE),
-        ("hash_def",        everything_until("end hash"),  HashConsumer.parse),
-        ("end",             "end hash",                    IGNORE)
+        ("begin",           "\s*%s"%t,                      IGNORE),
+        ("hash_def",        everything_until("end %s"%t),   HashConsumer.parse),
+        ("end",             "end %s" %t,                    IGNORE)
 ))
 
+t = syntax.as_integer("list")
 LIST_BLOCK = Lexer.ParseMap ((
-        ("begin",           r"\s*list",                     IGNORE),
-        ("list_def",        everything_until(r"end list"),  ListConsumer.parse),
-        ("end",             r"end list",                    IGNORE)
+        ("begin",           r"\s*%s"%t,                     IGNORE),
+        ("list_def",        everything_until(r"end %s"%t),  ListConsumer.parse),
+        ("end",             r"end %s"%t,                    IGNORE)
 ))
 
 VALUE_DEFINITION = Lexer.ParseMap((
@@ -115,26 +117,28 @@ VALUE_DEFINITION = Lexer.ParseMap((
     ("end",         r"\S*"              , IGNORE)
 ))
 
+t = "validator"
 VALIDATOR_BLOCK = Lexer.ParseMap((
-        ("begin",           "\s*validator ",                            IGNORE),
+        ("begin",           "\s*%s "%t,                            IGNORE),
         ("identifier",      regexlib["identifier"],                     register_validator),
-        ("validator_def",   everything_until("end validator"),          ValidatorConsumer.parse),
-        ("end",             "end validator",                            IGNORE)
+        ("validator_def",   everything_until("end %s"%t),          ValidatorConsumer.parse),
+        ("end",             "end %s"%t,                            IGNORE)
 ))
 
 WHEN_BLOCK = Lexer.ParseMap ((
         ("begin",       r"^when\s+",                IGNORE),
-        ("trigger",     regexlib["event_triggers"], syntax.as_integer),
+        ("trigger",     regexlib["event_triggers"], LITERAL),
         ("block_begin", r"\s*{",                    IGNORE),
         ("block",       everything_until("\}"),     WhenConsumer.parse),
         ("block_end",   r"\}$",                     IGNORE)
 ),strip=True,flags=re.M)
 
+t = "policy"
 POLICY_BLOCK = Lexer.ParseMap((
-        ("begin",           "\s*policy ",                               IGNORE),
+        ("begin",           "\s*%s\s+"%t,                               IGNORE),
         ("identifier",      regexlib["identifier"],                     register_policy),
-        ("policy_def",      everything_until("end policy"),             PolicyConsumer.parse),
-        ("end",             "end policy",                               IGNORE)
+        ("policy_def",      everything_until(r"end\s+%s"%t),             PolicyConsumer.parse),
+        ("end",             r"end\s+%s"%t,                               IGNORE)
 ))
 ################################
 # BEGIN NEXT TIER OF CONSUMERS #
@@ -162,11 +166,12 @@ EVENT_BLOCK = Lexer.ParseMap ((
     ("end",             r"end events"                        , IGNORE)
 ))
 
+t = syntax.as_integer("data")
 DATA_BLOCK = Lexer.ParseMap((
-        ("begin",           "\s*data ",                                 IGNORE),
+        ("begin",           "\s*%s "%t,                                 IGNORE),
         ("identifier",      regexlib["identifier"],                     register_data),
-        ("data_def",        everything_until(r"end data"),              DataConsumer.parse),
-        ("end",             r"end data",                                IGNORE)
+        ("data_def",        everything_until(r"end %s"%t),              DataConsumer.parse),
+        ("end",             r"end %s"%t,                                IGNORE)
 ))
 
 ################################
@@ -207,18 +212,20 @@ end widget
 # BEGIN NEXT TIER OF PARSE MAPS #
 #################################
 
+t = syntax.as_integer("template")
 TEMPLATE_BLOCK = Lexer.ParseMap((
-        ("begin",           "\s*template ",                     IGNORE),
+        ("begin",           "\s*%s\s+"%t,                     IGNORE),
         ("identifier",      regexlib["identifier"],             register_template),
-        ("template_def",    everything_until("end template"),   WidgetConsumer.parse),
-        ("end",             "end template",                     IGNORE)
+        ("template_def",    everything_until("end %s"%t),   WidgetConsumer.parse),
+        ("end",             "end\s+%s"%t,                     IGNORE)
 ))
 
+t = syntax.as_integer("widget")
 WIDGET_BLOCK = Lexer.ParseMap ((
-        ( "begin",          "widget ",                          IGNORE),
+        ( "begin",          "\s*%s\s+"%t,                          IGNORE),
         ( "identifier",     regexlib["identifier"],             register_widget),
-        ("widget_def",      everything_until("end widget"),     WidgetConsumer.parse),
-        ( "end",            r"end widget",                      IGNORE)
+        ("widget_def",      everything_until(r"end\s+%s"%t),     WidgetConsumer.parse),
+        ( "end",            r"end\s+%s"%t,                      IGNORE)
 ))
 
 ################################
@@ -232,4 +239,11 @@ RootConsumer = Consumer.Consumer([
     DATA_BLOCK,
     VALIDATOR_BLOCK,
     NEWLINES,
-], help="Basic Mogu syntax in the form of object blocks. See http://www.github.com/tomthorogood/gomogu for more assistance.")
+], help="""
+Basic Mogu syntax in the form of object blocks. See http://www.github.com/tomthorogood/gomogu for more assistance.
+Widget Regex:       %s
+Template Regex:     %s
+Policy Regex:       %s
+Data Regex:         %s
+Validator Regex:    %s
+"""%(WIDGET_BLOCK.regex,TEMPLATE_BLOCK.regex,POLICY_BLOCK.regex, DATA_BLOCK.regex,VALIDATOR_BLOCK.regex))

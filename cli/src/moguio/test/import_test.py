@@ -1,31 +1,7 @@
-import RootConsumer
-import PythonObjectConverter
-import RedisWriter
-import SharedData
-import SymbolRegistry
-import pyboro
+import pyboro 
+from moguio import FileImporter
 pyboro.Lexer.VERBAL = True
-from WIDGET_BLOCK import WIDGET_BLOCK
-SharedData.ActiveFile = "syntax_text.mogu"
-f = open("syntax_test.mogu")
-root_result = RootConsumer.RootConsumer.parse(f.read())
-f.close()
+parseable = FileImporter.stage("syntax_test.mogu", True)
 
-writer = RedisWriter.RedisWriter()
-converter = PythonObjectConverter.PythonObjectConverter()
-
-redis_objects = []
-for entry in root_result:
-    redis_objects.extend(converter.convert(entry))
-
-writer.write(redis_objects)
-
-print("WIDGETS:")
-print SymbolRegistry.widgetRegistry
-for symbol in SymbolRegistry.widgetRegistry:
-    print SymbolRegistry.widgetRegistry[symbol]
-
-print("DATA:")
-print SymbolRegistry.dataRegistry
-for symbol in SymbolRegistry.dataRegistry:
-    print SymbolRegistry.dataRegistry[symbol]
+if __name__ == "__main__":
+    FileImporter.import_file("syntax_test.mogu")
