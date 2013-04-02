@@ -40,7 +40,8 @@ regexlib = {
     "preposition"   :   option_list("preposition"),
     "comment"       :   r"#.*\n",
     "math_gen_expr" :   r"\(.*\)",
-    "math_oper"     :   "(\*|\+|\-|\/)"
+    "math_oper"     :   "(\*|\+|\-|\/)",
+    "comment"       :   "^#.*\n"
 }
 
 # OBJECT SET
@@ -186,3 +187,35 @@ VALIDATOR_TEST = pyboro.Lexer.ParseMap((
 ))
 
 NEWLINES = pyboro.Lexer.ParseMap([("newline","\n",IGNORE)])
+
+# Fundamentally, commands do one thing: They perform a 
+# single action on a single value. Therefore, every
+# command will have at LEAST this basic structure:
+# 
+#   action value
+#
+#
+# In almost all cases, 'value' can be substituted with
+# an object, or an object's attribute.
+#
+#   action [object]
+#   action [object] [attribute]
+#
+# Some commands (such as those that change values, or store them)
+# take a preposition and second value:
+#
+#   action [value] [to|at] [value]
+#   action [object] [to|at] [value]
+#   action [object][attribute] [to|at] [value]
+#   ...and so on.
+
+# Therefore, the first thing we have to do is get a list of 
+# valid actions.
+
+
+CHILDREN_BLOCK = pyboro.Lexer.ParseMap((
+    ("begin",           r"\s*children\s*"                           , IGNORE),
+    ("block",           everything_until(r"end children")           , reference_widget_list),
+    ("end",             r"end children"                             , IGNORE)
+))
+
