@@ -143,7 +143,7 @@ class SyntaxDictEntry(OutputLine):
 
 class CppEnumOpen(OutputLine):
     def __init__(self, name):
-        fstring = "enum %(name)s {"
+        fstring = "enum class %(name)s {"
         super(CppEnumOpen, self).__init__(fstring,{'name':name})
 
 class CppEnumEntry(OutputLine):
