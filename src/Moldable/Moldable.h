@@ -31,6 +31,7 @@ class Moldable : public Wt::WContainerWidget
     Wt::Signal <> __succeeded_test;
     Wt::Signal <> __loaded;
     Wt::Signal <> __hidden_changed;
+    Wt::Signal <> __index_changed;
 
 
     bool has_events;
@@ -58,10 +59,13 @@ public:
 
     virtual ~Moldable();
 
-    virtual std::string moldableValue() =0;
-    virtual void setMoldableValue(const std::string&) =0;
-    virtual void getState(
-        Tokens::MoguTokens state, NodeValue& val);
+    virtual std::string moldableValue()                 =0;
+    virtual void setMoldableValue(const std::string&)   =0;
+    virtual void getAttribute(
+        MoguSyntax state, NodeValue& val);
+
+    virtual bool setAttribute(
+        MoguSyntax state, NodeValue& val);
 
     inline virtual void setStyleClass (const Wt::WString& style)
     {
@@ -81,8 +85,38 @@ public:
     inline Wt::Signal <>& succeed() { return __succeeded_test;}
     inline Wt::Signal <>& onLoad() { return __loaded; }
     inline Wt::Signal <>& hiddenChanged() { return __hidden_changed; }
+    inline Wt::Signal <>& indexChanged() { return __index_changed;}
 
-    bool allowsAction(Tokens::MoguTokens action);
+    inline void increment(int byAmount=1) {
+        NodeValue v(0);
+        getAttribute(MoguSyntax::index,v);
+        int newindex = v.getInt() + byAmount;
+        v.setInt(newindex);
+        setAttribute(MoguSyntax::index,v);
+    }
+
+    inline void increment(NodeValue& val) {
+        int amt = val.getInt();
+        getAttribute(MoguSyntax::index,val);
+        amt += val.getInt();
+        setAttribute(MoguSyntax::index,val);
+    }
+
+    inline void decrement(int byAmount=1) {
+        NodeValue v(0);
+        getAttribute(MoguSyntax::index,v);
+        int newindex = v.getInt()-byAmount;
+        v.setInt(newindex);
+        setAttribute(MoguSyntax::index,v);
+    }
+
+    inline void decrement(NodeValue& val) {
+        int amt = val.getInt();
+        getAttribute(MoguSyntax::index,val);
+        amt = val.getInt()-amt;
+        setAttribute(MoguSyntax::index,val);
+    }
+
 
     virtual void inline reload()
     {
@@ -92,6 +126,9 @@ public:
         load();
         force_reload = false;
     }
+
+    //!\TODO
+    virtual void reset();
 
 };
 

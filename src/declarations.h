@@ -26,4 +26,6 @@
 #include <Config/forward_declarations.h>
 #include <Config/typedefs.h>
 
+#include <Types/syntax.h>
+
 #endif /* DECLARATIONS_H_ */

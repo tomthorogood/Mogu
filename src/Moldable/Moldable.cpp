@@ -44,6 +44,7 @@ __style_changed(this)
 ,__succeeded_test(this)
 ,__loaded(this)
 ,__hidden_changed(this)
+,__index_changed(this)
 ,__node(node)
 {
 #ifdef DEBUG
@@ -146,30 +147,31 @@ std::string Moldable::getParameter(const std::string& param)
     return EMPTY;
 }
 
-void Moldable::getState(Tokens::MoguTokens state, NodeValue& val)
+void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
 {
+
     switch (state) {
-    case Tokens::children: {
+    case MoguSyntax::children: {
         int n = children().size();
         val.setInt(n);
         break;
     }
-    case Tokens::index: {
+    case MoguSyntax::index: {
         Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
         int n = stack->currentIndex();
         val.setInt(n);
         break;
     }
-    case Tokens::hidden: {
+    case MoguSyntax::hidden: {
         bool v = isHidden();
         val.setInt((int) v);
         break;
     }
-    case Tokens::value: {
+    case MoguSyntax::text: {
         val.setString(moldableValue());
         break;
     }
-    case Tokens::style: {
+    case MoguSyntax::style: {
         val.setString(styleClass().toUTF8());
         break;
     }
@@ -177,26 +179,52 @@ void Moldable::getState(Tokens::MoguTokens state, NodeValue& val)
         val.setInt(0);
         break;
     }
+
+    //!\TODO test/verify
+    case MoguSyntax::source: {
+        Wt::WAnchor* anchor = (Wt::WAnchor*) widget(0);
+        val.setString((std::string)anchor->attributeValue("href"));
+        break;
+    }
+
+    //!\TODO
+    case MoguSyntax::location: {
+       break;
+    }
 }
 
-bool Moldable::allowsAction(Tokens::MoguTokens action)
+bool Moldable::setAttribute(MoguSyntax state, NodeValue& val)
 {
-    mApp;
-    std::string node = __node.addPrefix("widgets");
-    app->redisExec(Mogu::Keep, "hexists %s block", node.c_str());
-    if (!redisReply_TRUE) return true;
+    switch(state) {
+        case MoguSyntax::index: {
+            Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
+            stack->setCurrentIndex(val.getInt());
+            __index_changed.emit();
+            break;
+        }
+        case MoguSyntax::hidden: {
+            setHidden((bool) val.getInt());
+            __hidden_changed.emit();
+            break;
+        }
+        case MoguSyntax::text: {
+            setMoldableValue(val.getString());
+            break;
+        }
+        case MoguSyntax::style: {
+            setStyleClass(val.getString());
+        }
 
-    app->redisExec(Mogu::Keep, "hget %s block", node.c_str());
-    std::string blocks = redisReply_STRING;
-    if (blocks == "block") return false;
+        //!\TODO
+        case MoguSyntax::source: {
+            break;
+        }
+        //!\TODO
+        case MoguSyntax::location: {
+            break;
+        }
 
-    Parsers::MoguScript_Tokenizer tokens(blocks);
+    }
 
-    std::string block;
-    do {
-        block = tokens.next();
-        if (block == EMPTY) break;
-        if (Tokens::syntaxMap.get(block) == action) return false;
-    } while (block != EMPTY);
-    return true;
+    return true; //!<\TODO
 }

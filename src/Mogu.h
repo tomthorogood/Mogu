@@ -195,6 +195,7 @@ public:
     inline void setGroup(const std::string&& group) {__group = group;}
     inline std::string& getGroup() {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
+    void removeWidget(const std::string& identifier);
     };
 
 #endif /* PREVIEW_H_ */
