@@ -1,6 +1,11 @@
 /*
  * Static.cpp
  *
+ *  The contents of this file detail settings and methods that are global
+ *  to all instances of the Mogu app deployed at any given time (this is
+ *  in contrast to the 'Mogu' class, which has a distinct instnce for every
+ *  connected user).
+ *
  *  Created on: Jul 29, 2012
  *      Author: tom
  */
@@ -20,8 +25,8 @@ namespace Application {
 
 namespace {
 static bool configured = false;
-const char* META_USERLEVELS = "meta.user_levels";
-static size_t num_levels = 0;
+const static char* META_USERLEVELS = "meta.user_levels";
+
 }
 
 void setUserLevels()
@@ -48,8 +53,10 @@ void setUserLevels()
          * for users to add levels and also makes testing of ranks much
          * easier.
          */
+
+        std::string& level = vec_userlevels[level];
         app->redisExec(Mogu::Discard, "zadd %s %d %s", META_USERLEVELS, level,
-            vec_userlevels[level].c_str());
+            level.c_str());
     }
 }
 

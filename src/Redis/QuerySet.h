@@ -1,4 +1,4 @@
-#include <ContextManager.h>
+#include "Context.h"
 #include <queue>
 namespace Redis {
 
@@ -128,7 +128,7 @@ public:
     static const uint8_t ARRAY_TYPE_STR     = 1;
     
     //TODO set flag_iter to 0
-    QuerySet(Context& context );
+    QuerySet(Context& context);
     ~QuerySet();
 
     /*!\brief Add a query to the command queue. */
