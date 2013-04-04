@@ -1,4 +1,4 @@
-#include <ContextManager.h>
+#include "Context.h"
 #include <queue>
 namespace Redis {
 
@@ -128,7 +128,7 @@ public:
     static const uint8_t ARRAY_TYPE_STR     = 1;
     
     //TODO set flag_iter to 0
-    QuerySet(Context& context );
+    QuerySet(Context& context);
     ~QuerySet();
 
     /*!\brief Add a query to the command queue. */
@@ -143,11 +143,20 @@ public:
      * the value of the reply object, but make no returns. 
      * Will continue to execute statements until a reply is expected.
      */
-    void yieldResponse() {
+    inline void yieldResponse() {
         do {
             getNextReply();
         } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
         assignReply();
+    }
+
+    inline void execute()
+    {
+        while (hasQueue())
+        {
+            getNextReply();
+            assignReply();
+        }
     }
 
     /*!\brief Forces the return of an integer response, and continues
