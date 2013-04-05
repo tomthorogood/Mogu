@@ -30,7 +30,7 @@ namespace Parsers {
 class NodeValueParser 
 {
 	public:
-		NodeValueParser(std::string input, NodeValue &v);
+		NodeValueParser(const char* input, NodeValue &v);
 		void giveInput();
 
 	private:
@@ -46,6 +46,7 @@ class NodeValueParser
 
 		// METHODS
 		bool hasStates();	//the "do we need to invoke StateParser?" type of states
+		void tokenizeInput(const char* input);
 		void evaluateMath();
 		bool detectEventCommand();
 		void __reset__();
