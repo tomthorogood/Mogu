@@ -12,7 +12,6 @@ class StateParser;
 class MathParser;
 class AttributeParser;
 class CommandParser;
-class TokenGenerator;
 class NodeValue;
 
 #include <vector>
@@ -35,7 +34,6 @@ class NodeValueParser
 
 	private:
 		// PARSERS
-		TokenGenerator __tokenizer;
 		StateParser __stateParser;
 		MathParser __mathParser;
 		AttributeParser __attParser;
@@ -45,8 +43,11 @@ class NodeValueParser
 		std::vector<NodeValue> __tokens;
 
 		// METHODS
+		void tokenizeInput(std::string input);
+		void pushIntToken(std::string &token);
+		void pushStringToken(std::string &token);
+
 		bool hasStates();	//the "do we need to invoke StateParser?" type of states
-		void tokenizeInput(const char* input);
 		void evaluateMath();
 		bool detectEventCommand();
 		void __reset__();

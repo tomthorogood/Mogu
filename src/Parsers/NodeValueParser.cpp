@@ -10,6 +10,12 @@
 #include <Parsers/NodeValueParser/MathParser.h>
 #include <Parsers/NodeValueParser/AttributeParser.h>
 #include <Parsers/NodeValueParser/CommandParser.h>
+#include <Types/NodeValue.h>
+
+#include <cctype>
+
+//debug
+#include <iostream>
 
 namespace Parsers {
 /* things we need to do:
@@ -21,113 +27,83 @@ namespace Parsers {
 
 NodeValueParser::NodeValueParser()
 {
-	__tokenizer.add_pair('"', '"');		//for string literals
-	__tokenizer.add_pair('(', ')');		//for math strings
 }
 
-void NodeValueParser::tokenizeInput(const char* input)
+void NodeValueParser::tokenizeInput(std::string input)
 {
-	int len = strlen(inputString);
+	//debug
+	std::cout << "input string: " << input << std::endl;
+	
+	int inputIndex = 0;
+	while(inputIndex < input.size())
+	{
+		// ASSUMPTION: input is non-empty
+		char delineator;
+		bool isStringLiteral = false;
 
-	int strIndex = 0;
+		if(input[inputIndex] == '"') {
+			delineator = '"';
+			isStringLiteral = true;
+		}
+		else	
+			delineator = ' ';
 
-	while (strIndex < len) {
-		char current_char = inputString[strIndex];
+		auto endTokenIndex = input.find(delineator, 1);
+		auto startTokenIndex = (int) isStringLiteral;	//skip the "
 
-		// If we have encountered a digit, begin the loop to 
-		// determine the start/end indexes of said digit.
+		std::string token = input.substr(startTokenIndex, 
+				endTokenIndex - startTokenIndex); 
 
-		if isdigit(current_char) {
-
-			int token_start = strIndex;    
-			int token_iter = token_start+1;
-			char next = inputString[token_iter];
-
-		for (; isdigit(next); ++token_iter) {
-			next = inputString[token_iter];
+		//this next if-else chain is going to look weird because we
+		//can't test token[0] until we know that we're not dealing
+		//with a string literal (possibility of empty string)
+		if(isStringLiteral) {
+			pushStringToken(token);
+			inputIndex = endTokenIndex + 2;	//skip " and whitespace
+			continue;
 		}
 
-		// Once we reach this point, the token_iterator is one past the end 
-		// index of the valid digit.
-		
-		// In order to cast this as an int, we must create a substring.
-		// Start by getting the length of the digit:
-		int num_len = token_iter - token_start;
-		char* digit = (char*) malloc(num_len);
+		//from this point we're assuming that token is nonempty!
+		//this means that the importer must gaurantee that no input string
+		//can have two adjacent whitespaces
+		else if(isdigit(token[0]))
+			pushIntToken(token);
 
-		// Assign the chars to the proper indexes in the substring.
-		for (int dig_index = 0; dig_index < num_len; ++dig_index) {
-			int char_index = token_start + dig_index;
-			digit[dig_index] = inputString[char_index];
-		}
-		
-		// Convert to integer and append to the NV vector.
-		int result = atoi(digit);
-		tokenValues.push_back( NodeValue(result) ); 
-		free(digit);
+		else
+			pushStringToken(token);
 
-		// Advance the global iterator to the local iterator, 
-		// which, remember is already once char past the digit.
-		strIndex = token_iter;
+		inputIndex = endTokenIndex + 1;		//skip whitespace
 	}
-   
-	else if (current_char == '"') {
-		// Now we must do something similar to separate string literals.
-		// *NOTE: This does not cover quoted strings within string literals. 
-		// I don't feel like thinking *THAT* hard right now. I've only had
-        // one cup of coffee.
-        int token_start = strIndex;
-        int token_iter = token_start +1;
-        char next_char = inputString[token_iter];
-        for (; next_char != '"'; ++token_iter) {
-            next_char = inputString[token_iter];
-        }
-        int lit_len = token_iter - token_start;
-        char* literal = (char*) malloc(lit_len);
-        for (int lit_index = 0; lit_index < lit_len; ++lit_index) {
-            int char_index = token_start + lit_index;
-            literal[lit_index] = inputString[char_index];
-        }
-        tokenValues.push_back( NodeValue(literal) ); //type conversion to std::string
-        free(literal);
-        strIndex = token_iter;
-    }
-    
-    else if (current_char != ' ') { // For all other characters.
-        // Do the same exact thing, but searching for the next space.
-        int token_start = strIndex;
-        int token_iter = token_start +1;
-        char next_char = inputString[token_iter];
-        for (; next_char != ' '; ++token_iter) {
-            next_char = inputString[token_iter];
-        }
-        int tok_len = token_iter - token_start;
-        char* token = (char*) malloc(tok_len);
-        for (int tok_index = 0; tok_index < tok_len; ++tok_index) {
-            int char_index = token_start + tok_index;
-            token[tok_index] = inputString[char_index];
-        }
-        tokenValues.push_back( NodeValue(token) ); //type conversino to std::string
-        free(token);
-        strIndex = token_iter;
-    }
-    else ++strIndex;
+
+	//debug
+	std::cout << "tokenizing finished!" << std::endl;
+	
 }
+
+void NodeValueParser::pushIntToken(std::string &token)
+{
+	//assuming that since the first character of the token was a
+	//digit, the whole string should be convertable to an int
+	NodeValue v;
+	v.setInt(std::stoi(token));
+
+	//debug
+	std::cout << "(int) " << v.getInt() << std::endl;
+}
+
+void NodeValueParser::pushStringToken(std::string &token)
+{
+	NodeValue v;
+	v.setString(token);
+	__tokens.push_back(v);
+
+	//debug
+	std::cout << v.getString() << std::endl;
 
 }
 
 void NodeValueParser::giveInput(std::string input, NodeValue& v)
 {
-	__tokenizer.reset().newString(input);
-
-	// convert the input tokens into NodeValues and push
-	while(__tokenizer.hasNext()) {
-		std::string stringToken = __tokenizer.next();
-		NodeValue nvToken; 
-		tempToken.setString(stringToken)
-		__tokens.push_back(nvToken);
-	}
-
 	// run appropriate parsers
 	if(hasStates())
 		__stateParser.giveInput(__tokens);
@@ -148,10 +124,6 @@ bool NodeValueParser::hasStates()
 
 void NodeValueParser::evaluateMath()
 {
-	for(int i=0; i<__tokens.size(); i++) {
-		if(__tokenizer.isWrapped(__tokens[i], '('))
-				__mathParser.giveInput(__tokens[i]);
-	}
 }
 
 bool NodeValueParser::detectEventCommand()
@@ -160,9 +132,7 @@ bool NodeValueParser::detectEventCommand()
 
 void NodeValueParser::__reset__()
 {
-	__tokenizer.reset();
 	__tokens.clear();
-
 }
 
 }	// namespace Parsers
