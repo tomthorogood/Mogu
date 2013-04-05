@@ -57,7 +57,7 @@ public:
         NodeValue*);
 
     inline void operator=(
-        NodeValue& v)
+        const NodeValue& v)
     {
         copy(&v);
     }
@@ -92,31 +92,31 @@ public:
     }
 
     /*!\brief If the type is `string_value`, returns a string. */
-    inline std::string& getString()
+    inline std::string getString() const
     {
         return as_string;
     }
 
     /*!\brief If the type is `int_value`, returns the int.*/
-    inline int& getInt()
+    inline int getInt() const
     {
         return __numerics->as_int;
     }
 
     /*!\brief If the type is `float_value`, returns the float. */
-    inline float getFloat()
+    inline float getFloat() const
     {
         return __numerics->as_float;
     }
 
     /*!\brief Returns the type so the correct data can be extracted. */
-    inline ReadType getType()
+    inline ReadType getType() const
     {
         return __type;
     }
 
     void copy(
-        NodeValue*);
+        const NodeValue*);
 };
 // end NodeValue
 

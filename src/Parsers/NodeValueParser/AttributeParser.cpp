@@ -5,14 +5,13 @@
  *      Author: cameron
  */
 
-#include <Parsers/AttributeParser.h>
+#include <Parsers/NodeValueParser/AttributeParser.h>
 #include <cassert>
 
 namespace Parsers {
 
 AttributeParser::AttributeParser()
 {
-	__tokenizer.add_pair('"', '"');
 }
 
 void AttributeParser::giveInput(std::string input, NodeValue& v)
@@ -38,6 +37,8 @@ void AttributeParser::giveInput(std::string input, NodeValue& v)
 	 *	the command string between the different parsers we currently
 	 *	pass it as a string. figure out a good way to address this. 
 	 */	
+
+	/*
 
 	mApp;
 
@@ -124,6 +125,7 @@ void AttributeParser::giveInput(std::string input, NodeValue& v)
 		}
 
 	}
+	*/
 }
 
 

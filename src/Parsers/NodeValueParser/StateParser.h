@@ -10,5 +10,11 @@
 
 namespace Parsers {
 
+class StateParser
+{
+	public:
+		StateParser();
+};
+
 }	// namespace Parsers
 #endif /* STATEPARSER_H_ */

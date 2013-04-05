@@ -9,7 +9,6 @@
 #define ATTRIBUTEPARSER_H_
 
 #include <declarations.h>
-#include <Parsers/TokenGenerator.h>
 #include <Types/NodeValue.h>
 #include <vector>
 
@@ -31,13 +30,11 @@ class AttributeParser
 		void giveInput(std::string input, NodeValue& v);
 		inline void __reset__()
 		{
-			__tokenizer.reset();
 			__tokens.clear();
 			__iovalue = 0;
 		}
 	
 	private:
-		TokenGenerator __tokenizer;
 		std::vector<std::string> __tokens;
 		NodeValue* __iovalue;
 

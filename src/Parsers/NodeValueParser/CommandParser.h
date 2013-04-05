@@ -8,10 +8,13 @@
 #ifndef COMMANDPARSER_H_
 #define COMMANDPARSER_H_
 
-#include <FiniteAutomaton/FiniteAutomaton.h>
-#include <Parsers/TokenGenerator.h>
-
 namespace Parsers {
+
+class CommandParser
+{
+	public:
+		CommandParser();
+};
 
 }	// namespace Parsers
 #endif /* COMMANDPARSER_H_ */

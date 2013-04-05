@@ -9,4 +9,8 @@
 
 namespace Parsers {
 
+StateParser::StateParser()
+{
+}
+
 }	// namespace Parsers

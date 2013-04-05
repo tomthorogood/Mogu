@@ -8,10 +8,10 @@
 #ifndef NODEVALUEPARSER_H_
 #define NODEVALUEPARSER_H_
 
-class StateParser;
-class MathParser;
-class AttributeParser;
-class CommandParser;
+#include <Parsers/NodeValueParser/StateParser.h>
+#include <Parsers/NodeValueParser/MathParser.h>
+#include <Parsers/NodeValueParser/AttributeParser.h>
+#include <Parsers/NodeValueParser/CommandParser.h>
 class NodeValue;
 
 #include <vector>
@@ -29,8 +29,8 @@ namespace Parsers {
 class NodeValueParser 
 {
 	public:
-		NodeValueParser(const char* input, NodeValue &v);
-		void giveInput();
+		NodeValueParser();
+		void giveInput(std::string input, NodeValue& v);
 
 	private:
 		// PARSERS
@@ -44,8 +44,6 @@ class NodeValueParser
 
 		// METHODS
 		void tokenizeInput(std::string input);
-		void pushIntToken(std::string &token);
-		void pushStringToken(std::string &token);
 
 		bool hasStates();	//the "do we need to invoke StateParser?" type of states
 		void evaluateMath();

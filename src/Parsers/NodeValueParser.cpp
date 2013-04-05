@@ -6,10 +6,6 @@
  */
 #include <Parsers/NodeValueParser.h>
 
-#include <Parsers/NodeValueParser/StateParser.h>
-#include <Parsers/NodeValueParser/MathParser.h>
-#include <Parsers/NodeValueParser/AttributeParser.h>
-#include <Parsers/NodeValueParser/CommandParser.h>
 #include <Types/NodeValue.h>
 
 #include <cctype>
@@ -27,6 +23,7 @@ namespace Parsers {
 
 NodeValueParser::NodeValueParser()
 {
+	__tokens = std::vector<NodeValue>();
 }
 
 void NodeValueParser::tokenizeInput(std::string input)
@@ -35,6 +32,7 @@ void NodeValueParser::tokenizeInput(std::string input)
 	std::cout << "input string: " << input << std::endl;
 	
 	int inputIndex = 0;
+	NodeValue* nvToken;
 	while(inputIndex < input.size())
 	{
 		// ASSUMPTION: input is non-empty
@@ -48,8 +46,8 @@ void NodeValueParser::tokenizeInput(std::string input)
 		else	
 			delineator = ' ';
 
-		auto endTokenIndex = input.find(delineator, 1);
-		auto startTokenIndex = (int) isStringLiteral;	//skip the "
+		auto endTokenIndex = input.find(delineator, inputIndex + 1);
+		auto startTokenIndex = inputIndex + (int) isStringLiteral;	//skip the "
 
 		std::string token = input.substr(startTokenIndex, 
 				endTokenIndex - startTokenIndex); 
@@ -58,7 +56,9 @@ void NodeValueParser::tokenizeInput(std::string input)
 		//can't test token[0] until we know that we're not dealing
 		//with a string literal (possibility of empty string)
 		if(isStringLiteral) {
-			pushStringToken(token);
+			nvToken = new NodeValue();
+			nvToken->setString(token);
+			__tokens.push_back(*nvToken);
 			inputIndex = endTokenIndex + 2;	//skip " and whitespace
 			continue;
 		}
@@ -67,11 +67,22 @@ void NodeValueParser::tokenizeInput(std::string input)
 		//this means that the importer must gaurantee that no input string
 		//can have two adjacent whitespaces
 		else if(isdigit(token[0]))
-			pushIntToken(token);
+		{
+			nvToken = new NodeValue();
+			nvToken->setInt(std::stoi(token));
+			std::cout << "(int) " << nvToken->getInt() << std::endl;
+			__tokens.push_back(*nvToken);
+
+		}
 
 		else
-			pushStringToken(token);
-
+		{
+			nvToken = new NodeValue();
+			nvToken->setString(token);
+			std::cout << nvToken->getString() << std::endl;
+			__tokens.push_back(*nvToken);
+		}
+		
 		inputIndex = endTokenIndex + 1;		//skip whitespace
 	}
 
@@ -80,43 +91,10 @@ void NodeValueParser::tokenizeInput(std::string input)
 	
 }
 
-void NodeValueParser::pushIntToken(std::string &token)
-{
-	//assuming that since the first character of the token was a
-	//digit, the whole string should be convertable to an int
-	NodeValue v;
-	v.setInt(std::stoi(token));
-
-	//debug
-	std::cout << "(int) " << v.getInt() << std::endl;
-}
-
-void NodeValueParser::pushStringToken(std::string &token)
-{
-	NodeValue v;
-	v.setString(token);
-	__tokens.push_back(v);
-
-	//debug
-	std::cout << v.getString() << std::endl;
-
-}
-
 void NodeValueParser::giveInput(std::string input, NodeValue& v)
 {
-	// run appropriate parsers
-	if(hasStates())
-		__stateParser.giveInput(__tokens);
-
-	evaluateMath();	//decides whether to invoke mathparser on a token-by-token basis
-
-
-	if(detectEventCommand())
-		__cmdParser.giveInput(__tokens, v);
-	else
-		__attParser.giveInput(__tokens, v);
+	tokenizeInput(input);
 }
-
 bool NodeValueParser::hasStates()
 {
 	// TODO: figure out the best way to detect states!

@@ -5,8 +5,12 @@
  *      Author: cameron
  */
 
-#include <Parsers/CommandParser.h>
+#include <Parsers/NodeValueParser/CommandParser.h>
 
 namespace Parsers {
+
+CommandParser::CommandParser()
+{
+}
 
 }	// namespace Parsers
