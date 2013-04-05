@@ -34,7 +34,7 @@ source_files := src
 #
 branch_subs := \
 	crypt \
-	Config
+	Config \
 	Events \
 	FiniteAutomaton \
 	Factories \
