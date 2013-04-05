@@ -2,6 +2,8 @@ import getch as get
 from coloring import *
 from ConfigParser import SafeConfigParser
 from os import getcwd
+from argparse import ArgumentParser
+
 """
 Tom A. Thorogood
 11 September 2012
@@ -43,21 +45,6 @@ CONFIG_TEMPLATE = {
                 "If on, Mogu will stop when exceptions are met, otherwise it will try to recover gracefully without crashing. On is recommended.")
             ),
 
-        "redis_instance" : (
-            (
-                "database", 
-                "0", 
-                "The database within your Redis instance you want to use by default."),
-            (
-                "port", 
-                "6379", 
-                "The port for your Redis instance."),
-            (
-                "host", 
-                "localhost", 
-                "The address of your Redis instance.")
-            ),
-
         "meta_keys" : (
             (
                 "analytics_id", 
@@ -81,11 +68,8 @@ CONFIG_TEMPLATE = {
         }
 
 class ConfigImporter(object):
-    def __init__(self, filename=None):
-        if not filename:
-            self.filename = "/etc/mogu/mogu.conf"
-        else:
-            self.filename = filename
+    def __init__(self,filename):
+        self.filename = filename
         self.f = None
         self.get_char = get._Getch()
         self.try_import()
@@ -184,9 +168,7 @@ class ConfigImporter(object):
 
         return defined
 
-def write_config_file(config, filename=None):
-    if not filename:
-        filename = config.filename
+def write_config_file(config, filename):
     f = open(filename, 'w')
     for section in config.entries:
         f.write("[%s]\n" % section)
@@ -200,5 +182,9 @@ def create_file(args,db):
     write_config_file(ConfigImporter(), getcwd()+"/"+args[1])
 
 if __name__ == "__main__":
-    config = ConfigImporter()
+    parser = ArgumentParser("Creates a Mogu config file.")
+    parser.add_argument("--exists",dest="existing",action="store",type=str, default="",
+            help="If you already have a mogu.conf file, set this to import it first, which will save you some editing.")
+    args = parser.parse_args()
+    config = ConfigImporter(args.existing)
     write_config_file(config, getcwd()+"/mogu.conf")
