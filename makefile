@@ -1,60 +1,120 @@
+#-------------------------------#
+# Default Build Settings
 
-source_files := src
-branch_subs := Events Factories Moldable Redis FiniteAutomaton Parsers Parsers/NodeValueParser Types Perspectives crypt Sessions Validators Security Config
+# If you wish to change the default deployment of 
+# the database config, change it here.
+DBCONFIG_DIR := /usr/share/Mogu
 
-includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include -L/usr/local/lib
-executable := mogu-server
-o:=0
-devel_libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash -lwt
+# Default optimization level is 0
+o := 0
+
+# Directory where the final build will 
+# be deployed
+
+INSTALL := /usr/share/Mogu
+
+#-------------------------------#
+# Executables #
+
+# The python executable responsible for generating the default config file.
 gen_config := cli/src/config_generator.py
 
+# The final artifact executable
+EXECUTABLE := mogu-server
+
+#-------------------------------#
+#
+# All source files are located here
+source_files := src
+
+
+# Each of the subfolders within the src directory
+# Anytime a new subfolder is needed, it must be 
+# added here.
+#
+branch_subs := \
+	crypt \
+	Config
+	Events \
+	FiniteAutomaton \
+	Factories \
+	Moldable \
+	Parsers \
+	Parsers/NodeValueParser \
+   	Perspectives \
+	Redis \
+	Security \
+	Sessions \
+	Types \
+	Validators \
+
+# Directories outside the PATH that must be 
+# considered when locating header files.
+includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include -L/usr/local/lib
+
+# The libraries that the Mogu executable will be linked against.
+libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash -lwt
+
+# The location of the turnleft utilities
+# If they are not found, they will be downloaded
+# and built.
 turnleft := /usr/local/include/TurnLeftLib/TurnLeft.h
+
+# Create the path names for each of the source directories.
 sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
+
+# Find the *.cpp files located in each of the source directories.
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
+
+# The object artifacts for the source files.
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
+
+# Remove 'main.o' from the list of valid object artifacts
 objects_no_exe := $(patsubst src/main.o, , $(objects))
+
+# Mogu requires C++11 standards
 flags := -std=c++0x
-command := g++ $(flags) -Wall -O$(o) 
+
+# The c++ compiling flag
+command := g++ $(flags) -Wall -O$(o) -DDBCONF_DIR=$(DBCONF_DIR)
+
+# Location of some pre-compile requirements
 MOGUIO_DIR = $(CURDIR)/cli/src/moguio
 SYNTAX_PY := $(MOGUIO_DIR)/moguio/syntax.py
 
 
 all: $(objects) | $(turnleft) 
 ifeq ($(dbg),on)
-	g++ $(flags) -Wall -DDEBUG -DTERM_ENABLED -g -pg -o $(executable) $(objects) $(devel_libs)
+	g++ $(flags) -Wall -O$(o) -DDEBUG -DTERM_ENABLED -g -pg -o $(executable) $(objects) $(libs)
 else
-	g++ $(flags) -Wall -DNDEBUG -o $(executable) $(objects) $(devel_libs)
+	g++ $(flags) -Wall -O$(o) -DNDEBUG -o $(executable) $(objects) $(libs)
 endif
 
 
-upgrade-database: db_upgrade.cpp $(objects) | $(turnleft)
-	g++ $(flags) -Wall $(includes) -o $@ $(objects_no_exe) db_upgrade.cpp $(devel_libs)
-
 install: mogu.conf
 	$(MAKE) uninstall
-	mkdir -p /etc/mogu
-	cp $< /etc/mogu
-	cp -r resources/ /etc/mogu
-	ln -s $(CURDIR)/mogu-server /usr/bin/mogu-server
-	ln -s /etc/mogu/mogu /usr/bin/mogu
+	mkdir -p $(INSTALL)
+	cp $< $(INSTALL)
+	cp -r resources/ $(INSTALL)
+	ln -s $(CURDIR)/$(EXECUTABLE) /usr/bin/$(EXECUTABLE)
+	ln -s $(INSTALL)/mogu /usr/bin/mogu
 
 uninstall:
-	rm -f /usr/bin/mogu-server
-	rm -f /usr/bin/mogu
-	rm -rf /etc/mogu
+	rm -f $(INSTALL)/$(EXECUTABLE)
+	unlink /usr/bin/mogu
+	rm -rf /etc/mogu # Deprecate
 
 %.o:
 ifeq ($(dbg),on)
-	$(command) -c -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
+	$(command) -c -O$(o) -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
 else
-	$(command) -DNDEBUG -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
+	$(command) -DNDEBUG -c -O$(o) $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
 endif
 
 $(turnleft):
 	git clone git://www.github.com/tomthorogood/TurnLeftLib.git
 	cd TurnLeftLib && $(MAKE) && sudo $(MAKE) install
 	rm -rf TurnLeftLib
-
 
 upgrade:
 	$(MAKE) uninstall
@@ -74,7 +134,7 @@ clean:
 	cd syntax && $(MAKE) clean
 
 purge: clean
-	rm -rf mogu-server
+	rm -rf $(EXECUTABLE)
 	rm -f mogu.conf
 
 mogu.conf:
