@@ -143,7 +143,7 @@ public:
      * the value of the reply object, but make no returns. 
      * Will continue to execute statements until a reply is expected.
      */
-    inline void yieldResponse() {
+    template <class T> T yieldResponse() {
         do {
             getNextReply();
         } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
@@ -157,96 +157,6 @@ public:
             getNextReply();
             assignReply();
         }
-    }
-
-    /*!\brief Forces the return of an integer response, and continues
-     * to execute redis commands until the response is not ignored. 
-     * If the REQUIRE_INT flag is set, and the response is a string,
-     * a '0' will always be returned.
-     */
-    template <int> int yieldResponse() {
-        do {
-            getNextReply();
-        } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
-
-        assignReply();
-        
-        if (reply_type == REDIS_REPLY_STRING) {
-            if (last_flags & REQUIRE_INT) return 0;
-            return std::atoi(reply_string.c_str());
-        }
-        return reply_int;
-    }
-
-    /*!\brief Forces the return of a string response, and
-     * continues to execute redis commands until the response is
-     * not ignored. If the REQUIRE_STR flag is set, and the response
-     * is an integer, the empty string will be returned.
-     */
-    template <std::string> std::string yieldResponse() {
-        do {
-            getNextReply();
-        } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
-        assignReply();
-
-        if (reply_type == REDIS_REPLY_INTEGER) {
-            if (last_flags & REQUIRE_STRING) return "";
-            return std::to_string(reply_int);
-        }
-        return reply_string;
-    }
-
-    /*!\brief Forces the return of a boolean response,
-     * and continues to execute redis commands until the response
-     * is not ignored. If the REQUIRE_INT flag is set, and the responxse
-     * is a string, false will be returned.
-     */
-    template <bool> bool yieldResponse() {
-        do {
-            getNextReply();
-        } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
-        assignReply();
-        
-        if (reply_type == REDIS_REPLY_STRING) {
-            if (last_flags & REQUIRE_INT) return false;
-            if (reply_string != "") return true;
-            return false;
-        }
-
-        else if (reply_type == REDIS_REPLY_INTEGER) {
-            return bool(reply_int);
-        }
-
-        else if (reply_type == REDIS_REPLY_ARRAY) return true;
-
-        else return false;
-    }
-
-    /*!\brief Forces the return of a vector of integers,
-     * and continues to execute redis commands until the response is not
-     * ignored.
-     */
-    template <std::vector <int>>
-        std::vector <int>& yieldResponse() {
-        do {
-            getNextReply();
-        } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
-        assignReply();
-        return reply_array_int;
-    }
-
-    /*!\brief Roces the return of a vector of strings,
-     * and continues to execute redis commands until the response is
-     * not ignored.
-     */
-    template <std::vector <std::string>>
-        std::vector<std::string>& yieldResponse() {
-        do {
-            getNextReply();
-        } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
-        assignReply();
-
-        return reply_array_str;
     }
 
     //!\brief The last reply type received.
@@ -265,5 +175,105 @@ public:
     inline std::vector <std::string>& replyStringArray()
         { return reply_array_str;}
 };
+
+/*!\brief Forces the return of an integer response, and continues
+ * to execute redis commands until the response is not ignored.
+ * If the REQUIRE_INT flag is set, and the response is a string,
+ * a '0' will always be returned.
+ */
+template <> int
+    QuerySet::yieldResponse <int> ()
+{
+    do {
+        getNextReply();
+    } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
+
+    assignReply();
+
+    if (reply_type == REDIS_REPLY_STRING) {
+        if (last_flags & REQUIRE_INT) return 0;
+        return std::atoi(reply_string.c_str());
+    }
+    return reply_int;
+}
+
+/*!\brief Forces the return of a string response, and
+ * continues to execute redis commands until the response is
+ * not ignored. If the REQUIRE_STR flag is set, and the response
+ * is an integer, the empty string will be returned.
+ */
+template <> std::string
+    QuerySet::yieldResponse <std::string> ()
+{
+    do {
+        getNextReply();
+    } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
+    assignReply();
+
+    if (reply_type == REDIS_REPLY_INTEGER) {
+        if (last_flags & REQUIRE_STRING) return "";
+        return std::to_string(reply_int);
+    }
+    return reply_string;
+}
+
+/*!\brief Forces the return of a boolean response,
+ * and continues to execute redis commands until the response
+ * is not ignored. If the REQUIRE_INT flag is set, and the responxse
+ * is a string, false will be returned.
+ */
+template <> bool
+    QuerySet::yieldResponse <bool> ()
+{
+    do {
+        getNextReply();
+    } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
+    assignReply();
+
+    if (reply_type == REDIS_REPLY_STRING) {
+        if (last_flags & REQUIRE_INT) return false;
+        if (reply_string != "") return true;
+        return false;
+    }
+
+    else if (reply_type == REDIS_REPLY_INTEGER) {
+        return bool(reply_int);
+    }
+
+    else if (reply_type == REDIS_REPLY_ARRAY) return true;
+
+    else return false;
+}
+
+/*!\brief Forces the return of a vector of integers,
+ * and continues to execute redis commands until the response is not
+ * ignored.
+ */
+template <> std::vector<int>&
+    QuerySet::yieldResponse <std::vector <int>&> ()
+{
+    do {
+        getNextReply();
+    } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
+    assignReply();
+    return reply_array_int;
+}
+
+/*!\brief Forces the return of a vector of strings,
+ * and continues to execute redis commands until the response is
+ * not ignored.
+ */
+template <> std::vector <std::string>&
+    QuerySet::yieldResponse <std::vector <std::string>&> ()
+{
+    do {
+        getNextReply();
+    } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
+    assignReply();
+
+    return reply_array_str;
+}
+
+
 
 }//namespace Redis

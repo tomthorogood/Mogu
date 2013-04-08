@@ -1,102 +1,75 @@
 /*
- * UserCreator.h
+ * UserManager.h
  *
- *  Created on: Oct 22, 2012
+ *  Created on: Apr 8, 2013
  *      Author: tom
  */
 
-#ifndef USERCREATOR_H_
-#define USERCREATOR_H_
+#ifndef USERMANAGER_H_
+#define USERMANAGER_H_
+
 #include <declarations.h>
+#include <Redis/ContextQuery.h>
 
-namespace Security {
-
-class UserManager
-{
-    Mogu& application;
-    std::string __plain_userlogin;
-    std::vector<std::string> __sessions;
-    std::string __mogu_userid;
-    std::string __plain_password;
-    std::string __enc_userlogin;
-    std::string __salt;
-
-    std::string __recent_session;
-
-    inline void __encid_nempty()
-    {
-        if (__enc_userlogin == EMPTY) return;
-        //TODO THROW ERRROR!
-    }
-
-    inline void __userid_nempty()
-    {
-        if (__mogu_userid == EMPTY) return;
-        //TODO THROW ERROR!
-    }
-
-    void __get_recent_session__();
-    inline std::string __get_auth_token()
-    {
-        return getAuthToken(__recent_session);
-    }
-
-    std::string __create_auth_string();
-    bool __user_exists();
-    void __get_salt();
-
-    void __populate_sessions();
-
+/*!\brief Allows an application instance to log a user into the system.
+ *
+ */
+class UserManager {
 public:
-    UserManager(
-        Mogu& app)
-        : application(app)
-    {
-    }
-    ;
-
-    /*!\brief Adds a new user for the application.
+    UserManager(Mogu&);
+    ~UserManager();
+    /*!\brief Attempts to log in a user given the username and password,
+     * returning a status code which can be handled by the calling class.
+     * 1    - The login was successful
+     * 0    - The user's credentials were incorrect
+     * -1   - There was an error while attempting to authenticate the user
      *
-     *
-     * @param plain_id		The user's plaintext id
-     * @param plain_passwd	The user's plaintext password
-     * @return Whether or not the creation was successful
-     *
-     * The steps for this are as follows:
-     *
-     * + Verify that the user does not already exist
-     * + Generate salt for the user
-     * + Create the user's unique auth string
-     * + Create a new session
-     * + Link the new session to the "global" session
-     * + Create a new authentication token
-     * + Link the unique auth string to the authentication token
-     * + Link the session id to the authentication token
+     * If successful, the userKeyspace variable is set.
+     * \sa userKeyspace
      *
      */
-    bool createUser(
-        const std::string& plain_login, const std::string& plain_passwd);
-    bool userLogin(
-        const std::string& plain_login, const std::string& plain_passwd);
-    bool resetPassword(
-        const std::string& plain_id);
-    bool changePassword(
-        const std::string& new_password);
-    std::string getAuthToken(
-        const std::string& sessionid);
+    int8_t loginUser(const std::string& username, const std::string& password);
 
-    inline const std::string& getMoguID()
-    {
-        return __mogu_userid;
-    }
+    /*!\brief Attempts to register a user with the given name and password.
+     * The function returns a status code which can be handled by the calling
+     * class.
+     *
+     * 1    - Registration was successful
+     * 0    - The user already exists within the system
+     * -1   - There was an error while attempting to register the user
+     */
+    int8_t registerUser(const std::string& username, const std::string& password);
 
-    inline const std::vector<std::string>& getUserSessions()
-    {
-        if (__sessions.size() == 0) __populate_sessions();
-        return __sessions;
-    }
+    inline const std::string& getUserKeyspace() {return userKeyspace;}
+
+private:
+    Mogu& app_instance;
+    Redis::ContextQuery db;
+    /*!\brief The address within the user database where this user's
+     * information lives.
+     */
+    std::string userKeyspace = EMPTY;
+
+    /*!\brief Given a username, password, and salt, creates a
+     * collision proofed hash of user data.
+     *
+     * encrypted(username) + encrypted(salt) + encrypted(password)
+     *      => hashed together (x hash_iters)
+     */
+    std::string hashTogether(
+        const std::string& username     //encrypted
+        , const std::string& password   //encrypted
+        , const std::string& salt       //encrypted
+        , const int& hash_iters);
+
+    std::string createHash(
+        const std::string& username     //encrypted
+        , const std::string& password   //encrypted
+        , const std::string& salt       //encrypted
+    );
+
+    bool keyspaceExists(const std::string& userhash);
 };
 
-}    //namespace Security
 
-#endif /* USERCREATOR_H_ */
+#endif /* USERMANAGER_H_ */

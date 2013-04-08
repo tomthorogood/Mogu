@@ -21,6 +21,6 @@ public:
     ContextQuery(Prefix prefix);
 };
 
-//namespace Redis
+}//namespace Redis
 
 #endif /* CONTEXTQUERY_H_ */

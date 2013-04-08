@@ -10,6 +10,9 @@
 #include <Types/NodeValue.h>
 #include <Parsers/MoguScript_Tokenizer.h>
 #include <Exceptions/Exceptions.h>
+#include <Redis/Context.h>
+#include <Redis/Query.h>
+#include <Redis/ContextQuery.h>
 #include <Mogu.h>
 
 namespace Events {
