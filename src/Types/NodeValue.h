@@ -92,27 +92,42 @@ public:
     }
 
     /*!\brief If the type is `string_value`, returns a string. */
-    inline std::string& getString()
+    inline std::string& getString() const
     {
         return as_string;
     }
 
     /*!\brief If the type is `int_value`, returns the int.*/
-    inline int& getInt()
+    inline int& getInt() const
     {
         return __numerics->as_int;
     }
 
     /*!\brief If the type is `float_value`, returns the float. */
-    inline float getFloat()
+    inline float getFloat() const
     {
         return __numerics->as_float;
     }
 
     /*!\brief Returns the type so the correct data can be extracted. */
-    inline ReadType getType()
+    inline ReadType getType() const
     {
         return __type;
+    }
+
+    inline void c_str(const char* output) const
+    {
+       if (__type == string_value) {
+           output = as_string.c_str();
+       }
+       else if (__type == int_value) {
+           std::string str = std::to_string(__numerics->as_int);
+           output = str.c_str();
+       }
+       else if (__type == float_value) {
+           std::string str = std::to_string(__numerics->as_float);
+           output = str.c_str();
+       }
     }
 
     void copy(
