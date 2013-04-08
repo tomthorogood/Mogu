@@ -11,9 +11,8 @@
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <hash.h>
 
-UserManager::UserManager(Mogu& appl)
-:   app_instance(appl)
-    ,db(Prefix::user)
+UserManager::UserManager()
+:   db(Prefix::user)
 {
 }
 

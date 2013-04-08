@@ -16,7 +16,7 @@
  */
 class UserManager {
 public:
-    UserManager(Mogu&);
+    UserManager();
     ~UserManager();
     /*!\brief Attempts to log in a user given the username and password,
      * returning a status code which can be handled by the calling class.
@@ -43,7 +43,6 @@ public:
     inline const std::string& getUserKeyspace() {return userKeyspace;}
 
 private:
-    Mogu& app_instance;
     Redis::ContextQuery db;
     /*!\brief The address within the user database where this user's
      * information lives.

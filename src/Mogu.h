@@ -43,9 +43,8 @@ class Mogu: public Wt::WApplication
 
     Parsers::NodeValueParser __interpreter;
 
-    std::string __session;  //!< Currently active user session
+    std::string __user_keyspace;  //!< Currently active user session
     std::string __group;    //!< Currently active user group
-    std::string __auth_token;
     std::string __instanceid;
     redisContext* __redis;  //!< Database connection
     redisReply* __reply;    //!< State of last database query
@@ -175,18 +174,17 @@ public:
     {
         return __instanceid;
     }
-    inline std::string& sessionID()
+
+    inline void setUser(const std::string& userkeyspace)
     {
-        return __session;
+        __user_keyspace = userkeyspace;
     }
-    inline std::string& authToken()
+
+    inline const std::string& getUser()
     {
-        return __auth_token;
+        return __user_keyspace;
     }
-    inline void setSessionID(
-    const std::string&& sid) {__session = sid;}
-    inline void setSessionID (const std::string& sid) {__session = sid;}
-    inline void setAuthToken (const std::string& ath) {__auth_token = ath;}
+
     inline redisContext* DBConnection() {return __redis;}
     inline ApplicationManager& getManager() {return manager;}
     inline Security::UserManager& getUserManager() {return userManager;}
