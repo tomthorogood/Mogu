@@ -18,6 +18,8 @@ class StateParser
 		StateParser();
 		void processInput(const std::forward_list<int>& tokens);
 
+
+
 };
 
 }	// namespace Parsers

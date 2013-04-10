@@ -30,7 +30,7 @@ class MathParser
 		int processInput(std::forward_list<int>& infixExpression);
 	
 	private:
-		// vector to build/store our equivalent postfix expression
+		// vector to build/store an equivalent postfix expression
 		std::vector<int> __postfixExpression;
 
 		// stack used for postfix evaluation

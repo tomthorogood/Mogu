@@ -43,7 +43,7 @@ class NodeValueParser
 		bool hasStates;
 		bool isEvent;
 
-		void tokenizeInput(std::string input);
+		void tokenizeInput(const char* input);
 };
 
 }	// namespace Parsers

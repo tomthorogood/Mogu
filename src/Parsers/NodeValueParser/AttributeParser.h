@@ -14,15 +14,6 @@
 
 namespace Parsers {
 	
-/*
- * TODO:
- * 	- add logic to detect what type of node we are dealing with
- *	- accomodate possibility of db node being a list
- *	- use redisExec instead of redisCommand
- *	- use provided API to handle return of widget attributes
- *	- figure out how to access slot data
- *
- */
 class AttributeParser
 {
 	public:
