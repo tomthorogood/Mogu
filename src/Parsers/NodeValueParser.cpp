@@ -5,9 +5,7 @@
  *      Author: cameron
  */
 #include <Parsers/NodeValueParser.h>
-
 #include <Types/NodeValue.h>
-
 #include <cctype>
 
 //debug
@@ -26,6 +24,10 @@ NodeValueParser::NodeValueParser()
 	__tokens = std::vector<NodeValue>();
 }
 
+void NodeValueParser::tokenizeInput(const char* input, NodeValue& v)
+{
+
+}
 void NodeValueParser::tokenizeInput(std::string input)
 {
 	//debug

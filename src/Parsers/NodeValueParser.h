@@ -17,6 +17,8 @@ class NodeValue;
 #include <vector>
 #include <string>
 
+#define STRINGDELINEATOR 999999		//this will be replaced by a MoguSyntax
+
 namespace Parsers {
 
 /* take an input (a string from the database), tokenize it, convert
@@ -30,7 +32,7 @@ class NodeValueParser
 {
 	public:
 		NodeValueParser();
-		void giveInput(std::string input, NodeValue& v);
+		void giveInput(const char* input, NodeValue& v);
 
 	private:
 		// PARSERS
@@ -40,7 +42,7 @@ class NodeValueParser
 		CommandParser __cmdParser;
 
 		// DATA
-		std::vector<NodeValue> __tokens;
+		std::vector<int> __tokens;
 
 		// METHODS
 		void tokenizeInput(std::string input);
