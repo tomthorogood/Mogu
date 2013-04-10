@@ -1,9 +1,12 @@
+#include <declarations.h>
 namespace Redis {
 
-class Query {
-    public:
+struct Query {
+        Query(const char* querystring, ...);
         const char* querystring;
         va_list args;
+
+        ~Query();
 };
 
 }//namespace Redis

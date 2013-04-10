@@ -10,7 +10,6 @@ pyboro.Lexer.VERBAL = False
 IGNORE = pyboro.Lexer.ParseMap.IGNORE #alias for ease of reading
 LITERAL = pyboro.Lexer.ParseMap.LITERAL #alias for ease of reading
 
-reserved_words = "(%s)" % "|".join(syntax.MoguSyntax.keys())
 
 def option_list(grammar_type):
     return "(%s)" % "|".join(valid_options(grammar_type))
@@ -24,7 +23,7 @@ def option_list(grammar_type):
 #    ''' 
 
 regexlib = {
-    "identifier"    :   "(?!(?:%s))[:a-zA-Z_][:a-zA-Z_0-9]+" % reserved_words[1:-1],
+    "identifier"    :   "[a-zA-Z:_][a-zA-Z:_0-9]*",
     "string_literal":   r'''(?<!\\)".*?(?<!\\)"''',
     "math_operator" :   r'''(\(|\)|\+|\-|\*|\/)''',
     "math_begin"    :   r'''(\(|\-)''',
@@ -39,9 +38,14 @@ regexlib = {
     "attribute"     :   option_list("attribute"),
     "preposition"   :   option_list("preposition"),
     "comment"       :   r"#.*\n",
-    "math_gen_expr" :   r"\(.*\)",
-    "math_oper"     :   "(\*|\+|\-|\/)"
+    "math_gen_expr" :   r"%d.*%d" % (syntax.MoguOperators["("],syntax.MoguOperators[")"]),
+#    "math_gen_expr" :   r"\(.*\)",
+    "comment"       :   "^#.*\n"
 }
+
+regexlib["math_oper"] = "(%(*)d|%(+)d|%(-)d|%(/)d)" % syntax.MoguOperators
+regexlib["op_paren"] = str(syntax.MoguOperators["("])
+regexlib["cl_paren"] = str(syntax.MoguOperators[")"])
 
 # OBJECT SET
 #   An object set is a phrase which can resolve to an
@@ -64,7 +68,7 @@ regexlib = {
 regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(attribute)s|%(identifier)s)?" % regexlib
 regexlib["object_set"]  = "(%(object_set)s)+" % regexlib
 regexlib["signed_obj"] = "-?\s*(%(object_set)s|[0-9\.]+)" % regexlib
-regexlib["math_expr"] = "\(%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(math_oper)s\s*)*\s*%(signed_obj)s\)" % regexlib
+regexlib["math_expr"] = "%(op_paren)s%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(math_oper)s\s*)*\s*%(signed_obj)s%(cl_paren)s" % regexlib
 
 # VALUE
 #   A value in Mogu can consist of any object set, string literal, or integer literal.
@@ -77,11 +81,7 @@ regexlib["math_expr"] = "\(%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(mat
 #   data stringdata somestring
 #   user name first
 #
-regexlib["value"]       = "(%(object_set)s|%(string_literal)s|%(math_expr)s|-?[0-9]+)" % regexlib 
-
-COMMENT = pyboro.Lexer.ParseMap([
-        ("comment",         regexlib["comment"],        IGNORE)
-])
+regexlib["value"]       = "(%(object_set)s|%(string_literal)s|%(math_gen_expr)s|-?[0-9]+)" % regexlib 
 
 HASH_DEFINITION = pyboro.Lexer.ParseMap((
         ("key",             everything_until(":")   ,   trim),
@@ -125,64 +125,99 @@ LIST_DEFINITION = pyboro.Lexer.ParseMap([
 # end widget
 
 WIDGET_TYPE = pyboro.Lexer.ParseMap((
-        ("begin",   DIRECTIVE_START("type")     , IGNORE),
-        ("type",    regexlib["widget_types"]    , syntax.as_integer),
-        ("end",     r"\S*"                      , IGNORE)
+        ("begin",   DIRECTIVE_START(syntax.as_integer("type"))  , IGNORE),
+        ("type",    regexlib["widget_types"]                    , LITERAL),
+        ("end",     r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_STYLE = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("css|style")    , IGNORE),
-        ("css_classes", regexlib['string_literal']      , trim),
-        ("end",         r"\S*"                          , IGNORE)
+        ("begin",       DIRECTIVE_START(syntax.as_integer("css"))   , IGNORE),
+        ("css_classes", regexlib['string_literal']                  , trim),
+        ("end",         r"\S*"                                      , IGNORE)
 ))
 
 
 WIDGET_CONTENT = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("content|text")     , IGNORE),
-        ("content",     "[^\n]*"                            , trim),
-        ("end",         r"\S*"                              , IGNORE)
+        ("begin",       DIRECTIVE_START(syntax.as_integer("text"))  , IGNORE),
+        ("content",     r"[^\n]*"                                   , trim),
+        ("end",         r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_SOURCE = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("source")       , IGNORE),
-        ("source",      "[^\n]*"                        , trim),
-        ("end",         r"\S*"                          , IGNORE)
+        ("begin",       DIRECTIVE_START(syntax.as_integer('source')), IGNORE),
+        ("source",      "[^\n]*"                                    , trim),
+        ("end",         r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_LOCATION = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("location")     , IGNORE),
-        ("location",    "[^\n]*"                        , trim),
-        ("end",         r"\S*"                          , IGNORE)
+        ("begin",       DIRECTIVE_START(syntax.as_integer("location"))  , IGNORE),
+        ("location",    "[^\n]*"                                        , trim),
+        ("end",         r"\S*"                                          , IGNORE)
 ))
 
 WIDGET_TEMPLATE = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("template")     , IGNORE),
-        ("template",    regexlib["identifier"]          , reference_template),
-        ("end",         r"\S*"                          , IGNORE)
+        ("begin",       DIRECTIVE_START(syntax.as_integer("template"))  , IGNORE),
+        ("template",    regexlib["identifier"]                          , reference_template),
+        ("end",         r"\S*"                                          , IGNORE)
 ))
 
 POLICY_MODE  = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START("mode")         , IGNORE),
-        ("mode",        regexlib["identifier"]          , LITERAL),
-        ("end",         r"\S*"                          , IGNORE)
+        ("begin",       DIRECTIVE_START(syntax.as_integer("mode"))  , IGNORE),
+        ("mode",        "[0-9]+"                                    , LITERAL),
+        ("end",         r"\S*"                                      , IGNORE)
 ))
 
+# Data or type:
+t = "%d|%d" %(syntax.as_integer("data"),syntax.as_integer("type"))
 POLICY_DATA = pyboro.Lexer.ParseMap((
-        ("begin",           DIRECTIVE_START("data|type")    , IGNORE),
-        ("datatype",        regexlib["datatype"]            , trim),
-        ("end",             r"\S*"                          , IGNORE)
+        ("begin",       DIRECTIVE_START(t)  , IGNORE),
+        ("datatype",    regexlib["datatype"]                        , trim),
+        ("end",         r"\S*"                                      , IGNORE)
 ))
 
 VALIDATOR_TYPE = pyboro.Lexer.ParseMap((
-    ("begin",           DIRECTIVE_START("type")         , IGNORE),
-    ("type",            regexlib["validator_type"]      , LITERAL),
-    ("end",             r"\S*"                          , IGNORE)
+    ("begin",           DIRECTIVE_START(syntax.as_integer("type"))  , IGNORE),
+    ("type",            regexlib["validator_type"]                  , LITERAL),
+    ("end",             r"\S*"                                      , IGNORE)
 ))
 
 VALIDATOR_TEST = pyboro.Lexer.ParseMap((
-    ("begin",           DIRECTIVE_START("test")         , IGNORE),
-    ("test",            regexlib["string_literal"]      , LITERAL),
-    ("end",             r"\S*"                          , IGNORE)
+    ("begin",           DIRECTIVE_START(syntax.as_integer("test"))  , IGNORE),
+    ("test",            regexlib["string_literal"]                  , LITERAL),
+    ("end",             r"\S*"                                      , IGNORE)
 ))
 
-NEWLINES = pyboro.Lexer.ParseMap([("newline","\n",IGNORE)])
+NEWLINES = pyboro.Lexer.ParseMap([("newline",r"\n",IGNORE)])
+
+# Fundamentally, commands do one thing: They perform a 
+# single action on a single value. Therefore, every
+# command will have at LEAST this basic structure:
+# 
+#   action value
+#
+#
+# In almost all cases, 'value' can be substituted with
+# an object, or an object's attribute.
+#
+#   action [object]
+#   action [object] [attribute]
+#
+# Some commands (such as those that change values, or store them)
+# take a preposition and second value:
+#
+#   action [value] [to|at] [value]
+#   action [object] [to|at] [value]
+#   action [object][attribute] [to|at] [value]
+#   ...and so on.
+
+# Therefore, the first thing we have to do is get a list of 
+# valid actions.
+
+
+t = syntax.as_integer("children")
+CHILDREN_BLOCK = pyboro.Lexer.ParseMap((
+    ("begin",           r"\s*%d\s*"%t                           , IGNORE),
+    ("block",           everything_until(r"end\s*%d"%t)           , reference_widget_list),
+    ("end",             r"end\s*%d"%t                             , IGNORE)
+))
+

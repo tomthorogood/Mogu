@@ -143,9 +143,13 @@ class SyntaxDictEntry(OutputLine):
 
 class CppEnumOpen(OutputLine):
     def __init__(self, name):
-        fstring = "enum %(name)s {"
-        super(CppEnumOpen, self).__init__(fstring,{'name':name})
+        fstring = """
+#ifndef SYNTAX_H_
+#define SYNTAX_H_
 
+enum class %(name)s {
+"""
+        super(CppEnumOpen, self).__init__(fstring,{'name':name})
 class CppEnumEntry(OutputLine):
     def __init__(self, enum, integer):
         integer = int(integer)
@@ -236,6 +240,7 @@ with open(OUTPUT_PY, "a") as f:
 with open(OUTPUT_H,"a") as f:
     cl = CppEnumClose("MoguSyntax");
     f.write("\n%s" % str(cl))
+    f.write("#endif //SYNTAX_H_")
 
 os.system('sed -i "s/template/template_/g" syntax.h')
 os.system('sed -i "s/remove/remove_/g" syntax.h')

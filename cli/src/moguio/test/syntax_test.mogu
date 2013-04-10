@@ -1,7 +1,9 @@
+# This is a comment
+
 widget test_widget
-    type    :   container
-    content :   "Hello, World!"
-    template:   test_template
+    type        :   container
+    content     :   "Hello, World!"
+    template    :   test_template
     events
         when clicked {
             set own css to "clicked_style"

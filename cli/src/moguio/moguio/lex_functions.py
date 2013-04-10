@@ -58,7 +58,11 @@ def reference_policy(string):
     return string
 
 def valid_options (string):
-    return [key for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
+    """
+        Returns valid integral representations of keywords.
+    """
+    return [str(syntax.MoguSyntax[key][0]) for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
+#    return [key for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
 
 def trim(string):
     return string.strip()

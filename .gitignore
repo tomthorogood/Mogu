@@ -16,3 +16,5 @@ mogu-server
 resources/mogu/*
 Debug/*
 Testing/*
+syntax/syntax.py
+cli/src/moguio/moguio/syntax.py
