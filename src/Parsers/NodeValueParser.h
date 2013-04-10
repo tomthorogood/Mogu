@@ -14,10 +14,8 @@
 #include <Parsers/NodeValueParser/CommandParser.h>
 class NodeValue;
 
-#include <vector>
+#include <forward_list>
 #include <string>
-
-#define STRINGDELINEATOR 999999		//this will be replaced by a MoguSyntax
 
 namespace Parsers {
 
@@ -35,25 +33,17 @@ class NodeValueParser
 		void giveInput(const char* input, NodeValue& v);
 
 	private:
-		// PARSERS
 		StateParser __stateParser;
 		MathParser __mathParser;
 		AttributeParser __attParser;
 		CommandParser __cmdParser;
 
-		// DATA
-		std::vector<int> __tokens;
+		std::forward_list<int> __tokens;
+		bool hasMath;
+		bool hasStates;
+		bool isEvent;
 
-		// METHODS
 		void tokenizeInput(std::string input);
-
-		bool hasStates();	//the "do we need to invoke StateParser?" type of states
-		void evaluateMath();
-		bool detectEventCommand();
-		void __reset__();
-
-
-
 };
 
 }	// namespace Parsers

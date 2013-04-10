@@ -10,10 +10,18 @@
 
 namespace Parsers {
 
-class CommandParser
+enum CP_States
+{
+
+};
+
+class CommandParser: public Automaton::FiniteAutomatonTmpl<std::string, void,
+    NVP_States>
 {
 	public:
 		CommandParser();
+		void processInput(std::forward_list<int>& tokens, NodeValue& outputVal);
+
 };
 
 }	// namespace Parsers

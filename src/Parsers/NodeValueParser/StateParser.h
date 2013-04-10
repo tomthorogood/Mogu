@@ -8,12 +8,16 @@
 #ifndef STATEPARSER_H_
 #define STATEPARSER_H_
 
+#include <forward_list>
+
 namespace Parsers {
 
 class StateParser
 {
 	public:
 		StateParser();
+		void processInput(const std::forward_list<int>& tokens);
+
 };
 
 }	// namespace Parsers

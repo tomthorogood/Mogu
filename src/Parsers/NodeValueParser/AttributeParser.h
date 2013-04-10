@@ -10,7 +10,7 @@
 
 #include <declarations.h>
 #include <Types/NodeValue.h>
-#include <vector>
+#include <forward_list>
 
 namespace Parsers {
 	
@@ -27,16 +27,9 @@ class AttributeParser
 {
 	public:
 		AttributeParser();
-		void giveInput(std::string input, NodeValue& v);
-		inline void __reset__()
-		{
-			__tokens.clear();
-			__iovalue = 0;
-		}
+		void processInput(std::forward_list<int>& tokens, NodeValue& outputVal);
 	
 	private:
-		std::vector<std::string> __tokens;
-		NodeValue* __iovalue;
 
 };
 
