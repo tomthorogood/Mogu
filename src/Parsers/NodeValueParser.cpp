@@ -10,109 +10,110 @@
 
 //debug
 #include <iostream>
+#define PACKING_DELIMITER 999999
 
 namespace Parsers {
-/* things we need to do:
- * 1.  break the string into tokens
- * 2.  detect whether we have states we need to resolve in StateParser
- * 3.  detect whether we have math we need to resolve in MathParser
- * 4.  detect whether we need to use AttributeParser or CommandParser
- */
 
 NodeValueParser::NodeValueParser()
 {
-	__tokens = std::vector<NodeValue>();
 }
 
-void NodeValueParser::tokenizeInput(const char* input, NodeValue& v)
+void NodeValueParser::tokenizeInput(const char* input)
 {
+	const char* inputIndex = input;
+	std::forward_list<int> iter = __tokens.before_begin();
 
-}
-void NodeValueParser::tokenizeInput(std::string input)
-{
-	//debug
-	std::cout << "input string: " << input << std::endl;
-	
-	int inputIndex = 0;
-	NodeValue* nvToken;
-	while(inputIndex < input.size())
+	while(*inputIndex != '\0')
 	{
-		// ASSUMPTION: input is non-empty
-		char delineator;
-		bool isStringLiteral = false;
-
-		if(input[inputIndex] == '"') {
-			delineator = '"';
-			isStringLiteral = true;
-		}
-		else	
-			delineator = ' ';
-
-		auto endTokenIndex = input.find(delineator, inputIndex + 1);
-		auto startTokenIndex = inputIndex + (int) isStringLiteral;	//skip the "
-
-		std::string token = input.substr(startTokenIndex, 
-				endTokenIndex - startTokenIndex); 
-
-		//this next if-else chain is going to look weird because we
-		//can't test token[0] until we know that we're not dealing
-		//with a string literal (possibility of empty string)
-		if(isStringLiteral) {
-			nvToken = new NodeValue();
-			nvToken->setString(token);
-			__tokens.push_back(*nvToken);
-			inputIndex = endTokenIndex + 2;	//skip " and whitespace
-			continue;
-		}
-
-		//from this point we're assuming that token is nonempty!
-		//this means that the importer must gaurantee that no input string
-		//can have two adjacent whitespaces
-		else if(isdigit(token[0]))
+		if(isdigit(*inputIndex))
 		{
-			nvToken = new NodeValue();
-			nvToken->setInt(std::stoi(token));
-			std::cout << "(int) " << nvToken->getInt() << std::endl;
-			__tokens.push_back(*nvToken);
+			//delimit the digit by finding the next whitespace
+			const char* endTokenIndex = strchr(inputIndex, ' ');
 
+			//...or the null char, if we're at the end of string
+			if(!endTokenIndex)	
+				endTokenIndex = strchr(inputIndex, '\0');
+
+			//copy the digit to a temp buffer to convert to int
+			int tokenLength = endTokenIndex - inputIndex + 1;
+			char token[tokenLength];
+			memcpy(token, inputIndex, tokenLength-1);
+
+			//make sure to add in a terminating char!
+			token[tokenLength-1] = '\0';
+
+			iter = __tokens.insert_after(iter, atoi(token));
+
+			//move our index to the appropriate spot
+			if(!(*endTokenIndex) == '\0')
+				inputIndex = endTokenIndex + 1;
+			else
+				inputIndex = endTokenIndex;
 		}
-
 		else
 		{
-			nvToken = new NodeValue();
-			nvToken->setString(token);
-			std::cout << nvToken->getString() << std::endl;
-			__tokens.push_back(*nvToken);
+			//we have some sort of string; put in our special symbol
+			iter = __tokens.insert_after(iter, PACKING_DELIMITER);
+
+			//delimit our string by locating the last char before
+			//whitespace
+			const char* endTokenIndex;
+			if(*inputIndex == '"')
+				endTokenIndex = strchr(inputIndex+1, '"');
+			else
+			{
+				endTokenIndex = strchr(inputIndex, ' ') - 1;
+				if(!endTokenIndex)
+					endTokenIndex = strchr(inputIndex, '\0');
+			}
+
+			//push the number of characters in the string on to our
+			//tokens vector
+			iter = __tokens.insert_after(iter, endTokenIndex - inputIndex + 1);
+
+			//pack characters into ints by bitshifting the characters
+			//as we see them, pushing the resultant int on to our
+			//vector whenever it's full
+			unsigned int packedInt = 0;
+			int packedIntIndex = 0;
+			while(inputIndex <= endTokenIndex)
+			{
+				packedInt |= *inputIndex << (8 * packedIntIndex);
+				inputIndex++;
+
+				if(packedIntIndex == 3)
+				{
+					iter = __tokens.insert_after(iter, packedInt);
+					packedIntIndex = 0;
+					packedInt = 0;
+					continue;
+				}
+
+				packedIntIndex++;
+			}
+
+			//if we didn't end with a fully packed integer, make sure
+			//to send it anyway
+			if(packedIntIndex != 0)
+				iter = __tokens.insert_after(iter, packedInt);
+
+			inputIndex += 1;
 		}
-		
-		inputIndex = endTokenIndex + 1;		//skip whitespace
 	}
 
-	//debug
-	std::cout << "tokenizing finished!" << std::endl;
-	
 }
 
-void NodeValueParser::giveInput(std::string input, NodeValue& v)
+void NodeValueParser::giveInput(const char* input, NodeValue& v)
 {
+	std::cout << "input string: " << input << std::endl << std::endl;
 	tokenizeInput(input);
-}
-bool NodeValueParser::hasStates()
-{
-	// TODO: figure out the best way to detect states!
+
+
+	std::cout << "tokens:";
+	for(auto it = __tokens.begin(); it != __tokens.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << std::endl;
 }
 
-void NodeValueParser::evaluateMath()
-{
-}
-
-bool NodeValueParser::detectEventCommand()
-{
-}
-
-void NodeValueParser::__reset__()
-{
-	__tokens.clear();
-}
 
 }	// namespace Parsers
