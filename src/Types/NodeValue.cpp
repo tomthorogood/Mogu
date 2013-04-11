@@ -19,7 +19,7 @@ NodeValue::NodeValue(
 }
 
 void NodeValue::copy(
-    NodeValue* proto)
+    const NodeValue* proto)
 {
     __type = proto->getType();
 
@@ -40,5 +40,5 @@ void NodeValue::copy(
 
 NodeValue::~NodeValue()
 {
-    delete __numerics;
+	delete __numerics;
 }

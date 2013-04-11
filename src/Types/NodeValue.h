@@ -57,7 +57,7 @@ public:
         NodeValue*);
 
     inline void operator=(
-        NodeValue& v)
+        const NodeValue& v)
     {
         copy(&v);
     }
@@ -131,7 +131,7 @@ public:
     }
 
     void copy(
-        NodeValue*);
+        const NodeValue*);
 };
 // end NodeValue
 

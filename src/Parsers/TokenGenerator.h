@@ -165,6 +165,14 @@ public:
 
     }
 
+	virtual inline bool isWrapped(
+		const std::string& token, char char0)
+	{
+        char fchar = token.at(token.length() - 1);
+        if (starts_pair(char0) == fchar) return true;
+        return false;
+	}
+
     virtual inline char starts_pair(
         const char& ch) const
     {

@@ -5,14 +5,12 @@
  *      Author: cameron
  */
 
-#include <Parsers/MathParser.h>
+#include <Parsers/NodeValueParser/MathParser.h>
 #include <Types/syntax.h>
 #include <cassert>
 #include <cstdlib>
 
 #include <iostream>
-
-
 
 namespace Parsers {
 
