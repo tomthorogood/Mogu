@@ -13,7 +13,7 @@
 class MoldableAbstractParent : public Moldable
 {
 protected:
-    bool has_children;
+    int num_children;
     std::vector <Moldable*> __moldable_children;
     virtual void __init__();
 public:

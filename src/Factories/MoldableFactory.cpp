@@ -7,6 +7,8 @@
 
 #include "MoldableFactory.h"
 #include <Moldable/Implementations.h>
+#include <Types/syntax.h>
+#include <Redis/ContextQuery.h>
 #include <Mogu.h>
 
 MoldableFactory::MoldableFactory ()
@@ -16,53 +18,55 @@ MoldableFactory::MoldableFactory ()
 
 Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 {
-    mApp;
-    std::string s_type;
-    Tokens::MoguTokens e_type;
-    NodeValue v;
-    app->redisExec(Mogu::Keep, "hexists %s %s", node.c_str(), "type");
-    if (!redisReply_TRUE)
+    const char* c_node = node.c_str();
+
+    MoguSyntax widget_type;
+
+    Redis::ContextQuery db(Prefix::widgets);
+    std::shared_ptr <Redis::Query> get_type;
+
+    get_type = std::make_shared <Redis::Query>(
+        new Redis::Query("hget widgets.%s %d", c_node, MoguSyntax::type)
+    );
+
+    db.appendQuery(get_type);
+    widget_type = (MoguSyntax) db.yieldResponse <int>();
+
+    // If there was an error here, the syntax type will be 'none'
+    if (widget_type == MoguSyntax::__NONE__)
     {
-        app->redisExec(Mogu::Keep, "hexists %s %s", node.c_str(), "template");
-        if (redisReply_TRUE)
+        std::shared_ptr <Redis::Query> get_template;
+        get_template = std::make_shared <Redis::Query>(
+            new Redis::Query("hget widgets.%s %d", c_node, MoguSyntax::template_)
+        );
+        db.appendQuery(get_template);
+        widget_type = (MoguSyntax) db.yieldResponse <int>();
+        if (widget_type == MoguSyntax::__NONE__)
         {
-            app->redisExec(Mogu::Keep, "hget %s %s", node.c_str(), "template");
-            MoguNode template_(redisReply_STRING);
-            std::string tmpl = template_.addPrefix("templates");
-            app->redisExec(Mogu::Keep, "hget %s %s", tmpl.c_str(), "type");
-            s_type = redisReply_STRING;
+            // If we're still in error, just treat it as a container.
+            widget_type = MoguSyntax::container;
         }
-        else s_type = "{container}";
     }
-    else
+
+    switch(widget_type)
     {
-        app->redisExec(Mogu::Keep, "hget %s %s", node.c_str(), "type");
-        s_type = redisReply_STRING;
-    }
-    app->interpreter().giveInput(s_type, v);
-    e_type = (Tokens::MoguTokens) v.getInt();
-    switch(e_type)
-    {
-    case Tokens::container:
+    case MoguSyntax::container:
         return new MoldableContainer(node);
-    case Tokens::stack:
+    case MoguSyntax::stack:
         return new MoldableStack(node);
-    case Tokens::text:
+    case MoguSyntax::text:
         return new MoldableText(node);
-    case Tokens::anchor:
+    case MoguSyntax::anchor:
         return new MoldableLink(node);
-    case Tokens::image:
+    case MoguSyntax::image:
         return new MoldableImage(node);
-    case Tokens::image_link:
+    case MoguSyntax::image_link:
         return new MoldableImageLink(node);
-    case Tokens::input:
+    case MoguSyntax::input:
         return new MoldableInput(node);
-    case Tokens::password:
+    case MoguSyntax::password:
         return new MoldablePassword(node);
-    case Tokens::foreach:
-        return new MoldableForEach(node);
-    case Tokens::memberlist:
-        return new MoldableForEachUser(node);
-    default: return new MoldableContainer("");
+    default:
+        return new MoldableContainer("");
     }
 }

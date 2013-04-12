@@ -17,6 +17,7 @@
 #endif //REDIS_CONFIG
 
 #include <declarations.h>
+#include "DatabaseConfigReader.h"
 #include <hiredis/hiredis.h>
 #include "QuerySet.h"
 

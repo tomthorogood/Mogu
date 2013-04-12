@@ -34,24 +34,15 @@ class Moldable : public Wt::WContainerWidget
     Wt::Signal <> __index_changed;
 
 
-    bool has_events;
+    size_t num_events;
 
 protected:
     bool force_reload;
+    const char* template_name = EMPTY;
     virtual void __init__();
 
     MoguNode __node;
-    std::string getParameter(const std::string& param);
-    inline std::string getParameter(const std::string&& param)
-    {
-        return getParameter(param);
-    }
-
-    bool  hasProperty(const std::string& property);
-    inline bool  hasProperty(const std::string&& property)
-    {
-        return hasProperty(property);
-    }
+    std::string getParameter(Redis::ContextQuery&,MoguSyntax);
 
 public:
 

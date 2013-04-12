@@ -11,6 +11,7 @@
 #include <declarations.h>
 #include <Wt/WApplication>
 #include <signal.h>
+#include <Redis/DatabaseConfigReader.h>
 #include <Redis/RedisCore.h>
 #include <Moldable/Moldable.h>
 #include <Types/ApplicationManager.h>
@@ -112,64 +113,6 @@ public:
         widgetRegister.erase(iter);
     }
 
-    inline void loadAnalytics(
-        std::string id)
-    {
-        std::string script[] = { "var _gaq = _gaq || [];",
-            "_gaq.push(['_setAccount', '", id, "']);",
-            "_gaq.push(['_setDomainName', 'gomogu.org']);",
-            "_gaq.push(['_trackPageview']);", "(function() {",
-            "var ga = document.createElement('script');",
-            "ga.type = 'text/javascript'; ga.async = true;",
-            "ga.src = ('https:' == document.location.protocol ? ",
-            "'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';",
-            "var s = document.getElementsByTagName('script')[0];",
-            "s.parentNode.insertBefore(ga, s);", "})();" };
-        int array_len = 14;
-        std::string final = "";
-        for (int i = 0; i < array_len; i++) {
-            final += script[i];
-        }
-        doJavaScript(final);
-    }
-
-    inline void redisExec(
-        KeepReply r, const char* cmd, ...)
-    {
-        va_list ap;
-        va_start(ap, cmd);
-        __reply = (redisReply*) redisvCommand(__redis, cmd, ap);
-#ifdef DEBUG
-        va_start(ap, cmd);
-        vprintf(cmd, ap);
-        std::cout << std::endl;
-#endif
-        va_end(ap);
-        if (r != Keep) freeReply();
-    }
-
-    inline void redisCommand(
-        const char* cmd, ...)
-    {
-        va_list ap;
-        va_start(ap, cmd);
-        __reply = (redisReply*) redisvCommand(__redis, cmd, ap);
-#ifdef DEBUG
-        va_start(ap, cmd);
-        vprintf(cmd, ap);
-        std::cout << std::endl;
-#endif
-        va_end(ap);
-    }
-
-    inline redisReply* reply()
-    {
-        return __reply;
-    }
-    inline void freeReply()
-    {
-        freeReplyObject(__reply);
-    }
     inline std::string& instanceID()
     {
         return __instanceid;
@@ -185,8 +128,6 @@ public:
         return __user_keyspace;
     }
 
-    inline redisContext* DBConnection() {return __redis;}
-    inline ApplicationManager& getManager() {return manager;}
     inline Security::UserManager& getUserManager() {return userManager;}
     inline std::map<std::string,std::string>& getSlots() {return __slots;}
     inline void setGroup(const std::string& group) {__group = group;}

@@ -130,7 +130,7 @@ class MoguString(MultiString):
         if context != "script":
             avail_contexts = ("integral","script")
 
-        super(MoguString, self).__init__(avail_contexts,initstr)
+        super(MoguString, self).__init__(avail_contexts,initstr.replace("\t","    "))
 
         self.addTranslation('script','integral',self.script_to_integral)
         self.addTranslation('integral','script',self.integral_to_script)

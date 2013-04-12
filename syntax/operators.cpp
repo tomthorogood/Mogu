@@ -28,6 +28,7 @@ int main() {
     filestr << "\t,OPER_MINUS\t\t\t\t=" << op_map['-'] << std::endl;
     filestr << "\t,OPER_MULT\t\t\t\t=" << op_map['*'] << std::endl;
     filestr << "\t,OPER_DIV\t\t\t\t="<<op_map['/'] << std::endl;
+    filestr << "\t,TOKEN_DELIM\t\t\t\t="<<INT_MAX-6<<std::endl;
     filestr.close();
 
     return 0;
