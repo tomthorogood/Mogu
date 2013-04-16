@@ -30,6 +30,7 @@ class NodeValueParser
 {
 	public:
 		NodeValueParser();
+		void giveInput(std::string input, NodeValue& v);
 		void giveInput(const char* input, NodeValue& v);
 
 	private:
@@ -43,7 +44,12 @@ class NodeValueParser
 		bool hasStates;
 		bool isEvent;
 
-		void tokenizeInput(const char* input);
+		void tokenizeInput(std::string input);
+		void packString(std::string inputString);
+
+		//debug
+		void printTokens();
+
 };
 
 }	// namespace Parsers
