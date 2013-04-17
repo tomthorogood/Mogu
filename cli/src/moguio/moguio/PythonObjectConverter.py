@@ -210,7 +210,7 @@ class PythonObjectConverter(object):
         for result_tuple in result_list:
             result = result_tuple[0]
             triggers.append(result['trigger'])
-            key = "%s.events.%d" % (prefix, result['trigger'])
+            key = "%s.events.%d" % (prefix, int(result['trigger']))
             when_commands = []
             block = result['block']
             for line in block:

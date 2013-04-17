@@ -88,7 +88,7 @@ class RedisWriter(object):
         for prefix in self.dbconfig:
             db = redis.Redis(
                     host    = self.dbconfig[prefix]['host'],
-                    port    = int(self.dbconfig[prefix]['port'])
+                    port    = int(self.dbconfig[prefix]['port']),
                     db      = int(self.dbconfig[prefix]['number'])
                     )
             self.databases[prefix] = db
@@ -100,7 +100,7 @@ class RedisWriter(object):
             for pipe in self.pipes:
                 if self.verbal:
                     sys.stderr.write("NOTICE: %s database will be flushed.\n"%pipe)
-                pipe.flushdb()
+                self.pipes[pipe].flushdb()
 
     def pipe(self,prefix):
         """
@@ -126,21 +126,21 @@ class RedisWriter(object):
         else:
             raise KeyError("Redis prefix %s is not defined" % prefix)
 
-    def stringWriter(redis_object):
+    def stringWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
         pipe.set(redis_object.node,redis_object.data)
 
-    def listWriter(redis_object):
+    def listWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
         for value in redis_object.data:
             pipe.rpush(redis_object.node, value)
 
-    def hashWriter(redis_object):
+    def hashWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
         for key in redis_object.data:
             pipe.hset(redis_object.node, key, redis_object.data[key])
 
-    def setWriter(redis_object):
+    def setWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
         for value in redis_object.data:
             pipe.sadd(redis_object.node, value)
@@ -163,6 +163,6 @@ class RedisWriter(object):
         for pipe in self.pipes:
             if self.verbal:
                 sys.stderr.write("Executing commands in the %s pipeline..." % pipe)
-            pipe.execute()
+            self.pipes[pipe].execute()
             if self.verbal:
-                sys.stderr.write("success!")
+                sys.stderr.write("success!\n")

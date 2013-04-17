@@ -1,9 +1,10 @@
 # TODO : Read db info from dbconfig.conf
-
+import sys
 import PythonObjectConverter
 import SymbolRegistry
 import FileImporter
 import PathImporter
+import RedisWriter
 
 def display_undefined_symbols(registry):
     output = ""
@@ -11,7 +12,7 @@ def display_undefined_symbols(registry):
         if not registry[symbol]:
             output += "\n"
             output += str(registry[symbol])
-            output += "\n\tReferenced in: \n")
+            output += "\n\tReferenced in: \n"
             for reference in registry[symbol]:
                 output += "\t\t%s\n" % reference
     return output
@@ -21,11 +22,11 @@ def mogu_import(args):
     redis_objects = [] #Holds the objects that can be written to Redis
     write = not args.testing # If testing, don't actually write to Redis
 
-    for path in args.command[1:]
+    for path in args.command[1:]:
         if path.endswith(".mogu"): # If the path points to a specific file
-            results.extend(FileImporter.import_file(path.args.v))
+            results.extend(FileImporter.import_file(path,args.v))
         else:   # The path is a directory
-            results.extend(PathImporter.import_path(path.args.v))
+            results.extend(PathImporter.import_path(path,args.v))
 
     converter = PythonObjectConverter.PythonObjectConverter()
     for result in results:
