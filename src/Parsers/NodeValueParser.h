@@ -31,7 +31,6 @@ class NodeValueParser
 	public:
 		NodeValueParser();
 		void giveInput(std::string input, NodeValue& v);
-		void giveInput(const char* input, NodeValue& v);
 
 	private:
 		StateParser __stateParser;

@@ -63,12 +63,12 @@ void NodeValueParser::packString(std::string inputString, ListIterator &tokensIn
 		}
 
 		packedIntIndex++;
+		inputIndex++;
 	}
 
 	if(packedIntIndex != 0)
 		tokensIndex = __tokens.insert_after(tokensIndex, packedInt);
 
-	inputIndex++;
 }
 
 void NodeValueParser::printTokens()
@@ -83,18 +83,6 @@ void NodeValueParser::giveInput(std::string input, NodeValue& v)
 {
 	tokenizeInput(input);
 	printTokens();
-}
-
-void NodeValueParser::giveInput(const char* input, NodeValue& v)
-{
-	std::cout << "input string: " << input << std::endl << std::endl;
-	tokenizeInput(input);
-
-
-	std::cout << "tokens:";
-	for(auto it = __tokens.begin(); it != __tokens.end(); ++it)
-		std::cout << ' ' << *it;
-	std::cout << std::endl;
 }
 
 
