@@ -17,6 +17,7 @@ MoldableText::MoldableText(const std::string& node)
 
 void MoldableText::__init__()
 {
+    Moldable::__init__();
     mApp;
     Redis::ContextQuery db(Prefix::widgets);
     __text = new Wt::WText;

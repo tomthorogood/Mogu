@@ -15,13 +15,13 @@
 
 Moldable::Moldable (const std::string& node)
 :
-__style_changed(this)
-,__failed_test(this)
-,__succeeded_test(this)
-,__loaded(this)
-,__hidden_changed(this)
-,__index_changed(this)
-,__node(node)
+    __style_changed(this)
+    ,__failed_test(this)
+    ,__succeeded_test(this)
+    ,__loaded(this)
+    ,__hidden_changed(this)
+    ,__index_changed(this)
+    ,__node(node)
 {
     __init__();
 }
@@ -34,12 +34,13 @@ Moldable::~Moldable()
 void Moldable::__init__ ()
 {
     mApp;
+    app->registerWidget(__node,this);
     Parsers::NodeValueParser& nvp = app->interpreter();
-    __bindery = nullptr;
     std::string param;
     NodeValue v;
     Redis::ContextQuery db(Prefix::widgets);
 
+    // Any widget type can have style or tooltip declarations
     param = getParameter(db, MoguSyntax::style);
     if (param != EMPTY) {
         nvp.giveInput(param,v);
@@ -53,6 +54,8 @@ void Moldable::__init__ ()
         setToolTip(v.getString());
     }
 
+    // And any widget can have events. We only see if they exist now; we
+    // do not do any event handling at this time.
     CreateQuery(db,
         new Redis::Query("llen widgets.%s.events", __node.c_str()));
     num_events = (size_t) db.yieldResponse <int>();

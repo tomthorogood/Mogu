@@ -17,6 +17,7 @@ MoldableAbstractParent::MoldableAbstractParent (const std::string& node)
 
 void MoldableAbstractParent::__init__()
 {
+    Moldable::__init__();
     const char* c_node = __node.c_str();
     Redis::ContextQuery db(Prefix::widgets);
     CreateQuery(db,

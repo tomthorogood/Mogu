@@ -15,10 +15,10 @@ class MoldableAbstractParent : public Moldable
 protected:
     int num_children;
     std::vector <Moldable*> __moldable_children;
-    virtual void __init__();
+    virtual void __init__() override;
 public:
     MoldableAbstractParent (const std::string& node);
-    virtual void load();
+    virtual void load() override;
 
     inline const std::vector<Moldable*>& moldableChildren() {
         return __moldable_children;
@@ -32,7 +32,6 @@ public:
     {
         clear();
         force_reload = true;
-        Moldable::__init__();
         __init__();
         load();
         force_reload = false;

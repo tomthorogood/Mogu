@@ -18,7 +18,7 @@ MoldableImage::MoldableImage (const std::string& node)
 void MoldableImage::__init__()
 {
     mApp;
-    //Moldable::__init__();
+    Moldable::__init__();
     NodeValue v;
     const char* c_node = __node.c_str();
     Redis::ContextQuery db(Prefix::widgets);

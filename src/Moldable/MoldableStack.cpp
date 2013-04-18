@@ -17,8 +17,3 @@ MoldableStack::MoldableStack(const std::string& node)
 {
     __init__();
 }
-
-void MoldableStack::__init__()
-{
-
-}

@@ -17,6 +17,8 @@ MoldableInput::MoldableInput (const std::string& node)
 
 void MoldableInput::__init__()
 {
+    Moldable::__init__();
+
     mApp;
     NodeValue v;
     const char* c_node = __node.c_str();

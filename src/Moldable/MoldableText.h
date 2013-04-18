@@ -15,7 +15,7 @@ class MoldableText : public Moldable
 {
     Wt::WText* __text;
 protected:
-    virtual void __init__();
+    virtual void __init__() override;
 public:
     MoldableText(const std::string& node);
 
@@ -31,7 +31,6 @@ public:
     {
         clear();
         force_reload = true;
-        Moldable::__init__();
         __init__();
         load();
         force_reload = false;
