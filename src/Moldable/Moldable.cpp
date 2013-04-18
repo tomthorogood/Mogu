@@ -8,7 +8,6 @@
 
 #include "Moldable.h"
 #include <Mogu.h>
-#include <Events/Bindery.h>
 #include <Types/NodeValue.h>
 #include <Wt/WStackedWidget>
 
@@ -24,9 +23,6 @@ __style_changed(this)
 ,__index_changed(this)
 ,__node(node)
 {
-#ifdef DEBUG
-    std::cout << "\nCREATING " << getNode() << std::endl;
-#endif
     __init__();
 }
 
@@ -57,10 +53,8 @@ void Moldable::__init__ ()
         setToolTip(v.getString());
     }
 
-    std::shared_ptr <Redis::Query> get_num_events;
-    get_num_events = std::make_shared <Redis::Query>(
-        new Redis::Query("llen widgets.%s.events", getNode().c_str()));
-    db.appendQuery(get_num_events);
+    CreateQuery(db,
+        new Redis::Query("llen widgets.%s.events", __node.c_str()));
     num_events = (size_t) db.yieldResponse <int>();
 }
 
@@ -68,16 +62,12 @@ void Moldable::load()
 {
     if (loaded() && !force_reload) return;
     Wt::WContainerWidget::load();
-
-    if (num_events > 0) __bindery = new Events::EventBindery(this);
 }
 
 std::string Moldable::getParameter(Redis::ContextQuery& db, MoguSyntax param)
 {
-    std::shared_ptr<Redis::Query> get_param =
-        std::make_shared <Redis::Query>( new Redis::Query(
-            "hget widgets.%s %d", getNode().c_str(), (int)param));
-    db.appendQuery(get_param, db.REQUIRE_STRING);
+    CreateQuery(db,
+        new Redis::Query("hget widgets.%s %d",__node.c_str(), (int) param));
     return db.yieldResponse <std::string>();
 }
 

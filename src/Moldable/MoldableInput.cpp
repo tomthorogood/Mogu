@@ -17,16 +17,18 @@ MoldableInput::MoldableInput (const std::string& node)
 
 void MoldableInput::__init__()
 {
-    //Moldable::__init__();
     mApp;
     NodeValue v;
+    const char* c_node = __node.c_str();
+    Redis::ContextQuery db(Prefix::widgets);
+
     __input = new Wt::WLineEdit();
-    std::string param = getParameter("content");
-    app->interpreter().giveInput(param,v);
+
+    app->interpreter().giveInput(getParameter(db, MoguSyntax::text),v);
     __input->setEmptyText(v.getString());
     addWidget(__input);
 
-    param = getParameter("validator");
+    std::string param = getParameter(db,MoguSyntax::validator);;
     if (param != EMPTY)
     {
         app->interpreter().giveInput(param,v);

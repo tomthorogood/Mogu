@@ -17,13 +17,10 @@ MoldableAbstractParent::MoldableAbstractParent (const std::string& node)
 
 void MoldableAbstractParent::__init__()
 {
-    const char* c_node = getNode().c_str();
+    const char* c_node = __node.c_str();
     Redis::ContextQuery db(Prefix::widgets);
-    std::shared_ptr<Redis::Query> get_num_children;
-    get_num_children = std::make_shared<Redis::Query>(
-        new Redis::Query("llen widgets.%s.children", c_node)
-    );
-    db.appendQuery(get_num_children);
+    CreateQuery(db,
+        new Redis::Query("llen widgets.%s.children", c_node));
     num_children = db.yieldResponse <int>();
 }
 

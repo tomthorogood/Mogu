@@ -13,39 +13,41 @@
 #include <Wt/WApplication>
 #include <Exceptions/Exceptions.h>
 #include <Mogu.h>
+#include <Redis/ContextQuery.h>
 #include <Types/syntax.h>
 namespace Validators {
 
 using std::string;
 
 Wt::WValidator* createValidator(
-    std::string validatorName)
+    const std::string& validatorName)
 {
     mApp;
-    Wt::WValidator* validator = 0;
-    string validator_node = "validators." + validatorName;
-    app->redisExec(Mogu::Keep, "hget %s type", validator_node.c_str());
-    string vtype =  redisReply_STRING;
-    if (vtype == EMPTY) throw Exceptions::Err_MissingProperty(vtype, "type");
+    const char* c_node = validatorName.c_str();
+    Redis::ContextQuery db(Prefix::validators);
+    CreateQuery(db,
+        new Redis::Query("hget validators.%s %d", c_node, MoguSyntax::type));
+;
     NodeValue vval;
-    app->interpreter().giveInput(vtype, vval);
+    app->interpreter().giveInput(db.yieldResponse<std::string>(), vval);
     switch (vval.getInt()) {
-    case Tokens::regex: {
-        validator = (Wt::WValidator*) createRegexValidator(validator_node);
+    case MoguSyntax::regex: {
+      return createRegexValidator(db,c_node);
         break;
     }
     }
-    return validator;
+    return nullptr;
 }
 
 Wt::WRegExpValidator* createRegexValidator(
-    string node)
+    Redis::ContextQuery& db, const char* c_node)
 {
     mApp;
-    Wt::WRegExpValidator* validator = 0;
-    app->redisExec(Mogu::Keep, "hget %s test", node.c_str());
-    string pattern = redisReply_STRING;
-    if (pattern == EMPTY) throw Exceptions::Err_MissingProperty(node, "test");
+    CreateQuery(db,
+        new Redis::Query("hget validators.%s %d", c_node, MoguSyntax::test));
+
+    Wt::WRegExpValidator* validator = nullptr;
+    std::string pattern = db.yieldResponse <std::string>();
     Wt::WString wpattern(pattern);
     validator = new Wt::WRegExpValidator(wpattern);
     return validator;

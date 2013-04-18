@@ -41,7 +41,7 @@ protected:
     const char* template_name = EMPTY;
     virtual void __init__();
 
-    MoguNode __node;
+    const std::string& __node;
     std::string getParameter(Redis::ContextQuery&,MoguSyntax);
 
 public:
@@ -66,7 +66,7 @@ public:
 
     inline virtual std::string getNode()
     {
-        return __node.addPrefix("widgets");
+        return __node;
     }
 
     virtual void load();

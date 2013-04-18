@@ -18,4 +18,6 @@
 //Provides access to the user-specific instance of Mogu
 #define mApp Mogu* app = MoguApp
 
+#define CreateQuery(db,nquery) db.appendQuery(std::make_shared <Redis::Query>(nquery))
+
 #endif /* MACROS_H_ */
