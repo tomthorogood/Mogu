@@ -115,21 +115,6 @@ public:
         return __type;
     }
 
-    inline void c_str(const char* output) const
-    {
-       if (__type == string_value) {
-           output = as_string.c_str();
-       }
-       else if (__type == int_value) {
-           std::string str = std::to_string(__numerics->as_int);
-           output = str.c_str();
-       }
-       else if (__type == float_value) {
-           std::string str = std::to_string(__numerics->as_float);
-           output = str.c_str();
-       }
-    }
-
     void copy(
         const NodeValue*);
 };
