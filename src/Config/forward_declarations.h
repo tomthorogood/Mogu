@@ -96,5 +96,6 @@ class UniqueHashPackage;
 class ApplicationManager;
 class GroupManager;
 class Listener;
+class CommandValue;
 
 #endif /* FORWARD_DECLARATIONS_H_ */
