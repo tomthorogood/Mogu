@@ -8,7 +8,10 @@
 #ifndef STATEPARSER_H_
 #define STATEPARSER_H_
 
-#include <forward_list>
+#include <list>
+#include <string>
+#include <vector>
+#include <unordered_set>
 
 namespace Parsers {
 
@@ -16,7 +19,19 @@ class StateParser
 {
 	public:
 		StateParser();
-		void processInput(const std::forward_list<int>& tokens);
+		void processInput(const std::list<int>& numTokens, 
+						  const std::vector<std::string>& strTokens,
+						  Moldable* broadcaster,
+						  NodeValue &v);
+
+	private:
+		const std::unordered_set<int> __objectTokens;
+		std::list<int>::reverse_iterator objectArgsRit;
+		Moldable* targetWidget;
+
+		void resolveWidgetInfo(NodeValue &v);
+		void resolveDatabaseInfo(MoguSyntax token, NodeValue &v);
+		void resolveNamedWidgetInfo(NodeValue &v);
 
 
 

@@ -14,16 +14,14 @@
 
 namespace Parsers {
 
-typedef std::forward_list<int>::iterator ListIterator;
-
-NodeValueParser::NodeValueParser()
+NodeValueParser::NodeValueParser() : __actionTokens({16,17,18,19,21,22,23,24,25,
+													 29,32,34,39,43,63})
 {
 }
 
 void NodeValueParser::tokenizeInput(std::string input)
 {
 	int inputIndex = 0;
-	ListIterator tokensIndex = __tokens.before_begin();
 	while(inputIndex < input.size())
 	{
 		int endTokenIndex; 
@@ -35,54 +33,55 @@ void NodeValueParser::tokenizeInput(std::string input)
 		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
 		if(isdigit(token[0]))
-			tokensIndex = __tokens.insert_after(tokensIndex, std::stoi(token));
+			__numTokens.push_back(token);
 		else
-			packString(token, tokensIndex);
+		{
+			__numTokens.push_back(PACKING_DELIMITER);
+			__strTokens.push_back(token);
+		}
 
 		inputIndex += 2;
 	}
 }
 
-void NodeValueParser::packString(std::string inputString, ListIterator &tokensIndex)
-{
-	unsigned int packedInt = 0;
-	int packedIntIndex = 0;
-	int inputIndex = 0;
-
-	while(inputIndex < inputString.size())
-	{
-		packedInt |= inputString[inputIndex] << (8 * packedIntIndex);
-		inputIndex++;
-
-		if(packedIntIndex == 3)
-		{
-			tokensIndex = __tokens.insert_after(tokensIndex, packedInt);
-			packedIntIndex = 0;
-			packedInt = 0;
-			continue;
-		}
-
-		packedIntIndex++;
-		inputIndex++;
-	}
-
-	if(packedIntIndex != 0)
-		tokensIndex = __tokens.insert_after(tokensIndex, packedInt);
-
-}
-
 void NodeValueParser::printTokens()
 {
-	std::cout << "Contents of __tokens:" << std::endl;
-	for(auto it = __tokens.begin(); it != __tokens.end(); it++)
+	std::cout << "Contents of __numTokens:" << std::endl;
+	for(auto it = __numTokens.begin(); it != __numTokens.end(); it++)
 		std::cout << *it << std::endl;
-	std::cout << "End __tokens list." << std::endl;
+	std::cout << "End __numTokens list." << std::endl << std::endl;
+
+	std::cout << "Contents of __strTokens:" << std::endl;
+	for(auto it = __strTokens.begin(); it != __strTokens.end(); it++)
+		std::cout << *it << std::endl;
+	std::cout << "End __strTokens list." << std::endl << std::endl;
 }
 
 void NodeValueParser::giveInput(std::string input, NodeValue& v)
 {
 	tokenizeInput(input);
 	printTokens();
+
+	//single-token input
+	if(__numTokens.size() == 1)
+	{
+		if(__numTokens[0] == PACKING_DELIMITER)
+			v.setString(__strTokens[0]);
+		else
+			v.setInt(__numTokens[0]);
+
+		return;
+	}
+	__stateParser.processInput(__numTokens, __strTokens);
+	__mathParser.processInput(__numTokens, __strTokens);
+
+	//if the first token is an attribute enum, send through the
+	//command parser; otherwise, send through attribute parser 
+	if(__actionTokens.count(__numTokens[0]) == 1)
+		//TODO: how is command parser going to return event data?
+		__cmdParser.processInput(__numTokens, __strTokens, v);
+	else
+		__attParser.processInput(__numTokens, __strTokens, v);
 }
 
 
