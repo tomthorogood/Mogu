@@ -1,5 +1,11 @@
+#ifndef QUERYSET_H_
+#define QUERYSET_H_
+
+#include <declarations.h>
+#include "Query.h"
 #include "Context.h"
 #include <queue>
+
 namespace Redis {
 
 class QuerySet 
@@ -26,9 +32,11 @@ private:
     // response was an integer
     int         reply_int;
 
+
     //!\brief Holds the last string returned where Redis stated the
-    // response was a string
-    std::string reply_string;
+    // response was a string, as a pointer to an array of chars.
+    char* reply_c_string;
+    bool allow_free = false;
 
     //!\brief Holds a vector of the last set of responses where REdis
     // stated the response was a reply_array, and it was determined
@@ -54,11 +62,6 @@ private:
         return reply;
     }
 
-    /*!\brief Get the handling flags of the last response received from Redis */
-    inline uint8_t responseFlags() {
-        return queryflags.front();
-    }
-
     /*!\brief Based on the type of reply received from Redis,
      * sets the correct variable to hold the state, and
      * then releases the reply object.
@@ -67,7 +70,11 @@ private:
         reply_type = reply->type;
         
         reply_int = 0;
-        reply_string = "";
+        if (allow_free)
+        {
+            free(reply_c_string);
+            allow_free = false;
+        }
         reply_array_int.clear();
         reply_array_str.clear();
 
@@ -76,8 +83,10 @@ private:
             case REDIS_REPLY_INTEGER: 
                 reply_int = reply->integer;
                 break;
-            case REDIS_REPLY_STRING:  
-                reply_string = reply->str;
+            case REDIS_REPLY_STRING:
+                reply_c_string = (char*) malloc(strlen(reply->str));
+                strcpy(reply_c_string,reply->str);
+                allow_free = true;
                 break;  
             case REDIS_REPLY_ARRAY:
                 assignArray();
@@ -119,6 +128,15 @@ private:
         }
     }
 
+    //!\brief Executes commands until one is executed whose reply isn't ignored
+    inline void execute_nongreedy()
+    {
+        do {
+            getNextReply();
+        } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
+        assignReply();
+    }
+
 public:
     static const int IGNORE_RESPONSE        = 1;
     static const int REQUIRE_INT            = 2;
@@ -127,7 +145,7 @@ public:
     static const uint8_t ARRAY_TYPE_INT     = 0;
     static const uint8_t ARRAY_TYPE_STR     = 1;
     
-    //TODO set flag_iter to 0
+    //TODO set flag_iter to 0?
     QuerySet(Context& context);
     ~QuerySet();
 
@@ -144,10 +162,7 @@ public:
      * Will continue to execute statements until a reply is expected.
      */
     template <class T> T yieldResponse() {
-        do {
-            getNextReply();
-        } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
-        assignReply();
+        execute_nongreedy();
     }
 
     inline void execute()
@@ -163,7 +178,7 @@ public:
     inline int replyType() { return reply_type;}
 
     //!\brief The last reply string received.
-    inline std::string replyString() { return reply_string;}
+    inline std::string replyString() { return reply_c_string;}
 
     //!\brief The last reply integer received.
     inline int replyInt() { return reply_int;}
@@ -184,17 +199,49 @@ public:
 template <> int
     QuerySet::yieldResponse <int> ()
 {
-    do {
-        getNextReply();
-    } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
-
-    assignReply();
+    execute_nongreedy();
 
     if (reply_type == REDIS_REPLY_STRING) {
         if (last_flags & REQUIRE_INT) return 0;
-        return std::atoi(reply_string.c_str());
+        return std::atoi(reply_c_string);
+    }
+    else if (reply_type != REDIS_REPLY_INTEGER) {
+        return 0;
     }
     return reply_int;
+}
+
+/*!\brief Forces the return of a const char* response, and continued to
+ * execute Redis commands until the response is not ignored.
+ * If the REQUIRE_STRING flag is set, and the response is an int,
+ * the empty string will always be returned.
+ */
+template <> const char*
+    QuerySet::yieldResponse <const char*> ()
+{
+    execute_nongreedy();
+
+
+    if (reply_type == REDIS_REPLY_STRING) return reply_c_string;
+
+    /* If the reply type was an integer, we can still accept it as a
+     * valid c_string reply as long as we weren't explicitly told to
+     * require a string.
+     */
+    else if (reply_type == REDIS_REPLY_INTEGER)
+    {
+        if (!last_flags & REQUIRE_STRING)
+        {
+            std::string convert = std::to_string(reply_int);
+            reply_c_string = convert.c_str();
+            return reply_c_string;
+        }
+    }
+
+    /* If we've made it here, then a string was required and the
+     * reply type was not a string. Return the empty string instead.
+     */
+    return EMPTY;
 }
 
 /*!\brief Forces the return of a string response, and
@@ -205,16 +252,7 @@ template <> int
 template <> std::string
     QuerySet::yieldResponse <std::string> ()
 {
-    do {
-        getNextReply();
-    } while ( (last_flags & IGNORE_RESPONSE) && hasQueue() );
-    assignReply();
-
-    if (reply_type == REDIS_REPLY_INTEGER) {
-        if (last_flags & REQUIRE_STRING) return "";
-        return std::to_string(reply_int);
-    }
-    return reply_string;
+    return yieldResponse <const char*>();
 }
 
 /*!\brief Forces the return of a boolean response,
@@ -225,15 +263,17 @@ template <> std::string
 template <> bool
     QuerySet::yieldResponse <bool> ()
 {
-    do {
-        getNextReply();
-    } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
-    assignReply();
+    execute_nongreedy();
 
     if (reply_type == REDIS_REPLY_STRING) {
+        // Did not receive response of the proper type
         if (last_flags & REQUIRE_INT) return false;
-        if (reply_string != "") return true;
-        return false;
+
+        // Received nonempty response
+        else if (strcmp(reply_c_string,"") != 0) return true;
+
+        // Received empty response
+        else return false;
     }
 
     else if (reply_type == REDIS_REPLY_INTEGER) {
@@ -252,10 +292,7 @@ template <> bool
 template <> std::vector<int>&
     QuerySet::yieldResponse <std::vector <int>&> ()
 {
-    do {
-        getNextReply();
-    } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
-    assignReply();
+    execute_nongreedy();
     return reply_array_int;
 }
 
@@ -266,14 +303,13 @@ template <> std::vector<int>&
 template <> std::vector <std::string>&
     QuerySet::yieldResponse <std::vector <std::string>&> ()
 {
-    do {
-        getNextReply();
-    } while ((last_flags & IGNORE_RESPONSE) && hasQueue() );
-    assignReply();
-
+    execute_nongreedy();
     return reply_array_str;
 }
 
 
 
 }//namespace Redis
+
+
+#endif //QUERSET_H_

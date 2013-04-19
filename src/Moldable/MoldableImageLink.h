@@ -19,8 +19,6 @@ public:
     MoldableImageLink(const std::string& node);
     inline virtual void reload()
     {
-        Moldable::__init__();
-        MoldableLink::__init__();
         __init__();
         force_reload = true;
         load();

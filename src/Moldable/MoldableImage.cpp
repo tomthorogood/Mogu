@@ -6,6 +6,7 @@
  */
 
 #include "MoldableImage.h"
+#include <Redis/ContextQuery.h>
 #include <Mogu.h>
 
 MoldableImage::MoldableImage (const std::string& node)
@@ -16,21 +17,23 @@ MoldableImage::MoldableImage (const std::string& node)
 
 void MoldableImage::__init__()
 {
-    //Moldable::__init__();
-    NodeValue v;
     mApp;
-
-    std::string param = getParameter("source");
-    app->interpreter().giveInput(param, v);
+    Moldable::__init__();
+    NodeValue v;
+    const char* c_node = __node.c_str();
+    Redis::ContextQuery db(Prefix::widgets);
+    std::string param = getParameter(db, MoguSyntax::source);
+    app->interpreter().giveInput(param,v);
     std::string src = v.getString();
 
-    param = getParameter("content");
+    param = getParameter(db, MoguSyntax::text);
     app->interpreter().giveInput(param,v);
     std::string alt = v.getString();
     __image = new Wt::WImage(src, alt);
     addWidget(__image);
-    if (hasProperty("scaled"))
-    {
-        __image->addStyleClass("mogu_SCALED_IMAGE");
-    }
+//!TODO Re-add properties
+//    if (hasProperty("scaled"))
+//    {
+//        __image->addStyleClass("mogu_SCALED_IMAGE");
+//    }
 }

@@ -1,3 +1,6 @@
+#ifndef QUERY_H_
+#define QUERY_H_
+
 #include <declarations.h>
 namespace Redis {
 
@@ -10,3 +13,5 @@ struct Query {
 };
 
 }//namespace Redis
+
+#endif //QUERY_H_

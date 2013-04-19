@@ -6,6 +6,21 @@ import string
 import syntax
 import re
 
+class EscapeError(Exception):
+    def __init__(self, needle, haystack):
+        self.needle = needle
+        self.haystack = haystack
+    def __str__(self):
+        return """
+There is a problem with your escape sequences.
+
+    %(needle)s
+
+could not be found in:
+
+    %(haystack)s
+""" %(self.__dict__)
+
 class MoguString(MultiString):
     ReverseLookup = {}
     for keyword in syntax.MoguSyntax:
@@ -16,6 +31,7 @@ class MoguString(MultiString):
         ReverseLookup[str(value)] = op
 
     ReservedWords = syntax.MoguSyntax.keys()
+    CompoundWords = [entry for entry in ReservedWords if len(entry.split(" ")) >1]
     Operators = syntax.MoguOperators.keys()
 
     ReferencedTypes = [
@@ -114,13 +130,14 @@ class MoguString(MultiString):
         if context != "script":
             avail_contexts = ("integral","script")
 
-        super(MoguString, self).__init__(avail_contexts,initstr)
+        super(MoguString, self).__init__(avail_contexts,initstr.replace("\t","    "))
 
         self.addTranslation('script','integral',self.script_to_integral)
         self.addTranslation('integral','script',self.integral_to_script)
         self.preferences = prefs if prefs is not None else {} 
         self.string_literals = []
         self.maths = []
+        self.temp = None
 
 
     def script_to_integral(self, script):
@@ -132,18 +149,24 @@ class MoguString(MultiString):
         
         # When given scripted syntax, the first thing we have to do 
         # is separate string literals, since they will not be converted.
-        temp = self.separate_string_literals()
+        self.temp = self.separate_string_literals()
         
         # Next we must see if there are any math expressions in the string.
         # If so, we'll need to ensure they are spaced properly, since the 
         # lexer will not enforce spacing for mathematical expressions. 
-        if self.has_maths(temp):
+        if self.has_maths(self.temp):
             for math in self.maths:
                 expr = MoguString.assert_expression_spacing(math)
-                temp = re.sub(re.escape(math),expr,temp)
+                self.temp = re.sub(re.escape(math),expr,self.temp)
         # Now we can replace each of Mogu's reserved words with its integral
         # counterpart
-        tokens = temp.split(" ")
+
+        # We start by replacing entries that have more than one word
+        for entry in MoguString.CompoundWords:
+            self.temp = re.sub(entry,MoguString.getIntegral(entry),self.temp)
+
+        # and then move onto the single-word entries
+        tokens = self.temp.split(" ")
         tokens = filter(MoguString.filter_empty,tokens) #Ignore double spaces
 
         for index,token in enumerate(tokens):
@@ -177,10 +200,17 @@ class MoguString(MultiString):
 
         results = re.findall(regexlib['string_literal'],self.active())
         self.string_literals = filter(MoguString.filter_empty,results)
-        temp = self.active()
+        self.temp = self.active()
         for result in results:
-            temp = re.sub(result, '%s', temp)
-        return temp
+            if result not in self.temp:
+                raise EscapeError(result,self.temp)
+            
+            self.temp = re.sub(re.escape(result), r'%s', self.temp)
+
+            if result in self.temp:
+                raise EscapeError(result,self.temp)
+
+        return self.temp
 
     def integral_to_script(self, original_integral):
         """

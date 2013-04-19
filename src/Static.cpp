@@ -25,56 +25,23 @@ namespace Application {
 
 namespace {
 static bool configured = false;
-const static char* META_USERLEVELS = "meta.user_levels";
-
 }
 
 void setUserLevels()
 {
-    mApp;
-    app->redisExec(Mogu::Keep, "exists %s", META_USERLEVELS);
-    if (!(bool) redisReply_INT) return;
-    app->redisExec(Mogu::Keep, "get %s", META_USERLEVELS);
-    std::vector<std::string> vec_userlevels;
-    std::string token = EMPTY;
-    Parsers::TokenGenerator tgen(redisReply_STRING);
-    do {
-        token = tgen.next(',');
-        TurnLeft::Utils::trimchar(token);
-        if (token != EMPTY) vec_userlevels.push_back(token);
-    } while (token != EMPTY);
 
-    size_t num_userlevels = vec_userlevels.size();
-
-    // Replace the string key with the sorted set of ranked user levels
-    app->redisExec(Mogu::Discard, "del %s", META_USERLEVELS);
-    for (size_t level = num_userlevels - 1; level >= 0; --level) {
-        /* Essentially, reverse the order of the list. This makes it easier
-         * for users to add levels and also makes testing of ranks much
-         * easier.
-         */
-
-        std::string& level = vec_userlevels[level];
-        app->redisExec(Mogu::Discard, "zadd %s %d %s", META_USERLEVELS, level,
-            level.c_str());
-    }
 }
 
 std::string getUserLevel(
     const int& index)
 {
-    mApp;
-    app->redisExec(Mogu::Keep, "zrangebyscore %s %d %d", META_USERLEVELS, index,
-        index);
-    return app->reply()->element[0]->str;
+    return "";
 }
 
 int getUserLevel(
     const std::string& name)
 {
-    mApp;
-    app->redisExec(Mogu::Keep, "zrank %s %s", META_USERLEVELS, name.c_str());
-    return redisReply_INT;
+    return 0;
 }
 
 void configure()
@@ -82,26 +49,6 @@ void configure()
     if (configured) return;
     setUserLevels();
     configured = true;
-}
-
-bool metaKeyConfigured(
-    std::string key)
-{
-    mApp;
-    std::string k = "meta." + key;
-    const char* ck = k.c_str();
-    app->redisCommand("exists %s", ck);
-    return (bool) Redis::getInt(app->reply());
-}
-
-std::string getMetaValue(
-    std::string key)
-{
-    mApp;
-    std::string k = "meta." + key;
-    const char* ck = k.c_str();
-    app->redisCommand("get %s", ck);
-    return Redis::toString(app->reply());
 }
 
 }    //namespace Application

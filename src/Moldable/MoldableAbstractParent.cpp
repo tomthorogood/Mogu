@@ -6,6 +6,7 @@
  */
 
 #include "MoldableAbstractParent.h"
+#include <Redis/ContextQuery.h>
 #include <Mogu.h>
 
 MoldableAbstractParent::MoldableAbstractParent (const std::string& node)
@@ -16,29 +17,39 @@ MoldableAbstractParent::MoldableAbstractParent (const std::string& node)
 
 void MoldableAbstractParent::__init__()
 {
-    //Moldable::__init__();
-    mApp;
-    std::string children = getNode() + ".children";
-    app->redisExec(Mogu::Keep, "exists %s", children.c_str());
-    has_children = redisReply_TRUE ? true : false;
+    Moldable::__init__();
+    const char* c_node = __node.c_str();
+    Redis::ContextQuery db(Prefix::widgets);
+    CreateQuery(db,
+        new Redis::Query("llen widgets.%s.children", c_node));
+    num_children = db.yieldResponse <int>();
 }
 
 void MoldableAbstractParent::load(){
     if (loaded() && !force_reload) return;
     Moldable::load();
-    if (has_children) {
+    if (num_children > 0) {
 #ifdef DEBUG
         std::cout << getNode() << " " << "has children!" << std::endl;
 #endif
         mApp;
         const MoldableFactory& factory = app->getFactory();
-        std::string n_children = __node.addPrefix("widgets") + ".children";
-        app->redisExec(Mogu::Keep, "llen %s", n_children.c_str());
-        size_t i_children = (size_t) redisReply_INT;
-        for (size_t i = 0; i < i_children; ++i)
+        Redis::ContextQuery db(Prefix::widgets);
+        std::shared_ptr<Redis::Query> get_children;
+        get_children = std::make_shared <Redis::Query>(
+            new Redis::Query(
+                "lrange widgets.%s.children 0 %d",getNode().c_str(),num_children)
+        );
+
+        db.appendQuery(get_children);
+        std::vector <std::string>& children_v =
+            db.yieldResponse <std::vector <std::string>&>();
+
+
+
+        for (int i = 0; i < num_children; ++i)
         {
-           app->redisExec(Mogu::Keep, "lindex %s %d", n_children.c_str(), i);
-           std::string s_child = redisReply_STRING;
+           std::string s_child = children[i];
            Moldable* m_child = factory.createMoldableWidget(s_child);
            __moldable_children.push_back(m_child);
            addWidget(m_child);

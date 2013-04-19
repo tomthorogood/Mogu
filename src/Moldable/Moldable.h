@@ -15,16 +15,9 @@
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 
-struct TemplateNodeReply {
-    bool exists;
-    std::string response;
-
-    TemplateNodeReply(const char* widgetnode, const char* field);
-};
-
 class Moldable : public Wt::WContainerWidget
 {
-    Events::EventBindery* __bindery;
+    Events::EventBindery* __bindery = nullptr;
 
     Wt::Signal <> __style_changed;
     Wt::Signal <> __failed_test;
@@ -34,24 +27,15 @@ class Moldable : public Wt::WContainerWidget
     Wt::Signal <> __index_changed;
 
 
-    bool has_events;
+    size_t num_events;
 
 protected:
     bool force_reload;
+    std::string __node;
+    const char* template_name = EMPTY;
+
     virtual void __init__();
-
-    MoguNode __node;
-    std::string getParameter(const std::string& param);
-    inline std::string getParameter(const std::string&& param)
-    {
-        return getParameter(param);
-    }
-
-    bool  hasProperty(const std::string& property);
-    inline bool  hasProperty(const std::string&& property)
-    {
-        return hasProperty(property);
-    }
+    std::string getParameter(Redis::ContextQuery&,MoguSyntax);
 
 public:
 
@@ -60,12 +44,11 @@ public:
     virtual ~Moldable();
 
     virtual std::string moldableValue()                 =0;
-    virtual void setMoldableValue(const std::string&)   =0;
-    virtual void getAttribute(
-        MoguSyntax state, NodeValue& val);
 
-    virtual bool setAttribute(
-        MoguSyntax state, NodeValue& val);
+    virtual void setMoldableValue(const std::string&)   =0;
+
+    virtual void getAttribute(MoguSyntax state, NodeValue& val);
+    virtual bool setAttribute(MoguSyntax state, NodeValue& val);
 
     inline virtual void setStyleClass (const Wt::WString& style)
     {
@@ -73,19 +56,19 @@ public:
         __style_changed.emit();
     }
 
-    inline virtual std::string getNode()
+    inline std::string getNode()
     {
-        return __node.addPrefix("widgets");
+        return __node;
     }
 
-    virtual void load();
+    virtual void load() override;
 
-    inline Wt::Signal <>& styleChanged() { return __style_changed; }
-    inline Wt::Signal <>& fail() { return __failed_test; }
-    inline Wt::Signal <>& succeed() { return __succeeded_test;}
-    inline Wt::Signal <>& onLoad() { return __loaded; }
-    inline Wt::Signal <>& hiddenChanged() { return __hidden_changed; }
-    inline Wt::Signal <>& indexChanged() { return __index_changed;}
+    inline Wt::Signal <>& styleChanged()    { return __style_changed; }
+    inline Wt::Signal <>& fail()            { return __failed_test; }
+    inline Wt::Signal <>& succeed()         { return __succeeded_test;}
+    inline Wt::Signal <>& onLoad()          { return __loaded; }
+    inline Wt::Signal <>& hiddenChanged()   { return __hidden_changed; }
+    inline Wt::Signal <>& indexChanged()    { return __index_changed;}
 
     inline void increment(int byAmount=1) {
         NodeValue v(0);
@@ -127,8 +110,7 @@ public:
         force_reload = false;
     }
 
-    //!\TODO
-    virtual void reset();
+    inline virtual void reset()     {__init__()};
 
 };
 

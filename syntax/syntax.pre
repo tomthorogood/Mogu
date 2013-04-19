@@ -53,6 +53,7 @@
 (   text|content|contents   ,   text            ,   attribute hashkey widget type state)
 (   store                   ,   store           ,   action          )
 (   child                   ,   child           ,   object          )
+(   validator               ,   validator       ,   object attribute)
 (   regex                   ,   regex           ,   attribute validator type )
 (   list                    ,   list            ,   attribute datatype )
 (   string                  ,   string          ,   attribute datatype )

@@ -15,7 +15,7 @@ class MoldableLink : public Moldable
 {
 protected:
     Wt::WAnchor* __link;
-    virtual void __init__();
+    virtual void __init__() override;
 
 public:
     MoldableLink (const std::string& node);
@@ -31,7 +31,6 @@ public:
     inline virtual void reload()
     {
         force_reload = true;
-        Moldable::__init__();
         __init__();
         load();
         force_reload = false;

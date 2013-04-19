@@ -17,7 +17,7 @@ class MoldableImage : public Moldable
     Wt::WImage* __image;
 
 protected:
-    virtual void __init__();
+    virtual void __init__() override;
 
 public:
     MoldableImage(const std::string& node);
@@ -34,7 +34,6 @@ public:
     {
         force_reload = true;
         clear();
-        Moldable::__init__();
         __init__();
         load();
         force_reload = false;

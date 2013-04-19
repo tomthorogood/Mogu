@@ -17,6 +17,7 @@ namespace Redis {
  */
 
 class ContextQuery : public QuerySet {
+
 public:
     ContextQuery(Prefix prefix);
 };

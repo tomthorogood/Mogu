@@ -29,8 +29,7 @@ Mogu::Mogu(
 {
     TurnLeft::Utils::RandomCharSet rchar;
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
-    __session = GLOBAL_SESSION;
-    __auth_token = AUTH_TOKEN;
+
     __group = DEFAULT_GROUP;
     __instanceid = rchar.generate(4);
 
@@ -49,10 +48,6 @@ Mogu::Mogu(
 
     if (entry_path != "/" && entry_path.length() > 0) {
         handlePathChange(entry_path);
-    }
-
-    if (Application::metaKeyConfigured("analytics")) {
-        loadAnalytics(Application::getMetaValue("analytics"));
     }
 
     loadMoguStyles();
