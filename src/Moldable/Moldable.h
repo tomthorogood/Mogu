@@ -27,7 +27,7 @@ class Moldable : public Wt::WContainerWidget
     Wt::Signal <> __index_changed;
 
 
-    size_t num_events;
+    size_t num_triggers;
 
 protected:
     bool force_reload;
@@ -46,6 +46,8 @@ public:
     virtual std::string moldableValue()                 =0;
 
     virtual void setMoldableValue(const std::string&)   =0;
+
+    inline size_t getNumTriggers() { return num_triggers;}
 
     virtual void getAttribute(MoguSyntax state, NodeValue& val);
     virtual bool setAttribute(MoguSyntax state, NodeValue& val);

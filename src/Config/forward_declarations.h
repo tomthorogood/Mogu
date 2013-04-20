@@ -23,6 +23,7 @@ class UserManager;
 
 namespace Redis {
 struct Field;
+class ContextQuery;
 class StorageRequeset;
 class StoragePolicyLookup;
 class SessionValueRequest;

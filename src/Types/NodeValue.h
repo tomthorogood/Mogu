@@ -53,11 +53,9 @@ public:
     NodeValue();
 
     /*!\brief Copies the value of another node value into this one. */
-    NodeValue(
-        NodeValue*);
+    NodeValue(NodeValue*);
 
-    inline void operator=(
-        const NodeValue& v)
+    inline void operator=(const NodeValue& v)
     {
         copy(&v);
     }
@@ -66,16 +64,14 @@ public:
     virtual ~NodeValue();
 
     /*!\brief Sets the string as well as __type */
-    inline void setString(
-        std::string val)
+    inline void setString(std::string val)
     {
         as_string = val;
         __type = string_value;
     }
 
     /*!\brief Sets an int as well as __type */
-    inline void setInt(
-        int val)
+    inline void setInt(int val)
     {
         resetStr();
         __numerics->as_int = val;
@@ -115,8 +111,7 @@ public:
         return __type;
     }
 
-    void copy(
-        const NodeValue*);
+    void copy(const NodeValue*);
 };
 // end NodeValue
 
