@@ -14,8 +14,9 @@
 #include <Parsers/NodeValueParser/CommandParser.h>
 class NodeValue;
 
-#include <forward_list>
+#include <list>
 #include <string>
+#include <vector>
 
 namespace Parsers {
 
@@ -30,7 +31,7 @@ class NodeValueParser
 {
 	public:
 		NodeValueParser();
-		void giveInput(const char* input, NodeValue& v);
+		void giveInput(std::string input, NodeValue& v);
 
 	private:
 		StateParser __stateParser;
@@ -38,12 +39,19 @@ class NodeValueParser
 		AttributeParser __attParser;
 		CommandParser __cmdParser;
 
-		std::forward_list<int> __tokens;
+		std::list<int> __numTokens;
+		std::vector<std::string> __strTokens;
+		const std::unordered_set<int> __actionTokens;
 		bool hasMath;
 		bool hasStates;
 		bool isEvent;
 
-		void tokenizeInput(const char* input);
+		void tokenizeInput(std::string input);
+		void packString(std::string inputString);
+
+		//debug
+		void printTokens();
+
 };
 
 }	// namespace Parsers

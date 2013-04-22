@@ -10,109 +10,79 @@
 
 //debug
 #include <iostream>
+#define PACKING_DELIMITER 999999
 
 namespace Parsers {
-/* things we need to do:
- * 1.  break the string into tokens
- * 2.  detect whether we have states we need to resolve in StateParser
- * 3.  detect whether we have math we need to resolve in MathParser
- * 4.  detect whether we need to use AttributeParser or CommandParser
- */
 
-NodeValueParser::NodeValueParser()
+NodeValueParser::NodeValueParser() : __actionTokens({16,17,18,19,21,22,23,24,25,
+													 29,32,34,39,43,63})
 {
-	__tokens = std::vector<NodeValue>();
 }
 
-void NodeValueParser::tokenizeInput(const char* input, NodeValue& v)
-{
-
-}
 void NodeValueParser::tokenizeInput(std::string input)
 {
-	//debug
-	std::cout << "input string: " << input << std::endl;
-	
 	int inputIndex = 0;
-	NodeValue* nvToken;
 	while(inputIndex < input.size())
 	{
-		// ASSUMPTION: input is non-empty
-		char delineator;
-		bool isStringLiteral = false;
+		int endTokenIndex; 
+		if(input[inputIndex] == '"')
+			endTokenIndex = input.find('"', inputIndex);
+		else
+			endTokenIndex = input.find(' ', inputIndex) - 1;
 
-		if(input[inputIndex] == '"') {
-			delineator = '"';
-			isStringLiteral = true;
-		}
-		else	
-			delineator = ' ';
+		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
-		auto endTokenIndex = input.find(delineator, inputIndex + 1);
-		auto startTokenIndex = inputIndex + (int) isStringLiteral;	//skip the "
-
-		std::string token = input.substr(startTokenIndex, 
-				endTokenIndex - startTokenIndex); 
-
-		//this next if-else chain is going to look weird because we
-		//can't test token[0] until we know that we're not dealing
-		//with a string literal (possibility of empty string)
-		if(isStringLiteral) {
-			nvToken = new NodeValue();
-			nvToken->setString(token);
-			__tokens.push_back(*nvToken);
-			inputIndex = endTokenIndex + 2;	//skip " and whitespace
-			continue;
-		}
-
-		//from this point we're assuming that token is nonempty!
-		//this means that the importer must gaurantee that no input string
-		//can have two adjacent whitespaces
-		else if(isdigit(token[0]))
-		{
-			nvToken = new NodeValue();
-			nvToken->setInt(std::stoi(token));
-			std::cout << "(int) " << nvToken->getInt() << std::endl;
-			__tokens.push_back(*nvToken);
-
-		}
-
+		if(isdigit(token[0]))
+			__numTokens.push_back(token);
 		else
 		{
-			nvToken = new NodeValue();
-			nvToken->setString(token);
-			std::cout << nvToken->getString() << std::endl;
-			__tokens.push_back(*nvToken);
+			__numTokens.push_back(PACKING_DELIMITER);
+			__strTokens.push_back(token);
 		}
-		
-		inputIndex = endTokenIndex + 1;		//skip whitespace
-	}
 
-	//debug
-	std::cout << "tokenizing finished!" << std::endl;
-	
+		inputIndex += 2;
+	}
+}
+
+void NodeValueParser::printTokens()
+{
+	std::cout << "Contents of __numTokens:" << std::endl;
+	for(auto it = __numTokens.begin(); it != __numTokens.end(); it++)
+		std::cout << *it << std::endl;
+	std::cout << "End __numTokens list." << std::endl << std::endl;
+
+	std::cout << "Contents of __strTokens:" << std::endl;
+	for(auto it = __strTokens.begin(); it != __strTokens.end(); it++)
+		std::cout << *it << std::endl;
+	std::cout << "End __strTokens list." << std::endl << std::endl;
 }
 
 void NodeValueParser::giveInput(std::string input, NodeValue& v)
 {
 	tokenizeInput(input);
-}
-bool NodeValueParser::hasStates()
-{
-	// TODO: figure out the best way to detect states!
+	printTokens();
+
+	//single-token input
+	if(__numTokens.size() == 1)
+	{
+		if(__numTokens[0] == PACKING_DELIMITER)
+			v.setString(__strTokens[0]);
+		else
+			v.setInt(__numTokens[0]);
+
+		return;
+	}
+	__stateParser.processInput(__numTokens, __strTokens);
+	__mathParser.processInput(__numTokens, __strTokens);
+
+	//if the first token is an attribute enum, send through the
+	//command parser; otherwise, send through attribute parser 
+	if(__actionTokens.count(__numTokens[0]) == 1)
+		//TODO: how is command parser going to return event data?
+		__cmdParser.processInput(__numTokens, __strTokens, v);
+	else
+		__attParser.processInput(__numTokens, __strTokens, v);
 }
 
-void NodeValueParser::evaluateMath()
-{
-}
-
-bool NodeValueParser::detectEventCommand()
-{
-}
-
-void NodeValueParser::__reset__()
-{
-	__tokens.clear();
-}
 
 }	// namespace Parsers
