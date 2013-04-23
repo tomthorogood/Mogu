@@ -93,6 +93,7 @@ class Moldable;
 class Parseable;
 class redisContext;
 class redisReply;
+class SlotManager;
 class UniqueHashPackage;
 class ApplicationManager;
 class GroupManager;

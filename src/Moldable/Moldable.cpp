@@ -121,7 +121,7 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
     }
 }
 
-bool Moldable::setAttribute(MoguSyntax state, NodeValue& val)
+bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
 {
     switch(state) {
         case MoguSyntax::index: {

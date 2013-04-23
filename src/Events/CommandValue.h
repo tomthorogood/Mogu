@@ -56,12 +56,13 @@ public:
         flags |= VALUE;
     }
 
-    inline const MoguSyntax& getAction()    { return action;}
-    inline const MoguSyntax& getObject()    { return object;}
-    inline const NodeValue& getIdentifier() { return identifier;}
-    inline const NodeValue& getArg()        { return arg;}
-    inline const NodeValue& getValue()      { return value;}
-    inline const uint8_t& getFlags()        { return flags;}
+    inline const MoguSyntax& getAction() const    { return action;}
+    inline const MoguSyntax& getObject() const    { return object;}
+    inline const NodeValue& getIdentifier() const { return identifier;}
+    inline const NodeValue& getArg() const        { return arg;}
+    inline const NodeValue& getValue() const      { return value;}
+    inline const uint8_t& getFlags() const        { return flags;}
+    inline Moldable& getWidget() const { return broadcaster;}
 
     /* To meet minimum requirements, both the action and object must
      * be set.

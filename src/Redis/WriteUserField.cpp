@@ -23,7 +23,6 @@ void writeUserField (
     const char* c_keyspace = keyspace.c_str();
     const char* c_arg = field.arg_c_str();
     const char* c_value;
-    value.c_str(c_value);
 
     /* First, we need to look up the storage policy for the field.
      * After that, we'll extrapolate the type and encryption settings for the

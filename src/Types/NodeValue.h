@@ -60,6 +60,21 @@ public:
         copy(&v);
     }
 
+    inline bool operator==(const NodeValue& v)
+    {
+        if (__type != getType()) return false;
+        switch(getType())
+        {
+            case integer_type:
+                return __numerics.as_int == v.getInt();
+            case string_type:
+                return as_string == v.getString();
+            case float_type:
+                return __numerics.as_float == v.getFloat();
+            default:return false;
+        }
+    }
+
     /*!\brief deletes the pointer to the NumericUnion*/
     virtual ~NodeValue();
 

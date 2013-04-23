@@ -12,7 +12,10 @@
 
 namespace Redis {
 
-void writeUserField(const std::string& keyspace, const Field& field);
+void writeUserField(
+        const std::string& keyspace
+        , const Field& field
+        , const NodeValue& value);
 
 }//namespace Redis
 

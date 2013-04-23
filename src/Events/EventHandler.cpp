@@ -45,3 +45,47 @@ EventHandler::EventHandler(Moldable& broadcaster)
     }
 }
 
+void EventHandler::processCommand(CommandValue& v)
+{
+    switch(v.getAction())
+    {
+        case MoguSyntax::set: //✓
+            Actions::set(broadcaster,v);
+            break;
+        case MoguSyntax::increment: //✓
+            Actions::increment(broadcaster,v);
+            break;
+        case MoguSyntax::decrement: //✓
+            Actions::decrement(broadcaster,v);
+            break;
+        case MoguSyntax::test: //✓ 
+            Actions::test(broadcaster,v);
+            break;
+        case MoguSyntax::email:
+            Actions::email(broadcaster,v);
+            break;
+        case MoguSyntax::reload:
+            Actions::reload(broadcaster,v);
+            break;
+        case MoguSyntax::append:
+            Actions::append(broadcaster,v);
+            break;
+        case MoguSyntax::replace:
+            Actions::replace(broadcaster,v);
+            break;
+        case MoguSyntax::reset:
+            Actions::reset(broadcaster,v);
+            break;
+        case MoguSyntax::remove:
+            Actions::remove(broadcaster,v);
+            break;
+        case MoguSyntax::hash:
+            Actions::hash(broadcaster,v);
+            break;
+        case MoguSyntax::javascript:
+            Actions::javascript(broadcaster,v);
+            break;
+        default:return;
+    }
+}
+

@@ -14,10 +14,10 @@
 #include <Redis/DatabaseConfigReader.h>
 #include <Redis/RedisCore.h>
 #include <Moldable/Moldable.h>
-#include <Types/ApplicationManager.h>
 #include <Security/UserManager.h>
 #include <Parsers/NodeValueParser.h>
 #include <Factories/MoldableFactory.h>
+#include <Types/SlotManager.h>
 
 #ifndef AUTH_TOKEN
 #define AUTH_TOKEN "BendTheWeb"
@@ -53,15 +53,10 @@ class Mogu: public Wt::WApplication
     ApplicationManager manager;
     Security::UserManager userManager;
 
-    std::map<std::string, std::string> __slots;
+    SlotManager __slotMgr;
 
 public:
-    enum KeepReply
-    {
-        Discard, Keep
-    };
-    Mogu(
-        const Wt::WEnvironment& env);
+    Mogu(const Wt::WEnvironment& env);
     virtual ~Mogu();
 
     /*!\brief Returns whether or not a name represents a registered widget
@@ -129,11 +124,11 @@ public:
     }
 
     inline Security::UserManager& getUserManager() {return userManager;}
-    inline std::map<std::string,std::string>& getSlots() {return __slots;}
     inline void setGroup(const std::string& group) {__group = group;}
     inline void setGroup(const std::string&& group) {__group = group;}
     inline std::string& getGroup() {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
+    inline SlotManager& slotManager() { return __slotMgr;}
     void removeWidget(const std::string& identifier);
     };
 

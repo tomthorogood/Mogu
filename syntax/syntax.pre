@@ -80,7 +80,7 @@
 (   to                      ,   to              ,   preposition     )
 (   as                      ,   as              ,   preposition     )
 (   at                      ,   at              ,   preposition     )
-(   widget                  ,   m_widget        ,   object        )
+(   widget                  ,   widget        ,   object        )
 (   retrieve|get            ,   retrieve        ,   action          )
 (   type                    ,   type            ,   hashkey         )
 (   mode                    ,   mode            ,   hashkey         )
