@@ -161,7 +161,7 @@ public:
      * the value of the reply object, but make no returns. 
      * Will continue to execute statements until a reply is expected.
      */
-    template <class T> T yieldResponse() {
+    template <class T> void yieldResponse() {
         execute_nongreedy();
     }
 
