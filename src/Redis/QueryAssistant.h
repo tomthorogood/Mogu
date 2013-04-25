@@ -11,6 +11,7 @@ enum class CommandType
 {
     set
     , get
+    , append
 };
 
 enum class NodeType

@@ -14,7 +14,7 @@
 #include <float.h>
 #include <limits.h>
 
-enum ReadType
+enum class ReadType
 {
     NO_VALUE = 0x0, string_value = 0x1, int_value = 0x2, float_value = 0x3
 };
@@ -36,13 +36,13 @@ union NumericUnion
 class NodeValue
 {
     /*!\brief one of the possible types of values */
-    ReadType __type;
+    ReadType __type = ReadType::NO_VALUE;
 
     /*!\brief If the value is a string, it is stored here. */
-    std::string as_string;
+    std::string as_string = EMPTY ;
 
     /*!\brief If the value is numeric, it is stord here. */
-    NumericUnion* __numerics;
+    NumericUnion* __numerics = nullptr;
 
     inline void resetStr()
     {
@@ -55,9 +55,27 @@ public:
     /*!\brief Copies the value of another node value into this one. */
     NodeValue(NodeValue*);
 
-    inline void operator=(const NodeValue& v)
+    inline NodeValue& operator=(const NodeValue& v)
     {
-        copy(&v);
+        __type = v.getType();
+        as_string = v.getString();
+        if (__numerics != nullptr) delete __numerics;
+        __numerics = new NumericUnion();
+        
+        switch (__type) {
+        case int_value:
+            setInt(v.getInt());
+            break;
+        case string_value:
+            setString(v.getString());
+            break;
+        case float_value:
+            setFloat(v.getFloat());
+            break;
+        default:
+            break;
+        }
+        return *this;
     }
 
     inline bool operator==(const NodeValue& v)
@@ -126,7 +144,6 @@ public:
         return __type;
     }
 
-    void copy(const NodeValue*);
 };
 // end NodeValue
 

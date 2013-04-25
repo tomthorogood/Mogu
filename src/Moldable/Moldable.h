@@ -84,7 +84,7 @@ public:
         int amt = val.getInt();
         getAttribute(MoguSyntax::index,val);
         amt += val.getInt();
-        setAttribute(MoguSyntax::index,val);
+        setAttribute(MoguSyntax::index,amt);
     }
 
     inline void decrement(int byAmount=1) {

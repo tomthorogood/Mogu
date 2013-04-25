@@ -2,7 +2,7 @@
 
 namespace Redis {
 
-QueryBluePrint bluePrintFactory ( 
+QueryBlueprint bluePrintFactory ( 
         CommandType cmd_type
         , Prefix prefix
         , NodeType node_type)
@@ -10,7 +10,7 @@ QueryBluePrint bluePrintFactory (
     QueryBluePrint blueprint;
     switch(cmd_type)
     {
-        case CommandType::set
+        case CommandType::set:
         {
             switch(node_type)
             {
@@ -26,7 +26,7 @@ QueryBluePrint bluePrintFactory (
             }//end switch node_type
         } break; //end case set
 
-        case CommandType::get
+        case CommandType::get:
         {
             switch(node_type)
             {
@@ -48,7 +48,7 @@ QueryBluePrint bluePrintFactory (
 
     switch(cmd_type)
     {
-        case CommandType::set
+        case CommandType::set:
         {
             switch(node_type)
             {
@@ -65,7 +65,7 @@ QueryBluePrint bluePrintFactory (
             }//end switch node_type
         } break; //end case set
 
-        case CommandType::get
+        case CommandType::get:
         {
             switch(node_type)
             {

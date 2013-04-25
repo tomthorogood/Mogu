@@ -20,7 +20,6 @@ void MoldableImage::__init__()
     mApp;
     Moldable::__init__();
     NodeValue v;
-    const char* c_node = __node.c_str();
     Redis::ContextQuery db(Prefix::widgets);
     std::string param = getParameter(db, MoguSyntax::source);
     app->interpreter().giveInput(param,v);

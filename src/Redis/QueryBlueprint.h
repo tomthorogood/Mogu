@@ -14,7 +14,7 @@ struct QueryBlueprint {
         specs += 1;
     }
 
-    inline void appendLiteral(const std::string literal, bool final=true)
+    inline void appendLiteral(const std::string& literal, bool final=true)
     {
         query += literal;
         if (!final) query += " ";

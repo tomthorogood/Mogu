@@ -23,23 +23,17 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     MoguSyntax widget_type;
 
     Redis::ContextQuery db(Prefix::widgets);
-    std::shared_ptr <Redis::Query> get_type;
-
-    get_type = std::make_shared <Redis::Query>(
-        new Redis::Query("hget widgets.%s %d", c_node, MoguSyntax::type)
-    );
-
-    db.appendQuery(get_type);
+    CreateQuery(db,
+        new Redis::Query("hget widgets.%s %d", c_node, MoguSyntax::type));
+    
     widget_type = (MoguSyntax) db.yieldResponse <int>();
 
     // If there was an error here, the syntax type will be 'none'
     if (widget_type == MoguSyntax::__NONE__)
     {
-        std::shared_ptr <Redis::Query> get_template;
-        get_template = std::make_shared <Redis::Query>(
-            new Redis::Query("hget widgets.%s %d", c_node, MoguSyntax::template_)
-        );
-        db.appendQuery(get_template);
+        CreateQuery(db,
+            new Redis::Query("hget widgets.%s %d", 
+                c_node, MoguSyntax::template_));
         widget_type = (MoguSyntax) db.yieldResponse <int>();
         if (widget_type == MoguSyntax::__NONE__)
         {

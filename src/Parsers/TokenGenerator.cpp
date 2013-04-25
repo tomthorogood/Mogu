@@ -8,16 +8,14 @@
 #include <Parsers/TokenGenerator.h>
 
 namespace Parsers {
-using std::string;
 
-TokenGenerator::TokenGenerator(
-    string orig)
+TokenGenerator::TokenGenerator( std::string orig)
 {
     __orig = orig;
     __cpos = 0;
 }
 
-string TokenGenerator::next(
+std::string TokenGenerator::next(
     char delim)
 {
     /* Don't bother with anything else if we've already reached the end
@@ -46,7 +44,9 @@ string TokenGenerator::next(
      * Start with the next char, in case the pairs are the same char.
      */
     size_t tend = __orig.find(chmatch, __cpos + 1);
-    if (tend == string::npos) {    // If no match can be found, goes to the end of the line.
+    
+    // If no match can be found, goes to  the end of the line.
+    if (tend == std::string::npos) {    
         tend = (__orig.length());
     }
 
@@ -57,13 +57,13 @@ string TokenGenerator::next(
 
     /* Finds the length of the substring that we'll actually be returning */
     int tlen = (tend - __cpos);
-    string token =
+    std::string token =
         wrapped ? __orig.substr(__cpos, tlen + 1) : __orig.substr(__cpos, tlen);
 
     /* Now we need to prep for the next iteration. */
     size_t tmp = tend;
     tmp = __orig.find_first_of(delim, tmp);
-    if (tmp == string::npos) {
+    if (tmp == std::string::npos) {
         __cpos = __orig.length();
     }
     else {

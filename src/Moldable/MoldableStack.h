@@ -39,6 +39,12 @@ public:
         load();
         force_reload = false;
     }
+
+    inline virtual void __init__()
+    {
+        MoldableAbstractParent::__init__();
+        __stack = new Wt::WStackedWidget();
+    }
 };
 
 

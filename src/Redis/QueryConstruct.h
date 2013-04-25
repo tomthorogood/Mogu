@@ -14,9 +14,11 @@ public:
     void appendQuery(ContextQuery& db);
 
 private:
-    std::string node;
-    std::string sarg1, sarg2;
-    int iarg1, iarg2;
+    std::string node    = EMPTY;
+    std::string sarg1   = EMPTY;
+    std::string sarg2   = EMPTY;
+    int iarg1 = -1; 
+    int iarg2 = -1;
     QueryBlueprint& blueprint;
 
 };

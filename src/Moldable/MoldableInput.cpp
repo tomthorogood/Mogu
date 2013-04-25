@@ -21,7 +21,6 @@ void MoldableInput::__init__()
 
     mApp;
     NodeValue v;
-    const char* c_node = __node.c_str();
     Redis::ContextQuery db(Prefix::widgets);
 
     __input = new Wt::WLineEdit();

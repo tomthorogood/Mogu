@@ -28,10 +28,11 @@ template <MoguSyntax T> void EventHandler::handleTrigger()
 {
     mApp;
     Parsers::NodeValueParser& nvp = app->interpreter();
-    std::queue <std::string>& commands = triggerMap.getEvents(T);
-    size_t sz = commands.size();
+    //COPY the queue, do not use the reference, or commands will only be fired
+    //once per element!
+    std::queue <std::string> commands = triggerMap.getEvents(T);
     CommandValue v;
-    while (commands.size() > 0)
+    while (!commands.empty())
     {
         std::string cmd = commands.front();
         commands.pop();
