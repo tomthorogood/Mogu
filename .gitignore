@@ -8,6 +8,7 @@
 *grindout.xml
 *.patch
 *.orig
+*.check
 mogu.conf
 docs/html
 cli/c/clihash

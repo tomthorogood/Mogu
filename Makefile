@@ -69,7 +69,7 @@ sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 
 # Find the *.cpp files located in each of the source directories.
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
-
+check_files := $(foreach source, $(sources), $(wildcard $(source)/*.check))
 # The object artifacts for the source files.
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
 
@@ -139,8 +139,8 @@ $(CURDIR)/syntax/syntax.h: syntax
 
 clean:
 	@cd $(MOGUIO_DIR) && $(MAKE) clean
-	@rm -rf $(objects) $(syntax)
-	@echo "Removed build and syntax files..."
+	@rm -rf $(objects) $(syntax) $(check_files)
+	@echo "Removed build, syntax, and check files..."
 	@rm -rf *.pyc
 	@cd syntax && $(MAKE) clean
 
