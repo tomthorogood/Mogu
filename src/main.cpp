@@ -1,8 +1,5 @@
 #include "Mogu.h"
-
-#ifdef DEBUG
 #include <exception>
-#endif
 #include <Types/syntax.h>
 
 

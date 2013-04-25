@@ -19,9 +19,9 @@ public:
     MoguException(
         const std::string& node_name, const std::string& error_msg)
         : std::exception()
+          , __node_name(node_name)
+          , __error_msg(error_msg)
     {
-        __node_name = node_name;
-        __error_msg = error_msg;
     }
     virtual const char* what() const throw ()
     {
@@ -82,25 +82,6 @@ public:
     Err_EventOrderException(
         std::string a, std::string b)
         : MoguException(a, b)
-    {
-    }
-};
-
-class Err_CorruptedSessionList: public MoguException
-{
-    std::string session_id;
-public:
-    Err_CorruptedSessionList(
-        std::string a, std::string b)
-        : MoguException(a, b)
-    {
-        session_id = b;
-    }
-    inline std::string getSessionID() const
-    {
-        return session_id;
-    }
-    virtual ~Err_CorruptedSessionList() throw ()
     {
     }
 };

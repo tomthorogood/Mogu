@@ -2,7 +2,7 @@
 
 namespace Redis {
 
-QueryBlueprint bluePrintFactory ( 
+QueryBlueprint blueprintFactory ( 
         CommandType cmd_type
         , Prefix prefix
         , NodeType node_type)

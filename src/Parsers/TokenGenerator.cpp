@@ -10,8 +10,8 @@
 namespace Parsers {
 
 TokenGenerator::TokenGenerator( std::string orig)
+:    __orig(orig)
 {
-    __orig = orig;
     __cpos = 0;
 }
 

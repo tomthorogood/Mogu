@@ -26,7 +26,7 @@ private:
     redisContext* rdb;
 
     //!\brief The reply from the last query sent to the Redis context
-    redisReply* reply;
+    redisReply* reply = nullptr;
 
     //!\brief Holds the last integer returned, where Redis stated the
     // response was an integer

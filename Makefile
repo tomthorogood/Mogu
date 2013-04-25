@@ -54,7 +54,8 @@ branch_subs := \
 
 # Directories outside the PATH that must be 
 # considered when locating header files.
-includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include -L/usr/local/lib
+chkincludes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
+includes :=  $(chkincludes) -L/usr/local/lib
 
 # The libraries that the Mogu executable will be linked against.
 libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash -lwt
@@ -69,7 +70,6 @@ sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 
 # Find the *.cpp files located in each of the source directories.
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
-check_files := $(foreach source, $(sources), $(wildcard $(source)/*.check))
 # The object artifacts for the source files.
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
 
@@ -162,3 +162,7 @@ $(DBCONF_DIR)/dbconfig.conf:
 	@mkdir -p $(DBCONF_DIR)
 	@tail -n +3 $(CURDIR)/dbconfig.conf > $@
 	@sed -i "s|<DBCONF_DIR>|$(DBCONF_DIR)|g" $@
+
+check: syntax
+	@echo "Running cppcheck on project. This could take a while..."
+	@cppcheck --std=c++11 --enable=all $(chkincludes)  $(cpp_files) 2> all.check

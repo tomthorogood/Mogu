@@ -53,23 +53,24 @@ public:
     NodeValue();
 
     /*!\brief Copies the value of another node value into this one. */
-    NodeValue(NodeValue*);
+    NodeValue(const NodeValue&);
 
     inline NodeValue& operator=(const NodeValue& v)
     {
+        if (&v == this) return;
         __type = v.getType();
         as_string = v.getString();
         if (__numerics != nullptr) delete __numerics;
         __numerics = new NumericUnion();
         
         switch (__type) {
-        case int_value:
+        case ReadType::int_value:
             setInt(v.getInt());
             break;
-        case string_value:
+        case ReadType::string_value:
             setString(v.getString());
             break;
-        case float_value:
+        case ReadType::float_value:
             setFloat(v.getFloat());
             break;
         default:
