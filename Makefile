@@ -165,4 +165,4 @@ $(DBCONF_DIR)/dbconfig.conf:
 
 check: syntax
 	@echo "Running cppcheck on project. This could take a while..."
-	@cppcheck --std=c++11 --enable=all $(chkincludes)  $(cpp_files) 2> all.check
+	@cppcheck --std=c++11 --enable=all --max-configs=1 $(chkincludes)  $(cpp_files) 2> all.check
