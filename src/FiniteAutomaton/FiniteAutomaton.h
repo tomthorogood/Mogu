@@ -28,7 +28,7 @@ public:
      * Therefore, the enum is bit aligned and allows masking. Any tests
      * for different state types will mask the type.
      */
-    enum Type
+    enum class Type
     {
         UNDEFINED = 0x0, START = 0x1, INTER = 0x2, FINAL = 0x4
     };
@@ -78,7 +78,7 @@ public:
      * the machine stops processing. If OK_CPL is reached, the machine stops
      * and it's a good thing. Otherwise (OK_ICPL), the machine continues.
      */
-    enum Status
+    enum class Status
     {
         ERR_INVALID = 0x0    //<! Input invalid
         ,
@@ -138,7 +138,7 @@ public:
     FiniteAutomatonTmpl()
         : FiniteAutomaton()
     {
-        __status = ERR_INVALID;
+        __status = Status::ERR_INVALID;
         __starting_state = 0;
     }
 
@@ -274,35 +274,35 @@ public:
         output_type = (T) parse(input);
 
         if (!(output_type & __valid_outputs))
-            return FiniteAutomaton::ERR_INVALID;
+            return Status::ERR_INVALID;
 
         /* If this is an intermediate node that must continue */
         if (__type == INTER) {
             if (__automaton->hasNextToken())
-                return FiniteAutomaton::OK_ICPL;
+                return Status::OK_ICPL;
             else {
                 AbstractState* v = destination(output_type);
                 if (v->getType() & FINAL) {
-                    return FiniteAutomaton::OK_CPL;
+                    return Status::OK_CPL;
                 }
-                return FiniteAutomaton::ERR_ICPL;
+                return Status::ERR_ICPL;
             }
         }
 
         /* If this is a final node that may not continue */
         else if (__type == FINAL) {
             if (__automaton->hasNextToken())
-                return FiniteAutomaton::ERR_ECPL;
+                return Status::ERR_ECPL;
             else
-                return FiniteAutomaton::OK_CPL;
+                return Status::OK_CPL;
         }
 
         /* If this is an intermediate node that CAN be a final node */
         else {
             if (__automaton->hasNextToken())
-                return FiniteAutomaton::OK_ICPL;
+                return Status::OK_ICPL;
             else
-                return FiniteAutomaton::OK_CPL;
+                return Status::OK_CPL;
         }
     }
 

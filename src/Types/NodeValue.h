@@ -57,7 +57,7 @@ public:
 
     inline NodeValue& operator=(const NodeValue& v)
     {
-        if (&v == this) return;
+        if (&v == this) return *this;
         __type = v.getType();
         as_string = v.getString();
         if (__numerics != nullptr) delete __numerics;
