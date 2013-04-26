@@ -6,6 +6,8 @@
  */
 #include <Parsers/NodeValueParser.h>
 #include <Types/NodeValue.h>
+#include <Types/syntax.h>
+#include <Events/CommandValue.h>
 #include <cctype>
 
 //debug
@@ -14,10 +16,14 @@
 
 namespace Parsers {
 
-NodeValueParser::NodeValueParser() : __actionTokens({16,17,18,19,21,22,23,24,25,
-													 29,32,34,39,43,63})
+NodeValueParser::NodeValueParser() : 
+	__actionTokens({16,17,18,19,21,22,23,24,25,29,32,34,39,43,63}),
+	__objectTokens({1,2,3,4,31,40,27,62})
 {
+	__stateParser.setTokens(__numTokens, __strTokens);
+	__mathParser.setTokens(__numTokens, __strTokens);
 }
+
 
 void NodeValueParser::tokenizeInput(std::string input)
 {
@@ -57,7 +63,8 @@ void NodeValueParser::printTokens()
 	std::cout << "End __strTokens list." << std::endl << std::endl;
 }
 
-void NodeValueParser::giveInput(std::string input, NodeValue& v)
+void NodeValueParser::giveInput(
+		std::string input, NodeValue& nv, Moldable* broadcaster = 0)
 {
 	tokenizeInput(input);
 	printTokens();
@@ -72,17 +79,26 @@ void NodeValueParser::giveInput(std::string input, NodeValue& v)
 
 		return;
 	}
-	__stateParser.processInput(__numTokens, __strTokens);
-	__mathParser.processInput(__numTokens, __strTokens);
 
-	//if the first token is an attribute enum, send through the
-	//command parser; otherwise, send through attribute parser 
-	if(__actionTokens.count(__numTokens[0]) == 1)
-		//TODO: how is command parser going to return event data?
-		__cmdParser.processInput(__numTokens, __strTokens, v);
+	for(auto rit=__numTokens.rbegin(); rit!=__numTokens.rend(); rit++)
+	{
+		int currToken = *rit;
+		if(currToken == MoguSyntax::OPER_OPPAREN)
+			__mathParser.processInput(rit);
+		else if(__objectTokens.count(currToken) == 1)
+			__stateParser.processInput(rit);
+	}
+
+	if(__numTokens[0] == PACKING_DELIMITER)
+		v.setString(__strTokens[0]);
 	else
-		__attParser.processInput(__numTokens, __strTokens, v);
+		v.setInt(__numTokens[0]);
+
+
 }
 
-
+void NodeValueParser::giveInput(
+		std::string input, CommandValue& cv, Moldable* broadcaster = 0)
+{
+}
 }	// namespace Parsers

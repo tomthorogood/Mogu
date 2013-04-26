@@ -19,10 +19,8 @@ class StateParser
 {
 	public:
 		StateParser();
-		void processInput(const std::list<int>& numTokens, 
-						  const std::vector<std::string>& strTokens,
-						  Moldable* broadcaster,
-						  NodeValue &v);
+		void processInput(Moldable* broadcaster,
+						  std::list<int>::reverse_iterator rit);
 
 	private:
 		const std::unordered_set<int> __objectTokens;
@@ -32,9 +30,6 @@ class StateParser
 		void resolveWidgetInfo(NodeValue &v);
 		void resolveDatabaseInfo(MoguSyntax token, NodeValue &v);
 		void resolveNamedWidgetInfo(NodeValue &v);
-
-
-
 };
 
 }	// namespace Parsers
