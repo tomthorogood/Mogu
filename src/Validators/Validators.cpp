@@ -44,11 +44,9 @@ Wt::WRegExpValidator* createRegexValidator(
     CreateQuery(db,
         new Redis::Query("hget validators.%s %d", c_node, MoguSyntax::test));
 
-    Wt::WRegExpValidator* validator = nullptr;
     std::string pattern = db.yieldResponse <std::string>();
     Wt::WString wpattern(pattern);
-    validator = new Wt::WRegExpValidator(wpattern);
-    return validator;
+    return new Wt::WRegExpValidator(wpattern);
 }
 
 }    //namespace Validators

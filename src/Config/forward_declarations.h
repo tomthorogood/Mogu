@@ -55,16 +55,7 @@ namespace Parsers {
 class ParseException;
 class TemplateMismatchException;
 class NodeValueParser;
-class WidgetTypeParser;
-class StyleDirectiveParser;
 class WtAlignmentParser;
-class FamilyMemberParser;
-class NodeValueTypeParser;
-class SignalActionParser;
-class SignalTriggerParser;
-class TokenGenerator;
-class MoguScript_Tokenizer;
-struct TokenTestPackage;
 }
 
 namespace EventNodeConfiguration {

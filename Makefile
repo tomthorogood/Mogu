@@ -7,6 +7,14 @@ DBCONFIG_DIR := /usr/share/Mogu
 
 MAX_JOBS := $(shell grep -c ^processor /proc/cpuinfo)
 
+
+# When running 'make check', you can turn this off
+# to run the check faster, with less accuracy.
+# Turning this off is not recommended unless you 
+# really want to run the checks but it's taking
+# way too long for you.
+CHECK_UNUSED := on
+
 # Default optimization level is 0
 o := 0
 
@@ -173,10 +181,15 @@ check: all.check
 	@echo "Removing unwarranted entries from all.check"
 	@sed -i "/\(information\)/d" all.check
 	@sed -i "/\(portability\)/d" all.check
-	@sed -i "/\/usr/d" all.check
+	@sed -i "/syntax.h/d" all.check # Squelch erros caused by cppcheck bugs with enum classes
+	@sed -i "s|src/||g" all.check	# Remove the 'src/' from every line for easier reading.
 	@echo "Check complete. You can view the results by opening \"all.check\""
+	@sort all.check -o all.check
 
 all.check: syntax
 	@echo "Running cppcheck on project. This could take a while..."
+ifeq ($(CHECK_UNUSED),off)
 	@cppcheck --std=c++11 -j$(MAX_JOBS) --enable=all --max-configs=1 -I$(CURDIR)/src  $(header_files) $(cpp_files) 2> all.check
-
+else
+	@cppcheck --std=c++11 --enable=all --max-configs=1 -I$(CURDIR)/src $(header_files) $(cpp_files) 2> all.check
+endif
