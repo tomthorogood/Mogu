@@ -51,13 +51,19 @@ BlowfishKeyCreator::BlowfishKeyCreator()
     BF_set_key(bf_key, 16, key);
 }
 
+BlowfishKeyCreator::BlowfishKeyCreator(const BlowfishKeyCreator& proto)
+    : bf_key(std::make_shared<BF_KEY>(proto.getKey()))
+{
+    key = nullptr;
+}
+
 BlowfishKeyCreator::~BlowfishKeyCreator()
 {
-    free(key);
-    delete bf_key;
 }
+
+
 
 BF_KEY* BlowfishKeyCreator::getKey() const
 {
-    return bf_key;
+    return bf_key.get();
 }
