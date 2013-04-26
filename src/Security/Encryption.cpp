@@ -5,14 +5,13 @@
  *      Author: tom
  */
 
-#include <Security/Security.h>
+#include <declarations.h>
 #include <crypt/BlowfishKey.h>
 #include <crypt/Packet.h>
 
 namespace Security {
 
-string encrypt(
-    string dstr)
+std::string encrypt(std::string dstr)
 {
     BlowfishKeyCreator k;
     PacketCenter e(dstr, DECRYPTED);
@@ -20,8 +19,7 @@ string encrypt(
     return e.encrypt();
 }
 
-string decrypt(
-    string estr, PacketType translation)
+std::string decrypt(std::string estr, PacketType translation)
 {
     TurnLeft::Utils::sreplace(estr, '_', ' ');
     TurnLeft::Utils::trimchar(estr);

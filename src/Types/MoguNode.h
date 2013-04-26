@@ -44,9 +44,9 @@ protected:
 
 public:
     FixedString(){}
-    FixedString(const std::string& str){__str = str;}
-    FixedString(const std::string&& str) { __str = str;}
-    FixedString(const FixedString& fstr) {__str = fstr.str();}
+    FixedString(const std::string& str):__str(str){}
+    FixedString(const std::string&& str):__str(str) { }
+    FixedString(const FixedString& fstr):__str(str) {}
     inline const std::string& str () const { return __str; }
     inline void setString(const std::string& str) { __str = str; }
     inline void setString(const std::string&& str) { __str = str;}

@@ -23,6 +23,7 @@ class UserManager;
 
 namespace Redis {
 struct Field;
+class ContextQuery;
 class StorageRequeset;
 class StoragePolicyLookup;
 class SessionValueRequest;
@@ -54,16 +55,7 @@ namespace Parsers {
 class ParseException;
 class TemplateMismatchException;
 class NodeValueParser;
-class WidgetTypeParser;
-class StyleDirectiveParser;
 class WtAlignmentParser;
-class FamilyMemberParser;
-class NodeValueTypeParser;
-class SignalActionParser;
-class SignalTriggerParser;
-class TokenGenerator;
-class MoguScript_Tokenizer;
-struct TokenTestPackage;
 }
 
 namespace EventNodeConfiguration {
@@ -92,9 +84,11 @@ class Moldable;
 class Parseable;
 class redisContext;
 class redisReply;
+class SlotManager;
 class UniqueHashPackage;
 class ApplicationManager;
 class GroupManager;
 class Listener;
+class CommandValue;
 
 #endif /* FORWARD_DECLARATIONS_H_ */

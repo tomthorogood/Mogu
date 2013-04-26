@@ -18,14 +18,14 @@ MoldableImageLink::MoldableImageLink(const std::string& node)
 
 void MoldableImageLink::__init__()
 {
-    //MoldableLink::__init__();
-    std::string param = getParameter("source");
+    MoldableLink::__init__();
+    Redis::ContextQuery db(Prefix::widgets);
     mApp;
     NodeValue v;
-    app->interpreter().giveInput(param,v);
+    app->interpreter().giveInput(
+        getParameter(db,MoguSyntax::source),v);
     std::string src = v.getString();
     __image = new Wt::WImage(src, moldableValue());
     __link->setImage(__image);
     __link->setTarget(Wt::TargetNewWindow);
 }
-

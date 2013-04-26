@@ -6,6 +6,7 @@
  */
 
 #include "MoldableText.h"
+#include <Redis/ContextQuery.h>
 #include <Mogu.h>
 
 MoldableText::MoldableText(const std::string& node)
@@ -16,13 +17,15 @@ MoldableText::MoldableText(const std::string& node)
 
 void MoldableText::__init__()
 {
-    //Moldable::__init__();
+    Moldable::__init__();
     mApp;
+    Redis::ContextQuery db(Prefix::widgets);
     __text = new Wt::WText;
-    std::string param = getParameter("content");
+
     NodeValue v;
-    app->interpreter().giveInput(param, v);
-    if (v.getString() != EMPTY)
+    app->interpreter().giveInput(getParameter(db,MoguSyntax::text), v);
+    const std::string& content = v.getString();
+    if (content != EMPTY)
     {
         __text->setText(v.getString());
     }

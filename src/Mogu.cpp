@@ -29,8 +29,7 @@ Mogu::Mogu(
 {
     TurnLeft::Utils::RandomCharSet rchar;
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
-    __session = GLOBAL_SESSION;
-    __auth_token = AUTH_TOKEN;
+
     __group = DEFAULT_GROUP;
     __instanceid = rchar.generate(4);
 
@@ -51,24 +50,12 @@ Mogu::Mogu(
         handlePathChange(entry_path);
     }
 
-    if (Application::metaKeyConfigured("analytics")) {
-        loadAnalytics(Application::getMetaValue("analytics"));
-    }
-
     loadMoguStyles();
 }
 
 void Mogu::handlePathChange(
     std::string path)
 {
-    std::string perspective = path.substr(1, path.length() - 1);
-    Parsers::TokenGenerator t(perspective);
-    std::string mold = t.next('/');
-    while (mold != EMPTY) {
-        Perspective::Handler::mold(mold);
-        mold = t.next('/');
-    }
-
 }
 
 Mogu::~Mogu()

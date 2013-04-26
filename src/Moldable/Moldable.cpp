@@ -8,48 +8,22 @@
 
 #include "Moldable.h"
 #include <Mogu.h>
-#include <Events/Bindery.h>
 #include <Types/NodeValue.h>
+#include <Redis/ContextQuery.h>
 #include <Wt/WStackedWidget>
 
 
-TemplateNodeReply::TemplateNodeReply(const char* widgetnode, const char* field)
-{
-    mApp;
-    app->redisExec(Mogu::Keep, "hexists %s template", widgetnode);
-    exists = redisReply_TRUE;
-
-    if (exists)
-    {
-       app->redisExec(Mogu::Keep, "hget %s template", widgetnode);
-       MoguNode tpl(redisReply_STRING);
-       std::string template_ = tpl.addPrefix("templates");
-       app->redisExec(Mogu::Keep, "hexists %s %s", template_.c_str(), field);
-       exists = redisReply_TRUE;
-       if (exists)
-       {
-           app->redisExec(Mogu::Keep, "hget %s %s", template_.c_str(), field);
-           response = redisReply_STRING;
-
-       }
-       else response = EMPTY;
-    }
-    else response = EMPTY;
-}
 
 Moldable::Moldable (const std::string& node)
 :
-__style_changed(this)
-,__failed_test(this)
-,__succeeded_test(this)
-,__loaded(this)
-,__hidden_changed(this)
-,__index_changed(this)
-,__node(node)
+    __style_changed(this)
+    ,__failed_test(this)
+    ,__succeeded_test(this)
+    ,__loaded(this)
+    ,__hidden_changed(this)
+    ,__index_changed(this)
+    ,__node(node)
 {
-#ifdef DEBUG
-    std::cout << "\nCREATING " << getNode() << std::endl;
-#endif
     __init__();
 }
 
@@ -61,90 +35,44 @@ Moldable::~Moldable()
 void Moldable::__init__ ()
 {
     mApp;
+    app->registerWidget(__node,this);
     Parsers::NodeValueParser& nvp = app->interpreter();
-    __bindery = nullptr;
     std::string param;
     NodeValue v;
+    Redis::ContextQuery db(Prefix::widgets);
 
-    param = getParameter("name");
-    if (param != EMPTY) app->registerWidget(param, this);
-
-    param = getParameter("class");
+    // Any widget type can have style or tooltip declarations
+    param = getParameter(db, MoguSyntax::style);
     if (param != EMPTY) {
         nvp.giveInput(param,v);
         setStyleClass(v.getString());
     }
 
-    param = getParameter("tooltip");
+    param = getParameter(db, MoguSyntax::tooltip);
     if (param != EMPTY)
     {
         nvp.giveInput(param,v);
         setToolTip(v.getString());
     }
 
-    std::string events = __node.addPrefix("widgets") + ".events";
-    app->redisExec(Mogu::Keep, "exists %s", events.c_str());
-    has_events = redisReply_TRUE ? true : false;
+    // And any widget can have events. We only see if they exist now; we
+    // do not do any event handling at this time.
+    CreateQuery(db,
+        new Redis::Query("llen widgets.%s.events", __node.c_str()));
+    num_triggers = (size_t) db.yieldResponse <int>();
 }
 
 void Moldable::load()
 {
     if (loaded() && !force_reload) return;
     Wt::WContainerWidget::load();
-
-    if (has_events) __bindery = new Events::EventBindery(this);
 }
 
-bool Moldable::hasProperty(const std::string& property){
-
-    mApp;
-    Redis::strvector v_reply;
-    std::string dbnode = __node.addPrefix("widgets") + ".properties";
-    app->redisExec(Mogu::Keep, "exists %s", dbnode.c_str());
-    if (redisReply_TRUE)
-    {
-        app->redisExec(Mogu::Keep, "sismember %s %s",
-            dbnode.c_str(), property.c_str());
-        return redisReply_TRUE;
-    }
-    else
-    {
-        app->redisExec(Mogu::Keep, "hexists %s template", dbnode.c_str());
-        if (redisReply_TRUE)
-        {
-            app->redisExec(Mogu::Keep, "hget %s template", dbnode.c_str());
-            MoguNode tpl(redisReply_STRING);
-            std::string tplnode = tpl.addPrefix("templates");
-            std::string tplprop = tplnode + ".properties";
-            app->redisExec(Mogu::Keep, "exists %s", tplprop.c_str());
-            if (redisReply_TRUE)
-            {
-                app->redisExec(Mogu::Keep, "sismember %s %s",
-                    tplprop.c_str(), property.c_str());
-                return redisReply_TRUE;
-            }
-            else return false;
-        }
-        else return false;
-    }
-}
-
-std::string Moldable::getParameter(const std::string& param)
+std::string Moldable::getParameter(Redis::ContextQuery& db, MoguSyntax param)
 {
-    mApp;
-    std::string dbnode = __node.addPrefix("widgets");
-    app->redisExec(Mogu::Keep, "hexists %s %s", dbnode.c_str(), param.c_str());
-    if (redisReply_TRUE)
-    {
-        app->redisExec(Mogu::Keep, "hget %s %s", dbnode.c_str(), param.c_str());
-        return redisReply_STRING;
-    }
-    else
-    {
-        TemplateNodeReply reply(dbnode.c_str(), param.c_str());
-        return reply.response;
-    }
-    return EMPTY;
+    CreateQuery(db,
+        new Redis::Query("hget widgets.%s %d",__node.c_str(), (int) param));
+    return db.yieldResponse <std::string>();
 }
 
 void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
@@ -193,7 +121,7 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
     }
 }
 
-bool Moldable::setAttribute(MoguSyntax state, NodeValue& val)
+bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
 {
     switch(state) {
         case MoguSyntax::index: {

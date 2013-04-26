@@ -14,7 +14,7 @@
 #include <float.h>
 #include <limits.h>
 
-enum ReadType
+enum class ReadType
 {
     NO_VALUE = 0x0, string_value = 0x1, int_value = 0x2, float_value = 0x3
 };
@@ -36,13 +36,13 @@ union NumericUnion
 class NodeValue
 {
     /*!\brief one of the possible types of values */
-    ReadType __type;
+    ReadType __type = ReadType::NO_VALUE;
 
     /*!\brief If the value is a string, it is stored here. */
-    std::string as_string;
+    std::string as_string = EMPTY ;
 
     /*!\brief If the value is numeric, it is stord here. */
-    NumericUnion* __numerics;
+    NumericUnion* __numerics = nullptr;
 
     inline void resetStr()
     {
@@ -53,29 +53,59 @@ public:
     NodeValue();
 
     /*!\brief Copies the value of another node value into this one. */
-    NodeValue(
-        NodeValue*);
+    NodeValue(const NodeValue&);
 
-    inline void operator=(
-        const NodeValue& v)
+    inline NodeValue& operator=(const NodeValue& v)
     {
-        copy(&v);
+        if (&v == this) return *this;
+        __type = v.getType();
+        as_string = v.getString();
+        if (__numerics != nullptr) delete __numerics;
+        __numerics = new NumericUnion();
+        
+        switch (__type) {
+        case ReadType::int_value:
+            setInt(v.getInt());
+            break;
+        case ReadType::string_value:
+            setString(v.getString());
+            break;
+        case ReadType::float_value:
+            setFloat(v.getFloat());
+            break;
+        default:
+            break;
+        }
+        return *this;
+    }
+
+    inline bool operator==(const NodeValue& v)
+    {
+        if (__type != getType()) return false;
+        switch(getType())
+        {
+            case integer_type:
+                return __numerics.as_int == v.getInt();
+            case string_type:
+                return as_string == v.getString();
+            case float_type:
+                return __numerics.as_float == v.getFloat();
+            default:return false;
+        }
     }
 
     /*!\brief deletes the pointer to the NumericUnion*/
     virtual ~NodeValue();
 
     /*!\brief Sets the string as well as __type */
-    inline void setString(
-        std::string val)
+    inline void setString(std::string val)
     {
         as_string = val;
         __type = string_value;
     }
 
     /*!\brief Sets an int as well as __type */
-    inline void setInt(
-        int val)
+    inline void setInt(int val)
     {
         resetStr();
         __numerics->as_int = val;
@@ -92,7 +122,7 @@ public:
     }
 
     /*!\brief If the type is `string_value`, returns a string. */
-    inline std::string& getString() const
+    inline const std::string& getString() const
     {
         return as_string;
     }
@@ -115,23 +145,6 @@ public:
         return __type;
     }
 
-    inline void c_str(const char* output) const
-    {
-       if (__type == string_value) {
-           output = as_string.c_str();
-       }
-       else if (__type == int_value) {
-           std::string str = std::to_string(__numerics->as_int);
-           output = str.c_str();
-       }
-       else if (__type == float_value) {
-           std::string str = std::to_string(__numerics->as_float);
-           output = str.c_str();
-       }
-    }
-
-    void copy(
-        const NodeValue*);
 };
 // end NodeValue
 
