@@ -5,6 +5,8 @@
 # the database config, change it here.
 DBCONFIG_DIR := /usr/share/Mogu
 
+MAX_JOBS := $(shell grep -c ^processor /proc/cpuinfo)
+
 # Default optimization level is 0
 o := 0
 
@@ -70,6 +72,10 @@ sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 
 # Find the *.cpp files located in each of the source directories.
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
+
+# Find all *.h files located in each of the source directories.
+header_files := $(foreach source, $(sources), $(wildcard $(source)/*.h))
+
 # The object artifacts for the source files.
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
 
@@ -163,6 +169,14 @@ $(DBCONF_DIR)/dbconfig.conf:
 	@tail -n +3 $(CURDIR)/dbconfig.conf > $@
 	@sed -i "s|<DBCONF_DIR>|$(DBCONF_DIR)|g" $@
 
-check: syntax
+check: all.check
+	@echo "Removing unwarranted entries from all.check"
+	@sed -i "/\(information\)/d" all.check
+	@sed -i "/\(portability\)/d" all.check
+	@sed -i "/\/usr/d" all.check
+	@echo "Check complete. You can view the results by opening \"all.check\""
+
+all.check: syntax
 	@echo "Running cppcheck on project. This could take a while..."
-	@cppcheck --std=c++11 --enable=all --max-configs=1 $(chkincludes)  $(cpp_files) 2> all.check
+	@cppcheck --std=c++11 -j$(MAX_JOBS) --enable=all --max-configs=1 -I$(CURDIR)/src  $(header_files) $(cpp_files) 2> all.check
+
