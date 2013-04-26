@@ -153,7 +153,7 @@ $(CURDIR)/syntax/syntax.h: syntax
 
 clean:
 	@cd $(MOGUIO_DIR) && $(MAKE) clean
-	@rm -rf $(objects) $(syntax) $(check_files)
+	@rm -rf $(objects) $(syntax) all.check
 	@echo "Removed build, syntax, and check files..."
 	@rm -rf *.pyc
 	@cd syntax && $(MAKE) clean
