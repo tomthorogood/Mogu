@@ -86,19 +86,19 @@ void NodeValueParser::giveInput(
 		if(currToken == MoguSyntax::OPER_OPPAREN)
 			__mathParser.processInput(rit);
 		else if(__objectTokens.count(currToken) == 1)
-			__stateParser.processInput(rit);
+			__stateParser.processInput(rit, broadcaster);
 	}
 
 	if(__numTokens[0] == PACKING_DELIMITER)
 		v.setString(__strTokens[0]);
 	else
 		v.setInt(__numTokens[0]);
-
-
 }
 
 void NodeValueParser::giveInput(
 		std::string input, CommandValue& cv, Moldable* broadcaster = 0)
 {
+
 }
+
 }	// namespace Parsers

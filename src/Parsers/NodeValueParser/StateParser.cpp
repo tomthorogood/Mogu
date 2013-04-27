@@ -15,8 +15,8 @@ StateParser::StateParser() : __objectTokens({1,2,3,4,31,40,27,62})
 {
 }
 
-void StateParser::processInput(Moldable* broadcaster,
-							   std::list<int>::reverse_iterator rit)
+void StateParser::processInput(std::list<int>::reverse_iterator rit,
+							   Moldable* broadcaster);
 {
 
 	for(auto rit=numTokens.rbegin(); rit!=numTokens.rend(); rit++)

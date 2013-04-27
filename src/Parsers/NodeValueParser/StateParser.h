@@ -19,8 +19,8 @@ class StateParser
 {
 	public:
 		StateParser();
-		void processInput(Moldable* broadcaster,
-						  std::list<int>::reverse_iterator rit);
+		void processInput(std::list<int>::reverse_iterator rit,
+						  Moldable* broadcaster);
 
 	private:
 		const std::unordered_set<int> __objectTokens;

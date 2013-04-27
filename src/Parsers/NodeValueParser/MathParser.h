@@ -12,6 +12,7 @@
 #include <stack>
 #include <string>
 #include <climits>
+#include <list>
 
 #define LOWEST_OP_ENUM (INT_MAX - 5)
 #define isOperator(a) ( (a) >= LOWEST_OP_ENUM )
@@ -27,7 +28,11 @@ class MathParser
 
 		// convert the input tokens into postfix, and then evaluate
 		// the postfix expression.
-		int processInput(std::forward_list<int>& infixExpression);
+		int processInput(std::list<int>::reverse_iterator& endRit);
+
+		// initialize tokenlists
+		void setTokens(std::list<int>& numTokens,
+					   std::vector<std::string>& strTokens);
 	
 	private:
 		// vector to build/store an equivalent postfix expression
@@ -35,6 +40,10 @@ class MathParser
 
 		// stack used for postfix evaluation
 		std::stack<int> __operandStack;
+
+		// pointers to tokenlists in NVP
+		std::list<int>* __numTokens;
+		std::vector<std::string>* __strTokens;
 
 		// compare precedence to do proper order-of-operations
 		// returns true if op1 has higher precedence than op2
