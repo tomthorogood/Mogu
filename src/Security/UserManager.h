@@ -40,7 +40,7 @@ public:
      */
     int8_t registerUser(const std::string& username, const std::string& password);
 
-    inline const std::string& getUser() {return userKeyspace;}
+    inline const std::string& getUser() const {return userKeyspace;}
 
 private:
     Redis::ContextQuery db;

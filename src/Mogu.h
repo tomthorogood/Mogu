@@ -12,7 +12,6 @@
 #include <Wt/WApplication>
 #include <signal.h>
 #include <Redis/DatabaseConfigReader.h>
-#include <Redis/RedisCore.h>
 #include <Moldable/Moldable.h>
 #include <Security/UserManager.h>
 #include <Parsers/NodeValueParser.h>
@@ -35,7 +34,7 @@ class Mogu: public Wt::WApplication
     MoldableFactory moldableFactory;
 
     /*!\brief A map of named widgets. */
-    std::unordered_map <std::string, std::shared_ptr<Moldable>> widgetRegister;
+    std::unordered_map <std::string, Moldable*> widgetRegister;
 
     void loadMoguStyles();
 
@@ -50,8 +49,7 @@ class Mogu: public Wt::WApplication
     redisContext* __redis;  //!< Database connection
     redisReply* __reply;    //!< State of last database query
 
-    ApplicationManager manager;
-    Security::UserManager userManager;
+    UserManager userManager;
 
     SlotManager __slotMgr;
 
@@ -64,11 +62,6 @@ public:
      * @param name The name used for looking up the widget
      * @param widget The pointer to the widget itself.
      */
-    inline void registerWidget(
-        std::string name, std::shared_ptr<Moldable> widget)
-    {
-        widgetRegister[name] = widget;
-    }
 
     inline void registerWidget(
         std::string name, Moldable& widget)
@@ -82,10 +75,14 @@ public:
     }
 
     /*!\brief Returns a widget from the registry based on its name. */
-    inline std::shared_ptr<Moldable> registeredWidget(
+    inline Moldable* registeredWidget(
         std::string name)
     {      
-       return widgetRegister.at(name) : nullptr; 
+        try {
+            return widgetRegister.at(name); 
+        } catch (const std::out_of_range& e) {
+            return nullptr;
+        }
     }
 
     /*!\brief Removes a widget from the registry. */
@@ -105,7 +102,7 @@ public:
         return userManager.getUser();
     }
 
-    inline Security::UserManager& getUserManager() {return userManager;}
+    inline const UserManager& getUserManager() const {return userManager;}
     inline std::string& getGroup() {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
     inline SlotManager& slotManager() { return __slotMgr;}

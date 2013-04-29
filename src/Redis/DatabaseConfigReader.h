@@ -9,9 +9,11 @@
 #define DATABASECONFIGREADER_H_
 
 #include <declarations.h>
+#include <Types/Inthash.h>
 #include <Redis/Context.h>          // Context
 #include <fstream>                  // ifstream
 #include <memory>                   // std::make_shared
+
 
 #ifndef DBCONFIG_FILE //Defined at compile time or:
 #define DBCONFIG_FILE "/usr/share/Mogu/dbconfig.conf"
@@ -44,7 +46,7 @@ enum class Prefix {
     meta        =128
 };
 
-const std::unordered_map <Prefix, std::string> prefixMap = {
+const std::unordered_map <Prefix, std::string, IntHash<Prefix>> prefixMap = {
     { Prefix::widgets,      "widgets"},
     { Prefix::data,         "data"},
     { Prefix::user,         "user"},
@@ -54,11 +56,13 @@ const std::unordered_map <Prefix, std::string> prefixMap = {
     { Prefix::policies,     "policies"}
 };
 
+
+
 namespace Application { //static namespace
 
 
 
-std::unordered_map <Prefix, std::shared_ptr <Redis::Context> >
+std::unordered_map <Prefix, std::shared_ptr <Redis::Context>, IntHash<Prefix>>
     contextMap;
 static bool contextsLoaded = false;
 
@@ -69,7 +73,7 @@ static bool contextsLoaded = false;
 /* Multiply the meta bit by 2, and subtract one, which effectively sums
  * all of the prefix bits.
  */
-const static int MAX_PREFIX_MASK = (Prefix::meta << 1) -1;
+const static int MAX_PREFIX_MASK = (((int) Prefix::meta) << 1) -1;
 const static int PREFIX_MASK = 0;
 
 /* Matches the prefix passed into one of the enumeated prefixes

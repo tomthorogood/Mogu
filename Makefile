@@ -124,9 +124,11 @@ uninstall:
 %.o: | $(CURDIR)/syntax/syntax.h
 	@echo "Compiling $@..."
 ifeq ($(dbg),on)
-	@$(command) -c -O$(o) -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
+	@$(command) -c -O$(o) -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2> build_log.txt \
+	   || (echo "Build failed! See build_log.txt for more information." && exit 2)
 else
-	@$(command) -DNDEBUG -c -O$(o) $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 
+	@$(command) -DNDEBUG -c -O$(o) $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2> build_log.txt \
+		|| (echo "Build failed! See build_log.txt for more information." && exit 2)
 endif
 
 $(turnleft):
@@ -156,6 +158,7 @@ clean:
 	@rm -rf $(objects) $(syntax) all.check
 	@echo "Removed build, syntax, and check files..."
 	@rm -rf *.pyc
+	@rm -rf build_log.txt
 	@cd syntax && $(MAKE) clean
 
 purge: clean

@@ -1,6 +1,7 @@
 #ifndef QUERYSET_H_
 #define QUERYSET_H_
 
+#include <hiredis/hiredis.h>
 #include <declarations.h>
 #include "Query.h"
 #include "Context.h"
@@ -34,7 +35,7 @@ private:
 
     //!\brief Holds the last string returned, where Redis states the
     //response was a string.
-    std::string reply_str = EMPTY:
+    std::string reply_str = EMPTY;
 
 
     //!\brief Holds the last string returned where Redis stated the
@@ -61,7 +62,7 @@ private:
         queryflags.pop(); //reveal the next flag.
         last_flags = queryflags.front(); // make it easy to see.
         redisGetReply(rdb,&vreply);
-        reply = static_cast<RedisReply*>(vreply); //!< in cpp, have to explicitly cast this.
+        reply = static_cast<redisReply*>(vreply); //!< in cpp, have to explicitly cast this.
         return reply;
     }
 
@@ -108,7 +109,7 @@ private:
                     }
                     break;
                 case REDIS_REPLY_STRING:
-                    reply_array.str.clear();
+                    reply_array_str.clear();
                     if (reply->element[e]->type == REDIS_REPLY_STRING) {
                         reply_array_str.push_back(reply->element[e]->str);
                     }
@@ -153,7 +154,7 @@ public:
      * the value of the reply object, but make no returns. 
      * Will continue to execute statements until a reply is expected.
      */
-    template <class T> void yieldResponse() {
+    template <class T> T yieldResponse() {
         execute_nongreedy();
     }
 

@@ -12,6 +12,7 @@
 #include <stack>
 #include <string>
 #include <climits>
+#include <forward_list>
 
 #define LOWEST_OP_ENUM (INT_MAX - 5)
 #define isOperator(a) ( (a) >= LOWEST_OP_ENUM )

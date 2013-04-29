@@ -12,7 +12,6 @@
 #define CONTEXTMANAGER_H_
 
 #include <declarations.h>
-#include <Redis/RedisCore.h>
 namespace Redis {
 
 
