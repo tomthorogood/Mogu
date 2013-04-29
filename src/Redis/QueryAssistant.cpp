@@ -3,40 +3,40 @@
 namespace Redis {
 
 QueryBlueprint blueprintFactory ( 
-        CommandType cmd_type
+        MoguSyntax cmd_type
         , Prefix prefix
-        , NodeType node_type)
+        , MoguSyntax node_type)
 {
     QueryBluePrint blueprint;
     switch(cmd_type)
     {
-        case CommandType::set:
+        case MoguSyntax::set:
         {
             switch(node_type)
             {
-                case NodeType::string: 
+                case MoguSyntax::string: 
                     blueprint.appendLiteral("set",false);
                     break;
-                case NodeType::hash:
+                case MoguSyntax::hash:
                     blueprint.appendLiteral("hset",false);
                     break;
-                case NodeType::list:
+                case MoguSyntax::list:
                     blueprint.appendLiteral("lset",false);
                     break;
             }//end switch node_type
         } break; //end case set
 
-        case CommandType::get:
+        case MoguSyntax::get:
         {
             switch(node_type)
             {
-                case NodeType::string:
+                case MoguSyntax::string:
                     blueprint.appendLiteral("get", false);
                     break;
-                case NodeType::hash:
+                case MoguSyntax::hash:
                     blueprint.appendLiteral("hget",false);
                     break;
-                case NodeType::list:
+                case MoguSyntax::list:
                     blueprint.appendLiteral("lindex",false);
                     break;
             }//end switch node_type
@@ -48,31 +48,31 @@ QueryBlueprint blueprintFactory (
 
     switch(cmd_type)
     {
-        case CommandType::set:
+        case MoguSyntax::set:
         {
             switch(node_type)
             {
-                case NodeType::string:
+                case MoguSyntax::string:
                     blueprint.appendString();
                     break;
-                case NodeType::hash:
+                case MoguSyntax::hash:
                     blueprint.appendString(false);
                     blueprint.appendString();
                     break;
-                case NodeType::list:
+                case MoguSyntax::list:
                     blueprint.appendInt(false);
                     blueprint.appendString();
             }//end switch node_type
         } break; //end case set
 
-        case CommandType::get:
+        case MoguSyntax::get:
         {
             switch(node_type)
             {
-                case NodeType::hash:
+                case MoguSyntax::hash:
                     blueprint.appendString();
                     break;
-                case NodeType::list:
+                case MoguSyntax::list:
                     blueprint.appendInt();
                     break;
             }//end switch node_type
