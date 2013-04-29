@@ -6,6 +6,8 @@
  */
 #include <Parsers/NodeValueParser.h>
 #include <Types/NodeValue.h>
+#include <Types/syntax.h>
+#include <Events/CommandValue.h>
 #include <cctype>
 
 //debug
@@ -14,16 +16,18 @@
 
 namespace Parsers {
 
-typedef std::forward_list<int>::iterator ListIterator;
-
-NodeValueParser::NodeValueParser()
+NodeValueParser::NodeValueParser() : 
+	__actionTokens({16,17,18,19,21,22,23,24,25,29,32,34,39,43,63}),
+	__objectTokens({1,2,3,4,31,40,27,62})
 {
+	__stateParser.setTokens(__numTokens, __strTokens);
+	__mathParser.setTokens(__numTokens, __strTokens);
 }
+
 
 void NodeValueParser::tokenizeInput(std::string input)
 {
 	int inputIndex = 0;
-	ListIterator tokensIndex = __tokens.before_begin();
 	while(inputIndex < input.size())
 	{
 		int endTokenIndex; 
@@ -35,67 +39,66 @@ void NodeValueParser::tokenizeInput(std::string input)
 		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
 		if(isdigit(token[0]))
-			tokensIndex = __tokens.insert_after(tokensIndex, std::stoi(token));
+			__numTokens.push_back(token);
 		else
-			packString(token, tokensIndex);
+		{
+			__numTokens.push_back(PACKING_DELIMITER);
+			__strTokens.push_back(token);
+		}
 
 		inputIndex += 2;
 	}
 }
 
-void NodeValueParser::packString(std::string inputString, ListIterator &tokensIndex)
-{
-	unsigned int packedInt = 0;
-	int packedIntIndex = 0;
-	int inputIndex = 0;
-
-	while(inputIndex < inputString.size())
-	{
-		packedInt |= inputString[inputIndex] << (8 * packedIntIndex);
-		inputIndex++;
-
-		if(packedIntIndex == 3)
-		{
-			tokensIndex = __tokens.insert_after(tokensIndex, packedInt);
-			packedIntIndex = 0;
-			packedInt = 0;
-			continue;
-		}
-
-		packedIntIndex++;
-	}
-
-	if(packedIntIndex != 0)
-		tokensIndex = __tokens.insert_after(tokensIndex, packedInt);
-
-	inputIndex++;
-}
-
 void NodeValueParser::printTokens()
 {
-	std::cout << "Contents of __tokens:" << std::endl;
-	for(auto it = __tokens.begin(); it != __tokens.end(); it++)
+	std::cout << "Contents of __numTokens:" << std::endl;
+	for(auto it = __numTokens.begin(); it != __numTokens.end(); it++)
 		std::cout << *it << std::endl;
-	std::cout << "End __tokens list." << std::endl;
+	std::cout << "End __numTokens list." << std::endl << std::endl;
+
+	std::cout << "Contents of __strTokens:" << std::endl;
+	for(auto it = __strTokens.begin(); it != __strTokens.end(); it++)
+		std::cout << *it << std::endl;
+	std::cout << "End __strTokens list." << std::endl << std::endl;
 }
 
-void NodeValueParser::giveInput(std::string input, NodeValue& v)
+void NodeValueParser::giveInput(
+		std::string input, NodeValue& nv, Moldable* broadcaster = 0)
 {
 	tokenizeInput(input);
 	printTokens();
+
+	//single-token input
+	if(__numTokens.size() == 1)
+	{
+		if(__numTokens[0] == PACKING_DELIMITER)
+			v.setString(__strTokens[0]);
+		else
+			v.setInt(__numTokens[0]);
+
+		return;
+	}
+
+	for(auto rit=__numTokens.rbegin(); rit!=__numTokens.rend(); rit++)
+	{
+		int currToken = *rit;
+		if(currToken == MoguSyntax::OPER_OPPAREN)
+			__mathParser.processInput(rit);
+		else if(__objectTokens.count(currToken) == 1)
+			__stateParser.processInput(rit);
+	}
+
+	if(__numTokens[0] == PACKING_DELIMITER)
+		v.setString(__strTokens[0]);
+	else
+		v.setInt(__numTokens[0]);
+
+
 }
 
-void NodeValueParser::giveInput(const char* input, NodeValue& v)
+void NodeValueParser::giveInput(
+		std::string input, CommandValue& cv, Moldable* broadcaster = 0)
 {
-	std::cout << "input string: " << input << std::endl << std::endl;
-	tokenizeInput(input);
-
-
-	std::cout << "tokens:";
-	for(auto it = __tokens.begin(); it != __tokens.end(); ++it)
-		std::cout << ' ' << *it;
-	std::cout << std::endl;
 }
-
-
 }	// namespace Parsers
