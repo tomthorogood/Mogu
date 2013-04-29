@@ -27,7 +27,7 @@ class Moldable : public Wt::WContainerWidget
     Wt::Signal <> __index_changed;
 
 
-    size_t num_events;
+    size_t num_triggers;
 
 protected:
     bool force_reload;
@@ -47,8 +47,10 @@ public:
 
     virtual void setMoldableValue(const std::string&)   =0;
 
+    inline size_t getNumTriggers() { return num_triggers;}
+
     virtual void getAttribute(MoguSyntax state, NodeValue& val);
-    virtual bool setAttribute(MoguSyntax state, NodeValue& val);
+    virtual bool setAttribute(const MoguSyntax state, const NodeValue& val);
 
     inline virtual void setStyleClass (const Wt::WString& style)
     {
@@ -82,7 +84,7 @@ public:
         int amt = val.getInt();
         getAttribute(MoguSyntax::index,val);
         amt += val.getInt();
-        setAttribute(MoguSyntax::index,val);
+        setAttribute(MoguSyntax::index,amt);
     }
 
     inline void decrement(int byAmount=1) {

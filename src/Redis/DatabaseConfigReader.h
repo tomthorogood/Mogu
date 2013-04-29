@@ -44,6 +44,16 @@ enum class Prefix {
     meta        =128
 };
 
+const std::unordered_map <Prefix, std::string> prefixMap = {
+    { Prefix::widgets,      "widgets"},
+    { Prefix::data,         "data"},
+    { Prefix::user,         "user"},
+    { Prefix::group,        "group"},
+    { Prefix::templates,    "templates"},
+    { Prefix::validators,   "validators"},
+    { Prefix::policies,     "policies"}
+};
+
 namespace Application { //static namespace
 
 

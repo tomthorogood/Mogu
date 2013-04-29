@@ -9,6 +9,7 @@
 #include "Moldable.h"
 #include <Mogu.h>
 #include <Types/NodeValue.h>
+#include <Redis/ContextQuery.h>
 #include <Wt/WStackedWidget>
 
 
@@ -58,7 +59,7 @@ void Moldable::__init__ ()
     // do not do any event handling at this time.
     CreateQuery(db,
         new Redis::Query("llen widgets.%s.events", __node.c_str()));
-    num_events = (size_t) db.yieldResponse <int>();
+    num_triggers = (size_t) db.yieldResponse <int>();
 }
 
 void Moldable::load()
@@ -120,7 +121,7 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
     }
 }
 
-bool Moldable::setAttribute(MoguSyntax state, NodeValue& val)
+bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
 {
     switch(state) {
         case MoguSyntax::index: {

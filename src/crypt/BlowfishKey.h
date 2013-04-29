@@ -6,9 +6,10 @@ class BlowfishKeyCreator
 {
 private:
     KeyArray key;
-    BF_KEY* bf_key;
+    std::shared_ptr <BF_KEY> bf_key;
 public:
     BlowfishKeyCreator();
+    BlowfishKeyCreator(const BlowfishKeyCreator&);
     ~BlowfishKeyCreator();
     BF_KEY* getKey() const;
 };

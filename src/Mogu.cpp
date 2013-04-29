@@ -56,14 +56,6 @@ Mogu::Mogu(
 void Mogu::handlePathChange(
     std::string path)
 {
-    std::string perspective = path.substr(1, path.length() - 1);
-    Parsers::TokenGenerator t(perspective);
-    std::string mold = t.next('/');
-    while (mold != EMPTY) {
-        Perspective::Handler::mold(mold);
-        mold = t.next('/');
-    }
-
 }
 
 Mogu::~Mogu()

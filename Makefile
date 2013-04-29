@@ -5,6 +5,16 @@
 # the database config, change it here.
 DBCONFIG_DIR := /usr/share/Mogu
 
+MAX_JOBS := $(shell grep -c ^processor /proc/cpuinfo)
+
+
+# When running 'make check', you can turn this off
+# to run the check faster, with less accuracy.
+# Turning this off is not recommended unless you 
+# really want to run the checks but it's taking
+# way too long for you.
+CHECK_UNUSED := on
+
 # Default optimization level is 0
 o := 0
 
@@ -54,7 +64,8 @@ branch_subs := \
 
 # Directories outside the PATH that must be 
 # considered when locating header files.
-includes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include -L/usr/local/lib
+chkincludes := -I$(CURDIR)/src -I/usr/local/include -I/usr/include
+includes :=  $(chkincludes) -L/usr/local/lib
 
 # The libraries that the Mogu executable will be linked against.
 libs := -lwt -lwthttp -lboost_signals -lhiredis -lturnleft -lcrypto -lcityhash -lwt
@@ -69,6 +80,9 @@ sources := $(source_files) $(foreach s, $(branch_subs), $(source_files)/$s)
 
 # Find the *.cpp files located in each of the source directories.
 cpp_files := $(foreach source, $(sources), $(wildcard $(source)/*.cpp))
+
+# Find all *.h files located in each of the source directories.
+header_files := $(foreach source, $(sources), $(wildcard $(source)/*.h))
 
 # The object artifacts for the source files.
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
@@ -139,8 +153,8 @@ $(CURDIR)/syntax/syntax.h: syntax
 
 clean:
 	@cd $(MOGUIO_DIR) && $(MAKE) clean
-	@rm -rf $(objects) $(syntax)
-	@echo "Removed build and syntax files..."
+	@rm -rf $(objects) $(syntax) all.check
+	@echo "Removed build, syntax, and check files..."
 	@rm -rf *.pyc
 	@cd syntax && $(MAKE) clean
 
@@ -162,3 +176,20 @@ $(DBCONF_DIR)/dbconfig.conf:
 	@mkdir -p $(DBCONF_DIR)
 	@tail -n +3 $(CURDIR)/dbconfig.conf > $@
 	@sed -i "s|<DBCONF_DIR>|$(DBCONF_DIR)|g" $@
+
+check: all.check
+	@echo "Removing unwarranted entries from all.check"
+	@sed -i "/\(information\)/d" all.check
+	@sed -i "/\(portability\)/d" all.check
+	@sed -i "/syntax.h/d" all.check # Squelch erros caused by cppcheck bugs with enum classes
+	@sed -i "s|src/||g" all.check	# Remove the 'src/' from every line for easier reading.
+	@echo "Check complete. You can view the results by opening \"all.check\""
+	@sort all.check -o all.check
+
+all.check: syntax
+	@echo "Running cppcheck on project. This could take a while..."
+ifeq ($(CHECK_UNUSED),off)
+	@cppcheck --std=c++11 -j$(MAX_JOBS) --enable=all --max-configs=1 -I$(CURDIR)/src  $(header_files) $(cpp_files) 2> all.check
+else
+	@cppcheck --std=c++11 --enable=all --max-configs=1 -I$(CURDIR)/src $(header_files) $(cpp_files) 2> all.check
+endif

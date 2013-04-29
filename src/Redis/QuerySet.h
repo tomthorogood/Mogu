@@ -26,16 +26,19 @@ private:
     redisContext* rdb;
 
     //!\brief The reply from the last query sent to the Redis context
-    redisReply* reply;
+    redisReply* reply = nullptr;
 
     //!\brief Holds the last integer returned, where Redis stated the
     // response was an integer
-    int         reply_int;
+    int         reply_int =-1;
+
+    //!\brief Holds the last string returned, where Redis states the
+    //response was a string.
+    std::string reply_str = EMPTY:
 
 
     //!\brief Holds the last string returned where Redis stated the
     // response was a string, as a pointer to an array of chars.
-    char* reply_c_string;
     bool allow_free = false;
 
     //!\brief Holds a vector of the last set of responses where REdis
@@ -49,7 +52,7 @@ private:
     std::vector <int> reply_array_int;
 
 
-    void* vreply;
+    void* vreply =nullptr;
 
     /*! Executes the next command sent to Redis, and
      * increases the flag iterator. 
@@ -58,7 +61,7 @@ private:
         queryflags.pop(); //reveal the next flag.
         last_flags = queryflags.front(); // make it easy to see.
         redisGetReply(rdb,&vreply);
-        reply = (redisReply*) vreply; //!< in cpp, have to explicitly cast this.
+        reply = static_cast<RedisReply*>(vreply); //!< in cpp, have to explicitly cast this.
         return reply;
     }
 
@@ -67,27 +70,13 @@ private:
      * then releases the reply object.
      */
     inline void assignReply() {
-        reply_type = reply->type;
-        
-        reply_int = 0;
-        if (allow_free)
-        {
-            free(reply_c_string);
-            allow_free = false;
-        }
-        reply_array_int.clear();
-        reply_array_str.clear();
-
         switch(reply_type)
         {
             case REDIS_REPLY_INTEGER: 
                 reply_int = reply->integer;
                 break;
             case REDIS_REPLY_STRING:
-                reply_c_string = (char*) malloc(strlen(reply->str));
-                strcpy(reply_c_string,reply->str);
-                allow_free = true;
-                break;  
+                reply_str = reply->str;
             case REDIS_REPLY_ARRAY:
                 assignArray();
                 break;
@@ -104,11 +93,13 @@ private:
      * Otherwise, the elements are ignored.
      */
     inline void assignArray() {
+
         int num_elements = reply->elements;
         int first_element_type = reply->element[0]->type;
         for (int e = 0; e < num_elements; ++e) {
             switch (first_element_type) {
                 case REDIS_REPLY_INTEGER:
+                    reply_array_int.clear();
                     if (reply->element[e]->type == REDIS_REPLY_INTEGER) {
                         reply_array_int.push_back(reply->element[e]->integer);
                     }
@@ -117,6 +108,7 @@ private:
                     }
                     break;
                 case REDIS_REPLY_STRING:
+                    reply_array.str.clear();
                     if (reply->element[e]->type == REDIS_REPLY_STRING) {
                         reply_array_str.push_back(reply->element[e]->str);
                     }
@@ -161,7 +153,7 @@ public:
      * the value of the reply object, but make no returns. 
      * Will continue to execute statements until a reply is expected.
      */
-    template <class T> T yieldResponse() {
+    template <class T> void yieldResponse() {
         execute_nongreedy();
     }
 
@@ -178,7 +170,7 @@ public:
     inline int replyType() { return reply_type;}
 
     //!\brief The last reply string received.
-    inline std::string replyString() { return reply_c_string;}
+    inline std::string replyString() { return reply_str;}
 
     //!\brief The last reply integer received.
     inline int replyInt() { return reply_int;}
@@ -203,45 +195,12 @@ template <> int
 
     if (reply_type == REDIS_REPLY_STRING) {
         if (last_flags & REQUIRE_INT) return 0;
-        return std::atoi(reply_c_string);
+        return std::atoi(reply_str.c_str());
     }
     else if (reply_type != REDIS_REPLY_INTEGER) {
         return 0;
     }
     return reply_int;
-}
-
-/*!\brief Forces the return of a const char* response, and continued to
- * execute Redis commands until the response is not ignored.
- * If the REQUIRE_STRING flag is set, and the response is an int,
- * the empty string will always be returned.
- */
-template <> const char*
-    QuerySet::yieldResponse <const char*> ()
-{
-    execute_nongreedy();
-
-
-    if (reply_type == REDIS_REPLY_STRING) return reply_c_string;
-
-    /* If the reply type was an integer, we can still accept it as a
-     * valid c_string reply as long as we weren't explicitly told to
-     * require a string.
-     */
-    else if (reply_type == REDIS_REPLY_INTEGER)
-    {
-        if (!last_flags & REQUIRE_STRING)
-        {
-            std::string convert = std::to_string(reply_int);
-            reply_c_string = convert.c_str();
-            return reply_c_string;
-        }
-    }
-
-    /* If we've made it here, then a string was required and the
-     * reply type was not a string. Return the empty string instead.
-     */
-    return EMPTY;
 }
 
 /*!\brief Forces the return of a string response, and
@@ -252,7 +211,7 @@ template <> const char*
 template <> std::string
     QuerySet::yieldResponse <std::string> ()
 {
-    return yieldResponse <const char*>();
+    return reply_str;
 }
 
 /*!\brief Forces the return of a boolean response,
@@ -270,10 +229,7 @@ template <> bool
         if (last_flags & REQUIRE_INT) return false;
 
         // Received nonempty response
-        else if (strcmp(reply_c_string,"") != 0) return true;
-
-        // Received empty response
-        else return false;
+        else return reply_str != EMPTY;
     }
 
     else if (reply_type == REDIS_REPLY_INTEGER) {

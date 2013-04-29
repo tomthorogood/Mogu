@@ -30,11 +30,10 @@ Wt::WValidator* createValidator(
 ;
     NodeValue vval;
     app->interpreter().giveInput(db.yieldResponse<std::string>(), vval);
-    switch (vval.getInt()) {
-    case MoguSyntax::regex: {
-      return createRegexValidator(db,c_node);
-        break;
-    }
+    switch (vval.getInt())
+    {
+        case MoguSyntax::regex:
+          return createRegexValidator(db,c_node);
     }
     return nullptr;
 }
@@ -42,15 +41,12 @@ Wt::WValidator* createValidator(
 Wt::WRegExpValidator* createRegexValidator(
     Redis::ContextQuery& db, const char* c_node)
 {
-    mApp;
     CreateQuery(db,
         new Redis::Query("hget validators.%s %d", c_node, MoguSyntax::test));
 
-    Wt::WRegExpValidator* validator = nullptr;
     std::string pattern = db.yieldResponse <std::string>();
     Wt::WString wpattern(pattern);
-    validator = new Wt::WRegExpValidator(wpattern);
-    return validator;
+    return new Wt::WRegExpValidator(wpattern);
 }
 
 }    //namespace Validators
