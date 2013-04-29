@@ -24,10 +24,6 @@ public:
         return __moldable_children;
     }
 
-    inline Moldable* moldableChild(size_t index) {
-        return __moldable_children[index];
-    }
-
     inline virtual void reload()
     {
         clear();

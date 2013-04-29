@@ -62,7 +62,7 @@ void EventHandler::processCommand(CommandValue& v)
             Actions::test(broadcaster,v);
             break;
         case MoguSyntax::email:                 //TODO 
-//          Actions::email(broadcaster,v);
+            Actions::email(broadcaster,v);
             break;
         case MoguSyntax::reload:                //✓
             Actions::reload(broadcaster,v);

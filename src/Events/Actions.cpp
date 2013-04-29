@@ -22,6 +22,11 @@ void set (Moldable& broadcaster, CommandValue& v)
             break;
         case MoguSyntax::user:  // set user field
             mApp;
+            if (v.getIdentifier() == EMPTY)
+            {
+                app->userManager().loginUser();
+                return;
+            }
             std::string node = app->getUser() + "." + v.getIdentifier();
             Redis::ContextQuery policydb(Prefix::policies);
             CreateQuery(policydb,
@@ -42,8 +47,13 @@ void set (Moldable& broadcaster, CommandValue& v)
 
             db.execute();
             break;
-        case MoguSyntax::group: // set group field
+        case MoguSyntax::group: // set group field            
             mApp;
+            if (v.getIdentifier() == EMPTY)
+            {
+                app->userManager().setActiveGroup(v.getValue().getString());
+                return;
+            }
             std::string node = app->getGroup() + 
                 "." + v.getIdentifier();
             Redis::ContextQuery policydb(Prefix::policies);
@@ -636,6 +646,17 @@ void append(Moldable& broadcaster, CommandValue& v)
                 current.getString() + v.getValue().getString());
             app->slotManager().setSlot(v.getIdentifier(), value);
             break;
+
+        case MoguSyntax::app:
+            if (v.getValue().getInt() != (int) MoguSyntax::user) return;
+            mApp;
+            SlotManager& slots = app->slotManager();
+            app->userManager().registerUser(
+                    slots.retrieveSlot("USERNAME"),
+                    slots.retrieveSlot("PASSWORD")
+            );
+            break;
+
     }
 }
 
@@ -872,4 +893,90 @@ void javascript(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
     app->doJavascript(v.getValue().getString());
+}
+
+
+void email(Moldable& broadcaster, CommandValue& v)
+{
+    mApp;
+    NodeValue message;
+    EmailManager email;
+    email.setRecipient(v.getValue.getString());
+    email.setSubject(app->slotManager().peekSlot("EMAIL_SUBJECT"));
+
+    switch(v.getObject())
+    {
+        case MoguSyntax::own:
+            broadcaster.getAttribute(
+                    (MoguSyntax) v.getArg().getInt(), message);
+            email.setMessage(message.getString());
+            break;
+
+        case MoguSyntax::widget:
+            Moldable* widget = app->registeredWidget(v.getIdentifier()).get();
+            widget->getAttribute(
+                    (MoguSyntax) v.getArg().getInt(),n message);
+            email.setMessage(message.getString());
+
+        case MoguSyntax::user:
+            std::string node = app->getUser() + "." + v.getIdentifier();
+            Redis::ContextQuery policydb(Prefix::policies);
+            CreateQuery(policydb,
+                    new Redis::Query("hget policies.%s %d",
+                    v.getIdentifier().c_str(), MoguSyntax::type));
+            NodeType node_type = nodetypeMap.at(
+                    plicydb.yieldResponse <std::string>());
+            v.setIdentifier(node);
+            Redis::ContextQuery db(Prefix::user);
+            Redis::appendQuery(
+                db
+                , Redis::CommandType::get
+                , Prefix::user
+                , node_type
+                , v);
+            message.setString(db.yieldResponse<std::string>);
+            break;
+        case MoguSyntax::group:
+            std::string node = app->getGroup() + "." + v.getIdentifier();
+            Redis::ContextQuery policydb(Prefix::policies);
+            CreateQuery(policydb,
+                    new Redis::Query("hget policies.%s %d",
+                    v.getIdentifier().c_str(), MoguSyntax::type));
+            NodeType node_type = nodetypeMap.at(
+                    plicydb.yieldResponse <std::string>());
+            v.setIdentifier(node);
+            Redis::ContextQuery db(Prefix::group);
+            Redis::appendQuery(
+                db
+                , Redis::CommandType::get
+                , Prefix::group
+                , node_type
+                , v);
+            message.setString(db.yieldResponse<std::string>());
+            break;
+
+        case MoguSyntax::slot:
+            message.setString(app->slotManager().retrieveSlot(
+                    v.getIdentifier()));
+            break;
+
+        case MoguSyntax::data:
+            Redis::ContextQuery db(Prefix::data);
+            CreateQuery(db,
+                new Redis::Query("type data.%s", v.getIdentifier()).c_str());
+            Redis::NodeType node_type = 
+                Redis::nodeTypeMap.at(
+                    db.yieldResponse <std::string>());
+            Redis::appendQuery(
+                db
+                , Redis::CommandType::get
+                , Prefix::data
+                , node_type
+                , v);
+            message.setString(db.yieldResponse <std::string>());
+            break;
+        default: return;
+    }
+    email.setMessage(message.getString());
+    email.send();
 }

@@ -29,6 +29,7 @@ Moldable::Moldable (const std::string& node)
 
 Moldable::~Moldable()
 {
+    mApp; app->deregisterWidget(__node);
     if (__bindery != nullptr) delete __bindery;
 }
 
