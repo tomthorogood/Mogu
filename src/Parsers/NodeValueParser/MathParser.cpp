@@ -36,11 +36,8 @@ int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 	// temporary operator stack for doing conversion
 	std::stack<int> opStack;
 
-	// closeable is true when the next close paren encountered would
-	// match the open paren that started this math expression.
-	bool closeable = true;
-	bool closed = false;
-
+	// do-while loop... conditional is until level = 0
+	//
 	for(auto it=endRit.base()-1; it!=__numTokens->end(); it++) {
 		int currToken = *it;
 
