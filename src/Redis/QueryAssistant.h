@@ -7,34 +7,14 @@
 
 namespace Redis {
 
-enum class CommandType
-{
-    set
-    , get
-    , append
-};
-
-enum class NodeType
-{
-    string
-    , hash
-    , list
-};
-
-const static std::unordered_map <std::string,NodeType> nodeTypeMap = {
-    {"string" : NodeType::string},
-    {"hash"   : NodeType::hash},
-    {"list"   : NodeType::list}
-};
-
 QueryBlueprint blueprintFactory ( 
         CommandType cmd_type
         , Prefix prefix
-        , NodeType node_type);
+        , MoguSyntax node_type);
 
 inline void addQuery(
         ContextQuery& db
-        , CommandType cmd_type
+        , MoguSyntax cmd_type
         , Prefix prefix
         , NodeType node_type
         , CommandValue& cmd)

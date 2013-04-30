@@ -12,7 +12,6 @@
 #include <Wt/WApplication>
 #include <signal.h>
 #include <Redis/DatabaseConfigReader.h>
-#include <Redis/RedisCore.h>
 #include <Moldable/Moldable.h>
 #include <Security/UserManager.h>
 #include <Parsers/NodeValueParser.h>
@@ -35,7 +34,7 @@ class Mogu: public Wt::WApplication
     MoldableFactory moldableFactory;
 
     /*!\brief A map of named widgets. */
-    WidgetRegister widgetRegister;
+    std::unordered_map <std::string, Moldable*> widgetRegister;
 
     void loadMoguStyles();
 
@@ -50,36 +49,19 @@ class Mogu: public Wt::WApplication
     redisContext* __redis;  //!< Database connection
     redisReply* __reply;    //!< State of last database query
 
-    ApplicationManager manager;
-    Security::UserManager userManager;
+    UserManager userManager;
 
     SlotManager __slotMgr;
 
 public:
     Mogu(const Wt::WEnvironment& env);
     virtual ~Mogu();
-
-    /*!\brief Returns whether or not a name represents a registered widget
-     * within the application instance.
-     * @param name The name of the widget being sought.
-     */
-    inline bool widgetIsRegistered(
-        std::string name)
-    {
-        WidgetRegister::iterator iter = widgetRegister.find(name);
-        return iter != widgetRegister.end();
-    }
-
+    
     /*!\brief Adds a widget into the widget registry.
      *
      * @param name The name used for looking up the widget
      * @param widget The pointer to the widget itself.
      */
-    inline void registerWidget(
-        std::string name, Moldable* widget)
-    {
-        widgetRegister[name] = widget;
-    }
 
     inline void registerWidget(
         std::string name, Moldable& widget)
@@ -96,16 +78,18 @@ public:
     inline Moldable* registeredWidget(
         std::string name)
     {      
-       return widgetIsRegistered(name) ? widgetRegister.at(name) : NULL; 
+        try {
+            return widgetRegister.at(name); 
+        } catch (const std::out_of_range& e) {
+            return nullptr;
+        }
     }
 
     /*!\brief Removes a widget from the registry. */
     inline void deregisterWidget(
         std::string name)
     {
-        if (!widgetIsRegistered(name)) return;
-        WidgetRegister::iterator iter = widgetRegister.find(name);
-        widgetRegister.erase(iter);
+        widgetRegister.erase(name);
     }
 
     inline std::string& instanceID()
@@ -113,19 +97,12 @@ public:
         return __instanceid;
     }
 
-    inline void setUser(const std::string& userkeyspace)
+    inline const std::string& getUser() const
     {
-        __user_keyspace = userkeyspace;
+        return userManager.getUser();
     }
 
-    inline const std::string& getUser()
-    {
-        return __user_keyspace;
-    }
-
-    inline Security::UserManager& getUserManager() {return userManager;}
-    inline void setGroup(const std::string& group) {__group = group;}
-    inline void setGroup(const std::string&& group) {__group = group;}
+    inline const UserManager& getUserManager() const {return userManager;}
     inline std::string& getGroup() {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
     inline SlotManager& slotManager() { return __slotMgr;}

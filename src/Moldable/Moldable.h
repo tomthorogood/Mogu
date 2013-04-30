@@ -11,7 +11,6 @@
 #include <declarations.h>
 #include <Wt/WContainerWidget>
 #include <Wt/WSignal>
-#include <Types/MoguNode.h>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 
@@ -112,7 +111,7 @@ public:
         force_reload = false;
     }
 
-    inline virtual void reset()     {__init__()};
+    inline virtual void reset()     {__init__();}
 
 };
 

@@ -8,6 +8,45 @@
 #include <Mogu.h>
 #include "Actions.h"
 
+
+Redis::NodeType getPolicyNodeType(const std::string& identifier)
+{
+    Redis::ContextQuery policydb(Prefix::policies);
+    CreateQuery(policydb,
+        new Redis::Query("hget policies.%s %d",
+            identifier.c_str(), MoguSyntax::type));
+    return (MoguSyntax) atoi(policydb.yieldResponse <std::string>().c_str());
+}
+
+void policyQuery(
+        MoguSyntax queryType
+        , Redis::ContextQuery& db
+        , Prefix prefix, CommandValue& v
+        , init = true)
+{
+    mApp;
+
+    if (!init) goto lbl_append_query
+    MoguSyntax node_type = getPolicyNodeType(v.getIdenitifer());
+    switch(prefix)
+    {
+        case Prefix::user:
+            v.setIdentifier(app->getUser() + "." + v.getIdentifier());
+            break;
+        case Prefix::group:
+            v.setIdentifier(app->getGroup() + "." + v.getIdentifier());
+            break;
+        default:return;
+    }
+lbl_append_query:
+    Redis::appendQuery(
+        db
+        , queryType
+        , prefix
+        , node_type
+        , v);
+}
+
 void set (Moldable& broadcaster, CommandValue& v)
 {
     switch(v.getObject())
@@ -22,43 +61,31 @@ void set (Moldable& broadcaster, CommandValue& v)
             break;
         case MoguSyntax::user:  // set user field
             mApp;
-            std::string node = app->getUser() + "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                   v.getIdentifier().c_str(), MoguSyntax::type));
-            NodeType node_type = nodeTypeMap.at(
-                    policydb.yieldResponse<std::string>());
-            // Rewrite the node in the proper 
-            // [userid].field_name format
-            v.setIdentifier(node);
+            if (v.getIdentifier() == EMPTY)
+            {
+                app->userManager().loginUser();
+                return;
+            }
             Redis::ContextQuery db(Prefix::user);
-            Redis::addQuery(                            
-                db
-                , Redis::CommandType::set
-                , Prefix::user
-                , node_type
-                , v); 
-
+            policyQuery(
+                    MoguSyntax::set
+                    , db
+                    , Prefix::user
+                    , v);
             db.execute();
             break;
         case MoguSyntax::group: // set group field
             mApp;
-            std::string node = app->getGroup() + 
-                "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            NodeType node_type = nodeTypeMap.at(
-                    policydb.yieldResponse<std::string>());
-            v.setIdentifier(node);
+            if (v.getIdentifier() == EMPTY)
+            {
+                app->userManager().setActiveGroup(v.getValue().getString());
+                return;
+            }
             Redis::ContextQuery db(Prefix::group);
-            Redis::addQuery(
-                db
-                , Redis::CommandType::set
+            policyQuery(
+                MoguSyntax::set
+                , db
                 , Prefix::group
-                , node_type
                 , v);
             db.execute();
             break;
@@ -105,68 +132,43 @@ void increment (Moldable& broadcaster, CommandValue& v)
             break;
 
         case MoguSyntax::user:
-            mApp;
-            std::string node = app->getUser() + "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
             Redis::ContextQuery db(Prefix::user);
+            policyQuery(
+                MoguSyntax::get
+                , db
+                , Prefix::user
+                , v);
+            policyQuery(
+                MoguSyntax::set
+                , db
+                , Prefix::user
+                , v);
 
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-    
-            v.setIdentifier(node);
-            Redis::NodeType node_type = Redis::nodeTypeMap.at(
-                    policydb.yieldResponse<std::string>());
-            
-            NodeValue final(value);
-            v.setValue(final);
-            Redis::addQuery(
-               db
-               , Redis::CommandType::get
-               , Prefix::user
-               , node_type
-               , v);
-            Redis::addQuery(
-               db
-               , Redis::CommandType::set
-               , Prefix::user
-               , node_type
-               , v);
             final.setInt(
                 final.getInt() + atoi(db.yieldResponse<std::string>().c_str())
             );
             db.execute();
             break;
+
         case MoguSyntax::group:
-            mApp;
-            std::string node = app->getGroup() + "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
             Redis::ContextQuery db(Prefix::group);
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            v.setIdentifier(node);
-            Redis::NodeType node_type = Redis::nodeTypeMap.at(
-                policydb.yieldResponse<std::string>());
-            NodeValue final(value);
-            v.setValue(final);
-            Redis::addQuery(
-                db
-                , Redis::CommandType::get
+            policyQuery(
+                MoguSyntax::get
+                , db
                 , Prefix::group
-                , node_type
                 , v);
-            Redis::addQuery(
-                db
-                , Redis::CommandType::set
+            policyQuery(
+                MoguSyntax::set
+                , db
                 , Prefix::group
-                , node_type
                 , v);
+
             final.setInt(
                 final.getInt() + atoi(db.yieldResponse<std::string>().c_str())
             );
             db.execute();
             break;
+
         case MoguSyntax::data:
             Redis::ContextQuery(Prefix::data);
             NodeValue final(value);
@@ -197,6 +199,7 @@ void increment (Moldable& broadcaster, CommandValue& v)
             app->slotManager().setSlot(
                     v.getIdentifier(), final);
             break;
+
         case MoguSyntax::widget:
             mApp;
             Moldable* widget = app->registeredWidget(v.getIdentifier());
@@ -227,68 +230,41 @@ void decrement (Moldable& broadcaster, CommandValue& v)
             break;
 
         case MoguSyntax::user:
-            mApp;
-            std::string node = app->getUser() + "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
             Redis::ContextQuery db(Prefix::user);
+            policyQuery(
+                MoguSyntax::get
+                , db
+                , Prefix::user
+                , v);
+            policyQuery(
+                MoguSyntax::set
+                , db
+                , Prefix::user
+                , v);
+            final.setInt(
+                final.getInt() - atoi(db.yieldResponse<std::string>().c_str())
+            );
+            db.execute();
+            break;
 
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-    
-            v.setIdentifier(node);
-            Redis::NodeType node_type = Redis::nodeTypeMap.at(
-                    policydb.yieldResponse<std::string>());
-            
-            NodeValue final(value);
-            v.setValue(final);
-            Redis::addQuery(
-               db
-               , Redis::CommandType::get
-               , Prefix::user
-               , node_type
-               , v);
-            Redis::addQuery(
-               db
-               , Redis::CommandType::set
-               , Prefix::user
-               , node_type
-               , v);
-            final.setInt(
-                final.getInt() - atoi(db.yieldResponse<std::string>().c_str())
-            );
-            db.execute();
-            break;
         case MoguSyntax::group:
-            mApp;
-            std::string node = app->getGroup() + "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
-            Redis::ContextQuery db(Prefix::group);
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            v.setIdentifier(node);
-            Redis::NodeType node_type = Redis::nodeTypeMap.at(
-                policydb.yieldResponse<std::string>());
-            NodeValue final(value);
-            v.setValue(final);
-            Redis::addQuery(
-                db
-                , Redis::CommandType::get
-                , Prefix::group
-                , node_type
+            Redis::ContextQuery db(Prefix::user);
+            policyQuery(
+                MoguSyntax::get
+                , db
+                , Prefix::user
                 , v);
-            Redis::addQuery(
-                db
-                , Redis::CommandType::set
-                , Prefix::group
-                , node_type
+            policyQuery(
+                MoguSyntax::set
+                , db
+                , Prefix::user
                 , v);
             final.setInt(
                 final.getInt() - atoi(db.yieldResponse<std::string>().c_str())
             );
             db.execute();
             break;
+
         case MoguSyntax::data:
             Redis::ContextQuery(Prefix::data);
             NodeValue final(value);
@@ -311,6 +287,7 @@ void decrement (Moldable& broadcaster, CommandValue& v)
             db.execute();
 
             break;
+
         case MoguSyntax::slot:
             mApp;
             NodeValue& final = app->slotManager().retrieveSlot(
@@ -319,6 +296,7 @@ void decrement (Moldable& broadcaster, CommandValue& v)
             app->slotManager().setSlot(
                     v.getIdentifier(), final);
             break;
+
         case MoguSyntax::widget:
             mApp;
             Moldable* widget = app->registeredWidget(v.getIdentifier());
@@ -348,52 +326,25 @@ void test(Moldable& broadcaster, CommandValue& v)
             broadcaster.getAttribute( (MoguSyntax) v.getArg().getInt(), value);
             break;
         case MoguSyntax::user:
-            mApp;
-            std::string node = app->getUser() + "." + v.getIdentifier();
-
-            ContextQuery policydb(Prefix::policies);
-            ContextQuery db(Prefix::user);
-
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            
-            if (v.getValue().getType() == integer_type)
-                v.getValue().setString(std::to_string(v.getValue().getInt()));
-            v.setIdentifier(node);
-            Redis::NodeType node_type = Redis::nodeTypeMap.at(
-                    policydb.yieldResponse <std::string>());
-            Redis::addQuery(
-                db
-                , Redis::CommandType::get
+            Redis::ContextQuery db(Prefix::user);
+            policyQuery(
+                MoguSyntax::get
+                , db
                 , Prefix::user
-                , node_type
-                , v);
+                ,v);
             value.setString(db.yieldResponse<std::string>()); 
             break;
+
         case MoguSyntax::group:
-            mApp;
-            std::string node = app->getGroup() + "." + v.getIdentifier();
-
-            ContextQuery policydb(Prefix::policies);
-            ContextQuery db(Prefix::user);
-
-            CreateQuery(policydb,
-                new Redis::Query("hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            v.setIdentifier(node);
-            if (v.getValue().getType() == integer_type)
-                v.getValue().setString(std::to_string(v.getValue().getInt()));
-            Redis::NodeType node_type = Redis::nodeTypeMap.at(
-                    policydb.yieldResponse <std::string>());
-            Redis::addQuery(
-                db
-                , Redis::CommandType::get
+            Redis::ContextQuery db(Prefix::group);
+            policyQuery(
+                MoguSyntax::get
+                , db
                 , Prefix::group
-                , node_type
-                , v);
-            value.setString(db.yieldResponse <std::string>());
+                ,v);
+            value.setString(db.yieldResponse<std::string>()); 
             break;
+
         case MoguSyntax::data:
             ContextQuery db(Prefix::data);
             CreateQuery(db
@@ -518,16 +469,8 @@ void append(Moldable& broadcaster, CommandValue& v)
             std::string node = app.getUser() + "." + v.getIdentifier();
             Redis::ContextQuery policydb(Prefix::policies);
             Redis::ContextQuery db(Prefix::user);
-
-            CreateQuery(policydb,
-                new Redis::Query(
-                    "hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            v.setIdentifier(node);
-
-            MoguSyntax storage_type = (MoguSyntax) atoi
-                (db.yieldResponse <std::string>().c_str());
-            Redis::NodeType node_type;
+            Redis::NodeType node_type = getPolicyNodeType(v.getIdentifier());
+            
             switch(storage_type)
             {
                 case MoguSyntax::list:
@@ -556,18 +499,10 @@ void append(Moldable& broadcaster, CommandValue& v)
         case MoguSyntax::group:
             mApp;
             std::string node = app.getGroup() + "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
             Redis::ContextQuery db(Prefix::group);
 
-            CreateQuery(policydb,
-                new Redis::Query(
-                    "hget policies.%s %d",
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            v.setIdentifier(node);
+            Redis::NodeType node_type = getPolicyNodeType(v.getIdentifier());
 
-            MoguSyntax storage_type = (MoguSyntax) atoi
-                (db.yieldResponse <std::string>().c_str());
-            Redis::NodeType node_type;
             switch(storage_type)
             {
                 case MoguSyntax::list:
@@ -636,6 +571,17 @@ void append(Moldable& broadcaster, CommandValue& v)
                 current.getString() + v.getValue().getString());
             app->slotManager().setSlot(v.getIdentifier(), value);
             break;
+
+        case MoguSyntax::app:
+            if (v.getValue().getInt() != (int) MoguSyntax::user) return;
+            mApp;
+            SlotManager& slots = app->slotManager();
+            app->userManager().registerUser(
+                    slots.retrieveSlot("USERNAME"),
+                    slots.retrieveSlot("PASSWORD")
+            );
+            break;
+
     }
 }
 
@@ -717,11 +663,8 @@ void remove (Moldable& broadcaster, CommandValue& v)
             Redis::ContextQuery policydb(Prefix::policies);
             Redis::ContextQuery db(Prefix::user);
 
-            CreateQuery(policydb
-                new Redis::Query("hget policies.%s %d", 
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            MoguSyntax storage_type = (MoguSyntax) 
-                policydb.yieldResponse <std::string>();
+            Redis::NodeType node_type = getPolicyNodeType(v.getIdentifier());
+
             bool del_node = false;
             switch(storage_type)
             {
@@ -762,14 +705,10 @@ void remove (Moldable& broadcaster, CommandValue& v)
         case MoguSyntax::group:
             mApp;
             std::string node = app->getGroup() + "." + v.getIdentifier();
-            Redis::ContextQuery policydb(Prefix::policies);
             Redis::ContextQuery db(Prefix::group);
 
-            CreateQuery(policydb
-                new Redis::Query("hget policies.%s %d", 
-                    v.getIdentifier().c_str(), MoguSyntax::type));
-            MoguSyntax storage_type = (MoguSyntax) 
-                policydb.yieldResponse <std::string>();
+            Redis::NodeType node_type = getPolicyNodeType(v.getIdentifier());
+            
             bool del_node = false;
 
             switch(storage_type)
@@ -872,4 +811,72 @@ void javascript(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
     app->doJavascript(v.getValue().getString());
+}
+
+
+void email(Moldable& broadcaster, CommandValue& v)
+{
+    mApp;
+    NodeValue message;
+    EmailManager email;
+    email.setRecipient(v.getValue.getString());
+    email.setSubject(app->slotManager().peekSlot("EMAIL_SUBJECT"));
+
+    switch(v.getObject())
+    {
+        case MoguSyntax::own:
+            broadcaster.getAttribute(
+                    (MoguSyntax) v.getArg().getInt(), message);
+            email.setMessage(message.getString());
+            break;
+
+        case MoguSyntax::widget:
+            Moldable* widget = app->registeredWidget(v.getIdentifier()).get();
+            widget->getAttribute(
+                    (MoguSyntax) v.getArg().getInt(),n message);
+            email.setMessage(message.getString());
+
+        case MoguSyntax::user:
+            Redis::ContextQuery db(Prefix::user);
+            policyQuery(
+                MoguSyntax::get
+                , db
+                , Prefix::user
+                , v);
+            message.setString(db.yieldResponse<std::string>);
+            break;
+        case MoguSyntax::group:
+            Redis::ContextQuery db(Prefix::group);
+            policyQuery(
+                MoguSyntax::get
+                , db
+                , Prefix::group
+                , v);
+            message.setString(db.yieldResponse<std::string>);
+            break;
+
+        case MoguSyntax::slot:
+            message.setString(app->slotManager().retrieveSlot(
+                    v.getIdentifier()));
+            break;
+
+        case MoguSyntax::data:
+            Redis::ContextQuery db(Prefix::data);
+            CreateQuery(db,
+                new Redis::Query("type data.%s", v.getIdentifier()).c_str());
+            Redis::NodeType node_type = 
+                Redis::nodeTypeMap.at(
+                    db.yieldResponse <std::string>());
+            Redis::appendQuery(
+                db
+                , Redis::CommandType::get
+                , Prefix::data
+                , node_type
+                , v);
+            message.setString(db.yieldResponse <std::string>());
+            break;
+        default: return;
+    }
+    email.setMessage(message.getString());
+    email.send();
 }

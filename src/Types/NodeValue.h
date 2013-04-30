@@ -51,7 +51,15 @@ class NodeValue
 
 public:
     NodeValue();
-
+    NodeValue(const int i) {
+        setInt(i);
+    }
+    NodeValue(const std::string& s) {
+        setString(s);
+    }
+    NodeValue(const float f) {
+        setFloat(f);
+    }
     /*!\brief Copies the value of another node value into this one. */
     NodeValue(const NodeValue&);
 
@@ -84,12 +92,12 @@ public:
         if (__type != getType()) return false;
         switch(getType())
         {
-            case integer_type:
-                return __numerics.as_int == v.getInt();
-            case string_type:
+            case ReadType::int_value:
+                return __numerics->as_int == v.getInt();
+            case ReadType::string_value:
                 return as_string == v.getString();
-            case float_type:
-                return __numerics.as_float == v.getFloat();
+            case ReadType::float_value:
+                return __numerics->as_float == v.getFloat();
             default:return false;
         }
     }
@@ -101,7 +109,7 @@ public:
     inline void setString(std::string val)
     {
         as_string = val;
-        __type = string_value;
+        __type = ReadType::string_value;
     }
 
     /*!\brief Sets an int as well as __type */
@@ -109,7 +117,7 @@ public:
     {
         resetStr();
         __numerics->as_int = val;
-        __type = int_value;
+        __type = ReadType::int_value;
     }
 
     /*!\brief Sets a float as well as __type */
@@ -118,7 +126,7 @@ public:
     {
         resetStr();
         __numerics->as_float = val;
-        __type = float_value;
+        __type = ReadType::float_value;
     }
 
     /*!\brief If the type is `string_value`, returns a string. */

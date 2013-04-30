@@ -46,6 +46,7 @@
 (   path                    ,   path            ,   object          )
 (   user                    ,   user            ,   object          )
 (   session                 ,   session         ,   object          )
+(   app                     ,   app             ,   object          )
 (   reset                   ,   reset           ,   action          )
 (   style|css               ,   style           ,   attribute hashkey state )
 (   group                   ,   group           ,   object          )

@@ -18,7 +18,6 @@ typedef std::map<std::string, std::string> Strings;
 }
 
 typedef TurnLeft::Utils::HungryVector<char> CharVector;
-typedef std::unordered_map<std::string, Moldable*> WidgetRegister;
 
 typedef std::vector<std::pair<char, char> > CharCouplets;
 

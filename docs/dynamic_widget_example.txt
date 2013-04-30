@@ -1,0 +1,51 @@
+set user.1.bar "foo"
+set user.2.bar "food"
+set user.3.bar "foot
+
+set group.1.members [1,2]
+set group.1.moderator [3]
+
+
+policy bar
+    type    :   string
+    read    :   user group moderator
+    write   :   user moderator
+    encrypt :   yes
+end policy
+
+widget userbars
+    content :   member bar
+    access  :   moderator
+    template:   barlist
+    type    :   container
+end widget
+
+template barlist
+    type    :   container
+    children
+        :display
+        :input
+        :submit
+    end children
+end template
+
+template barlist:display
+    type    :   text
+    content :   member bar
+end template
+
+template barlist:input
+    type    :   input
+    content :   EMPTY
+end template
+
+template barlist:submit
+    type    :   button
+    content :   "Edit"
+
+    events
+        when clicked {
+            set member foo to member barlist:input text
+        }
+    end events
+end template

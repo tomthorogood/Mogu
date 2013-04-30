@@ -12,18 +12,14 @@
 
 class EmailManager
 {
-    std::string to_address;
-    std::string subject;
-    std::string message;
+    std::string to_address  = EMPTY;
+    std::string subject     = EMPTY;
+    std::string message     = EMPTY;
 
-    uint8_t __status;
+    uint8_t __status        = 0;
 public:
     EmailManager()
     {
-        __status = 0;
-        to_address = EMPTY;
-        subject = EMPTY;
-        message = EMPTY;
     }
     ~EmailManager()
     {
