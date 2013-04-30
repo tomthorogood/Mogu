@@ -15,8 +15,20 @@ StateParser::StateParser() : __objectTokens({1,2,3,4,31,40,27,62})
 {
 }
 
+<<<<<<< HEAD
 void StateParser::processInput(std::list<int>::reverse_iterator rit,
 							   Moldable* broadcaster);
+=======
+void StateParser::setTokens(std::list<int>& numTokens,
+							std::vector<std::string>& strTokens)
+{
+	__numTokens = numTokens;
+	__strTokens = strTokens;
+}
+
+void StateParser::processInput(std::list<int>::reverse_iterator rit,
+							   Moldable* broadcaster)
+>>>>>>> 10507bec0743e303841951054a223078ed455f19
 {
 
 	for(auto rit=numTokens.rbegin(); rit!=numTokens.rend(); rit++)
@@ -52,24 +64,6 @@ void StateParser::processInput(std::list<int>::reverse_iterator rit,
 
 		}
 	}
-
-}
-
-void StateParser::resolveWidgetInfo(NodeValue &v)
-{
-	int arg = *(--rit);
-	targetWidget.getAttribute(arg, v);
-
-}
-
-void StateParser::resolveDatabaseInfo(MoguSyntax token, NodeValue &v)
-{
-}
-
-
-void StateParser::resolveNamedWidgetInfo(NodeValue &v)
-{
-	std::string widgetName = strTokens[
 
 }
 
