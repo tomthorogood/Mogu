@@ -4,11 +4,11 @@
 #include <declarations.h>
 #include "QueryBlueprint.h"
 #include "QueryConstruct.h"
-
+#include <Events/CommandValue.h>
 namespace Redis {
 
 QueryBlueprint blueprintFactory ( 
-        CommandType cmd_type
+        MoguSyntax cmd_type
         , Prefix prefix
         , MoguSyntax node_type);
 
@@ -16,7 +16,7 @@ inline void addQuery(
         ContextQuery& db
         , MoguSyntax cmd_type
         , Prefix prefix
-        , NodeType node_type
+        , MoguSyntax node_type
         , CommandValue& cmd)
 {
     QueryBlueprint blueprint = blueprintFactory(cmd_type,prefix,node_type);

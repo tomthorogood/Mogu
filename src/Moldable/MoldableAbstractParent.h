@@ -20,6 +20,7 @@ public:
     MoldableAbstractParent (const std::string& node);
     virtual void load() override;
 
+    virtual void appendChild(Moldable*) =0;
     inline const std::vector<Moldable*>& moldableChildren() {
         return __moldable_children;
     }

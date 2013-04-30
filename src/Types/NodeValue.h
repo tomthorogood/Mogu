@@ -105,6 +105,33 @@ public:
     /*!\brief deletes the pointer to the NumericUnion*/
     virtual ~NodeValue();
 
+    inline MoguSyntax getSyntax() const
+    {
+        switch(getType()) {
+            case ReadType::string_value:
+                return (MoguSyntax) atoi(as_string.c_str());
+            case ReadType::int_value:
+                return (MoguSyntax) __numerics->as_int;
+            default: return MoguSyntax::__NONE__;
+        }
+    }
+
+    operator MoguSyntax() const {
+        return getSyntax();
+    }
+
+    operator std::string() const {
+        return as_string;
+    }
+
+    operator int() const {
+        return __numerics->as_int;
+    }
+
+    operator float() const {
+        return __numerics->as_float;
+    }
+
     /*!\brief Sets the string as well as __type */
     inline void setString(std::string val)
     {

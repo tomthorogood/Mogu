@@ -9,7 +9,7 @@
 #define COMMANDVALUE_H_
 
 #include <declarations.h>
-
+#include <Types/NodeValue.h>
 
 /*!\brief Holds parsed values from the CommandParser which can then be used
  * to handle events.
@@ -58,18 +58,19 @@ public:
 
     inline const MoguSyntax& getAction() const    { return action;}
     inline const MoguSyntax& getObject() const    { return object;}
-    inline const NodeValue& getIdentifier() const { return identifier;}
-    inline const NodeValue& getArg() const        { return arg;}
-    inline const NodeValue& getValue() const      { return value;}
+    inline const std::string& getIdentifier() const 
+        { return identifier.getString();}
+    inline NodeValue& getArg()         { return arg;}
+    inline NodeValue& getValue()       { return value;}
     inline const uint8_t& getFlags() const        { return flags;}
-    inline Moldable& getWidget() const { return broadcaster;}
+    inline Moldable& getWidget()  { return broadcaster;}
 
     /* To meet minimum requirements, both the action and object must
      * be set.
      */
     inline bool valid()
     {
-        return (flags & action) && (flags & object);
+        return (flags & ACTION) && (flags & OBJECT);
     }
 
 private:

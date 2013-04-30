@@ -243,4 +243,3 @@ with open(OUTPUT_H,"a") as f:
     f.write("#endif //SYNTAX_H_")
 
 os.system('sed -i "s/template/template_/g" syntax.h')
-os.system('sed -i "s/remove/remove_/g" syntax.h')

@@ -24,7 +24,7 @@ struct QueryBlueprint {
     {
         query += "%d";
         if (!final) query += " ";
-        specs << = 1;
+        specs <<= 1;
     }
 
     inline size_t nargs() 

@@ -6,7 +6,7 @@
 #include "Query.h"
 #include "Context.h"
 #include <queue>
-
+#include <memory>
 namespace Redis {
 
 class QuerySet 
@@ -156,6 +156,7 @@ public:
      */
     template <class T> T yieldResponse() {
         execute_nongreedy();
+        return nullptr;
     }
 
     inline void execute()
@@ -215,6 +216,16 @@ template <> std::string
     return reply_str;
 }
 
+template <> MoguSyntax
+    QuerySet::yieldResponse <MoguSyntax>()
+{
+    if (reply_type == REDIS_REPLY_STRING) 
+        return (MoguSyntax) atoi(reply_str.c_str());
+    else if (reply_type == REDIS_REPLY_INTEGER)
+        return (MoguSyntax) reply_int;
+    return MoguSyntax::__NONE__;
+}
+
 /*!\brief Forces the return of a boolean response,
  * and continues to execute redis commands until the response
  * is not ignored. If the REQUIRE_INT flag is set, and the responxse
@@ -246,8 +257,8 @@ template <> bool
  * and continues to execute redis commands until the response is not
  * ignored.
  */
-template <> std::vector<int>&
-    QuerySet::yieldResponse <std::vector <int>&> ()
+template <> std::vector<int>
+    QuerySet::yieldResponse <std::vector <int>> ()
 {
     execute_nongreedy();
     return reply_array_int;
@@ -257,8 +268,8 @@ template <> std::vector<int>&
  * and continues to execute redis commands until the response is
  * not ignored.
  */
-template <> std::vector <std::string>&
-    QuerySet::yieldResponse <std::vector <std::string>&> ()
+template <> std::vector <std::string>
+    QuerySet::yieldResponse <std::vector <std::string>> ()
 {
     execute_nongreedy();
     return reply_array_str;

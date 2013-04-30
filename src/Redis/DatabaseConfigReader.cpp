@@ -8,6 +8,8 @@
 
 namespace Application {
 
+static bool contextsLoaded = false;
+
 Prefix matchPrefix(const std::string& prefix)
 {
     if (prefix.find("widgets") != std::string::npos) {

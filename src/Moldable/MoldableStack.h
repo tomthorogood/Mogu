@@ -24,7 +24,9 @@ public:
     //Stacked containers do not have textual values
     inline virtual std::string moldableValue() { return EMPTY; }
     inline virtual void setMoldableValue(const std::string& str) {}
-
+    virtual void appendChild(Moldable* child) {
+        __stack->addChild(child);
+    }
     inline virtual void addWidget(Wt::WWidget* moldable)
     {
         __stack->addWidget(moldable);

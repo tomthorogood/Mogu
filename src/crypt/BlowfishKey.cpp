@@ -26,7 +26,7 @@
 BlowfishKeyCreator::BlowfishKeyCreator()
 {
     key = (KeyArray) malloc(sizeof(KeyArray) * 16);
-    bf_key = new BF_KEY();
+    bf_key = std::make_shared<BF_KEY>();
 
     key[0] = (unsigned char) _BF_RANDOM_BYTE_0;
     key[1] = (unsigned char) _BF_RANDOM_BYTE_1;
@@ -48,11 +48,11 @@ BlowfishKeyCreator::BlowfishKeyCreator()
     //KeyArray const_key =
     //		reinterpret_cast <KeyArray> (key);
 
-    BF_set_key(bf_key, 16, key);
+    BF_set_key(bf_key.get(), 16, key);
 }
 
 BlowfishKeyCreator::BlowfishKeyCreator(const BlowfishKeyCreator& proto)
-    : bf_key(std::make_shared<BF_KEY>(proto.getKey()))
+    : bf_key(proto.getKey())
 {
     key = nullptr;
 }

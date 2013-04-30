@@ -9,7 +9,9 @@
 #define TRIGGERMAP_H_
 
 #include <declarations.h>
+#include <queue>
 #include <set>
+#include <Types/Inthash.h>
 
 class TriggerMap {
 public:
@@ -25,7 +27,7 @@ public:
         return __map.at(trigger);
     }
 
-    inline const std::vector <MoguSyntax>& getTriggers()
+    inline const std::set <MoguSyntax>& getTriggers()
     {
         if (triggers.size() < __map.size()) populateTriggers();
         return triggers;
@@ -34,7 +36,7 @@ public:
 private:
     void populateTriggers();
     std::set <MoguSyntax> triggers;
-    std::unordered_map <MoguSyntax,std::queue <std::string>> __map;
+    std::unordered_map <MoguSyntax,std::queue <std::string>, IntHash<MoguSyntax>> __map;
 };
 
 

@@ -5,36 +5,32 @@
  *      Author: tom
  */
 
-#include <Static.h>
 #include <algorithm>
 
 #include <Wt/WApplication>
+#include <Wt/WOverlayLoadingIndicator>
 #include <Wt/WScrollArea>
 #include <Wt/WString>
 #include <Wt/WStackedWidget>
 #include <TurnLeftLib/Utils/randomcharset.h>
 
-#include <Mogu.h>
-#include <Moldable/Moldable.h>
-#include <Factories/MoldableFactory.h>
-#include <Perspectives/PerspectiveHandler.h>
-#include <hash.h>
-#include <Wt/WOverlayLoadingIndicator>
-#include <Types/ApplicationManager.h>
+#include "Mogu.h"
+#include "Moldable/Moldable.h"
+#include "Factories/MoldableFactory.h"
+#include "hash.h"
+#include "Redis/DatabaseConfigReader.h"
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)
-    : Wt::WApplication(env), widgetRegister(), manager(*this), userManager(
-        *this)
+    : Wt::WApplication(env), widgetRegister()
 {
+    Application::loadDatabaseContexts();
     TurnLeft::Utils::RandomCharSet rchar;
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
 
     __group = DEFAULT_GROUP;
     __instanceid = rchar.generate(4);
 
-    __reply = 0;
-    __redis = redisConnect(REDIS_HOST, REDIS_PORT);
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
 

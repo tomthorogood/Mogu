@@ -12,7 +12,7 @@ QuerySet::QuerySet(Context& context)
 {
     rdb = redisConnect(context.host,context.port);
     auto select = std::make_shared<Query>(
-        new Query("select %d", context.db_num));
+        Query("select %d", context.db_num));
     appendQuery(select, IGNORE_RESPONSE);
 }
 
