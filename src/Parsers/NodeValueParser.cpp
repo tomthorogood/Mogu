@@ -86,7 +86,7 @@ void NodeValueParser::giveInput(
 		if(currToken == MoguSyntax::OPER_OPPAREN)
 			__mathParser.processInput(rit);
 		else if(__objectTokens.count(currToken) == 1)
-			__stateParser.processInput(rit);
+			__stateParser.processInput(rit, broadcaster);
 	}
 
 	if(__numTokens[0] == PACKING_DELIMITER)
