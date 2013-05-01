@@ -25,10 +25,8 @@ class NodeValueParser
 {
 	public:
 		NodeValueParser();
-		void giveInput(
-				std::string input, NodeValue& nv, Moldable* broadcaster = 0);
-		void giveInput(
-				std::string input, CommandValue& cv, Moldable* broadcaster = 0);
+		void giveInput(std::string input, NodeValue& nv, Moldable* bc);
+		void giveInput(std::string input, CommandValue& cv);
 
 	private:
 		StateParser __stateParser;
@@ -36,10 +34,12 @@ class NodeValueParser
 
 		std::list<int> __numTokens;
 		std::vector<std::string> __strTokens;
-		const std::unordered_set<int> __actionTokens;
+		const std::unordered_set<int> __flippedActionTokens;
 		const std::unordered_set<int> __objectTokens;
+		const std::unordered_set<int> __prepositionTokens;
 
 		void tokenizeInput(std::string input);
+		bool reduceExpressions(Moldable* bc);
 
 		//debug
 		void printTokens();
