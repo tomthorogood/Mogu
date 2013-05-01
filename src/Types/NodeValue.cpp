@@ -6,7 +6,7 @@
 NodeValue::NodeValue()
 {
     __numerics = new NumericUnion();
-    __type = NO_VALUE;
+    __type = ReadType::NO_VALUE;
     as_string = EMPTY;
 }
 
@@ -14,16 +14,16 @@ NodeValue::NodeValue( const NodeValue& proto)
 {
     if (&proto == this) return;
     __numerics = new NumericUnion();
-    __type = NO_VALUE;
+    __type = ReadType::NO_VALUE;
     switch(proto.getType())
     {
-        case (ReadType::as_integer):
+        case (ReadType::int_value):
             setInt(proto.getInt());
             break;
-        case (ReadType::as_string):
+        case (ReadType::string_value):
             setString(proto.getString());
             break;
-        case (ReadType::as_float):
+        case (ReadType::float_value):
             setFloat(proto.getFloat());
             break;
         default:break;
