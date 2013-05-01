@@ -41,6 +41,8 @@ public:
     int8_t registerUser(const std::string& username, const std::string& password);
 
     inline const std::string& getUser() const {return userKeyspace;}
+    
+    bool setActiveGroup(const std::string& groupid); 
 
 private:
     Redis::ContextQuery db;
@@ -66,6 +68,7 @@ private:
         , const std::string& password   //encrypted
         , const std::string& salt       //encrypted
     );
+
 
     bool keyspaceExists(const std::string& userhash);
 };

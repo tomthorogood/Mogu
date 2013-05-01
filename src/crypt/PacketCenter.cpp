@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 PacketCenter::PacketCenter(
-    string input, PacketType inputType)
+    std::string input, PacketType inputType)
 {
     /* By default the encryption key is set to null, for obvious reasons. */
     _key = 0;
@@ -44,7 +44,7 @@ PacketCenter::PacketCenter(
          */
         for (unsigned int p = 0; p < num_packets; p++) {
             int start = p * Packet::SIZE;
-            string substring = input.substr(start, Packet::SIZE);
+            std::string substring = input.substr(start, Packet::SIZE);
 
             Packet* pkt = new Packet(substring);
             packet_vector->add(pkt);
@@ -100,8 +100,7 @@ PacketCenter::PacketCenter(
     }
 }
 
-Packet* PacketCenter::fill_packet(
-    string input, int& start)
+Packet* PacketCenter::fill_packet(std::string input, int& start)
 {
     /* `bytes` refers to the number of bytes currently discovered. */
     int bytes = 0;
@@ -123,7 +122,7 @@ Packet* PacketCenter::fill_packet(
         advance++;
     }
     /* Extract only eight bytes of ciphertext. */
-    string sub = input.substr(start, advance);
+    std::string sub = input.substr(start, advance);
 
     /* Create a CharArray out of the string, padding it with one extra
      * byte to avoid a segfault when handing to the Blowfish methods.
@@ -137,7 +136,7 @@ Packet* PacketCenter::fill_packet(
     return new Packet(_sub);
 }
 
-string PacketCenter::process_encryption(
+std::string PacketCenter::process_encryption(
     PacketType type, PacketType translation)
 {
     PacketType other_type = type == ENCRYPTED ? DECRYPTED : ENCRYPTED;
@@ -175,7 +174,7 @@ string PacketCenter::process_encryption(
     std::stringstream strm;
     int num_packets = write->size();
     for (int i = 0; i < num_packets; i++) {
-        string str;
+        std::string str;
         if (other_type == ENCRYPTED) {
             str = write->at(i)->int_str();
         }
@@ -198,13 +197,13 @@ string PacketCenter::process_encryption(
     return strm.str();
 }
 
-string PacketCenter::decrypt(
+std::string PacketCenter::decrypt(
     PacketType translation)
 {
     return process_encryption(ENCRYPTED, translation);
 }
 
-string PacketCenter::encrypt()
+std::string PacketCenter::encrypt()
 {
     return process_encryption(DECRYPTED, DO_TRANSLATION);
 }

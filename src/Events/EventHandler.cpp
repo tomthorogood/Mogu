@@ -7,12 +7,15 @@
 
 
 #include "EventHandler.h"
+#include "Actions.h"
+#include "TriggerMap.h"
+#include "CommandValue.h"
 
 EventHandler::EventHandler(Moldable& broadcaster)
 : triggerMap(broadcaster.getNumTriggers(), broadcaster.getNode()),
   broadcaster(broadcaster)
 {
-    for (auto trigger : triggerMap.getTriggers())
+    for (MoguSyntax trigger : triggerMap.getTriggers())
     {
         switch (trigger)
         {
@@ -49,34 +52,34 @@ void EventHandler::processCommand(CommandValue& v)
 {
     switch(v.getAction())
     {
-        case MoguSyntax::set:                   //✓
+        case MoguSyntax::set:                   
             Actions::set(broadcaster,v);
             break;
-        case MoguSyntax::increment:             //✓
+        case MoguSyntax::increment:             
             Actions::increment(broadcaster,v);
             break;
-        case MoguSyntax::decrement:             //✓
+        case MoguSyntax::decrement:             
             Actions::decrement(broadcaster,v);
             break;
-        case MoguSyntax::test:                  //✓ 
+        case MoguSyntax::test:                   
             Actions::test(broadcaster,v);
             break;
-        case MoguSyntax::email:                 //TODO 
+        case MoguSyntax::email:
             Actions::email(broadcaster,v);
             break;
-        case MoguSyntax::reload:                //✓
+        case MoguSyntax::reload:                
             Actions::reload(broadcaster,v);
             break;
-        case MoguSyntax::append:                //✓
+        case MoguSyntax::append:                
             Actions::append(broadcaster,v);
             break;
-        case MoguSyntax::reset:                 //✓
+        case MoguSyntax::reset:                 
             Actions::reset(broadcaster,v);
             break;
         case MoguSyntax::remove:
-            Actions::remove(broadcaster,v);     //✓
+            Actions::remove(broadcaster,v);     
             break;
-        case MoguSyntax::javascript:            //✓
+        case MoguSyntax::javascript:            
             Actions::javascript(broadcaster,v);
             break;
         default:return;

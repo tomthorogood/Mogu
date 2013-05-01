@@ -10,6 +10,7 @@
 
 #include "QuerySet.h"
 #include <declarations.h>
+#include <Redis/DatabaseConfigReader.h>
 namespace Redis {
 
 /*!\brief Abstracts the Context lookup tighten constraints
@@ -19,7 +20,7 @@ namespace Redis {
 class ContextQuery : public QuerySet {
 
 public:
-    ContextQuery(Prefix prefix);
+    ContextQuery(Prefix);
 };
 
 }//namespace Redis

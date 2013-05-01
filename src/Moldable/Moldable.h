@@ -45,6 +45,7 @@ public:
     virtual std::string moldableValue()                 =0;
 
     virtual void setMoldableValue(const std::string&)   =0;
+    virtual void appendChild(Moldable*){}
 
     inline size_t getNumTriggers() { return num_triggers;}
 
@@ -112,6 +113,10 @@ public:
     }
 
     inline virtual void reset()     {__init__();}
+
+    inline virtual void rmChild(Moldable* child) {
+        removeChild(child);
+    }
 
 };
 

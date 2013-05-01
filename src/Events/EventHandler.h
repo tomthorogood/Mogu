@@ -8,8 +8,9 @@
 #ifndef EVENTHANDLER_H_
 #define EVENTHANDLER_H_
 
-#include <Mogu.h>
 #include <declarations.h>
+#include <Mogu.h>
+#include "TriggerMap.h"
 
 class EventHandler
 {
@@ -31,7 +32,7 @@ template <MoguSyntax T> void EventHandler::handleTrigger()
     //COPY the queue, do not use the reference, or commands will only be fired
     //once per element!
     std::queue <std::string> commands = triggerMap.getEvents(T);
-    CommandValue v;
+    CommandValue v(broadcaster);
     while (!commands.empty())
     {
         std::string cmd = commands.front();

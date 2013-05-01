@@ -16,7 +16,7 @@ TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
     const char* c_node = widget.c_str();
     db.appendQuery(
         std::make_shared <Redis::Query>(
-            new Redis::Query(
+            Redis::Query(
                 "lrange widgets.%s.events 0 %d", c_node, num_triggers))
     );
 
@@ -33,15 +33,17 @@ TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
         // Get the number of commands associated with that trigger
         db.appendQuery(
             std::make_shared <Redis::Query>(
-                new Redis::Query("llen widgets.%s.events.%d", c_node, trigger)
+                Redis::Query("llen widgets.%s.events.%d", c_node, trigger)
             ),
         Redis::ContextQuery::REQUIRE_INT);
 
         // Get the commands associated with that trigger
-        CreateQuery(db, new Redis::Query(
-            "lrange widgets.%s.events.%d 0 %d",
-            c_node, trigger, db.yieldResponse <int>()
-        ));
+        CreateQuery(db,
+                "lrange widgets.%s.events.%d 0 %d",
+                c_node,
+                trigger,
+                db.yieldResponse <int>()
+        );
 
         // Store the commands in the trigger queue
         for (std::string command : db.yieldResponse <std::vector <std::string>>())
@@ -54,7 +56,7 @@ TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
 void TriggerMap::populateTriggers()
 {
     auto iter = __map.begin();
-    for (int i = 0; i < __map.size(); ++i)
+    for (size_t i = 0; i < __map.size(); ++i)
     {
         triggers.insert(iter->first);
     }

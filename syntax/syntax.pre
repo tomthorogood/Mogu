@@ -43,6 +43,7 @@
 (   append                  ,   append          ,   action          )
 (   replace                 ,   replace         ,   action          )
 (   set                     ,   set             ,   action datatype )
+(   get                     ,   get             ,   action          ) 
 (   path                    ,   path            ,   object          )
 (   user                    ,   user            ,   object          )
 (   session                 ,   session         ,   object          )

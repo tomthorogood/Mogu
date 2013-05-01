@@ -7,7 +7,9 @@
 
 #ifndef SLOTMANAGER_H_
 #define SLOTMANAGER_H_
-
+#include "NodeValue.h"
+#include <unordered_map>
+#include <string>
 class SlotManager
 {
 public:

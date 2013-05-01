@@ -90,5 +90,6 @@ class ApplicationManager;
 class GroupManager;
 class Listener;
 class CommandValue;
+class TriggerMap;
 
 #endif /* FORWARD_DECLARATIONS_H_ */

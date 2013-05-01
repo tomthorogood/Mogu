@@ -1,3 +1,4 @@
+#include <memory>
 #include <openssl/blowfish.h>
 
 typedef unsigned char* KeyArray;

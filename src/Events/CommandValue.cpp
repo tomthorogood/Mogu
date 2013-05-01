@@ -10,7 +10,7 @@
 #include <Types/NodeValue.h>
 
 CommandValue::CommandValue(Moldable& widget)
-: broadcaster(widget), identifier(), arg(), value()
+: identifier(), arg(), value(), broadcaster(widget)
 {
 
 }

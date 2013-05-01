@@ -5,6 +5,9 @@
 # the database config, change it here.
 DBCONFIG_DIR := /usr/share/Mogu
 
+# When running 'make check', you can set this to use fewer 
+# cores. This has no effect unless 'CHECK_UNUSED' is off, as
+# by default it will only use one processor.
 MAX_JOBS := $(shell grep -c ^processor /proc/cpuinfo)
 
 
@@ -26,6 +29,8 @@ o := 0
 # be deployed
 
 INSTALL := /usr/share/Mogu
+
+EXAMINE := 
 
 #-------------------------------#
 # Executables #
@@ -121,14 +126,21 @@ uninstall:
 	@rm -rf /etc/mogu # Deprecate
 	@echo "Uninstall complete."
 
+
+compile-ignore-errors: $(objects)
+	@echo "Job complete. Check build_log.txt for information about the builds."
+
+compile-examine: 
+	$(MAKE) clean && $(MAKE) $(EXAMINE).o && vi build_log.txt
+
 %.o: | $(CURDIR)/syntax/syntax.h
 	@echo "Compiling $@..."
 ifeq ($(dbg),on)
-	@$(command) -c -O$(o) -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2> build_log.txt \
-	   || (echo "Build failed! See build_log.txt for more information." && exit 2)
+	@$(command) -c -O$(o) -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2>> build_log.txt \
+	   || (echo "Build failed! See build_log.txt for more information." )
 else
-	@$(command) -DNDEBUG -c -O$(o) $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2> build_log.txt \
-		|| (echo "Build failed! See build_log.txt for more information." && exit 2)
+	@$(command) -DNDEBUG -c -O$(o) $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2>> build_log.txt \
+		|| (echo "Build failed! See build_log.txt for more information.")
 endif
 
 $(turnleft):

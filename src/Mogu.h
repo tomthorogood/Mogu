@@ -85,6 +85,9 @@ public:
         }
     }
 
+    //TODO
+    inline void setPath(const std::string&){}
+
     /*!\brief Removes a widget from the registry. */
     inline void deregisterWidget(
         std::string name)
@@ -102,11 +105,11 @@ public:
         return userManager.getUser();
     }
 
-    inline const UserManager& getUserManager() const {return userManager;}
+    inline UserManager& getUserManager() {return userManager;}
     inline std::string& getGroup() {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
     inline SlotManager& slotManager() { return __slotMgr;}
     void removeWidget(const std::string& identifier);
-    };
+};
 
 #endif /* PREVIEW_H_ */

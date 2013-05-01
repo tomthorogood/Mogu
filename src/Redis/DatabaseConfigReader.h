@@ -64,7 +64,6 @@ namespace Application { //static namespace
 
 std::unordered_map <Prefix, std::shared_ptr <Redis::Context>, IntHash<Prefix>>
     contextMap;
-static bool contextsLoaded = false;
 
 /* These bits are used as flags in PREFIX_MASK to ensure
  * that an application has all database prefixes properly configured.
