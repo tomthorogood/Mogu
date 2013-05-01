@@ -19,18 +19,27 @@ MathParser::MathParser()
 
 }
 
-int MathParser::evaluate(std::vector<std::string>& infixExpression)
+void MathParser::setTokens(std::list<int>& numTokens,
+						   std::vector<std::string>& strTokens)
+{
+	__numTokens = numTokens;
+	__strTokens = strTokens;
+}
+
+int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 {
 	__reset__();
 
 	// *** CONVERT INFIX -> POSTFIX ***
-	__postfixExpression.reserve(infixExpression.size());
+	__postfixExpression.reserve(__numTokens->size());
 
 	// temporary operator stack for doing conversion
 	std::stack<int> opStack;
 
-	for(int i=0; i<infixExpression.size(); i++) {
-		int currToken = atoi(infixExpression[i].c_str());
+	// do-while loop... conditional is until level = 0
+	//
+	for(auto it=endRit.base()-1; it!=__numTokens->end(); it++) {
+		int currToken = *it;
 
 		if(isOperator(currToken)) {
 			switch(currToken) {
