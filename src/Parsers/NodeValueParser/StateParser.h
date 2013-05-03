@@ -13,6 +13,8 @@
 #include <vector>
 #include <unordered_set>
 
+#include <Moldable/Moldable.h>
+
 namespace Parsers {
 
 class StateParser
