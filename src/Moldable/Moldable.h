@@ -14,9 +14,34 @@
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 
-class Moldable : public Wt::WContainerWidget
+class Moldable;
+
+/* Simply an interface that can be implemented to expose widgets to 
+ * manipulation by external forces.
+ */
+class AllowsExternalManipulation : public Wt::WContainerWidget
 {
-    Events::EventBindery* __bindery = nullptr;
+public:
+    /* Overload of the parent class 'addChild' widget to provide public access
+     * to manipulate widget tree for Moldable widgets.
+     */
+    inline virtual void addChild(Moldable* child) {
+        Wt::WContainerWidget::addChild(reinterpret_cast<Wt::WWidget*>(child));
+    }
+
+    /* Overload of the parent class 'removeChild' widget to provide public
+     * access to manipulate widget tree for Moldable widgets.
+     */
+    inline virtual void removeChild(Moldable* child) {
+        Wt::WContainerWidget::removeChild(reinterpret_cast<Wt::WWidget*>(child));
+    }
+};
+
+
+class Moldable : 
+    public AllowsExternalManipulation
+{
+    EventHandler* __bindery = nullptr;
 
     Wt::Signal <> __style_changed;
     Wt::Signal <> __failed_test;
@@ -113,11 +138,7 @@ public:
     }
 
     inline virtual void reset()     {__init__();}
-
-    inline virtual void rmChild(Moldable* child) {
-        removeChild(child);
-    }
-
 };
+
 
 #endif /* MOLDABLE_H_ */

@@ -1,15 +1,18 @@
 #ifndef QUERY_H_
 #define QUERY_H_
 
-#include <declarations.h>
+#include <stdarg.h>
+
 namespace Redis {
 
 struct Query {
-        Query(const char* querystring, ...);
-        const char* querystring;
-        va_list args;
+    Query(const char* querystring, ...);
+    
+    const char* querystring;
+    
+    va_list args;
 
-        ~Query();
+    ~Query();
 };
 
 }//namespace Redis

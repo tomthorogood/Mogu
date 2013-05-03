@@ -7,6 +7,7 @@
 #include "DatabaseConfigReader.h"
 
 namespace Application {
+static int PREFIX_MASK = 0;
 
 static bool contextsLoaded = false;
 
@@ -129,8 +130,7 @@ void loadDatabaseContexts() {
             //!\todo Throw an error if a context not fully defined.
             if (completion < 7) return;
             auto context =
-                std::make_shared<Redis::Context>(
-                    new Redis::Context(port,host.c_str(),dbnum));
+                std::make_shared<Redis::Context>(port,host.c_str(),dbnum);
             contextMap[prefix] = context;
         }
     }

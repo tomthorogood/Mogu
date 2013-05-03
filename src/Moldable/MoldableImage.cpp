@@ -7,6 +7,7 @@
 
 #include "MoldableImage.h"
 #include <Redis/ContextQuery.h>
+#include <Parsers/NodeValueParser.h>
 #include <Mogu.h>
 
 MoldableImage::MoldableImage (const std::string& node)

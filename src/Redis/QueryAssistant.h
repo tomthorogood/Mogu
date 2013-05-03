@@ -5,6 +5,7 @@
 #include "QueryBlueprint.h"
 #include "QueryConstruct.h"
 #include <Events/CommandValue.h>
+#include "DatabaseConfigReader.h"
 namespace Redis {
 
 QueryBlueprint blueprintFactory ( 

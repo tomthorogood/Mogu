@@ -32,11 +32,16 @@ public:
         flags |= ACTION;
     }
 
+    inline void setAction(int iAction)
+    { setAction( static_cast<MoguSyntax> (iAction)); }
+
     inline void setObject(MoguSyntax object_)
     {
         object = object_;
         flags |= OBJECT;
     }
+    inline void setObject(int iObject)
+    { setObject( static_cast<MoguSyntax> (iObject)); }
 
     inline void setIdentifier(const NodeValue& identifier_)
     {

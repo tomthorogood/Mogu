@@ -14,9 +14,10 @@
 #include <Redis/DatabaseConfigReader.h>
 #include <Moldable/Moldable.h>
 #include <Security/UserManager.h>
-#include <Parsers/NodeValueParser.h>
 #include <Factories/MoldableFactory.h>
 #include <Types/SlotManager.h>
+#include <Parsers/NodeValueParser.h>
+
 
 #ifndef AUTH_TOKEN
 #define AUTH_TOKEN "BendTheWeb"

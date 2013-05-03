@@ -73,7 +73,6 @@ std::unordered_map <Prefix, std::shared_ptr <Redis::Context>, IntHash<Prefix>>
  * all of the prefix bits.
  */
 const static int MAX_PREFIX_MASK = (((int) Prefix::meta) << 1) -1;
-const static int PREFIX_MASK = 0;
 
 /* Matches the prefix passed into one of the enumeated prefixes
  * stated in the ContextManager header, and sets the corresponding

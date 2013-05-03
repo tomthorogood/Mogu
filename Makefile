@@ -27,7 +27,6 @@ o := 0
 
 # Directory where the final build will 
 # be deployed
-
 INSTALL := /usr/share/Mogu
 
 EXAMINE := 
@@ -91,12 +90,16 @@ header_files := $(foreach source, $(sources), $(wildcard $(source)/*.h))
 
 # The object artifacts for the source files.
 objects := $(patsubst %.cpp, %.o, $(cpp_files))
+logs := $(patsubst %.o, %.o.log, $(objects))
 
 # Mogu requires C++11 standards
-flags := -std=c++0x
+flags := -std=c++0x -Wall -O$(o) -DDBCONF_DIR=$(DBCONF_DIR)
 
-# The c++ compiling flag
-command := g++ $(flags) -Wall -O$(o) -DDBCONF_DIR=$(DBCONF_DIR)
+ifeq ($(dbg),on)
+	$(flags) += -DDEBUG -g -pg
+else
+	$(flags) += -DNDEBUG
+endif
 
 # Location of some pre-compile requirements
 MOGUIO_DIR = $(CURDIR)/cli/src/moguio
@@ -105,14 +108,9 @@ SYNTAX_PY := $(MOGUIO_DIR)/moguio/syntax.py
 
 all: $(objects) | $(turnleft)
 	@echo "Linking object files and creating executable..."
-ifeq ($(dbg),on)
-	@g++ $(flags) -Wall -O$(o) -DDEBUG -DTERM_ENABLED -g -pg -o $(executable) $(objects) $(libs)
-else
-	@g++ $(flags) -Wall -O$(o) -DNDEBUG -o $(executable) $(objects) $(libs)
-endif
+	@g++ $(flags) -o $(executable) $(objects) $(libs)
 
-
-install: mogu.conf
+install: mogu.conf $(executable)
 	@$(MAKE) uninstall
 	@mkdir -p $(INSTALL)
 	@cp $< $(INSTALL)
@@ -121,27 +119,37 @@ install: mogu.conf
 	@ln -s $(INSTALL)/mogu /usr/bin/mogu
 
 uninstall:
-	@rm -f $(INSTALL)/$(EXECUTABLE)
+	@rm -rf $(INSTALL)/$(EXECUTABLE)
 	@unlink /usr/bin/mogu
-	@rm -rf /etc/mogu # Deprecate
 	@echo "Uninstall complete."
 
-
+# Attempts to compile all object files, but does not stop if there are
+# errors, instead appending them to 'build_log.txt' for you to review.
+# This is meant only for developing in Mogu, as it will help to find issues
+# before attempting a full, linked build.
 compile-ignore-errors: $(objects)
 	@echo "Job complete. Check build_log.txt for information about the builds."
 
-compile-examine: 
-	$(MAKE) clean && $(MAKE) $(EXAMINE).o && vi build_log.txt
 
-%.o: | $(CURDIR)/syntax/syntax.h
-	@echo "Compiling $@..."
-ifeq ($(dbg),on)
-	@$(command) -c -O$(o) -DDEBUG -DTERM_ENABLED -g -pg $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2>> build_log.txt \
-	   || (echo "Build failed! See build_log.txt for more information." )
-else
-	@$(command) -DNDEBUG -c -O$(o) $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2>> build_log.txt \
-		|| (echo "Build failed! See build_log.txt for more information.")
-endif
+# Attempts to compile a single object file, and then stops regarldess of
+# whether the compilation was a success, opening the output in 'vim'. If
+# there is no output, then everything is great. Rejoice.
+compile-examine: 
+	$(MAKE) clean && $(MAKE) $(EXAMINE).o && vi build/$(EXAMINE).o.log
+
+%.o: | build $(CURDIR)/syntax/syntax.h
+	@echo -n "Compiling $@..."
+	@(g++ $(flags) -c $(includes) -o $@ $(patsubst %.o, %.cpp, $@) 2> $@.log \
+		&& echo "DONE!") \
+		|| (echo "failed. See log in build/ for more information.")
+	@if [ -s $@.log ]; then \
+		mv $@.log build/ ; \
+	else \
+   		rm -f $@.log; \
+	fi
+
+build:
+	mkdir -p $(CURDIR)/build
 
 $(turnleft):
 	@echo "TurnLeftLib required but not found. Installing..."
@@ -167,13 +175,14 @@ $(CURDIR)/syntax/syntax.h: syntax
 
 clean:
 	@cd $(MOGUIO_DIR) && $(MAKE) clean
-	@rm -rf $(objects) $(syntax) all.check
-	@echo "Removed build, syntax, and check files..."
-	@rm -rf *.pyc
-	@rm -rf build_log.txt
 	@cd syntax && $(MAKE) clean
+	@rm -rf $(CURDIR)/build
+	@rm -rf $(objects) $(syntax) $(logs) all.check
+	@echo "Removed build, syntax, and check files..."
+	@rm -rf *.pyc build_log.txt autom4te.cache *.log
 
 purge: clean
+	@rm -rf configure
 	@rm -rf $(EXECUTABLE)
 	@rm -f mogu.conf
 	@echo "Mogu has been purged from your system."

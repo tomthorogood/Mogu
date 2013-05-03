@@ -1,5 +1,5 @@
 #include "QueryAssistant.h"
-
+#include "QueryBlueprint.h"
 namespace Redis {
 
 QueryBlueprint blueprintFactory ( 
@@ -7,7 +7,7 @@ QueryBlueprint blueprintFactory (
         , Prefix prefix
         , MoguSyntax node_type)
 {
-    QueryBluePrint blueprint;
+    QueryBlueprint blueprint;
     switch(cmd_type)
     {
         case MoguSyntax::set:
@@ -23,6 +23,7 @@ QueryBlueprint blueprintFactory (
                 case MoguSyntax::list:
                     blueprint.appendLiteral("lset",false);
                     break;
+                default: break;
             }//end switch node_type
         } break; //end case set
 
@@ -39,11 +40,16 @@ QueryBlueprint blueprintFactory (
                 case MoguSyntax::list:
                     blueprint.appendLiteral("lindex",false);
                     break;
+                default: break;
             }//end switch node_type
         } break; //end case get
+
+        default: break;
     }//end switch cmd_type
 
-    blueprint.appendLiteral(prefixMap[prefix]+".");
+    std::string literal = prefixMap.at(prefix);
+    literal += ".";
+    blueprint.appendLiteral(literal);
     blueprint.appendString(false);
 
     switch(cmd_type)
@@ -62,6 +68,7 @@ QueryBlueprint blueprintFactory (
                 case MoguSyntax::list:
                     blueprint.appendInt(false);
                     blueprint.appendString();
+                default: break;
             }//end switch node_type
         } break; //end case set
 
@@ -75,9 +82,12 @@ QueryBlueprint blueprintFactory (
                 case MoguSyntax::list:
                     blueprint.appendInt();
                     break;
+                default: break;
             }//end switch node_type
         }//end case get
+        default: break;
     }//end switch cmd_type;
+
     return blueprint;
 }
 

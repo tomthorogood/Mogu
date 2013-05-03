@@ -35,15 +35,9 @@ class HashedString64;
 class HashedString128;
 }
 
-namespace Events {
-class EventBindery;
-class BroadcastMessage;
-class EventPreprocessor;
-
 namespace ActionCenter {
 namespace Actions {
 struct EmailPacket;
-}
 }
 }
 
@@ -86,10 +80,8 @@ class redisContext;
 class redisReply;
 class SlotManager;
 class UniqueHashPackage;
-class ApplicationManager;
-class GroupManager;
-class Listener;
 class CommandValue;
 class TriggerMap;
+class EventHandler;
 
 #endif /* FORWARD_DECLARATIONS_H_ */

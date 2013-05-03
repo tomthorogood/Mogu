@@ -4,10 +4,10 @@
 namespace Redis {
 
 
-Query::Query(const char* querystring, ...) : args()
+Query::Query(const char* querystring_, ...) : querystring(querystring_)
 {
     this->querystring = querystring;
-    va_start (args, querystring);
+    va_start (args, querystring_);
 }
 
 Query::~Query() {

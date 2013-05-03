@@ -652,7 +652,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::widget:{//remove widget foo from widget bar
                     Moldable* child = app->registeredWidget(
                             v.getValue().getString());
-                    widget->rmChild(child);
+                    widget->removeChild(child);
                     break;}
                 default:return;
             }

@@ -20,8 +20,7 @@ void MoldableAbstractParent::__init__()
     Moldable::__init__();
     const char* c_node = __node.c_str();
     Redis::ContextQuery db(Prefix::widgets);
-    CreateQuery(db,
-        new Redis::Query("llen widgets.%s.children", c_node));
+    CreateQuery(db,"llen widgets.%s.children", c_node);
     num_children = db.yieldResponse <int>();
 }
 
@@ -33,15 +32,14 @@ void MoldableAbstractParent::load(){
         mApp;
         const MoldableFactory& factory = app->getFactory();
         Redis::ContextQuery db(Prefix::widgets);
-        CreateQuery(db,
-            new Redis::Query("lrange widgets.%s.children 0 %d", 
-                getNode().c_str(), num_children));
+        CreateQuery(db,"lrange widgets.%s.children 0 %d", getNode().c_str(),
+                num_children);
         
-        auto children_v = db.yieldResponse <std::vector <std::string>&>();
+        auto children_v = db.yieldResponse <std::vector <std::string>>();
 
         for (int i = 0; i < num_children; ++i)
         {
-           std::string s_child = children[i];
+           std::string s_child = children_v[i];
            Moldable* m_child = factory.createMoldableWidget(s_child);
            __moldable_children.push_back(m_child);
            addWidget(m_child);

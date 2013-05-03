@@ -10,6 +10,7 @@
 
 #include <declarations.h>
 #include <Mogu.h>
+#include <Parsers/NodeValueParser.h>
 #include "TriggerMap.h"
 
 class EventHandler

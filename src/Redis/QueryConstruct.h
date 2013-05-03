@@ -2,7 +2,9 @@
 #define QUERYCONSTRUCT_H_
 
 #include <declarations.h>
-
+#include "QueryBlueprint.h"
+#include <Events/CommandValue.h>
+#include "ContextQuery.h"
 namespace Redis {
 
 /*!\brief Given a QueryBlueprint, and a command, fills in the blanks
@@ -10,7 +12,7 @@ namespace Redis {
  */
 class QueryConstruct {
 public:
-    QueryConstruct(QueryBlueprint& blueprint, const CommandValue& command);
+    QueryConstruct(QueryBlueprint& blueprint, CommandValue& command);
     void appendQuery(ContextQuery& db);
 
 private:

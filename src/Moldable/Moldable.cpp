@@ -11,8 +11,8 @@
 #include <Types/NodeValue.h>
 #include <Redis/ContextQuery.h>
 #include <Wt/WStackedWidget>
-
-
+#include <Events/EventHandler.h>
+#include <Wt/WAnchor>
 
 Moldable::Moldable (const std::string& node)
 :
@@ -36,7 +36,7 @@ Moldable::~Moldable()
 void Moldable::__init__ ()
 {
     mApp;
-    app->registerWidget(__node,this);
+    app->registerWidget(__node,*this);
     Parsers::NodeValueParser& nvp = app->interpreter();
     std::string param;
     NodeValue v;
@@ -58,8 +58,7 @@ void Moldable::__init__ ()
 
     // And any widget can have events. We only see if they exist now; we
     // do not do any event handling at this time.
-    CreateQuery(db,
-        new Redis::Query("llen widgets.%s.events", __node.c_str()));
+    CreateQuery(db,"llen widgets.%s.events", __node.c_str());
     num_triggers = (size_t) db.yieldResponse <int>();
 }
 
@@ -71,8 +70,7 @@ void Moldable::load()
 
 std::string Moldable::getParameter(Redis::ContextQuery& db, MoguSyntax param)
 {
-    CreateQuery(db,
-        new Redis::Query("hget widgets.%s %d",__node.c_str(), (int) param));
+    CreateQuery(db, "hget widgets.%s %d",__node.c_str(), (int) param);
     return db.yieldResponse <std::string>();
 }
 
@@ -80,46 +78,47 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
 {
 
     switch (state) {
-    case MoguSyntax::children: {
-        int n = children().size();
-        val.setInt(n);
-        break;
-    }
-    case MoguSyntax::index: {
-        Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
-        int n = stack->currentIndex();
-        val.setInt(n);
-        break;
-    }
-    case MoguSyntax::hidden: {
-        bool v = isHidden();
-        val.setInt((int) v);
-        break;
-    }
-    case MoguSyntax::text: {
-        val.setString(moldableValue());
-        break;
-    }
-    case MoguSyntax::style: {
-        val.setString(styleClass().toUTF8());
-        break;
-    }
-    default:
-        val.setInt(0);
-        break;
+        case MoguSyntax::children: {
+            int n = children().size();
+            val.setInt(n);
+            break;
+        }
+        case MoguSyntax::index: {
+            Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
+            int n = stack->currentIndex();
+            val.setInt(n);
+            break;
+        }
+        case MoguSyntax::hidden: {
+            bool v = isHidden();
+            val.setInt((int) v);
+            break;
+        }
+        case MoguSyntax::text: {
+            val.setString(moldableValue());
+            break;
+        }
+        case MoguSyntax::style: {
+            val.setString(styleClass().toUTF8());
+            break;
+        }
+        //!\TODO test/verify
+        case MoguSyntax::source: {
+            Wt::WAnchor* anchor = (Wt::WAnchor*) widget(0);
+            std::string attrval("href");
+            val.setString(anchor->attributeValue(attrval).toUTF8());
+            break;
+        }
+
+        //!\TODO
+        case MoguSyntax::location: {
+           break;
+        }
+        default:
+            val.setInt(0);
+            break;
     }
 
-    //!\TODO test/verify
-    case MoguSyntax::source: {
-        Wt::WAnchor* anchor = (Wt::WAnchor*) widget(0);
-        val.setString((std::string)anchor->attributeValue("href"));
-        break;
-    }
-
-    //!\TODO
-    case MoguSyntax::location: {
-       break;
-    }
 }
 
 bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
@@ -153,6 +152,7 @@ bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
             break;
         }
 
+        default: return false;
     }
 
     return true; //!<\TODO

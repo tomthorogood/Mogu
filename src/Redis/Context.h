@@ -21,10 +21,8 @@ struct Context {
     const char* host; //<!\b The host (ip address|localhost) of the instance
     int         db_num; //<!\b The database number to use
 public:
-    Context(int port_ = 6379, const char* host_ = "localhost", int db_num_=0) {
-        port = port_;
-        host = host_;
-        db_num = db_num_;
+    Context(int port_ = 6379, const char* host_ = "localhost", int db_num_=0)
+    : port(port_), host(host_), db_num(db_num) {
     }
 };
 

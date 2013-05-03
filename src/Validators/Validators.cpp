@@ -5,19 +5,19 @@
  *      Author: tom
  */
 
-#include <Validators/Validators.h>
-#include <Wt/WValidator>
-#include <Wt/WRegExpValidator>
-#include <Redis/RedisCore.h>
-#include <Types/NodeValue.h>
-#include <Wt/WApplication>
+#include "Validators.h"
+
 #include <Exceptions/Exceptions.h>
 #include <Mogu.h>
 #include <Redis/ContextQuery.h>
+#include <Types/NodeValue.h>
 #include <Types/syntax.h>
+#include <Wt/WApplication>
+#include <Wt/WValidator>
+#include <Wt/WRegExpValidator>
+
 namespace Validators {
 
-using std::string;
 
 Wt::WValidator* createValidator(
     const std::string& validatorName)
@@ -25,15 +25,15 @@ Wt::WValidator* createValidator(
     mApp;
     const char* c_node = validatorName.c_str();
     Redis::ContextQuery db(Prefix::validators);
-    CreateQuery(db,
-        new Redis::Query("hget validators.%s %d", c_node, MoguSyntax::type));
-;
+    CreateQuery(db, "hget validators.%s %d", c_node, MoguSyntax::type);
+    
     NodeValue vval;
     app->interpreter().giveInput(db.yieldResponse<std::string>(), vval);
-    switch (vval.getInt())
+    switch ((MoguSyntax) vval.getInt())
     {
         case MoguSyntax::regex:
-          return createRegexValidator(db,c_node);
+            return createRegexValidator(db,c_node);
+        default:break;
     }
     return nullptr;
 }
@@ -41,8 +41,7 @@ Wt::WValidator* createValidator(
 Wt::WRegExpValidator* createRegexValidator(
     Redis::ContextQuery& db, const char* c_node)
 {
-    CreateQuery(db,
-        new Redis::Query("hget validators.%s %d", c_node, MoguSyntax::test));
+    CreateQuery(db, "hget validators.%s %d", c_node, (int) MoguSyntax::test);
 
     std::string pattern = db.yieldResponse <std::string>();
     Wt::WString wpattern(pattern);

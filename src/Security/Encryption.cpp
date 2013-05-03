@@ -8,7 +8,8 @@
 #include <declarations.h>
 #include <crypt/BlowfishKey.h>
 #include <crypt/Packet.h>
-
+#include "Encryption.h" 
+#include <TurnLeftLib/Utils/inlines.h>
 namespace Security {
 
 std::string encrypt(std::string dstr)

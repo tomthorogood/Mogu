@@ -11,10 +11,8 @@
 #include <declarations.h>
 namespace Validators {
 
-Wt::WValidator* createValidator(
-    std::string validator);
-Wt::WRegExpValidator* createRegexValidator(
-    std::string node);
+Wt::WValidator* createValidator(std::string validator);
+Wt::WRegExpValidator* createRegexValidator(Redis::ContextQuery&,const char*);
 
 }    //namespace Validators
 
