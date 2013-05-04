@@ -17,7 +17,7 @@ namespace Parsers {
 
 NodeValueParser::NodeValueParser() : 
 	__flippedActionTokens({23,32}),
-	__objectTokens({1,2,3,4,31,40,27,62})
+	__objectTokens({1,2,3,4,31,40,27,62}),
 	__prepositionTokens({60,61,62})	
 {
 	__stateParser.setTokens(__numTokens, __strTokens);
@@ -27,7 +27,7 @@ NodeValueParser::NodeValueParser() :
 
 void NodeValueParser::tokenizeInput(std::string input)
 {
-	int inputIndex = 0;
+	unsigned int inputIndex = 0;
 	while(inputIndex < input.size())
 	{
 		int endTokenIndex; 
@@ -39,10 +39,10 @@ void NodeValueParser::tokenizeInput(std::string input)
 		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
 		if(isdigit(token[0]))
-			__numTokens.push_back(token);
+			__numTokens.push_back(std::stoi(token));
 		else
 		{
-			__numTokens.push_back(MoguSyntax::TOKEN_DELIM);
+			__numTokens.push_back(mtoi(MoguSyntax::TOKEN_DELIM));
 			__strTokens.push_back(token);
 		}
 
@@ -50,7 +50,7 @@ void NodeValueParser::tokenizeInput(std::string input)
 	}
 }
 
-void NodeValueParser::reduceExpressions(Moldable* bc)
+bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
 	int lastToken = 0;
 	bool hasPreposition = false;
@@ -58,12 +58,12 @@ void NodeValueParser::reduceExpressions(Moldable* bc)
 	{
 		int currToken = *rit;
 
-		if(currToken == MoguSyntax::OPER_OPPAREN) 
+		if(currToken == mtoi(MoguSyntax::OPER_OPPAREN)) 
 			__mathParser.processInput(rit);
 			
 		else if(__objectTokens.count(currToken) == 1)
 		{
-			if(lastToken < MoguSyntax::OPER_OPPAREN)
+			if(lastToken < mtoi(MoguSyntax::OPER_OPPAREN))
 				__stateParser.processInput(rit, bc);
 		}
 
@@ -117,20 +117,20 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 	printTokens();
 	reduceExpressions(bc);
 
-	if(__numTokens[0] == MoguSyntax::TOKEN_DELIM)
-		v.setString(__strTokens[0]);
+	if(__numTokens.front() == mtoi(MoguSyntax::TOKEN_DELIM))
+		nv.setString(__strTokens[0]);
 	else
-		v.setInt(__numTokens[0]);
+		nv.setInt(__numTokens.front());
 }
 
 void NodeValueParser::giveInput(std::string input, CommandValue& cv)
 {
 	tokenizeInput(input);
-	bool hasPreposition = reduceExpressions(cv.getWidget());
+	bool hasPreposition = reduceExpressions(&cv.getWidget());
 	cv.setAction(__numTokens.front());
 
 	auto it = ++__numTokens.begin();
-	if(__flippedActionTokens.count(cv.getAction()) == 1)
+	if(__flippedActionTokens.count(mtoi(cv.getAction())) == 1)
 	{
 		//flip-flopped command syntax
 		//e.g. 'remove', 'append'

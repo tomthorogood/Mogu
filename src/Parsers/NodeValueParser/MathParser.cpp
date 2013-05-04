@@ -22,13 +22,13 @@ MathParser::MathParser()
 void MathParser::setTokens(std::list<int>& numTokens,
 						   std::vector<std::string>& strTokens)
 {
-	__numTokens = numTokens;
-	__strTokens = strTokens;
+	__numTokens = &numTokens;
+	__strTokens = &strTokens;
 }
 
 int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 {
-	__reset__();
+	reset();
 
 	// *** CONVERT INFIX -> POSTFIX ***
 	__postfixExpression.reserve(__numTokens->size());
@@ -38,17 +38,17 @@ int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 
 	// do-while loop... conditional is until level = 0
 	//
-	for(auto it=endRit.base()-1; it!=__numTokens->end(); it++) {
+	for(auto it=endRit.base()--; it!=__numTokens->end(); it++) {
 		int currToken = *it;
 
 		if(isOperator(currToken)) {
-			switch(currToken) {
+			switch((MoguSyntax) currToken) {
 				case MoguSyntax::OPER_OPPAREN:
 				opStack.push(currToken);
 				break;
 
 				case MoguSyntax::OPER_CLPAREN:
-				while(opStack.top() != MoguSyntax::OPER_OPPAREN) {
+				while((MoguSyntax) opStack.top() != MoguSyntax::OPER_OPPAREN) {
 					__postfixExpression.push_back(opStack.top());
 					opStack.pop();
 				}
@@ -90,7 +90,7 @@ int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 	//std::cout << std::endl;
 
 	// *** EVALUATE POSTFIX EXPRESSION ***
-	for(int i=0; i<__postfixExpression.size(); i++) {
+	for(unsigned int i=0; i<__postfixExpression.size(); i++) {
 
 		int currToken = __postfixExpression[i];
 
@@ -104,7 +104,7 @@ int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 			__operandStack.pop();
 
 			int opResult;
-			switch(currToken) {
+			switch((MoguSyntax) currToken) {
 				case MoguSyntax::OPER_PLUS:
 				opResult = op1 + op2;
 				break;
@@ -116,6 +116,8 @@ int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 				break;
 				case MoguSyntax::OPER_DIV:
 				opResult = op1 / op2;
+				break;
+				default:
 				break;
 			}
 		__operandStack.push(opResult);
@@ -129,17 +131,17 @@ int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
 // read: has STRICTLY higher precedence
 bool MathParser::hasHigherPrecedence(int op1, int op2)
 {
-	if(op1 == MoguSyntax::OPER_MULT || op1 == MoguSyntax::OPER_DIV)
-		if(op2 == MoguSyntax::OPER_PLUS || op2 == MoguSyntax::OPER_MINUS)
+	if((MoguSyntax) op1 == MoguSyntax::OPER_MULT || (MoguSyntax) op1 == MoguSyntax::OPER_DIV)
+		if((MoguSyntax) op2 == MoguSyntax::OPER_PLUS || (MoguSyntax) op2 == MoguSyntax::OPER_MINUS)
 			return true;
 
-	if(op2 == MoguSyntax::OPER_OPPAREN)
+	if((MoguSyntax) op2 == MoguSyntax::OPER_OPPAREN)
 		return true;
 
 	return false;
 }
 
-void MathParser::__reset__()
+void MathParser::reset()
 {
 	__postfixExpression.clear();
 	while(!__operandStack.empty())
