@@ -19,12 +19,16 @@ class CommandValue;
 
 namespace Parsers {
 
+inline int mtoi(MoguSyntax input) {
+	return static_cast<int>(input);
+}
+
 class NodeValueParser 
 {
 	public:
 		NodeValueParser();
-		void giveInput(std::string input, NodeValue& nv, Moldable* bc);
-        void giveInput(std::string input, NodeValue& nv);
+		void giveInput(std::string input, NodeValue& nv, Moldable* bc = 0);
+        //void giveInput(std::string input, NodeValue& nv);
 		void giveInput(std::string input, CommandValue& cv);
 
 	private:
@@ -39,6 +43,8 @@ class NodeValueParser
 
 		void tokenizeInput(std::string input);
 		bool reduceExpressions(Moldable* bc);
+		void parseListener(std::list<int>::iterator& it, CommandValue& cv);
+		void parseMessage(std::list<int>::iterator& it, CommandValue& cv);
 
 		//debug
 		void printTokens();

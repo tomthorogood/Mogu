@@ -29,6 +29,7 @@ class StateParser
 	private:
 		std::list<int>* __numTokens;
 		std::vector<std::string>* __strTokens;
+		const std::unordered_set<int> __objectTokens;
 };
 
 }	// namespace Parsers

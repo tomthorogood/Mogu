@@ -18,47 +18,44 @@ StateParser::StateParser() : __objectTokens({1,2,3,4,31,40,27,62})
 void StateParser::setTokens(std::list<int>& numTokens,
 							std::vector<std::string>& strTokens)
 {
-	__numTokens = numTokens;
-	__strTokens = strTokens;
+	__numTokens = &numTokens;
+	__strTokens = &strTokens;
 }
 
-void StateParser::processInput(std::list<int>::reverse_iterator rit,
+void StateParser::processInput(std::list<int>::reverse_iterator &rit,
 							   Moldable* broadcaster)
 {
-
-	for(auto rit=numTokens.rbegin(); rit!=numTokens.rend(); rit++)
+	for(auto it=rit.base()--; it!=__numTokens->end(); rit++)
 	{
 		int currToken = *rit;
 		if(__objectTokens.count(currToken) == 1)
 		{
-			objectArgsRit = rit;
-
-			switch(currToken)
+			switch((MoguSyntax) currToken)
 			{
 				case MoguSyntax::own:
-					targetWidget = broadcaster;
 				case MoguSyntax::parent:
-					targetWidget = broadcaster->parent();
 				case MoguSyntax::children:
 					//TODO: how do we find/handle children?
 				case MoguSyntax::siblings:
 					//TODO: how do we find/handle siblings
-					resolveRelativeWidgetInfo();
 					break;
 				case MoguSyntax::group:
 				case MoguSyntax::data:
 				case MoguSyntax::user:
-					resolveDatabaseInfo();
 					break;
-				case MoguSyntax::m_widget:
-					resolveNamedWidgetInfo();
+				case MoguSyntax::widget:
 					break;
 				default:
 					//TODO: handle unrecognized token!
 					break;
+			}
 
 		}
 	}
+
+	//debug
+	if(broadcaster)
+		broadcaster = 0;
 
 }
 
