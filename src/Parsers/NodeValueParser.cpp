@@ -15,7 +15,7 @@
 
 namespace Parsers {
 
-NodeValueParser::NodeValueParser() : 
+NodeValueParser::NodeValueParser()
 {
 	__stateParser.setTokens(__numTokens, __strTokens);
 	__mathParser.setTokens(__numTokens, __strTokens);
