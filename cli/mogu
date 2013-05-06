@@ -15,6 +15,7 @@ cli_map = {
     "purge-sessions"    :   cli.purge_sessions,
     "init"              :   cli.init,
     "create_config"     :   cli.create_config,
+    "set-root"          :   cli.set_root,
 }
 if __name__ == "__main__":
     cli_map[command](args)
