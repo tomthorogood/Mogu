@@ -16,9 +16,6 @@
 namespace Parsers {
 
 NodeValueParser::NodeValueParser() : 
-	__flippedActionTokens({23,32}),
-	__objectTokens({1,2,3,4,31,40,27,62}),
-	__prepositionTokens({60,61,62})	
 {
 	__stateParser.setTokens(__numTokens, __strTokens);
 	__mathParser.setTokens(__numTokens, __strTokens);

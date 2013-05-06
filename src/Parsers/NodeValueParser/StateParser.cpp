@@ -25,9 +25,9 @@ void StateParser::setTokens(std::list<int>& numTokens,
 void StateParser::processInput(std::list<int>::reverse_iterator &rit,
 							   Moldable* broadcaster)
 {
-	for(auto it=rit.base()--; it!=__numTokens->end(); rit++)
+	for(auto it=rit.base()--; it!=__numTokens->end(); it++)
 	{
-		int currToken = *rit;
+		int currToken = *it;
 		if(__objectTokens.count(currToken) == 1)
 		{
 			switch((MoguSyntax) currToken)
@@ -35,9 +35,7 @@ void StateParser::processInput(std::list<int>::reverse_iterator &rit,
 				case MoguSyntax::own:
 				case MoguSyntax::parent:
 				case MoguSyntax::children:
-					//TODO: how do we find/handle children?
 				case MoguSyntax::siblings:
-					//TODO: how do we find/handle siblings
 					break;
 				case MoguSyntax::group:
 				case MoguSyntax::data:
@@ -46,7 +44,7 @@ void StateParser::processInput(std::list<int>::reverse_iterator &rit,
 				case MoguSyntax::widget:
 					break;
 				default:
-					//TODO: handle unrecognized token!
+					//unrecognized token
 					break;
 			}
 

@@ -37,9 +37,9 @@ class NodeValueParser
 
 		std::list<int> __numTokens;
 		std::vector<std::string> __strTokens;
-		const std::unordered_set<int> __flippedActionTokens;
-		const std::unordered_set<int> __objectTokens;
-		const std::unordered_set<int> __prepositionTokens;
+		const std::unordered_set<int> __flippedActionTokens = {23,32};
+		const std::unordered_set<int> __objectTokens = {1,2,3,4,28,29,33,37,45,63,65};
+		const std::unordered_set<int> __prepositionTokens = {60,61,62};
 
 		void tokenizeInput(std::string input);
 		bool reduceExpressions(Moldable* bc);
