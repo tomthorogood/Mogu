@@ -35,8 +35,9 @@ def reference_widget(string):
 def reference_widget_list(string):
     w_list = newline_list(string)
     for index,entry in enumerate(w_list):
-        if entry[0] == ':':
+        if entry.startswith(":"):
             w_list[index] = SharedData.ActiveIdentifier+entry
+            print("Expanded %s to %s" % (entry, w_list[index]))
     for w in w_list:
         reference_widget(w)
     return w_list
@@ -73,4 +74,5 @@ def everything_until(string):
 def newline_list(string):
     nl_list = string.split("\n")
     nl_list = [e for e in [entry.strip() for entry in nl_list if entry] if e]
+    nl_list = [i.strip() for i in nl_list]
     return nl_list

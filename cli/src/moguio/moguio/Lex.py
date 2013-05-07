@@ -21,6 +21,8 @@ from lex_base import WIDGET_SOURCE
 from lex_base import WIDGET_LOCATION
 from lex_base import WIDGET_TEMPLATE
 from lex_base import WIDGET_STYLE
+from lex_base import WIDGET_TOOLTIP
+from lex_base import WIDGET_VALIDATOR
 from lex_base import CHILDREN_BLOCK
 
 from lex_base import LITERAL
@@ -185,6 +187,8 @@ WidgetConsumer = Consumer.Consumer([
     WIDGET_LOCATION,
     WIDGET_TEMPLATE,
     WIDGET_STYLE,
+    WIDGET_TOOLTIP,
+    WIDGET_VALIDATOR,
     EVENT_BLOCK,
     CHILDREN_BLOCK,
     NEWLINES

@@ -155,9 +155,21 @@ WIDGET_LOCATION = pyboro.Lexer.ParseMap((
         ("end",         r"\S*"                                          , IGNORE)
 ))
 
+WIDGET_VALIDATOR = pyboro.Lexer.ParseMap((
+        ("begin",       DIRECTIVE_START(syntax.as_integer('validator')), IGNORE),
+        ("validator",    "[^\n]*"                                        , trim),
+        ("end",          r"\S*"                                          , IGNORE)
+))
+
 WIDGET_TEMPLATE = pyboro.Lexer.ParseMap((
         ("begin",       DIRECTIVE_START(syntax.as_integer("template"))  , IGNORE),
         ("template",    regexlib["identifier"]                          , reference_template),
+        ("end",         r"\S*"                                          , IGNORE)
+))
+
+WIDGET_TOOLTIP = pyboro.Lexer.ParseMap((
+        ("begin",       DIRECTIVE_START(syntax.as_integer("tooltip"))   , IGNORE),
+        ("tooltip",     "[^\n]*"                                        , trim),
         ("end",         r"\S*"                                          , IGNORE)
 ))
 
