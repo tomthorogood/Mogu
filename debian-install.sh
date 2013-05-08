@@ -75,7 +75,7 @@ sudo pip install    \
 
 # Retrieve, configure, and build Wt
 wget $WT_LINK
-tar xvf $WR_FOLDER.tar.gz
+tar xvf $WT_FOLDER.tar.gz
 mkdir $WT_FOLDER/build
 pushd $WT_FOLDER/build
 cmake ../ && make && sudo make install
