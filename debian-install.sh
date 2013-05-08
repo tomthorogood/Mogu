@@ -17,6 +17,8 @@ sudo echo "deb http://ftp.us.debian.org/debian testing main contrib" \
     >> /etc/apt/sources.list
 sudo apt-get update
 
+mkdir install
+pushd install
 
 # Install managed packages from Debian repositories
 sudo apt-get install                                \
@@ -66,10 +68,9 @@ virtualenv $VENV_FOLDER
 source $VENV_FOLDER/bin/activate
 
 # Install requirements for Python2.7
-sudo pip    \
-    install \
-    redis   \
-    pyboro  \
+sudo pip install    \
+    redis           \
+    pyboro          \
     multistring
 
 # Retrieve, configure, and build Wt
@@ -81,15 +82,9 @@ cmake ../ && make && sudo make install
 popd
 
 # Retrieve and build Mogu
-git clone https://github.com/tomthorogood/Mogu.git
-pushd Mogu
-checkout lex
+popd # leave install folder
 make && sudo make install
-popd
 
 # Cleanup
 deactivate
-rm -rf $REDIS_FOLDER $REDIS_FOLDER.tar.gz
-rm -rf hiredis
-rm -rf $WT_FOLDER
-rm -rf Mogu
+rm -rf install
