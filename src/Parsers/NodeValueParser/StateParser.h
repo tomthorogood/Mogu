@@ -13,6 +13,7 @@
 #include <vector>
 #include <unordered_set>
 
+#include <Types/NodeValue.h>
 #include <Moldable/Moldable.h>
 
 namespace Parsers {
@@ -29,7 +30,9 @@ class StateParser
 	private:
 		std::list<int>* __numTokens;
 		std::vector<std::string>* __strTokens;
-		const std::unordered_set<int> __objectTokens;
+
+		const std::unordered_set<int> __widgetTokens = {1,2,3,4,37,65};
+		const std::unordered_set<int> __dbTokens = {28,29,33,43};
 };
 
 }	// namespace Parsers

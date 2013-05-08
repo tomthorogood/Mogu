@@ -10,6 +10,7 @@
 
 #include <Parsers/NodeValueParser/StateParser.h>
 #include <Parsers/NodeValueParser/MathParser.h>
+#include <Types/syntax.h>
 class NodeValue;
 class CommandValue;
 
@@ -28,7 +29,6 @@ class NodeValueParser
 	public:
 		NodeValueParser();
 		void giveInput(std::string input, NodeValue& nv, Moldable* bc = 0);
-        //void giveInput(std::string input, NodeValue& nv);
 		void giveInput(std::string input, CommandValue& cv);
 
 	private:
@@ -37,9 +37,29 @@ class NodeValueParser
 
 		std::list<int> __numTokens;
 		std::vector<std::string> __strTokens;
-		const std::unordered_set<int> __flippedActionTokens = {23,32};
-		const std::unordered_set<int> __objectTokens = {1,2,3,4,28,29,33,37,45,63,65};
-		const std::unordered_set<int> __prepositionTokens = {60,61,62};
+
+		const std::unordered_set<int> __flippedActionTokens = {
+			(int) MoguSyntax::remove,
+			(int) MoguSyntax::append
+		};
+
+		const std::unordered_set<int> __objectTokens = {
+			(int) MoguSyntax::own,
+			(int) MoguSyntax::parent,
+			(int) MoguSyntax::user,
+			(int) MoguSyntax::session,
+			(int) MoguSyntax::group,
+			(int) MoguSyntax::child,
+			(int) MoguSyntax::data,
+			(int) MoguSyntax::slot,
+			(int) MoguSyntax::widget
+		};
+
+		const std::unordered_set<int> __prepositionTokens = {
+			(int) MoguSyntax::to,
+			(int) MoguSyntax::as,
+			(int) MoguSyntax::at
+		};
 
 		void tokenizeInput(std::string input);
 		bool reduceExpressions(Moldable* bc);
