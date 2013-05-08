@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 BOOST_VERSION=1.49
 REDIS_VERSION=2.6.13
