@@ -183,6 +183,9 @@ class SymbolRegistry(object):
                 return False
         return True
 
+    def undefined(self):
+        return [key for key in self if not self[key]]
+
     def reference(self, key, reference):
         """
         Mogu allows for symbols to be referenced before they are defined. 
@@ -208,6 +211,14 @@ templateRegistry    = SymbolRegistry("templates")
 dataRegistry        = SymbolRegistry("data")
 validatorRegistry   = SymbolRegistry("validators")
 policyRegistry      = SymbolRegistry("policies")
+
+registries = (
+    widgetRegistry,
+    templateRegistry,
+    dataRegistry,
+    validatorRegistry,
+    policyRegistry
+)
 
 # TESTING #
 if __name__ == "__main__":
