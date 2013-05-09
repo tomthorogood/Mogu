@@ -12,17 +12,7 @@ CURDIR = os.getcwd()
 DB_CONFIG_DIRECTORY = CURDIR
 
 def getCLIArgs():
-    global CONFIG_FILE    
-    config = SafeConfigParser()
-    config.read(CONFIG_FILE)
-
-    try:
-        auth = config.get("redis_instance", "auth")
-    except NoOptionError:
-        auth = None
-
-    parser = ArgumentParser(description="The command line utility for interacting with your Mogu web aplication")
-    
+    parser = ArgumentParser("Utility for interacting with Mogu via command line")
     parser.add_argument(
             "command", 
             nargs='+', 
@@ -31,7 +21,7 @@ def getCLIArgs():
             help="The command you want to run (see readme for available commands")
     
     parser.add_argument("--dbconfig", dest="dbconfig",
-            default=os.path.join(CURDIR,"dbconfig.conf")
+            default=os.path.join(CURDIR,"dbconfig.conf"))
 
 
 # Boolean options for interacting with the Redis environment
@@ -45,7 +35,7 @@ def getCLIArgs():
             help="Will assume yes to all questions. EXTRA CAREFUL!")
 
     parser.add_argument("-v", "--verbose",
-            dest="verbose", action="store_true", default=False,
+            dest="verbal", action="store_true", default=False,
             help="Will make the import command more verbose when assuming yes")
 
     parser.add_argument("--test-only", 

@@ -60,6 +60,18 @@ class ScriptImporter(object):
 
         self.redisWriter.write(self.redisObjects)
 
+def doImport(args):
+    # args.command[0] will be 'import'
+    try:
+        assert args.command[0] == 'import'
+    except AssertionError:
+        sys.stderr.write("Something happened. I was told to import, but not by you. This should probably be reported.\n")
+        sys.stderr.write("Please report the following output: %s" % (str(args)))
+        sys.exit()
+
+    importer = ScriptImporter(args.command[1:],args)
+    importer.write()
+
 if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser("Test the ScriptImporter")
@@ -74,6 +86,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args.paths)
     importer = ScriptImporter(args.paths,args)
+    importer.write()
 elif not hasattr(__main__,"__file__"):
     class Collection(object):
         def __init__(self):
