@@ -18,7 +18,7 @@ namespace Parsers {
 NodeValueParser::NodeValueParser()
 {
 	__stateParser.setTokens(__numTokens, __strTokens);
-	__mathParser.setTokens(__numTokens, __strTokens);
+	__mathParser.setTokens(__numTokens);
 }
 
 
@@ -39,8 +39,7 @@ void NodeValueParser::tokenizeInput(std::string input)
 			__numTokens.push_back(std::stoi(token));
 		else
 		{
-			__numTokens.push_back(mtoi(MoguSyntax::TOKEN_DELIM));
-			__strTokens.push_back(token);
+			__numTokens.push_back(__strTokens.add(token));
 		}
 
 		inputIndex += 2;
@@ -103,8 +102,8 @@ void NodeValueParser::printTokens()
 	std::cout << "End __numTokens list." << std::endl << std::endl;
 
 	std::cout << "Contents of __strTokens:" << std::endl;
-	for(auto it = __strTokens.begin(); it != __strTokens.end(); it++)
-		std::cout << *it << std::endl;
+	//for(auto it = __strTokens.begin(); it != __strTokens.end(); it++)
+	//	std::cout << *it << std::endl;
 	std::cout << "End __strTokens list." << std::endl << std::endl;
 }
 

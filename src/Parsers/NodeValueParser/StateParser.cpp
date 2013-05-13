@@ -16,7 +16,7 @@ StateParser::StateParser()
 }
 
 void StateParser::setTokens(std::list<int>& numTokens,
-							std::vector<std::string>& strTokens)
+							StringTracker& strTokens)
 {
 	__numTokens = &numTokens;
 	__strTokens = &strTokens;
@@ -28,40 +28,35 @@ void StateParser::processInput(std::list<int>::reverse_iterator &rit,
 	auto it = rit.base()--;
 	MoguSyntax currToken = (MoguSyntax) *it;
 
-	if(__widgetTokens.count(currToken) == 1) {
-		Moldable* target;
-		switch(currToken) {
+	Moldable* target;
+	switch(currToken) {
 		case MoguSyntax::own:
 			target = broadcaster;
-			break;
 		case MoguSyntax::parent:
-			target = broadcaster.parent();
+			target = (Moldable*) broadcaster.parent();
 		case MoguSyntax::child:
-		case MoguSyntax::children:
-		case MoguSyntax::siblings:
+			//assumes we want only the first child.  how do we address
+			//multiple children?
+			target = (Moldable*) (broadcaster.children()[0]);
 		case MoguSyntax::widget:
-		default:
-		}
-	}
+			mApp;
+			target = app->registeredWidget( );
+			break;
 
-	else if(__dbTokens.count(currToken) == 1) {
-		switch(currToken) {
-		case MoguSyntax::group:
 		case MoguSyntax::user:
-		case MoguSyntax::data:
 		case MoguSyntax::session:
+		case MoguSyntax::group:
+		case MoguSyntax::data:
+			break;
+
+		case MoguSyntax::slot:
+			break;
+
 		default:
-		}
+			break;
 	}
-
-	else {
-		switch(currToken) {
-			case MoguSyntax::slot:
-			default:
-	}
-
-
 
 }
+
 
 }	// namespace Parsers

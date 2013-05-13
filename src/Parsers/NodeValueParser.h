@@ -10,6 +10,7 @@
 
 #include <Parsers/NodeValueParser/StateParser.h>
 #include <Parsers/NodeValueParser/MathParser.h>
+#include <Parsers/NodeValueParser/StringTracker.h>
 #include <Types/syntax.h>
 class NodeValue;
 class CommandValue;
@@ -24,6 +25,8 @@ inline int mtoi(MoguSyntax input) {
 	return static_cast<int>(input);
 }
 
+//TODO: clear all the token vectors for new iteration of NVP
+
 class NodeValueParser 
 {
 	public:
@@ -36,7 +39,7 @@ class NodeValueParser
 		MathParser __mathParser;
 
 		std::list<int> __numTokens;
-		std::vector<std::string> __strTokens;
+		StringTracker __strTokens;
 
 		const std::unordered_set<int> __flippedActionTokens = {
 			(int) MoguSyntax::remove,

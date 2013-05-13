@@ -13,6 +13,8 @@
 #include <vector>
 #include <unordered_set>
 
+class StringTracker;
+#include <declarations.h>
 #include <Types/NodeValue.h>
 #include <Moldable/Moldable.h>
 
@@ -25,14 +27,26 @@ class StateParser
 		void processInput(std::list<int>::reverse_iterator& rit,
 						  Moldable* broadcaster);
 		void setTokens(std::list<int>& numTokens,
-					   std::vector<std::string>& strTokens);
+					   StringTracker& strTokens);
 
 	private:
 		std::list<int>* __numTokens;
-		std::vector<std::string>* __strTokens;
+		StringTracker* __strTokens;
 
-		const std::unordered_set<int> __widgetTokens = {1,2,3,4,37,65};
-		const std::unordered_set<int> __dbTokens = {28,29,33,43};
+		const std::unordered_set<int> __widgetTokens = {
+			(int) MoguSyntax::own,
+			(int) MoguSyntax::parent,
+			(int) MoguSyntax::child,
+			(int) MoguSyntax::widget
+		};
+
+		const std::unordered_set<int> __dbTokens = {
+			(int) MoguSyntax::user,
+			(int) MoguSyntax::session,
+			(int) MoguSyntax::group,
+			(int) MoguSyntax::data
+		};
+
 };
 
 }	// namespace Parsers
