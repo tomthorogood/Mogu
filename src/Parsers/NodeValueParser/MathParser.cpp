@@ -19,12 +19,12 @@ MathParser::MathParser()
 
 }
 
-void MathParser::setTokens(std::list<int>& numTokens)
+void MathParser::setTokens(std::vector<int>& numTokens)
 {
 	__numTokens = &numTokens;
 }
 
-int MathParser::processInput(std::list<int>::reverse_iterator& endRit)
+int MathParser::processInput(std::vector<int>::reverse_iterator& endRit)
 {
 	reset();
 

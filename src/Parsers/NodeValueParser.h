@@ -21,10 +21,6 @@ class CommandValue;
 
 namespace Parsers {
 
-inline int mtoi(MoguSyntax input) {
-	return static_cast<int>(input);
-}
-
 //TODO: clear all the token vectors for new iteration of NVP
 
 class NodeValueParser 
@@ -38,8 +34,8 @@ class NodeValueParser
 		StateParser __stateParser;
 		MathParser __mathParser;
 
-		std::list<int> __numTokens;
-		StringTracker __strTokens;
+		std::vector<int> __numTokens;
+		std::vector<std::string> __strTokens;
 
 		const std::unordered_set<int> __flippedActionTokens = {
 			(int) MoguSyntax::remove,

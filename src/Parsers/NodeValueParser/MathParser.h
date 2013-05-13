@@ -28,10 +28,10 @@ class MathParser
 
 		// convert the input tokens into postfix, and then evaluate
 		// the postfix expression.
-		int processInput(std::list<int>::reverse_iterator& endRit);
+		int processInput(std::vector<int>::reverse_iterator& endRit);
 
 		// initialize tokenlists
-		void setTokens(std::list<int>& numTokens);
+		void setTokens(std::vector<int>& numTokens);
 	
 	private:
 		// vector to build/store an equivalent postfix expression
@@ -41,7 +41,7 @@ class MathParser
 		std::stack<int> __operandStack;
 
 		// pointers to tokenlists in NVP
-		std::list<int>* __numTokens;
+		std::vector<int>* __numTokens;
 
 		// compare precedence to do proper order-of-operations
 		// returns true if op1 has higher precedence than op2

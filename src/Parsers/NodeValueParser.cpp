@@ -25,6 +25,7 @@ NodeValueParser::NodeValueParser()
 void NodeValueParser::tokenizeInput(std::string input)
 {
 	unsigned int inputIndex = 0;
+	unsigned int strIndex = 0;
 	while(inputIndex < input.size())
 	{
 		int endTokenIndex; 
@@ -39,7 +40,12 @@ void NodeValueParser::tokenizeInput(std::string input)
 			__numTokens.push_back(std::stoi(token));
 		else
 		{
-			__numTokens.push_back(__strTokens.add(token));
+			__strTokens.push_back(token);
+			__numTokens.push_back(MoguSyntax::TOKEN_DELIM);
+			__numTokens.push_back(200 + strIndex);
+			//magic number 200 to avoid collision with actual syntax
+
+			strIndex++;
 		}
 
 		inputIndex += 2;
@@ -54,12 +60,12 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 	{
 		int currToken = *rit;
 
-		if(currToken == mtoi(MoguSyntax::OPER_OPPAREN)) 
+		if(currToken == (int) MoguSyntax::OPER_OPPAREN) 
 			__mathParser.processInput(rit);
 			
 		else if(__objectTokens.count(currToken) == 1)
 		{
-			if(lastToken < mtoi(MoguSyntax::OPER_OPPAREN))
+			if(lastToken < (int) MoguSyntax::OPER_OPPAREN)
 				__stateParser.processInput(rit, bc);
 		}
 
@@ -113,8 +119,11 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 	printTokens();
 	reduceExpressions(bc);
 
-	if(__numTokens.front() == mtoi(MoguSyntax::TOKEN_DELIM))
-		nv.setString(__strTokens[0]);
+	//if we have more than one token in __numTokens at this point (or
+	//two if the first token is TOKEN DELIM), something has gone wrong
+
+	if(__numTokens.front() == (int) MoguSyntax::TOKEN_DELIM)
+		nv.setString(__strTokens[200 + __numTokens[1] ]);
 	else
 		nv.setInt(__numTokens.front());
 }
@@ -126,7 +135,7 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv)
 	cv.setAction(__numTokens.front());
 
 	auto it = ++__numTokens.begin();
-	if(__flippedActionTokens.count(mtoi(cv.getAction())) == 1)
+	if(__flippedActionTokens.count((int) cv.getAction() == 1))
 	{
 		//flip-flopped command syntax
 		//e.g. 'remove', 'append'

@@ -8,7 +8,6 @@
 #ifndef STATEPARSER_H_
 #define STATEPARSER_H_
 
-#include <list>
 #include <string>
 #include <vector>
 #include <unordered_set>
@@ -24,14 +23,14 @@ class StateParser
 {
 	public:
 		StateParser();
-		void processInput(std::list<int>::reverse_iterator& rit,
+		void processInput(std::vector<int>::reverse_iterator& rit,
 						  Moldable* broadcaster);
-		void setTokens(std::list<int>& numTokens,
-					   StringTracker& strTokens);
+		void setTokens(std::vector<int>& numTokens,
+					   std::vector<std::string>& strTokens);
 
 	private:
-		std::list<int>* __numTokens;
-		StringTracker* __strTokens;
+		std::vector<int>* __numTokens;
+		std::vector<int>* __strTokens;
 
 		const std::unordered_set<int> __widgetTokens = {
 			(int) MoguSyntax::own,
