@@ -25,6 +25,7 @@ void StateParser::setTokens(std::vector<int>& numTokens,
 void StateParser::processInput(std::vector<int>::reverse_iterator &rit,
 							   Moldable* broadcaster)
 {
+	mApp;
 	auto it = rit.base()--;
 	MoguSyntax currToken = (MoguSyntax) *it;
 
@@ -33,13 +34,12 @@ void StateParser::processInput(std::vector<int>::reverse_iterator &rit,
 		case MoguSyntax::own:
 			target = broadcaster;
 		case MoguSyntax::parent:
-			target = (Moldable*) broadcaster.parent();
+			target = (Moldable*) broadcaster->parent();
 		case MoguSyntax::child:
 			//assumes we want only the first child.  how do we address
 			//multiple children?
-			target = (Moldable*) (broadcaster.children()[0]);
+			target = (Moldable*) (broadcaster->children()[0]);
 		case MoguSyntax::widget:
-			mApp;
 			target = app->registeredWidget( );
 			break;
 

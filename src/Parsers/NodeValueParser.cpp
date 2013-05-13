@@ -41,7 +41,7 @@ void NodeValueParser::tokenizeInput(std::string input)
 		else
 		{
 			__strTokens.push_back(token);
-			__numTokens.push_back(MoguSyntax::TOKEN_DELIM);
+			__numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
 			__numTokens.push_back(200 + strIndex);
 			//magic number 200 to avoid collision with actual syntax
 

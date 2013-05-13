@@ -30,7 +30,7 @@ class StateParser
 
 	private:
 		std::vector<int>* __numTokens;
-		std::vector<int>* __strTokens;
+		std::vector<std::string>* __strTokens;
 
 		const std::unordered_set<int> __widgetTokens = {
 			(int) MoguSyntax::own,
