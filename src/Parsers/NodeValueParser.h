@@ -15,7 +15,6 @@
 class NodeValue;
 class CommandValue;
 
-#include <list>
 #include <string>
 #include <vector>
 
@@ -62,8 +61,8 @@ class NodeValueParser
 
 		void tokenizeInput(std::string input);
 		bool reduceExpressions(Moldable* bc);
-		void parseListener(std::list<int>::iterator& it, CommandValue& cv);
-		void parseMessage(std::list<int>::iterator& it, CommandValue& cv);
+		void parseListener(std::vector<int>::iterator& it, CommandValue& cv);
+		void parseMessage(std::vector<int>::iterator& it, CommandValue& cv);
 
 		//debug
 		void printTokens();

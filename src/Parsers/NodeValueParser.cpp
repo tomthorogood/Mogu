@@ -78,7 +78,7 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 	return hasPreposition;
 }
 
-void NodeValueParser::parseListener(std::list<int>::iterator& it,
+void NodeValueParser::parseListener(std::vector<int>::iterator& it,
 									CommandValue& cv)
 {
 	cv.setObject(*it++);
@@ -92,7 +92,7 @@ void NodeValueParser::parseListener(std::list<int>::iterator& it,
 	cv.setArg(*it++);
 }
 
-void NodeValueParser::parseMessage(std::list<int>::iterator& it,
+void NodeValueParser::parseMessage(std::vector<int>::iterator& it,
 								   CommandValue& cv)
 {
 	//TODO: handling of edge cases
