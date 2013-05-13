@@ -180,6 +180,8 @@ clean:
 	@rm -rf $(objects) $(syntax) $(logs) all.check
 	@echo "Removed build, syntax, and check files..."
 	@rm -rf *.pyc build_log.txt autom4te.cache *.log
+	@sudo pip uninstall moguio \
+		|| echo "moguio not installed, so not removing"
 
 purge: clean
 	@rm -rf configure
@@ -193,7 +195,7 @@ mogu.conf:
 
 moguio: $(SYNTAX_PY)
 	@echo "Building the moguio Python library"
-	@cd $(MOGUIO_DIR) && python setup.py install
+	@sudo pip install $(MOGUIO_DIR)
 
 $(DBCONF_DIR)/dbconfig.conf:
 	@echo "Creating and updating $@"

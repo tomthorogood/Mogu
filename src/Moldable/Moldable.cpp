@@ -78,11 +78,6 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
 {
 
     switch (state) {
-        case MoguSyntax::children: {
-            int n = children().size();
-            val.setInt(n);
-            break;
-        }
         case MoguSyntax::index: {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
             int n = stack->currentIndex();

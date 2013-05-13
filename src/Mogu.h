@@ -110,6 +110,10 @@ public:
     inline std::string& getGroup() {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
     inline SlotManager& slotManager() { return __slotMgr;}
+    inline void alert (const std::string& message) {
+        std::string jsalert = "alert(\""+message"\");";
+        doJavaScript(jsalert);
+    }
     void removeWidget(const std::string& identifier);
 };
 

@@ -11,6 +11,8 @@ DB_CONFIG_PATH = "../../../../"
 DB_CONFIG_FILE = "dbconfig.conf"
 
 def parseDBConfig(filename):
+    if not filename:
+        raise IOError("No filename listed")
     def important(string):
         """Removes comments and blank lines"""
         if len(string) <= 1:
@@ -66,9 +68,9 @@ class RedisWriter(object):
                     'port'  :   '6379',
                     'number':   '0'
             }
-            sys.stderr.write("WARNING: dbconfig file (%s) not found.\n\
-                    You should only continue if you are a Mogu developer\
-                    testing things.\n" % dbconfig )
+            sys.stderr.write("WARNING: dbconfig file (%s) not found. "
+                    "You should only continue if you are a Mogu developer "
+                    "testing things.\n" % dbconfig )
 
             cont = raw_input("Continue anyway? type 'continue' to continue :")
             
@@ -76,10 +78,10 @@ class RedisWriter(object):
                 sys.stderr.write("Exiting.")
                 sys.exit()
             else:
-                sys.stderr.write("Using\n\t\
-                        host: %(host)s\n\t\
-                        port: %(port)\n\t\
-                        select: %(number)s"\
+                sys.stderr.write("Using\n\t"
+                        "host: %(host)s\n\t"
+                        "port: %(port)s\n\t"
+                        "select: %(number)s"
                         % self.dbconfig['default'])
         self.databases = {}
         self.pipes = {}
