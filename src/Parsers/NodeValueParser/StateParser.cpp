@@ -40,7 +40,7 @@ void StateParser::processInput(std::vector<int>::reverse_iterator &rit,
 			//multiple children?
 			target = (Moldable*) (broadcaster->children()[0]);
 		case MoguSyntax::widget:
-			target = app->registeredWidget( );
+			target = app->registeredWidget(*(it++) );
 			break;
 
 		case MoguSyntax::user:

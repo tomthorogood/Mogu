@@ -63,13 +63,13 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 		if(currToken == (int) MoguSyntax::OPER_OPPAREN) 
 			__mathParser.processInput(rit);
 			
-		else if(__objectTokens.count(currToken) == 1)
+		else if(isObjectToken(currToken))
 		{
 			if(lastToken < (int) MoguSyntax::OPER_OPPAREN)
 				__stateParser.processInput(rit, bc);
 		}
 
-		else if(__prepositionTokens.count(currToken) == 1)
+		else if(isPrepositionToken(currToken))
 			hasPreposition = true;
 
 		lastToken = *rit;
@@ -83,11 +83,11 @@ void NodeValueParser::parseListener(std::vector<int>::iterator& it,
 {
 	cv.setObject(*it++);
 
-	if(it == __numTokens.end() || __prepositionTokens.count(*it) == 1)
+	if(it == __numTokens.end() || isPrepositionToken(*it))
 		return;
 	cv.setIdentifier(*it++);
 
-	if(it == __numTokens.end() || __prepositionTokens.count(*it) == 1)
+	if(it == __numTokens.end() || isPrepositionToken(*it))
 		return;
 	cv.setArg(*it++);
 }
@@ -135,7 +135,7 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv)
 	cv.setAction(__numTokens.front());
 
 	auto it = ++__numTokens.begin();
-	if(__flippedActionTokens.count((int) cv.getAction() == 1))
+	if(isFlippedActionToken(cv.getAction()))
 	{
 		//flip-flopped command syntax
 		//e.g. 'remove', 'append'

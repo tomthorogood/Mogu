@@ -12,10 +12,10 @@
 #include <vector>
 #include <unordered_set>
 
-class StringTracker;
 #include <declarations.h>
 #include <Types/NodeValue.h>
 #include <Moldable/Moldable.h>
+#include <Parsers/NodeValueParser/TokenGroups.h>
 
 namespace Parsers {
 
@@ -32,19 +32,6 @@ class StateParser
 		std::vector<int>* __numTokens;
 		std::vector<std::string>* __strTokens;
 
-		const std::unordered_set<int> __widgetTokens = {
-			(int) MoguSyntax::own,
-			(int) MoguSyntax::parent,
-			(int) MoguSyntax::child,
-			(int) MoguSyntax::widget
-		};
-
-		const std::unordered_set<int> __dbTokens = {
-			(int) MoguSyntax::user,
-			(int) MoguSyntax::session,
-			(int) MoguSyntax::group,
-			(int) MoguSyntax::data
-		};
 
 };
 

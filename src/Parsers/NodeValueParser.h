@@ -10,6 +10,7 @@
 
 #include <Parsers/NodeValueParser/StateParser.h>
 #include <Parsers/NodeValueParser/MathParser.h>
+#include <Parsers/NodeValueParser/TokenGroups.h>
 #include <Types/syntax.h>
 class NodeValue;
 class CommandValue;
@@ -35,28 +36,7 @@ class NodeValueParser
 		std::vector<int> __numTokens;
 		std::vector<std::string> __strTokens;
 
-		const std::unordered_set<int> __flippedActionTokens = {
-			(int) MoguSyntax::remove,
-			(int) MoguSyntax::append
-		};
-
-		const std::unordered_set<int> __objectTokens = {
-			(int) MoguSyntax::own,
-			(int) MoguSyntax::parent,
-			(int) MoguSyntax::user,
-			(int) MoguSyntax::session,
-			(int) MoguSyntax::group,
-			(int) MoguSyntax::child,
-			(int) MoguSyntax::data,
-			(int) MoguSyntax::slot,
-			(int) MoguSyntax::widget
-		};
-
-		const std::unordered_set<int> __prepositionTokens = {
-			(int) MoguSyntax::to,
-			(int) MoguSyntax::as,
-			(int) MoguSyntax::at
-		};
+		
 
 		void tokenizeInput(std::string input);
 		bool reduceExpressions(Moldable* bc);
