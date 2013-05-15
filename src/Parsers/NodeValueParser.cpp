@@ -54,25 +54,25 @@ void NodeValueParser::tokenizeInput(std::string input)
 
 bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
-	int lastToken = 0;
+	MoguSyntax lastToken = MoguSyntax::__NONE__;
 	bool hasPreposition = false;
 	for(auto rit=__numTokens.rbegin(); rit!=__numTokens.rend(); rit++)
 	{
-		int currToken = *rit;
+		MoguSyntax currToken = (MoguSyntax) *rit;
 
-		if(currToken == (int) MoguSyntax::OPER_OPPAREN) 
+		if(currToken == MoguSyntax::OPER_OPPAREN) 
 			__mathParser.processInput(rit);
 			
 		else if(isObjectToken(currToken))
 		{
-			if(lastToken < (int) MoguSyntax::OPER_OPPAREN)
+			if(lastToken < MoguSyntax::OPER_OPPAREN)
 				__stateParser.processInput(rit, bc);
 		}
 
 		else if(isPrepositionToken(currToken))
 			hasPreposition = true;
 
-		lastToken = *rit;
+		lastToken = (MoguSyntax) *rit;
 	}
 
 	return hasPreposition;
@@ -83,11 +83,11 @@ void NodeValueParser::parseListener(std::vector<int>::iterator& it,
 {
 	cv.setObject(*it++);
 
-	if(it == __numTokens.end() || isPrepositionToken(*it))
+	if(it == __numTokens.end() || isPrepositionToken((MoguSyntax) *it))
 		return;
 	cv.setIdentifier(*it++);
 
-	if(it == __numTokens.end() || isPrepositionToken(*it))
+	if(it == __numTokens.end() || isPrepositionToken((MoguSyntax) *it))
 		return;
 	cv.setArg(*it++);
 }
