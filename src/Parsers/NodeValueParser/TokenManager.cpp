@@ -110,6 +110,6 @@ void TokenManager::injectToken(std::string strToken)
 	__revit = __numTokens.insert(__revit, (int) MoguSyntax::TOKEN_DELIM);
 	__strTokens.insert(__numTokens.begin()+strIndex, strToken);
 
-}
+
 
 }	// namespace Parsers
