@@ -18,15 +18,14 @@ namespace Parsers {
 
 NodeValueParser::NodeValueParser()
 {
-	__stateParser.setTokens(__numTokens, __strTokens);
-	__mathParser.setTokens(__numTokens);
+	__stateParser.setTokenManager(__tm);
+	__mathParser.setTokenManager(__tm);
 }
 
 
 void NodeValueParser::tokenizeInput(std::string input)
 {
 	unsigned int inputIndex = 0;
-	unsigned int strIndex = 0;
 	while(inputIndex < input.size())
 	{
 		int endTokenIndex; 
@@ -38,19 +37,15 @@ void NodeValueParser::tokenizeInput(std::string input)
 		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
 		if(isdigit(token[0]))
-			__numTokens.push_back(std::stoi(token));
+			__tm.addToken(std::stoi(token));
 		else
-		{
-			__strTokens.push_back(token);
-			__numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
-			__numTokens.push_back(9001 + strIndex);
-			//magic number to avoid collision with actual syntax
-
-			strIndex++;
-		}
+			__tm.addToken(token);
 
 		inputIndex += 2;
 	}
+
+	//tell TokenManager that we're done adding tokens
+	__tm.setIterator();
 }
 
 bool NodeValueParser::reduceExpressions(Moldable* bc)

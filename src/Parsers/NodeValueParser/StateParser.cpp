@@ -16,15 +16,12 @@ StateParser::StateParser()
 {
 }
 
-void StateParser::setTokens(std::vector<int>& numTokens,
-							std::vector<std::string>& strTokens)
+void StateParser::setTokenManager(TokenManager& tm)
 {
-	__numTokens = &numTokens;
-	__strTokens = &strTokens;
+	__tm = tm;
 }
 
-void StateParser::processInput(std::vector<int>::reverse_iterator &rit,
-							   Moldable* broadcaster)
+void StateParser::processInput(Moldable* broadcaster)
 {
 	mApp;
 	auto it = rit.base()--;

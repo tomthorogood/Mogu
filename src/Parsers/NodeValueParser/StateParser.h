@@ -9,11 +9,11 @@
 #define STATEPARSER_H_
 
 #include <string>
-#include <vector>
 
 #include <declarations.h>
 #include <Moldable/Moldable.h>
 #include <Parsers/NodeValueParser/TokenGroups.h>
+#include <Parsers/NodeValueParser/TokenManager.h>
 
 namespace Parsers {
 
@@ -21,14 +21,11 @@ class StateParser
 {
 	public:
 		StateParser();
-		void processInput(std::vector<int>::reverse_iterator& rit,
-						  Moldable* broadcaster);
-		void setTokens(std::vector<int>& numTokens,
-					   std::vector<std::string>& strTokens);
+		void processInput(Moldable* broadcaster);
+		void setTokenManager(TokenManager& tm);
 
 	private:
-		std::vector<int>* __numTokens;
-		std::vector<std::string>* __strTokens;
+		TokenManager& __tm;
 
 
 };

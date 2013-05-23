@@ -5,8 +5,6 @@
  *      Author: cameron
  */
 
-#include <Types/syntax.h>
-
 namespace Parsers {
 
 TokenManager::TokenManager()
@@ -35,14 +33,18 @@ void TokenManager::addToken(std::string strToken)
 void TokenManager::setIterator()
 {
 	__revit = __numTokens.rbegin();
-	strIndex = __strTokens.size();	//initially points out-of-bounds
+	__strIndex = __strTokens.size();	//initially points out-of-bounds
+
+	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
+		__strIndex--;		//in case we don't have a prev() call to properly 
+						//line us up
 }
 
 int TokenManager::currentToken()
 {
 	//internally we use a reverse iterator, but externally we are to
 	//think of the tokens being arranged in the traditional forwards
-	//direction
+	//direction.  hence the out-of-bounds signals are reversed
 	if(__revit >= __numTokens.rend())
 		return OutOfRange::Begin;
 
@@ -50,15 +52,15 @@ int TokenManager::currentToken()
 		return OutOfRange::End;
 
 	else
-		return *rit;
+		return *__revit;
 }
 
 
 
 std::string TokenManager::fetchStringToken()
 {
-	if(*rit == (int) MoguSyntax::TOKEN_DELIM)
-		return __strTokens[strIndex];
+	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
+		return __strTokens[__strIndex];
 
 	else
 		return R"(ERR: DEREFERENCING NON-TOKENDELIM");
@@ -69,16 +71,45 @@ std::string TokenManager::fetchStringToken()
 
 void TokenManager::next()
 {
-	rit--;
-	if(*rit == (int) MoguSyntax::TOKEN_DELIM)
-	   strIndex++;	
+	__revit--;
+	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
+	   __strIndex++;	
 }
 
 void TokenManager::prev()
 {
-	rit++;
-	if(*rit == (int) MoguSyntax::TOKEN_DELIM)
-		strIndex--;
+	__revit++;
+	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
+		__strIndex--;
+}
+
+void TokenManager::saveLocation()
+{
+	__savedrit = __revit;
+}
+
+void TokenManager::deleteToSaved()
+{
+	//up to and including saved loc.  also, update our iterator.
+	__revit =  __numTokens.erase(__revit, __savedrit+1);	
+
+	//TODO: updated strIndex as needed (deleted strings)
+}
+
+//call this directly after deleteToSaved()!
+void TokenManager::injectToken(int numToken)
+{
+	//ends pointing to our newly inserted element
+	__revit = __numTokens.insert(__revit, numToken);
+
+}
+
+//call this directly after deleteToSaved()!
+void TokenManager::injectToken(std::string strToken)
+{
+	__revit = __numTokens.insert(__revit, (int) MoguSyntax::TOKEN_DELIM);
+	__strTokens.insert(__numTokens.begin()+strIndex, strToken);
+
 }
 
 }	// namespace Parsers
