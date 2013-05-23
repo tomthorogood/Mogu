@@ -12,8 +12,8 @@
 #include <stack>
 #include <string>
 #include <climits>
-#include <list>
 
+//TODO: replace these macros with generated syntax values
 #define LOWEST_OP_ENUM (INT_MAX - 5)
 #define isOperator(a) ( (a) >= LOWEST_OP_ENUM )
 

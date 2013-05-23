@@ -10,8 +10,6 @@
 
 #include <Parsers/NodeValueParser/StateParser.h>
 #include <Parsers/NodeValueParser/MathParser.h>
-#include <Parsers/NodeValueParser/TokenGroups.h>
-#include <Types/syntax.h>
 class NodeValue;
 class CommandValue;
 

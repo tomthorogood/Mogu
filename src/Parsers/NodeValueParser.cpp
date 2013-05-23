@@ -5,6 +5,7 @@
  *      Author: cameron
  */
 #include <Parsers/NodeValueParser.h>
+#include <Parsers/NodeValueParser/TokenGroups.h>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Events/CommandValue.h>
@@ -42,8 +43,8 @@ void NodeValueParser::tokenizeInput(std::string input)
 		{
 			__strTokens.push_back(token);
 			__numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
-			__numTokens.push_back(200 + strIndex);
-			//magic number 200 to avoid collision with actual syntax
+			__numTokens.push_back(9001 + strIndex);
+			//magic number to avoid collision with actual syntax
 
 			strIndex++;
 		}
@@ -123,7 +124,7 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
 	if(__numTokens.front() == (int) MoguSyntax::TOKEN_DELIM)
-		nv.setString(__strTokens[200 + __numTokens[1] ]);
+		nv.setString(__strTokens[9001 + __numTokens[1] ]);
 	else
 		nv.setInt(__numTokens.front());
 }
