@@ -19,10 +19,10 @@ void MoldableText::__init__()
 {
     Moldable::__init__();
     mApp;
+    NodeValue v;
     Redis::ContextQuery db(Prefix::widgets);
     __text = new Wt::WText;
 
-    NodeValue v;
     app->interpreter().giveInput(getParameter(db,MoguSyntax::text), v);
     const std::string& content = v.getString();
     if (content != EMPTY)

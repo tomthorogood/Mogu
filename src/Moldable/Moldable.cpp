@@ -35,9 +35,14 @@ Moldable::~Moldable()
 
 void Moldable::__init__ ()
 {
-    mApp;
+    mApp; // Access application instance
+
+    // Add widget to registry
     app->registerWidget(__node,*this);
+
+    // Access application instance interpreter
     Parsers::NodeValueParser& nvp = app->interpreter();
+
     std::string param;
     NodeValue v;
     Redis::ContextQuery db(Prefix::widgets);
@@ -45,6 +50,8 @@ void Moldable::__init__ ()
     // Any widget type can have style or tooltip declarations
     param = getParameter(db, MoguSyntax::style);
     if (param != EMPTY) {
+        // input will either be a string literal or a resolvable Mogu command
+        // pointing to a string literal (eventually)
         nvp.giveInput(param,v);
         setStyleClass(v.getString());
     }
@@ -52,12 +59,20 @@ void Moldable::__init__ ()
     param = getParameter(db, MoguSyntax::tooltip);
     if (param != EMPTY)
     {
+        // input will either be a string literal or a resolvable Mogu command
+        // pointing to a string literal (eventually). This will possibly
+        // have valid HTML markup embedded, which is allowed as long as it's
+        // well formed.
         nvp.giveInput(param,v);
         setToolTip(v.getString());
     }
 
     // And any widget can have events. We only see if they exist now; we
     // do not do any event handling at this time.
+    //
+    // The widgets.[id].events key will be a list of the event triggers.
+    // Therefore, the llen query will show how many triggers we have for
+    // this widget.
     CreateQuery(db,"llen widgets.%s.events", __node.c_str());
     num_triggers = (size_t) db.yieldResponse <int>();
 }

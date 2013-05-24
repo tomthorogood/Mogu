@@ -18,6 +18,8 @@ public:
     //Containers have no textual value:
     inline virtual std::string moldableValue(){return EMPTY;}
     inline virtual void setMoldableValue(const std::string&){}
+
+    // public access for adding children to the widget
     virtual void appendChild(Moldable* child) { addChild(child);}
 };
 
