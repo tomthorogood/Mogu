@@ -10,8 +10,7 @@
 
 #include <Parsers/NodeValueParser/StateParser.h>
 #include <Parsers/NodeValueParser/MathParser.h>
-#include <Parsers/NodeValueParser/TokenGroups.h>
-#include <Types/syntax.h>
+#include <Parsers/NodeValueParser/TokenManager.h>
 class NodeValue;
 class CommandValue;
 
@@ -32,20 +31,12 @@ class NodeValueParser
 	private:
 		StateParser __stateParser;
 		MathParser __mathParser;
-
-		std::vector<int> __numTokens;
-		std::vector<std::string> __strTokens;
-
-		
+		TokenManager __tm;
 
 		void tokenizeInput(std::string input);
 		bool reduceExpressions(Moldable* bc);
 		void parseListener(std::vector<int>::iterator& it, CommandValue& cv);
 		void parseMessage(std::vector<int>::iterator& it, CommandValue& cv);
-
-		//debug
-		void printTokens();
-
 };
 
 }	// namespace Parsers

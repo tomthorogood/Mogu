@@ -5,6 +5,7 @@
  *      Author: cameron
  */
 #include <Parsers/NodeValueParser.h>
+#include <Parsers/NodeValueParser/TokenGroups.h>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Events/CommandValue.h>
@@ -17,15 +18,14 @@ namespace Parsers {
 
 NodeValueParser::NodeValueParser()
 {
-	__stateParser.setTokens(__numTokens, __strTokens);
-	__mathParser.setTokens(__numTokens);
+	__stateParser.setTokenManager(__tm);
+	__mathParser.setTokenManager(__tm);
 }
 
 
 void NodeValueParser::tokenizeInput(std::string input)
 {
 	unsigned int inputIndex = 0;
-	unsigned int strIndex = 0;
 	while(inputIndex < input.size())
 	{
 		int endTokenIndex; 
@@ -37,19 +37,15 @@ void NodeValueParser::tokenizeInput(std::string input)
 		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
 		if(isdigit(token[0]))
-			__numTokens.push_back(std::stoi(token));
+			__tm.addToken(std::stoi(token));
 		else
-		{
-			__strTokens.push_back(token);
-			__numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
-			__numTokens.push_back(200 + strIndex);
-			//magic number 200 to avoid collision with actual syntax
-
-			strIndex++;
-		}
+			__tm.addToken(token);
 
 		inputIndex += 2;
 	}
+
+	//tell TokenManager that we're done adding tokens
+	__tm.setIterator();
 }
 
 bool NodeValueParser::reduceExpressions(Moldable* bc)
@@ -123,7 +119,7 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
 	if(__numTokens.front() == (int) MoguSyntax::TOKEN_DELIM)
-		nv.setString(__strTokens[200 + __numTokens[1] ]);
+		nv.setString(__strTokens[9001 + __numTokens[1] ]);
 	else
 		nv.setInt(__numTokens.front());
 }
