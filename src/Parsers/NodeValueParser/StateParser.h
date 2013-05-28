@@ -22,10 +22,10 @@ class StateParser
 	public:
 		StateParser();
 		void processInput(Moldable* broadcaster);
-		void setTokenManager(TokenManager& tm);
 
 	private:
-		TokenManager* __tm;
+		TokenManager& __tm;
+        std::string getIdentifier();
 
 
 };
