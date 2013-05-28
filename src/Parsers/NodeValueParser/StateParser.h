@@ -35,9 +35,10 @@ class StateParser
 
         // Looks up the state of a named widget
         void handleWidget(const std::string& identifier, NodeValue& result); 
-
         // Looks up the state of a self-referential widget "own|self"
-        // void handleWidget (Moldable* broadcaster, NodeValue& result)
+        void handleWidget (Moldable* broadcaster, NodeValue& result)
+        void handleData(const std::string& identifier, NodeValue& result);
+
 };
 
 }	// namespace Parsers
