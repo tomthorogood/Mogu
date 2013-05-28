@@ -75,10 +75,7 @@ void TokenManager::next()
 {
 	__it++;
 	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
-	{
 	   __strIndex++;	
-	std::cout << "next(): __strIndex == " << __strIndex << std::endl;
-	}
 
 	if(__delStringCount >= 0)
 		__delStringCount++;
@@ -88,10 +85,7 @@ void TokenManager::prev()
 {
 	__it--;
 	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
-	{
 		__strIndex--;
-	std::cout << "prev() __strIndex == " << __strIndex << std::endl;
-	}
 
 	if(__delStringCount >= 0)
 		__delStringCount--;
@@ -112,7 +106,6 @@ void TokenManager::deleteToSaved()
 	__strIndex -= __delStringCount;
 	if(*__it != (int) MoguSyntax::TOKEN_DELIM)
 		__strIndex++;
-	std::cout << "deleteToSaved(): strIndex == " << __strIndex << std::endl;
 	__delStringCount = -1;
 }
 
@@ -122,7 +115,6 @@ void TokenManager::deleteFromSaved()
 	__strIndex -= __delStringCount;
 	if(*__it != (int) MoguSyntax::TOKEN_DELIM)
 		__strIndex++;
-	std::cout << "deleteFromSaved(): strIndex == " << __strIndex << std::endl;
 	__delStringCount = -1;
 }
 
@@ -132,19 +124,13 @@ void TokenManager::injectToken(int numToken)
 	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
 		__strIndex++;
 
-	std::cout << "injectToken(): strIndex == " << __strIndex << std::endl;
-
 	__it = __numTokens.insert(__it, numToken);
 }
 
 //call this directly after deleteToSaved()!
 void TokenManager::injectToken(std::string strToken)
 {
-	std::cout << "injectToken(): pre numInsert" << std::endl;
 	__it = __numTokens.insert(__it, (int) MoguSyntax::TOKEN_DELIM);
-	std::cout << "injectToken(): pre strInsert" << std::endl;
-	std::cout << "strTokens.size() == " << __strTokens.size() << std::endl;
-	std::cout << "strIndex == " << __strIndex << std::endl;
 	__strTokens.insert(__strTokens.begin()+__strIndex+1, strToken);
 	__strIndex++;
 }

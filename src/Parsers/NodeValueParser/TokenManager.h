@@ -14,10 +14,6 @@
 
 #include <Types/syntax.h>
 
-//debug
-#include <iostream>
-
-
 namespace Parsers {
 
 	//centralized token groups for decision logic in the various
@@ -128,11 +124,6 @@ class TokenManager
 
 		//debug methods
 		void printTokens();
-		inline void printStrIndex()
-		{
-			std::cout << "printStrIndex(): __strIndex == " << __strIndex << std::endl;
-		}
-
 
 	private:
 		std::vector<int> __numTokens;
