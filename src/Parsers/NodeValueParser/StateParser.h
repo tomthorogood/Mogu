@@ -20,7 +20,7 @@ namespace Parsers {
 class StateParser
 {
 	public:
-		StateParser();
+		StateParser(TokenManager& tm);
 		void processInput(Moldable* broadcaster);
 
 	private:
