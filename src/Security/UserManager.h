@@ -17,7 +17,6 @@
 class UserManager {
 public:
     UserManager();
-    ~UserManager();
     /*!\brief Attempts to log in a user given the username and password,
      * returning a status code which can be handled by the calling class.
      * 1    - The login was successful
@@ -42,7 +41,7 @@ public:
 
     inline const std::string& getUser() const {return userKeyspace;}
     
-    bool setActiveGroup(const std::string& groupid); 
+    bool setActiveGroup(const std::string& groupid){} //TODO
 
 private:
     Redis::ContextQuery db;

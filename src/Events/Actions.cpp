@@ -12,7 +12,7 @@
 #include <Redis/QueryAssistant.h>
 #include <Types/SlotManager.h>
 #include <Types/EmailManager.h>
-
+namespace Actions {
 MoguSyntax getPolicyNodeType(const std::string& identifier)
 {
     Redis::ContextQuery policydb(Prefix::policies);
@@ -890,3 +890,5 @@ void email(Moldable& broadcaster, CommandValue& v)
     email.setMessage(message.getString());
     email.send();
 }
+
+}//namespace Actions

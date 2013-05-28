@@ -73,8 +73,7 @@ HashedString* hashedString(
  * @param str The string to be hashed.
  * @return The hashed value.
  */
-std::string toHash(
-    const std::string& str);
+std::string toHash(const std::string& str);
 
 }    //<-- namespace hash
 

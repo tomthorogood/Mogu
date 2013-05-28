@@ -61,5 +61,4 @@ void Mogu::handlePathChange(
 
 Mogu::~Mogu()
 {
-    redisFree(__redis);
 }

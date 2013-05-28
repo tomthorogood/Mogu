@@ -62,7 +62,7 @@ namespace Application { //static namespace
 
 
 
-std::unordered_map <Prefix, std::shared_ptr <Redis::Context>, IntHash<Prefix>>
+static std::unordered_map <Prefix, std::shared_ptr <Redis::Context>, IntHash<Prefix>>
     contextMap;
 
 /* These bits are used as flags in PREFIX_MASK to ensure

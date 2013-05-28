@@ -36,7 +36,12 @@ class StateParser
         void handleWidget(const std::string& identifier, NodeValue& result); 
         // Looks up the state of a self-referential widget "own|self"
         void handleWidget (Moldable* broadcaster, NodeValue& result);
+
+        // Looks up the value of a static data field in Redis.
         void handleData(const std::string& identifier, NodeValue& result);
+
+        // Looks up the value of a user's data field in Redis.
+        void handleUserField (const std::string& identifier, NodeValue& result);
 
 };
 

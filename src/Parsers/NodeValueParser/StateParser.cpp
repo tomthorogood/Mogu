@@ -51,7 +51,7 @@ void StateParser::processInput(Moldable* broadcaster)
             //result changed in place to hold value
             handleWidget(identifier,result);
             break;
-        case MoguSyntax::self:
+        case MoguSyntax::own:
             __tm.next();
             handleWidget(broadcaster, result);
             break;
@@ -63,12 +63,13 @@ void StateParser::processInput(Moldable* broadcaster)
             handleUserField(identifier, result);
 		case MoguSyntax::group:
             identifier = getIdentifier();
-            handleGroupField(identifier, result);
+            //handleGroupField(identifier, result);
 		case MoguSyntax::slot:{
             mApp;
             identifier = getIdentifier();
-            SlotManager& slots = app->slotManager();
-            result.setString(slots.retrieveSlot(identifier));
+          //  SlotManager& slots = app->slotManager();
+          //  result.setString(slots.retrieveSlot(identifier));
+            result = app->slotManager().retrieveSlot(identifier);
             break;
           }
 
@@ -159,5 +160,17 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
 void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 {
     widget->getAttribute(__tm.currentToken <MoguSyntax>(), result);
+}
+
+void StateParser::handleUserField(const std::string& field, NodeValue& result)
+{
+    mApp;
+    std::string userid = app->getUser();
+    Redis::ContextQuery policies(Prefix::policies);
+    Redis::ContextQuery user(Prefix::user);
+
+    // Determine the expected type and encryption
+    // of the field in question:
+
 }
 }	// namespace Parsers

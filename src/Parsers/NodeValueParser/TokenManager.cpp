@@ -136,5 +136,26 @@ void TokenManager::printTokens()
 	std::cout << std::endl;
 }
 
+template <typename T> T TokenManager::currentToken() {
+    return (T) currentToken <int>();
+}
+
+template <> int TokenManager::currentToken()
+{
+	if(__it < __numTokens.begin())
+		return (int) OutOfRange::Begin;
+
+	else if(__it >= __numTokens.end())
+		return (int) OutOfRange::End;
+
+	else
+		return *__it;
+}
+
+template <> MoguSyntax TokenManager::currentToken()
+{
+    return static_cast<MoguSyntax>(currentToken <int>());
+}
+
 
 }	// namespace Parsers

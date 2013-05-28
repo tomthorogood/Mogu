@@ -8,8 +8,8 @@
  *\brief tracking Redis instances for different prefixes.
  */
 
-#ifndef CONTEXTMANAGER_H_
-#define CONTEXTMANAGER_H_
+#ifndef CONTEXT_H_
+#define CONTEXT_H_
 
 #include <declarations.h>
 namespace Redis {
@@ -28,4 +28,4 @@ public:
 
 }//Redis
 
-#endif /* CONTEXTMANAGER_H_ */
+#endif /* CONTEXT_H_ */

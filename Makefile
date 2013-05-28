@@ -113,7 +113,7 @@ SYNTAX_PY := $(MOGUIO_DIR)/moguio/syntax.py
 
 all: $(objects) | $(turnleft)
 	@echo "Linking object files and creating executable..."
-	@g++ $(flags) -o $(executable) $(objects) $(libs)
+	@g++ $(flags) -o $(EXECUTABLE) $(objects) $(libs)
 
 # Attempts to compile all object files, but does not stop if there are
 # errors, instead appending them to 'build_log.txt' for you to review.

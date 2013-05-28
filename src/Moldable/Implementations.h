@@ -17,8 +17,8 @@
 #include "MoldableImage.h"
 #include "MoldableLink.h"
 #include "MoldableImageLink.h"
-#include "MemberContainer.h"
-#include "MemberStack.h"
+//#include "MemberContainer.h"
+//#include "MemberStack.h"
 
 
 #endif /* IMPLEMENTATIONS_H_ */

@@ -4,7 +4,8 @@
  *  Created on: Apr 22, 2013
  *      Author: tom
  */
-
+#ifndef ACTIONS_H_
+#define ACTIONS_H_
 #include <declarations.h>
 namespace Actions
 {
@@ -22,3 +23,4 @@ void javascript(Moldable& broadcaster, CommandValue& command);
 
 }//namespace Actions
 
+#endif //ACTIONS_H_

@@ -56,12 +56,12 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     switch(widget_type)
     {
     case MoguSyntax::container:
-        if (has_tmpl && has_content)
-            return new MemberContainer(node);
+//        if (has_tmpl && has_content)
+//            return new MemberContainer(node);
         return new MoldableContainer(node);
     case MoguSyntax::stack:
-        if (has_tmpl && has_content)
-            return new MemberStack(node);
+//        if (has_tmpl && has_content)
+//            return new MemberStack(node);
         return new MoldableStack(node);
     case MoguSyntax::text:
         return new MoldableText(node);
