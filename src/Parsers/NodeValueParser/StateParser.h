@@ -25,7 +25,7 @@ class StateParser
 		void setTokenManager(TokenManager& tm);
 
 	private:
-		TokenManager& __tm;
+		TokenManager* __tm;
 
 
 };

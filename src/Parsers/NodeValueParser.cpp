@@ -74,7 +74,7 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 	return hasPreposition;
 }
 
-void NodeValueParser::parseListener(std::vector<int>::iterator& it,
+/*void NodeValueParser::parseListener(std::vector<int>::iterator& it,
 									CommandValue& cv)
 {
 	cv.setObject(*it++);
@@ -94,20 +94,7 @@ void NodeValueParser::parseMessage(std::vector<int>::iterator& it,
 	//TODO: handling of edge cases
 	//e.g. 'append widget foo to widget bar'
 	cv.setValue(*it);
-}
-
-void NodeValueParser::printTokens()
-{
-	std::cout << "Contents of __numTokens:" << std::endl;
-	for(auto it = __numTokens.begin(); it != __numTokens.end(); it++)
-		std::cout << *it << std::endl;
-	std::cout << "End __numTokens list." << std::endl << std::endl;
-
-	std::cout << "Contents of __strTokens:" << std::endl;
-	//for(auto it = __strTokens.begin(); it != __strTokens.end(); it++)
-	//	std::cout << *it << std::endl;
-	std::cout << "End __strTokens list." << std::endl << std::endl;
-}
+}*/
 
 void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 {
@@ -118,10 +105,10 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 	//if we have more than one token in __numTokens at this point (or
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
-	if(__numTokens.front() == (int) MoguSyntax::TOKEN_DELIM)
-		nv.setString(__strTokens[9001 + __numTokens[1] ]);
+	if(__tm.currentToken() == (int) MoguSyntax::TOKEN_DELIM)
+		nv.setString(__tm.fetchStringToken());
 	else
-		nv.setInt(__numTokens.front());
+		nv.setInt(__tm.currentToken());
 }
 
 void NodeValueParser::giveInput(std::string input, CommandValue& cv)

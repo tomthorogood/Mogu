@@ -35,8 +35,6 @@ class NodeValueParser
 
 		void tokenizeInput(std::string input);
 		bool reduceExpressions(Moldable* bc);
-		void parseListener(std::vector<int>::iterator& it, CommandValue& cv);
-		void parseMessage(std::vector<int>::iterator& it, CommandValue& cv);
 };
 
 }	// namespace Parsers
