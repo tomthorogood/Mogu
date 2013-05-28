@@ -9,6 +9,7 @@
 #include <Parsers/NodeValueParser/StateParser.h>
 #include <Redis/ContextQuery.h>
 #include <Types/syntax.h>
+#include <Redis/ContextQuery.h>
 
 namespace Parsers {
 
