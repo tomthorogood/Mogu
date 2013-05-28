@@ -127,7 +127,7 @@ compile-ignore-errors: $(objects)
 # whether the compilation was a success, opening the output in 'vim'. If
 # there is no output, then everything is great. Rejoice.
 compile-examine: 
-	$(MAKE) clean && $(MAKE) $(EXAMINE).o && vi build/$(EXAMINE).o.log
+	$(MAKE) clean && $(MAKE) $(EXAMINE).o 
 
 %.o: | build $(CURDIR)/syntax/syntax.h
 	@echo -n "Compiling $@..."
