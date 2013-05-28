@@ -18,61 +18,23 @@ StateParser::StateParser()
 
 void StateParser::setTokenManager(TokenManager& tm)
 {
-	__tm = tm;
+	__tm = &tm;
 }
 
 void StateParser::processInput(Moldable* broadcaster)
 {
 	mApp;
-	auto it = rit.base()--;
-	MoguSyntax currToken = (MoguSyntax) *it;
+	MoguSyntax currToken = (MoguSyntax) __tm->currentToken();
 
-	if(isWidgetToken(currToken)) {
-
-		Moldable* target;
-		switch(currToken) {
-			case MoguSyntax::own:
-				target = broadcaster;
-				break;
-			case MoguSyntax::parent:
-				target = broadcaster.parent();
-				break;
-			case MoguSyntax::child:
-				target = broadcaster.children()[0];
-				break;
-			case MoguSyntax::widget:
-				it++;	//place iterator on identifier
-				if
-				target = app->registeredWidget(*it);
-				break;
-		}
-
-	}
-
-	else if(isDBToken(currToken)) {
-		int index = *(it++);
-		std::string identifier = __strTokens->at(index);
-		int arg = *(it++);
-
-
-
-		switch(currToken) {
-			case MoguSyntax::user:
-				Redis::ContextQuery db(Prefix::user);
-				break;
-			case MoguSyntax::group:
-				Redis::ContextQuery db(Prefix::group);
-				break;
-			case MoguSyntax::data:
-				Redis::ContextQuery db(Prefix::data);
-				break;
-		}
-	}
-
-	else 		//slot syntax?
+	switch(currToken)
 	{
+		case MoguSyntax::widget:
+		case MoguSyntax::data:
+		case MoguSyntax::user:
+		case MoguSyntax::session:
+		case MoguSyntax::group:
+		case MoguSyntax::slot:
 	}
-
 
 }
 
