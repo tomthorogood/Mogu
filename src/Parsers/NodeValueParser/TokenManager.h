@@ -106,8 +106,6 @@ class TokenManager
 
 		//methods for navigating the token list.
         template <typename T> T currentToken();
-		template <> int currentToken();
-        template <> MoguSyntax currentToken();
 
         std::string fetchStringToken();
 		void next();
