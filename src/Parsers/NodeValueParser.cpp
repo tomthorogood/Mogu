@@ -5,7 +5,6 @@
  *      Author: cameron
  */
 #include <Parsers/NodeValueParser.h>
-#include <Parsers/NodeValueParser/TokenGroups.h>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Events/CommandValue.h>
@@ -16,10 +15,8 @@
 
 namespace Parsers {
 
-NodeValueParser::NodeValueParser()
+NodeValueParser::NodeValueParser() : __stateParser(__tm), __mathParser(__tm)
 {
-	__stateParser.setTokenManager(__tm);
-	__mathParser.setTokenManager(__tm);
 }
 
 
@@ -50,25 +47,26 @@ void NodeValueParser::tokenizeInput(std::string input)
 
 bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
-	MoguSyntax lastToken = MoguSyntax::__NONE__;
+	//MoguSyntax lastToken = MoguSyntax::__NONE__;
+	MoguSyntax currToken = __tm.currentToken<MoguSyntax>();
 	bool hasPreposition = false;
-	for(auto rit=__numTokens.rbegin(); rit!=__numTokens.rend(); rit++)
-	{
-		MoguSyntax currToken = (MoguSyntax) *rit;
 
+	while((int) currToken != (int) TokenManager::OutOfRange::Begin)
+	{
 		if(currToken == MoguSyntax::OPER_OPPAREN) 
 			__mathParser.processInput();
 			
 		else if(isObjectToken(currToken))
 		{
-			if(lastToken < MoguSyntax::OPER_OPPAREN)
-				__stateParser.processInput(rit, bc);
+			//if(lastToken < MoguSyntax::OPER_OPPAREN)
+				__stateParser.processInput(bc);
 		}
 
 		else if(isPrepositionToken(currToken))
 			hasPreposition = true;
 
-		lastToken = (MoguSyntax) *rit;
+		//lastToken = __tm.currentToken<MoguSyntax>();
+		__tm.prev();
 	}
 
 	return hasPreposition;
@@ -99,21 +97,21 @@ void NodeValueParser::parseMessage(std::vector<int>::iterator& it,
 void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 {
 	tokenizeInput(input);
-	printTokens();
 	reduceExpressions(bc);
 
 	//if we have more than one token in __numTokens at this point (or
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
-	if(__tm.currentToken() == (int) MoguSyntax::TOKEN_DELIM)
+	if(__tm.currentToken<MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
 		nv.setString(__tm.fetchStringToken());
 	else
-		nv.setInt(__tm.currentToken());
+		nv.setInt(__tm.currentToken<int>());
 }
 
 void NodeValueParser::giveInput(std::string input, CommandValue& cv)
 {
-	tokenizeInput(input);
+	//CV PROCESSING PENDING CHANGES
+	/*tokenizeInput(input);
 	bool hasPreposition = reduceExpressions(&cv.getWidget());
 	cv.setAction(__numTokens.front());
 
@@ -132,7 +130,7 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv)
 		parseListener(it, cv);
 		if(hasPreposition)
 			parseMessage(++it, cv);
-	}
+	}*/
 }
 
 }	// namespace Parsers

@@ -14,13 +14,8 @@
 
 namespace Parsers {
 
-MathParser::MathParser()
+MathParser::MathParser(TokenManager& tm) : __tm(tm)
 {
-}
-
-void MathParser::setTokenManager(TokenManager& tm)
-{
-	__tm = &tm;
 }
 
 int MathParser::processInput()
@@ -30,13 +25,13 @@ int MathParser::processInput()
 	// temporary operator stack for doing conversion
 	std::stack<int> opStack;
 
-	__tm->saveLocation();
+	__tm.saveLocation();
 
 	bool done = false;
 	while(!done)
 	{
-		int currToken = __tm->currentToken();
-		__tm->next();	//move
+		int currToken = __tm.currentToken<int>();
+		__tm.next();	//move
 
 		if(isOperator(currToken)) {
 			switch((MoguSyntax) currToken) {
@@ -125,9 +120,9 @@ int MathParser::processInput()
 
 	assert(__operandStack.size() == 1);
 
-	__tm->prev();
-	__tm->deleteFromSaved();
-	__tm->injectToken(__operandStack.top());
+	__tm.prev();
+	__tm.deleteFromSaved();
+	__tm.injectToken(__operandStack.top());
 	return __operandStack.top();
 }
 
