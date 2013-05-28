@@ -45,20 +45,6 @@ void TokenManager::setIterator()
 						//line us up
 }
 
-int TokenManager::currentToken()
-{
-	if(__it < __numTokens.begin())
-		return (int) OutOfRange::Begin;
-
-	else if(__it >= __numTokens.end())
-		return (int) OutOfRange::End;
-
-	else
-		return *__it;
-}
-
-
-
 std::string TokenManager::fetchStringToken()
 {
 	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
