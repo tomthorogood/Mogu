@@ -5,7 +5,6 @@
  *      Author: cameron
  */
 #include <Parsers/NodeValueParser.h>
-#include <Parsers/NodeValueParser/TokenGroups.h>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Events/CommandValue.h>
@@ -54,7 +53,7 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 	MoguSyntax currToken = (MoguSyntax) __tm.currentToken();
 	bool hasPreposition = false;
 
-	while((int) currToken != TokenManager::OutOfRange::Begin)
+	while((int) currToken != (int) TokenManager::OutOfRange::Begin)
 	{
 		if(currToken == MoguSyntax::OPER_OPPAREN) 
 			__mathParser.processInput();
