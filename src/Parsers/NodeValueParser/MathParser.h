@@ -26,15 +26,12 @@ class MathParser
 {
 	public:
 		// empty constructor
-		MathParser();
+		MathParser(TokenManager& tm);
 
 		// convert the input tokens into postfix, and then evaluate
 		// the postfix expression.
 		int processInput();
 
-		// initialize tokenlists
-		void setTokenManager(TokenManager& tm);
-	
 	private:
 		// vector to build/store an equivalent postfix expression
 		std::vector<int> __postfixExpression;
@@ -43,7 +40,7 @@ class MathParser
 		std::stack<int> __operandStack;
 
 		// token manager from NVP 
-		TokenManager* __tm = 0;
+		TokenManager& __tm;
 
 		// compare precedence to do proper order-of-operations
 		// returns true if op1 has higher precedence than op2

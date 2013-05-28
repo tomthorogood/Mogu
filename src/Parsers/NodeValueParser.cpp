@@ -15,10 +15,8 @@
 
 namespace Parsers {
 
-NodeValueParser::NodeValueParser()
+NodeValueParser::NodeValueParser() : __stateParser(__tm), __mathParser(__tm)
 {
-	__stateParser.setTokenManager(__tm);
-	__mathParser.setTokenManager(__tm);
 }
 
 
@@ -49,8 +47,8 @@ void NodeValueParser::tokenizeInput(std::string input)
 
 bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
-	MoguSyntax lastToken = MoguSyntax::__NONE__;
-	MoguSyntax currToken = (MoguSyntax) __tm.currentToken();
+	//MoguSyntax lastToken = MoguSyntax::__NONE__;
+	MoguSyntax currToken = __tm.currentToken<MoguSyntax>();
 	bool hasPreposition = false;
 
 	while((int) currToken != (int) TokenManager::OutOfRange::Begin)
@@ -67,7 +65,7 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 		else if(isPrepositionToken(currToken))
 			hasPreposition = true;
 
-		lastToken = __tm.currentToken();
+		//lastToken = __tm.currentToken<MoguSyntax>();
 		__tm.prev();
 	}
 
@@ -99,16 +97,15 @@ void NodeValueParser::parseMessage(std::vector<int>::iterator& it,
 void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 {
 	tokenizeInput(input);
-	printTokens();
 	reduceExpressions(bc);
 
 	//if we have more than one token in __numTokens at this point (or
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
-	if(__tm.currentToken() == (int) MoguSyntax::TOKEN_DELIM)
+	if(__tm.currentToken<MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
 		nv.setString(__tm.fetchStringToken());
 	else
-		nv.setInt(__tm.currentToken());
+		nv.setInt(__tm.currentToken<int>());
 }
 
 void NodeValueParser::giveInput(std::string input, CommandValue& cv)
