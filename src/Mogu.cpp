@@ -34,7 +34,12 @@ Mogu::Mogu(
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
 
-    __wrapper = moldableFactory.createMoldableWidget("widgets.wrapper");
+    Redis::ContextQuery db(Prefix::meta);
+    CreateQuery(db, "get meta.root");
+
+
+    __wrapper = moldableFactory.createMoldableWidget(
+           db.yieldResponse <std::string> ());
 
     root()->addWidget(__wrapper);
 

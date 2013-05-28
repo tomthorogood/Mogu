@@ -23,18 +23,32 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     MoguSyntax widget_type;
 
     Redis::ContextQuery db(Prefix::widgets);
+    CreateQuery(db, "hexists widgets.%s %d", c_node, MoguSyntax::template_);
+    CreateQuery(db, "hexists widgets.%s %d", c_node, MoguSyntax::text);
     CreateQuery(db, "hget widgets.%s %d", c_node, MoguSyntax::type);
-    
+    bool has_tmpl = db.yieldResponse <bool>();
+    bool has_content = db.yieldResponse <bool>();
     widget_type = (MoguSyntax) db.yieldResponse <int>();
 
     // If there was an error here, the syntax type will be 'none'
-    if (widget_type == MoguSyntax::__NONE__)
+    if (widget_type == MoguSyntax::__NONE__ && has_tmpl)
     {
+        // If there is no type, we have to check to see if there is
+        // a template assigned to the widget which may contain this
+        // information.
         CreateQuery(db, "hget widgets.%s %d", c_node, MoguSyntax::template_);
-        widget_type = (MoguSyntax) db.yieldResponse <int>();
+        std::string template_id = db.yieldResponse <std::string>();
+
+        const char* tmpl_id = template_id.c_str();
+        Redis::ContextQuery tmpldb(Prefix::templates);
+        CreateQuery(tmpldb, "hget templates.%s %d",
+                tmpl_id, MoguSyntax::type);
+        widget_type = (MoguSyntax) tmpldb.yieldResponse <int>();
+
         if (widget_type == MoguSyntax::__NONE__)
         {
-            // If we're still in error, just treat it as a container.
+            // If we're still in error, just treat it as a container. It 
+            // will not render properly, but Mogu can keep running.
             widget_type = MoguSyntax::container;
         }
     }
@@ -42,8 +56,12 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     switch(widget_type)
     {
     case MoguSyntax::container:
+        if (has_tmpl && has_content)
+            return new MemberContainer(node);
         return new MoldableContainer(node);
     case MoguSyntax::stack:
+        if (has_tmpl && has_content)
+            return new MemberStack(node);
         return new MoldableStack(node);
     case MoguSyntax::text:
         return new MoldableText(node);

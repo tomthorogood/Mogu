@@ -11,6 +11,11 @@ DBCONFIG_DIR := /usr/share/Mogu
 MAX_JOBS := $(shell grep -c ^processor /proc/cpuinfo)
 
 
+BUILDDIR 	= build
+BINDIR 		= $(BUILDDIR)/bin
+OBJDIR 		= $(BUILDDIR)/objects
+HEADDIR		= $(BUILDDIR)/include
+
 # When running 'make check', you can turn this off
 # to run the check faster, with less accuracy.
 # Turning this off is not recommended unless you 
@@ -110,19 +115,6 @@ all: $(objects) | $(turnleft)
 	@echo "Linking object files and creating executable..."
 	@g++ $(flags) -o $(executable) $(objects) $(libs)
 
-install: mogu.conf $(executable)
-	@$(MAKE) uninstall
-	@mkdir -p $(INSTALL)
-	@cp $< $(INSTALL)
-	@cp -r resources/ $(INSTALL)
-	@ln -s $(CURDIR)/$(EXECUTABLE) /usr/bin/$(EXECUTABLE)
-	@ln -s $(INSTALL)/mogu /usr/bin/mogu
-
-uninstall:
-	@rm -rf $(INSTALL)/$(EXECUTABLE)
-	@unlink /usr/bin/mogu
-	@echo "Uninstall complete."
-
 # Attempts to compile all object files, but does not stop if there are
 # errors, instead appending them to 'build_log.txt' for you to review.
 # This is meant only for developing in Mogu, as it will help to find issues
@@ -219,3 +211,18 @@ ifeq ($(CHECK_UNUSED),off)
 else
 	@cppcheck --std=c++11 --enable=all --max-configs=1 -I$(CURDIR)/src $(header_files) $(cpp_files) 2> all.check
 endif
+
+help:
+	@echo "[path/to/]*.o            | Compile a specific source file without linkage"
+	@echo "build                    | Create build directory"
+	@echo "upgrade                  | Uninstall, clean, build, and reinstall Mogu"
+	@echo "syntax                   | Create system-specific syntax tables"
+	@echo "purge                    | Clean, uninstall, and fully remove Mogu from the system."
+	@echo "mogu.conf                | Generate a configuration file with prompts"
+	@echo "moguio                   | Create and install the python mogu library"
+	@echo "[/path/to]dbconfig.conf  | Create the database config file in the DBCONF_DIR directry"
+	@echo "check                    | Use cppcheck to statically check the source code for errors"
+	@echo "compile-examine          | Use with 'EXAMINE=path/to/source.cpp' to attempt to compile \
+	                                  \n\t\tand show errors for a source file." 
+	@echo "compile-ignore-errors    | Try and compile all object files, logging errors for later examination"
+	@echo "all                      | Compile, link, and create an executable for Mogu"

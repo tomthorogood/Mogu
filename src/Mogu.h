@@ -47,8 +47,6 @@ class Mogu: public Wt::WApplication
     std::string __user_keyspace;  //!< Currently active user session
     std::string __group;    //!< Currently active user group
     std::string __instanceid;
-    redisContext* __redis;  //!< Database connection
-    redisReply* __reply;    //!< State of last database query
 
     UserManager userManager;
 
@@ -111,8 +109,8 @@ public:
     inline const MoldableFactory& getFactory() { return moldableFactory; }
     inline SlotManager& slotManager() { return __slotMgr;}
     inline void alert (const std::string& message) {
-        std::string jsalert = "alert(\""+message"\");";
-        doJavaScript(jsalert);
+        std::string jsalert = "alert(\""+message+"\");";
+	    doJavaScript(jsalert);
     }
     void removeWidget(const std::string& identifier);
 };
