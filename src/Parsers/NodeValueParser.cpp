@@ -51,24 +51,25 @@ void NodeValueParser::tokenizeInput(std::string input)
 bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
 	MoguSyntax lastToken = MoguSyntax::__NONE__;
+	MoguSyntax currToken = (MoguSyntax) __tm.currentToken();
 	bool hasPreposition = false;
-	for(auto rit=__numTokens.rbegin(); rit!=__numTokens.rend(); rit++)
-	{
-		MoguSyntax currToken = (MoguSyntax) *rit;
 
+	while((int) currToken != TokenManager::OutOfRange::Begin)
+	{
 		if(currToken == MoguSyntax::OPER_OPPAREN) 
 			__mathParser.processInput();
 			
 		else if(isObjectToken(currToken))
 		{
-			if(lastToken < MoguSyntax::OPER_OPPAREN)
-				__stateParser.processInput(rit, bc);
+			//if(lastToken < MoguSyntax::OPER_OPPAREN)
+				__stateParser.processInput(bc);
 		}
 
 		else if(isPrepositionToken(currToken))
 			hasPreposition = true;
 
-		lastToken = (MoguSyntax) *rit;
+		lastToken = __tm.currentToken();
+		__tm.prev();
 	}
 
 	return hasPreposition;
@@ -113,7 +114,8 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 
 void NodeValueParser::giveInput(std::string input, CommandValue& cv)
 {
-	tokenizeInput(input);
+	//CV PROCESSING PENDING CHANGES
+	/*tokenizeInput(input);
 	bool hasPreposition = reduceExpressions(&cv.getWidget());
 	cv.setAction(__numTokens.front());
 
@@ -132,7 +134,7 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv)
 		parseListener(it, cv);
 		if(hasPreposition)
 			parseMessage(++it, cv);
-	}
+	}*/
 }
 
 }	// namespace Parsers
