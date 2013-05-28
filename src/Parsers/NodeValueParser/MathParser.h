@@ -43,7 +43,7 @@ class MathParser
 		std::stack<int> __operandStack;
 
 		// token manager from NVP 
-		TokenManager& __tm;
+		TokenManager* __tm = 0;
 
 		// compare precedence to do proper order-of-operations
 		// returns true if op1 has higher precedence than op2

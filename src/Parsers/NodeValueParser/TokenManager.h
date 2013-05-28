@@ -10,9 +10,9 @@
 
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 #include <Types/syntax.h>
-
 
 namespace Parsers {
 
@@ -85,22 +85,24 @@ namespace Parsers {
 //iteration we do while parsing mogu commands
 class TokenManager
 {
+	typedef std::vector<int>::iterator fwd_iterator;
+
 	//these arbitrarily-picked values need to be greater than the
 	//'largest' syntax enumeration and smaller than the 'smallest'
 	//operator enumeration
 
-	//TODO: refactor using generated syntax
-	enum class OutOfRange { Begin = 2147483640, End = 2147483641 };
 
 	//TODO: inline where appropriate
 	public:
+		//TODO: refactor using generated syntax
+		enum class OutOfRange { Begin = 2147483640, End = 2147483641 };
+
 		TokenManager();
 		void reset();
 		void addToken(int numToken);
 		void addToken(std::string strToken);
 		//MUST set the iterator after input command has been tokenized
 		void setIterator();
-
 
 		//methods for navigating the token list.
 		int currentToken();
@@ -116,17 +118,28 @@ class TokenManager
 		//inject a token after we delete several tokens.
 		void saveLocation();
 		void deleteToSaved();
+		void deleteFromSaved();
 		void injectToken(int numToken);
 		void injectToken(std::string strToken);
+
+		//debug methods
+		void printTokens();
 
 	private:
 		std::vector<int> __numTokens;
 		std::vector<std::string> __strTokens;
 
-		std::vector<int>::reverse_iterator __revit;
-		std::vector<int>::reverse_iterator __savedrit;
+		fwd_iterator __it;
+		fwd_iterator __savedit;
+
+		//when we save a location for deletion, this variable keeps
+		//track of how many strings are to be deleted so we can
+		//updated strIndex accordingly.
+		int __delStringCount = -1;
+
+
 		//keeps track of which string corresponds to which tokendelim
-		size_type __strIndex;
+		std::vector<int>::size_type __strIndex;
 };
 
 }	// namespace Parsers

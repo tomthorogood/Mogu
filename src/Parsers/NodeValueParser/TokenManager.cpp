@@ -5,6 +5,11 @@
  *      Author: cameron
  */
 
+#include <Parsers/NodeValueParser/TokenManager.h>
+
+//debug
+#include <iostream>
+
 namespace Parsers {
 
 TokenManager::TokenManager()
@@ -32,38 +37,35 @@ void TokenManager::addToken(std::string strToken)
 //or else we will have undefined behavior!
 void TokenManager::setIterator()
 {
-	__revit = __numTokens.rbegin();
+	__it = --(__numTokens.end());
 	__strIndex = __strTokens.size();	//initially points out-of-bounds
 
-	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
-		__strIndex--;		//in case we don't have a prev() call to properly 
+	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
+		__strIndex--;	//in case we don't have a prev() call to properly 
 						//line us up
 }
 
 int TokenManager::currentToken()
 {
-	//internally we use a reverse iterator, but externally we are to
-	//think of the tokens being arranged in the traditional forwards
-	//direction.  hence the out-of-bounds signals are reversed
-	if(__revit >= __numTokens.rend())
-		return OutOfRange::Begin;
+	if(__it < __numTokens.begin())
+		return (int) OutOfRange::Begin;
 
-	else if(__revit < __numTokens.rbegin())
-		return OutOfRange::End;
+	else if(__it >= __numTokens.end())
+		return (int) OutOfRange::End;
 
 	else
-		return *__revit;
+		return *__it;
 }
 
 
 
 std::string TokenManager::fetchStringToken()
 {
-	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
+	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
 		return __strTokens[__strIndex];
 
 	else
-		return R"(ERR: DEREFERENCING NON-TOKENDELIM");
+		return R"(ERR: DEREFERENCING NON-TOKENDELIM)";
 }
 
 //TODO: we are dereferencing our iterator twice; once on iterator
@@ -71,45 +73,82 @@ std::string TokenManager::fetchStringToken()
 
 void TokenManager::next()
 {
-	__revit--;
-	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
+	__it++;
+	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
 	   __strIndex++;	
+
+	if(__delStringCount >= 0)
+		__delStringCount++;
 }
 
 void TokenManager::prev()
 {
-	__revit++;
-	if(*__revit == (int) MoguSyntax::TOKEN_DELIM)
+	__it--;
+	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
 		__strIndex--;
+
+	if(__delStringCount >= 0)
+		__delStringCount--;
 }
 
 void TokenManager::saveLocation()
 {
-	__savedrit = __revit;
+	__savedit = __it;
+
+	__delStringCount = 0;
+	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
+		__delStringCount++;
 }
 
 void TokenManager::deleteToSaved()
 {
-	//up to and including saved loc.  also, update our iterator.
-	__revit =  __numTokens.erase(__revit, __savedrit+1);	
+	__it = __numTokens.erase(__it, __savedit+1);
+	__strIndex -= __delStringCount;
+	if(*__it != (int) MoguSyntax::TOKEN_DELIM)
+		__strIndex++;
+	__delStringCount = -1;
+}
 
-	//TODO: updated strIndex as needed (deleted strings)
+void TokenManager::deleteFromSaved()
+{
+	__it = __numTokens.erase(__savedit, __it+1);
+	__strIndex -= __delStringCount;
+	if(*__it != (int) MoguSyntax::TOKEN_DELIM)
+		__strIndex++;
+	__delStringCount = -1;
 }
 
 //call this directly after deleteToSaved()!
 void TokenManager::injectToken(int numToken)
 {
-	//ends pointing to our newly inserted element
-	__revit = __numTokens.insert(__revit, numToken);
+	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
+		__strIndex++;
 
+	__it = __numTokens.insert(__it, numToken);
 }
 
 //call this directly after deleteToSaved()!
 void TokenManager::injectToken(std::string strToken)
 {
-	__revit = __numTokens.insert(__revit, (int) MoguSyntax::TOKEN_DELIM);
-	__strTokens.insert(__numTokens.begin()+strIndex, strToken);
+	__it = __numTokens.insert(__it, (int) MoguSyntax::TOKEN_DELIM);
+	__strTokens.insert(__strTokens.begin()+__strIndex+1, strToken);
+	__strIndex++;
+}
 
+//debug method
+void TokenManager::printTokens()
+{
+	int tempStrIndex = 0;
+	std::cout << "[TokenManager]: ";
+	for(unsigned int i=0; i<__numTokens.size(); i++)
+	{
+		if(__numTokens[i] == (int) MoguSyntax::TOKEN_DELIM)
+			std::cout << __strTokens[tempStrIndex++] << " ";
+		else
+			std::cout << __numTokens[i] << " ";
+	}
+	std::cout << std::endl;
+}
 
 
 }	// namespace Parsers

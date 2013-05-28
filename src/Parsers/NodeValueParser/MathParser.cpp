@@ -16,28 +16,27 @@ namespace Parsers {
 
 MathParser::MathParser()
 {
-
 }
 
 void MathParser::setTokenManager(TokenManager& tm)
 {
-	__tm = tm;
+	__tm = &tm;
 }
 
 int MathParser::processInput()
 {
 	reset();
 
-	// *** CONVERT INFIX -> POSTFIX ***
-	__postfixExpression.reserve(__numTokens->size());
-
 	// temporary operator stack for doing conversion
 	std::stack<int> opStack;
 
-	// do-while loop... conditional is until level = 0
-	//
-	for(auto it=endRit.base()--; it!=__numTokens->end(); it++) {
-		int currToken = *it;
+	__tm->saveLocation();
+
+	bool done = false;
+	while(!done)
+	{
+		int currToken = __tm->currentToken();
+		__tm->next();	//move
 
 		if(isOperator(currToken)) {
 			switch((MoguSyntax) currToken) {
@@ -50,6 +49,8 @@ int MathParser::processInput()
 					__postfixExpression.push_back(opStack.top());
 					opStack.pop();
 				}
+
+				done = true;
 				opStack.pop();	//remove open parens
 				break;
 
@@ -123,6 +124,10 @@ int MathParser::processInput()
 	}
 
 	assert(__operandStack.size() == 1);
+
+	__tm->prev();
+	__tm->deleteFromSaved();
+	__tm->injectToken(__operandStack.top());
 	return __operandStack.top();
 }
 

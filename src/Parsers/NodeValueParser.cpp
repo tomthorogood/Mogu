@@ -57,7 +57,7 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 		MoguSyntax currToken = (MoguSyntax) *rit;
 
 		if(currToken == MoguSyntax::OPER_OPPAREN) 
-			__mathParser.processInput(rit);
+			__mathParser.processInput();
 			
 		else if(isObjectToken(currToken))
 		{
