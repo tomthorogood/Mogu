@@ -46,16 +46,31 @@ void StateParser::processInput(Moldable* broadcaster)
 	switch(currentToken)
 	{
 		case MoguSyntax::widget:
-            __tm.next();
             identifier = getIdentifier();
             //result changed in place to hold value
             handleWidget(identifier,result);
             break;
+        case MoguSyntax::self:
+            __tm.next();
+            handleWidget(broadcaster, result);
+            break;
 		case MoguSyntax::data:
+            identifier = getIdentifier();
+            handleData(identifier, result);
 		case MoguSyntax::user:
-		case MoguSyntax::session:
+            identifier = getIdentifier();
+            handleUserField(identifier, result);
 		case MoguSyntax::group:
-		case MoguSyntax::slot:
+            identifier = getIdentifier();
+            handleGroupField(identifier, result);
+		case MoguSyntax::slot:{
+            mApp;
+            identifier = getIdentifier();
+            SlotManager& slots = app->slotManager();
+            result.setString(slots.retrieveSlot(identifier));
+            break;
+          }
+
         default:break;
 	}
 
@@ -88,8 +103,60 @@ void StateParser::handleWidget(const std::string& identifier, NodeValue& result)
     // TODO
     if (widget == nullptr) return; 
     
+    // getIdentifier will have already advaned the token pointer 
     MoguSyntax widget_attribute = __tm.currentToken <MoguSyntax>();
     widget->getAttribute(widget_attribute, result);
 }
 
+void StateParser::handleData(const std::string& identifier, NodeValue& result)
+{
+    const char* c_node = identifier.c_str();
+    Redis::ContextQuery db(Prefix::data);
+    CreateQuery(db, "type data.%s", c_node); 
+    std::string node_type = db.yieldResponse <std::string>();
+    if (node_type == "string")
+    {
+        //We need no further information!
+        CreateQuery(db, "get data.%s", c_node);
+    }
+    else if (node_type == "hash")
+    {
+        // If this is the case, the very next argument must inherently be
+        // the hash key to resolve the field. There are two possibilities:
+        MoguSyntax hashkey = __tm.currentToken <MoguSyntax> (); 
+
+        // The key is a string, such as "foo", with syntax like: 
+        //  hget data.bar foo 
+        if (hashkey == MoguSyntax::TOKEN_DELIM)
+            CreateQuery(db, "hget data.%s %s", c_node,
+                    __tm.fetchStringToken().c_str());
+
+        // Or the key is a string that is really an integer, with 
+        // syntax like:
+        //
+        // hget data.bar 17
+        else
+            CreateQuery(db, "hget data.%s %d", c_node,
+                    __tm.currentToken<int>());
+
+        // NOTE that there is the possibility of a collision in the highly
+        // unlikely case that the hash key integer value is the same as the 
+        // TOKEN_DELIM integer. Again, though, this is super unlikely, but it
+        // should be noted as a later TODO.
+    }
+    else if (node_type == "list")
+    {
+        // In this case, there must necessarily be a list index in order
+        // to find the value.
+        CreateQuery(db, "lindex data.%s %d", c_node, __tm.currentToken<int>());
+
+    }
+
+    result.setString(db.yieldResponse<std::string>());
+}
+
+void StateParser::handleWidget(Moldable* widget, NodeValue& result)
+{
+    widget->getAttribute(__tm.currentToken <MoguSyntax>(), result);
+}
 }	// namespace Parsers
