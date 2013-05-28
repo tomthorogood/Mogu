@@ -5,6 +5,7 @@
  *      Author: cameron
  */
 
+#include <Mogu.h>
 #include <Parsers/NodeValueParser/StateParser.h>
 #include <Redis/ContextQuery.h>
 #include <Types/syntax.h>
@@ -22,7 +23,8 @@ StateParser::StateParser(TokenManager& tm) : __tm(tm)
  * the identifier (and return it), and advance the TokenManager to the next
  * pointer.
  */
-std::string getIdentifier() {
+std::string StateParser::getIdentifier()
+{
     __tm.next();
     if (__tm.currentToken <MoguSyntax> () != MoguSyntax::TOKEN_DELIM)
     {
@@ -39,20 +41,22 @@ void StateParser::processInput(Moldable* broadcaster)
     __tm.saveLocation();
     MoguSyntax currentToken = __tm.currentToken <MoguSyntax>();
     NodeValue result;
+    std::string identifier;
 
-	switch(currToken)
+	switch(currentToken)
 	{
 		case MoguSyntax::widget:
             __tm.next();
-            std::string identifier = getIdentifier();
+            identifier = getIdentifier();
             //result changed in place to hold value
-            handleWidget(broadcaster,result);
+            handleWidget(identifier,result);
             break;
 		case MoguSyntax::data:
 		case MoguSyntax::user:
 		case MoguSyntax::session:
 		case MoguSyntax::group:
 		case MoguSyntax::slot:
+        default:break;
 	}
 
     __tm.deleteFromSaved();
