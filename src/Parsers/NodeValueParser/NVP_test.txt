@@ -1,0 +1,16 @@
+#include <Parsers/NodeValueParser.h>
+#include <Parsers/NodeValueParser/StateParser.h>
+#include <Parsers/NodeValueParser/TokenManager.h>
+#include <Parsers/NodeValueParser/MathParser.h>
+#include <Types/syntax.h>
+
+#include <iostream>
+
+using namespace std;
+using namespace Parsers;
+
+int main()
+{
+
+ 	return 0;
+}
