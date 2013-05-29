@@ -10,10 +10,15 @@ from collections import OrderedDict
 def import_path(pathname, verbal=False):
     sys.stdout.write("\n")
     path_results = []
-    mogu_files = [entry for entry in os.listdir(pathname) if \
-            entry.endswith(".mogu")]
-    directories = [entry for entry in os.listdir(pathname) if \
-            os.path.isdir(os.path.join(pathname,entry))]
+    mogu_files = []
+    directories = []
+    if pathname.endswith(".mogu"):
+        mogu_files = [pathname]
+    else:
+        mogu_files = [entry for entry in os.listdir(pathname) if \
+                entry.endswith(".mogu")]
+        directories = [entry for entry in os.listdir(pathname) if \
+                os.path.isdir(os.path.join(pathname,entry))]
 
     head,tail = os.path.split(pathname)
     shortname = tail

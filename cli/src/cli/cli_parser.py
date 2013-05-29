@@ -25,22 +25,17 @@ def getCLIArgs():
 
 
 # Boolean options for interacting with the Redis environment
-    parser.add_argument("--redis-flush", 
+    parser.add_argument("--flush", 
             dest="flushdb", action="store_true", 
             default=False, 
             help="If importing a Mogu database, flushes the selected database first. CAREFUL!")
 
-    parser.add_argument("--assume-yes", 
-            dest="yes", action="store_true", default=False, 
+    parser.add_argument("-y", 
+            dest="y", action="store_true", default=False, 
             help="Will assume yes to all questions. EXTRA CAREFUL!")
 
     parser.add_argument("-v", "--verbose",
-            dest="verbal", action="store_true", default=False,
-            help="Will make the import command more verbose when assuming yes")
-
-    parser.add_argument("--test-only", 
-            dest="testing", action="store_true", default=False, 
-            help="Displays various information depending on the command, making no changes to your database.")
-
+            dest="v", action="store_true", default=False,
+            help="Will make the import command more verbose")
 
     return parser.parse_args()

@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 
 import moguio
+from moguio import RedisWriter
+from moguio import PathImporter
 import src
 #import src.cli_parser
 args = src.cli_parser.getCLIArgs()
 command = args.command[0]
 
-cli_map = {
-    "import"            :   moguio.ScriptImporter.doImport
-#    "set-root"          :   cli.set_root,
-}
 if __name__ == "__main__":
-    cli_map[command](args)
+    if command == "import":
+        writer = RedisWriter.RedisWriter(args)
+        paths = args.command[1:]
+        print paths
+        for path in paths:
+            lexed = moguio.PathImporter.import_path(path, args.v)
+            converted = moguio.PathImporter.convert_results(lexed)
+            writer.write(converted)
