@@ -54,8 +54,9 @@ class RedisWriter(object):
                 flushdb = False
         """
         self.dbconfig   = None # Will be set in try...except below
-        self.verbal     = args.verbal if args else True
+        self.verbal     = args.v if args else True
         self.flushdb    = args.flushdb if args else False
+        self.yes        = args.y if args else False
         dbconfig        = args.dbconfig if args else os.path.join(
                             DB_CONFIG_PATH,DB_CONFIG_FILE)
         
@@ -71,18 +72,21 @@ class RedisWriter(object):
             sys.stderr.write("WARNING: dbconfig file (%s) not found. "
                     "You should only continue if you are a Mogu developer "
                     "testing things.\n" % dbconfig )
-
-            cont = raw_input("Continue anyway? type 'continue' to continue :")
-            
-            if cont.strip().lower() != 'continue':
-                sys.stderr.write("Exiting.")
-                sys.exit()
+                
+            if not self.yes:
+                cont = raw_input("Continue anyway? type 'continue' to continue :")
+                if cont.strip().lower() != 'continue':
+                    sys.stderr.write("Exiting.")
+                    sys.exit()
+                else:
+                    sys.stderr.write("Using\n\t"
+                            "host: %(host)s\n\t"
+                            "port: %(port)s\n\t"
+                            "select: %(number)s"
+                            % self.dbconfig['default'])
             else:
-                sys.stderr.write("Using\n\t"
-                        "host: %(host)s\n\t"
-                        "port: %(port)s\n\t"
-                        "select: %(number)s"
-                        % self.dbconfig['default'])
+                sys.stderr.write("'yes' assumed due to -y switch\n")
+             
         self.databases = {}
         self.pipes = {}
         
@@ -150,7 +154,8 @@ class RedisWriter(object):
     def write(self, collection):
         for obj in collection:
             if not isinstance(obj, RedisObjects.RedisObject):
-                raise TypeError("All objects must be in RedisObject format.")
+                raise TypeError("Found type %s. Expected type RedisObject" % \
+                        str(type(obj)))
 
         for obj in collection:
             if isinstance(obj, RedisObjects.RedisString):

@@ -3,6 +3,7 @@ from collections import OrderedDict
 import syntax
 import lex_base
 import Lex
+import pyboro
 class PythonObjectConverter(object):
     """
     Each entry passed into this converter must be a tuple
@@ -29,8 +30,11 @@ class PythonObjectConverter(object):
     def convert(self, obj):
 
         lexed_results = obj[0]
-        assert(isinstance(lexed_results,OrderedDict))
+        assert isinstance(lexed_results,OrderedDict), \
+                "Type %s not an OrderedDict, which is required" % (str(type(lexed_results)))
         lex_map = obj[1]
+        assert isinstance(lex_map, pyboro.Lexer.ParseMap), \
+                "Type %s not a Pyboro ParseMap, which is required" % (str(type(lex_map)))
         if lex_map is Lex.WIDGET_BLOCK:
             return self.convert_widget(lexed_results)
         elif lex_map is Lex.TEMPLATE_BLOCK:
