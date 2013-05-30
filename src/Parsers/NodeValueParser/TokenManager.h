@@ -125,6 +125,8 @@ class TokenManager
 
 		//debug methods
 		void printTokens();
+		void printNumTokens();
+		void printStringTokens();
 
 	private:
 		std::vector<int> __numTokens;

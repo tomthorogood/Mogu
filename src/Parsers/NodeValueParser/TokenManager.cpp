@@ -22,6 +22,28 @@ void TokenManager::reset()
 	__strTokens.clear();
 }
 
+template <typename T> T TokenManager::currentToken() {
+    return (T) currentToken <int>();
+}
+
+template <> int TokenManager::currentToken()
+{
+	if(__it < __numTokens.begin())
+		return (int) OutOfRange::Begin;
+
+	else if(__it >= __numTokens.end())
+		return (int) OutOfRange::End;
+
+	else
+		return *__it;
+}
+
+template <> MoguSyntax TokenManager::currentToken()
+{
+    return static_cast<MoguSyntax>(currentToken <int>());
+}
+
+
 void TokenManager::addToken(int numToken)
 {
 	__numTokens.push_back(numToken);
@@ -38,15 +60,15 @@ void TokenManager::addToken(std::string strToken)
 void TokenManager::setIterator()
 {
 	__it = --(__numTokens.end());
-	__strIndex = __strTokens.size();	//initially points out-of-bounds
-
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
-		__strIndex--;	//in case we don't have a prev() call to properly 
-						//line us up
+	__strIndex = __strTokens.size() - 1;
 }
 
 std::string TokenManager::fetchStringToken()
 {
+	//debug
+	printStringTokens();
+	std::cout << "strIndex = " << __strIndex << std::endl;
+
 	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
 		return __strTokens[__strIndex];
 
@@ -59,22 +81,30 @@ std::string TokenManager::fetchStringToken()
 
 void TokenManager::next()
 {
-	__it++;
 	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
 	   __strIndex++;	
 
+	__it++;
+
 	if(__delStringCount >= 0)
 		__delStringCount++;
+
+	std::cout << "next(): currentToken = " << currentToken<int>() << 
+		" || strIndex = " << __strIndex << std::endl;
 }
 
 void TokenManager::prev()
 {
-	__it--;
 	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
 		__strIndex--;
 
+	__it--;
+
 	if(__delStringCount >= 0)
 		__delStringCount--;
+	
+	std::cout << "prev(): currentToken = " << currentToken<int>() << 
+		" || strIndex = " << __strIndex << std::endl;
 }
 
 void TokenManager::saveLocation()
@@ -107,9 +137,6 @@ void TokenManager::deleteFromSaved()
 //call this directly after deleteToSaved()!
 void TokenManager::injectToken(int numToken)
 {
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
-		__strIndex++;
-
 	__it = __numTokens.insert(__it, numToken);
 }
 
@@ -136,25 +163,20 @@ void TokenManager::printTokens()
 	std::cout << std::endl;
 }
 
-template <typename T> T TokenManager::currentToken() {
-    return (T) currentToken <int>();
+void TokenManager::printNumTokens()
+{
+	std::cout << "[TM numTokens]: ";
+	for(unsigned int i=0; i<__numTokens.size(); i++)
+		std::cout << __numTokens[i] << " ";
+	std::cout << std::endl;
 }
 
-template <> int TokenManager::currentToken()
+void TokenManager::printStringTokens()
 {
-	if(__it < __numTokens.begin())
-		return (int) OutOfRange::Begin;
-
-	else if(__it >= __numTokens.end())
-		return (int) OutOfRange::End;
-
-	else
-		return *__it;
-}
-
-template <> MoguSyntax TokenManager::currentToken()
-{
-    return static_cast<MoguSyntax>(currentToken <int>());
+	std::cout << "[TM strTokens]: ";
+	for(unsigned int i=0; i<__strTokens.size(); i++)
+		std::cout << i << ":" << __strTokens[i];
+	std::cout << std::endl;
 }
 
 
