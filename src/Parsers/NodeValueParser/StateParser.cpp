@@ -198,11 +198,60 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
             }
             else return;
             break;
+        default: return;
     };
     if (encrypted)
         result.setString(
                 Security::decrypt( user.yieldResponse <std::string>()));
     else
         result.setString(user.yieldResponse <std::string>());
+}
+
+void StateParser::handleGroupField(const std::string& field, NodeValue& result)
+{
+    mApp;
+    std::string user = app->getUser();
+    std::string group = app->getGroup();
+    GroupManager group_mgr(group);
+    bool read_enabled = group_mgr.hasReadAccess(field);
+    if (!read_enabled) return;
+    
+    Redis::ContextQuery& grpdb = group_mgr.getContext(Prefix::group); 
+    Redis::ContextQuery& plcdb = group_mgr.getContext(Prefix::policies);
+
+    CreateQuery(plcdb, "hget policies.%s %d", field.c_str(), MoguSyntax::type);
+    CreateQuery(plcdb, "hget policies.%s %d",
+            field.c_str(), MoguSyntax::encrypted);
+    MoguSyntax type  plcdb.yieldResponse <MoguSyntax>();
+    bool encrypted = plcdb.yieldResponse <bool>();
+
+    switch(type)
+    {
+        case MoguSyntax::string:
+            CreateQuery(grpdb, "get groups.%s.%s", group.c_str(),
+                    field.c_str());
+            break;
+        case MoguSyntax::list:
+            // Get the index of list item
+            int index = __tm.currentToken <int>();
+            CreateQuery(grpdb, "lindex groups.%s.%s %d", group.c_str(),
+                    field.c_str(), index);
+            break;
+        case MoguSyntax::hash:
+            // Ensure that the next token is in fact a key:
+            if (!__tm.currenToken() != MoguSyntax::TOKEN_DELIM) return;
+            std::string key = __tm.fetchStringtoken();
+            CreateQuery(grpdb, "hget groups.%s.%s %s",
+                    group.c_str(), field.c_str(), key.c_str());
+            break;
+        default: return;
+    };
+
+    if (encrypted)
+        result.setString(
+            Security::decrypt(
+                grpdb.yieldResponse <std::string>()));
+    else
+        result.setString(grpdb.yieldResponse <std::string>());
 }
 }	// namespace Parsers
