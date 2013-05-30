@@ -1,6 +1,7 @@
 import redis
 from moguio import Keyspace
 from moguio import ScriptWriter
+from moguio.MoguString import MoguString
 
 class DatabaseExporter(object):
     EXPORT_KEYSPACES = (
@@ -40,6 +41,13 @@ class DatabaseExporter(object):
             prefix = root.split('.')[0]
             self.roots[prefix].append(root)
 
+    def convert_output(self,container):
+        self.scripts = []
+        for formatter in container:
+            mogustring = MoguString("integral", str(formatter))
+            mogustring.translate("script")
+            self.scripts.append(mogustring.script)
+
     def export_abstract_widget(self,datatype,container,callback=None):
         container = []
         for widget in self.roots[datatype]:
@@ -74,16 +82,20 @@ class DatabaseExporter(object):
                 container.append(ScriptWriter.TemplateWriter(
                     identifier,attributes,children=children,events=events)
                 )
+
+        self.convert_output(container)
         if callback:
-            callback(container)
+            return callback(self.scripts)
+        else:
+            return self.scripts
 
     def export_widgets(self,callback=None):
         self.widgetWriters = []
-        self.export_abstract_widget('widgets',self.widgetWriters,callback)
+        return self.export_abstract_widget('widgets',self.widgetWriters,callback)
 
     def export_templates(self, callback=None):
         self.templateWriters = []
-        self.export_abstract_widget('templates',self.templateWriters,callback)
+        return self.export_abstract_widget('templates',self.templateWriters,callback)
 
     def export_data(self, callback=None):
         self.dataWriters = []
@@ -98,8 +110,12 @@ class DatabaseExporter(object):
             elif redistype == 'list':
                 data_object = self.db.lrange(data,0,self.db.llen(data))
             self.dataWriters.append(ScriptWriter.DataWriter(identifier,data_object))
+
+        self.convert_output(self.dataWriters)
         if callback:
-            callback(self.dataWriters)
+            return callback(self.scripts)
+        else:
+            return self.scripts
 
     def export_validators(self,callback=None):
         self.validatorWriters = []
@@ -107,8 +123,11 @@ class DatabaseExporter(object):
             identifier = Keyspace.identifier('validators',validator)
             attrs = self.db.hgetall(validator)
             self.validatorWriters.append(ScriptWriter.ValidatorWriter(identifier,attrs))
+        self.convert_output(self.validatorWriters)
         if callback:
-            callback(self.validatorWriters)
+            return callback(self.scripts)
+        else:
+            return self.scripts
 
     def export_policies(self,callback=None):
         self.policyWriters = []
@@ -116,6 +135,9 @@ class DatabaseExporter(object):
             identifier = Keyspace.identifier('policies',policy)
             attrs = self.db.hgetall(policy)
             self.policyWriters.append(ScriptWriter.PolicyWriter(identifier,attrs))
+        self.convert_output(self.policyWriters)
         if callback:
-            callback(self.policyWriters)
+            return callback(self.scripts)
+        else:
+            return self.scripts
 
