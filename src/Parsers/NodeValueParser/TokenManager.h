@@ -142,7 +142,7 @@ class TokenManager
 
 
 		//keeps track of which string corresponds to which tokendelim
-		std::vector<int>::size_type __strIndex;
+		int __strIndex;
 };
 
 
