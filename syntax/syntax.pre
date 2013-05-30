@@ -81,6 +81,7 @@
 (   at                      ,   at              ,   preposition     )
 (   widget                  ,   widget          ,   object          )
 (   type                    ,   type            ,   hashkey         )
+(   encrypted               ,   encrypted       ,   hashkey         )
 (   mode                    ,   mode            ,   hashkey         )
 (   source                  ,   source          ,   hashkey attribute state )
 (   location                ,   location        ,   hashkey attribute state )

@@ -171,6 +171,38 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
 
     // Determine the expected type and encryption
     // of the field in question:
-
+    CreateQuery(policies,
+        "hget policies.%s %d", field.c_str(), MoguSyntax::encrypted);
+    CreateQuery(policies,
+        "hget policies.%s %d", field.c_str(), MoguSyntax::type);
+    bool encrypted = policies.yieldResult <bool>();
+    MoguSyntax type = policies.yieldResult <MoguSyntax>();
+    
+    switch(type)
+    {
+        case MoguSyntax::string:
+            CreateQuery(user, "get user.%s.%s", field.c_str(), userid.c_str());
+            break;
+        case MoguSyntax::list:
+            int index = __tm.currentToken <int> ();
+            CreateQuery(user, "lindex user.%s.%s %d",
+                    field.c_str(), userid.c_str(), index);
+            break;
+        case MoguSyntax::hash:
+            // Make sure that the current token is a TOKEN_DELIM:
+            if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
+            {
+                std::string key = __tm.fetchStringToken();
+                CreateQuery(user, "hget user.%s.%s %s",
+                        field.c_str(), userid.c_str(), key.c_str());
+            }
+            else return;
+            break;
+    };
+    if (encrypted)
+        result.setString(
+                Security::decrypt( user.yieldResponse <std::string>()));
+    else
+        result.setString(user.yieldResponse <std::string>());
 }
 }	// namespace Parsers
