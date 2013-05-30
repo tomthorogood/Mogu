@@ -1,6 +1,7 @@
 import redis
 from moguio import Keyspace
 from moguio import ScriptWriter
+
 class DatabaseExporter(object):
     EXPORT_KEYSPACES = (
             "widgets",
@@ -23,12 +24,21 @@ class DatabaseExporter(object):
             redis_host='localhost',
             redis_port=6379
             ):
+        # Connect to the proper Redis database
         self.db = redis.Redis(db=redis_db_num,host=redis_host,port=redis_port)
+
+        # Create a list of all root objects in the database, meaning those
+        # that have a keyspace prefix and an identifier only
         roots = filter(DatabaseExporter.root_object, self.db.keys('*'))
-        self.roots = dict.fromkeys(DatabaseExporter.EXPORT_KEYSPACES,[])
+
+        # Create a dictionary for each of the keyspaces, and populate the
+        # dictionary with the root objects for each prefix
+        self.roots = dict.fromkeys(DatabaseExporter.EXPORT_KEYSPACES,None)
+        for root in self.roots:
+            self.roots[root] = []
         for root in roots:
-            keypath = root.split('.')[0]
-            self.roots[keypath].append(root)
+            prefix = root.split('.')[0]
+            self.roots[prefix].append(root)
 
     def export_abstract_widget(self,datatype,container,callback=None):
         container = []
