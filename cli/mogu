@@ -12,7 +12,6 @@ if __name__ == "__main__":
     if command == "import":
         writer = RedisWriter.RedisWriter(args)
         paths = args.command[1:]
-        print paths
         for path in paths:
             lexed = moguio.PathImporter.import_path(path, args.v)
             converted = moguio.PathImporter.convert_results(lexed)

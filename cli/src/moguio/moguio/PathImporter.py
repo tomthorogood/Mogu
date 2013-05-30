@@ -12,14 +12,15 @@ def import_path(pathname, verbal=False):
     path_results = []
     mogu_files = []
     directories = []
-    if pathname.endswith(".mogu"):
-        mogu_files = [pathname]
-    else:
+    single_file = pathname.endswith(".mogu")
+    
+    if not single_file:
         mogu_files = [entry for entry in os.listdir(pathname) if \
                 entry.endswith(".mogu")]
         directories = [entry for entry in os.listdir(pathname) if \
                 os.path.isdir(os.path.join(pathname,entry))]
-
+    else:
+        mogu_files = [pathname]
     head,tail = os.path.split(pathname)
     shortname = tail
     for directory in directories:
@@ -35,9 +36,13 @@ def import_path(pathname, verbal=False):
         sys.stdout.flush()
 
         # Append lexed results to results
-        path_results.extend(
-                FileImporter.import_file(
-                    os.path.join(pathname,mogufile),verbal))
+        if single_file:
+            sys.stdout.write("Importing single file: %s" % mogufile)
+            path_results.extend(FileImporter.import_file(mogufile))
+        else:
+            path_results.extend(
+                    FileImporter.import_file(
+                        os.path.join(pathname,mogufile),verbal))
 
     sys.stdout.write("\n")
     # The results will be a list of tuples, each of which will contain two

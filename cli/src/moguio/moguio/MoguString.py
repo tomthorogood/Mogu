@@ -5,6 +5,7 @@ import SharedData
 import string
 import syntax
 import re
+from sets import Set
 
 class EscapeError(Exception):
     def __init__(self, needle, haystack):
@@ -20,6 +21,20 @@ could not be found in:
 
     %(haystack)s
 """ %(self.__dict__)
+
+class UnescapeError(Exception):
+    def __init__(self, needle, haystack):
+        self.needle = needle
+        self.haystack = haystack
+
+    def __str__(self):
+        return """
+There is a problem with your escape sequences.
+
+    %(needle)s should have been substituted, but was not in: 
+
+    %(haystack)s
+"""
 
 class MoguString(MultiString):
     ReverseLookup = {}
@@ -135,7 +150,7 @@ class MoguString(MultiString):
         self.addTranslation('script','integral',self.script_to_integral)
         self.addTranslation('integral','script',self.integral_to_script)
         self.preferences = prefs if prefs is not None else {} 
-        self.string_literals = []
+        self.string_literals = {} 
         self.maths = []
         self.temp = None
 
@@ -176,7 +191,7 @@ class MoguString(MultiString):
         translated = " ".join(tokens)
 
         if self.string_literals:
-            return translated % tuple(self.string_literals)
+            return translated % (self.string_literals)
         return translated
 
     def has_maths(self, string):
@@ -197,18 +212,40 @@ class MoguString(MultiString):
             separate list (self.string_literals), and the temporary 
             string with the literals replaced is returned.
         """
-
+        self.string_literals = {} 
+        # Finds all string literals contained in the input string
         results = re.findall(regexlib['string_literal'],self.active())
-        self.string_literals = filter(MoguString.filter_empty,results)
-        self.temp = self.active()
-        for result in results:
-            if result not in self.temp:
-                raise EscapeError(result,self.temp)
-            
-            self.temp = re.sub(re.escape(result), r'%s', self.temp)
 
-            if result in self.temp:
-                raise EscapeError(result,self.temp)
+        # Makes things nicer by removing empty tokens (' ', '')
+        string_literals = Set(filter(MoguString.filter_empty,results))
+        for literal in string_literals:
+            literal_id = "l%d" % len(self.string_literals)
+            self.string_literals[literal_id] = literal
+        # Copy the current MoguString 
+        self.temp = self.active()
+        if r"%s" in self.temp:
+            raise SyntaxError("The format string '%s' token is already present"
+                    " in the input string. Either you have some weird text, or"
+                    " something went very wrong somewhere. Exiting.")
+        for entry in self.string_literals :
+            literal = self.string_literals[entry]
+            if literal not in self.temp:
+                # We haven't done any substitutions yet, so this
+                # is a check to make sure that there is not an issue with
+                # the regex and escape sequences.
+                raise EscapeError(literal,self.temp)
+           
+            # Remove all string literals and substitute the '%s' token
+            # in their places. 
+            self.temp = re.sub(
+                    re.escape(literal), 
+                    "%(" + "%s" % entry + ")s",
+                    self.temp)
+
+            # Ensure that the string literal was in fact substituted; 
+            # a second regex escape sequence check.
+            if literal in self.temp:
+                raise UnescapeError(literal,self.temp)
 
         return self.temp
 
@@ -242,6 +279,7 @@ class MoguString(MultiString):
         # they are guaranteed by the script -> integral conversion
         # to be space-delimited, so long a there are no string literals.
         tokens = integral.split(' ')
+        filter(lambda s: s not in (""," "),tokens)
 
         # In case there are mathematical expressions, we must first
         # resolve any syntax that may be confused with numbers. This
@@ -284,16 +322,27 @@ class MoguString(MultiString):
         translated = " ".join(tokens)
 
         if self.string_literals:
-            return translated % tuple(self.string_literals)
+            return translated % (self.string_literals)
         else:
             return translated
 
     def getKeyword(self, integral):
+        # Since we have to strip the token in order to ensure that
+        # we get an actual integer, we want to preserve any newline
+        # characters we come across
+        newline = "\n" if \
+                (isinstance(integral,str) and integral.endswith("\n")) else ""
+        integral = integral.strip()
+        if int(integral) == 0:
+            return "0%s" % newline
         if int(integral) in self.preferences:
-            return self.preferences[int(integral)]
+            return "%s%s" % (
+                    self.preferences[int(integral)], newline)
         if str(integral) in MoguString.ReverseLookup:
-            return MoguString.ReverseLookup[integral]
-        return "None"
+            return "%s%s" % (
+                    MoguString.ReverseLookup[integral],newline)
+        raise SyntaxError(
+                "%d is not recognized as Mogu integral syntax." % integral)
 
     def create_references(self):
         if self.context == 'integral': 

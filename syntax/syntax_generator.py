@@ -32,6 +32,10 @@ def as_integer(string):
 
 def as_string(integer):
     global MoguSyntax
+    integer = integer.strip()
+    if int(integer) == 0:
+        print "I'm a zero"
+        return "0"
     reverseDict = dict.fromkeys(MoguSyntax,None)
     for key in MoguSyntax:
         ival = MoguSyntax[key][0]

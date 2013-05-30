@@ -172,7 +172,7 @@ clean:
 	@rm -rf $(objects) $(syntax) $(logs) all.check
 	@echo "Removed build, syntax, and check files..."
 	@rm -rf *.pyc build_log.txt autom4te.cache *.log
-	@sudo pip uninstall moguio \
+	@sudo pip uninstall moguio -y \
 		|| echo "moguio not installed, so not removing"
 
 purge: clean

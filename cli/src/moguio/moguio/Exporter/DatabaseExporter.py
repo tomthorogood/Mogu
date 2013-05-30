@@ -33,12 +33,12 @@ class DatabaseExporter(object):
     def export_abstract_widget(self,datatype,container,callback=None):
         container = []
         for widget in self.roots[datatype]:
-            identifier = keyspace.identifier(datatype,widget)
+            identifier = Keyspace.identifier(datatype,widget)
             events = Keyspace.zipstring(datatype,identifier,'events')
             children = Keyspace.zipstring(datatype,identifier,'children')
             
             has_events = self.db.exists(events)
-            has_chidlren = self.db.exists(children)
+            has_children = self.db.exists(children)
             if has_events:
                 triggerlist = self.db.lrange(events,0,self.db.llen(events))
                 eventdict = {}
