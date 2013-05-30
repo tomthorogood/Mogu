@@ -199,8 +199,25 @@ class MoguString(MultiString):
             Searches the string for occurences of mathematical expressions.
             If it finds them, it adds them to the instance list self.maths.
             Returns True if expressions are found, False otherwise.
+
+            Because format strings that are generated during the translation
+            process resemble math operations, this also generates a list of 
+            format strings "%(foo)s". This prevents false positives. If the
+            intersection of the two is the same, then we don't actually have
+            any mathematical operations.
         """
         self.maths = re.findall("\(.*\)",string)
+        formats = re.findall("%\(.*\)s",string)
+
+        if len(self.maths) == len(formats):
+            return False
+
+        if self.maths and self.formats:
+            for entry in self.formats:
+                format_id = entry[1:-1]
+                if format_id in self.maths:
+                    self.maths.remove(format_id)
+
         return len(self.maths) > 0
 
     def separate_string_literals(self):
