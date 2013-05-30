@@ -10,6 +10,8 @@
 #include <Redis/ContextQuery.h>
 #include <Types/syntax.h>
 #include <Redis/ContextQuery.h>
+#include <Security/Encryption.h>
+#include <Groups/GroupManager.h>
 
 namespace Parsers {
 
@@ -48,7 +50,6 @@ void StateParser::processInput(Moldable* broadcaster)
 	{
 		case MoguSyntax::widget:
             identifier = getIdentifier();
-            //result changed in place to hold value
             handleWidget(identifier,result);
             break;
         case MoguSyntax::own:
@@ -63,16 +64,13 @@ void StateParser::processInput(Moldable* broadcaster)
             handleUserField(identifier, result);
 		case MoguSyntax::group:
             identifier = getIdentifier();
-            //handleGroupField(identifier, result);
+            handleGroupField(identifier, result);
 		case MoguSyntax::slot:{
             mApp;
             identifier = getIdentifier();
-          //  SlotManager& slots = app->slotManager();
-          //  result.setString(slots.retrieveSlot(identifier));
             result = app->slotManager().retrieveSlot(identifier);
             break;
           }
-
         default:break;
 	}
 
@@ -175,19 +173,19 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
         "hget policies.%s %d", field.c_str(), MoguSyntax::encrypted);
     CreateQuery(policies,
         "hget policies.%s %d", field.c_str(), MoguSyntax::type);
-    bool encrypted = policies.yieldResult <bool>();
-    MoguSyntax type = policies.yieldResult <MoguSyntax>();
+    bool encrypted = policies.yieldResponse <bool>();
+    MoguSyntax type = policies.yieldResponse <MoguSyntax>();
     
     switch(type)
     {
         case MoguSyntax::string:
             CreateQuery(user, "get user.%s.%s", field.c_str(), userid.c_str());
             break;
-        case MoguSyntax::list:
+        case MoguSyntax::list:{
             int index = __tm.currentToken <int> ();
             CreateQuery(user, "lindex user.%s.%s %d",
                     field.c_str(), userid.c_str(), index);
-            break;
+            break;}
         case MoguSyntax::hash:
             // Make sure that the current token is a TOKEN_DELIM:
             if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
@@ -195,9 +193,9 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
                 std::string key = __tm.fetchStringToken();
                 CreateQuery(user, "hget user.%s.%s %s",
                         field.c_str(), userid.c_str(), key.c_str());
+                break;
             }
             else return;
-            break;
         default: return;
     };
     if (encrypted)
@@ -211,7 +209,7 @@ void StateParser::handleGroupField(const std::string& field, NodeValue& result)
 {
     mApp;
     std::string user = app->getUser();
-    std::string group = app->getGroup();
+    int group = app->getGroup();
     GroupManager group_mgr(group);
     bool read_enabled = group_mgr.hasReadAccess(field);
     if (!read_enabled) return;
@@ -222,28 +220,28 @@ void StateParser::handleGroupField(const std::string& field, NodeValue& result)
     CreateQuery(plcdb, "hget policies.%s %d", field.c_str(), MoguSyntax::type);
     CreateQuery(plcdb, "hget policies.%s %d",
             field.c_str(), MoguSyntax::encrypted);
-    MoguSyntax type  plcdb.yieldResponse <MoguSyntax>();
+    MoguSyntax type = plcdb.yieldResponse <MoguSyntax>();
     bool encrypted = plcdb.yieldResponse <bool>();
 
     switch(type)
     {
         case MoguSyntax::string:
-            CreateQuery(grpdb, "get groups.%s.%s", group.c_str(),
+            CreateQuery(grpdb, "get groups.%s.%s", group,
                     field.c_str());
             break;
-        case MoguSyntax::list:
+        case MoguSyntax::list:{
             // Get the index of list item
             int index = __tm.currentToken <int>();
-            CreateQuery(grpdb, "lindex groups.%s.%s %d", group.c_str(),
+            CreateQuery(grpdb, "lindex groups.%s.%s %d", group,
                     field.c_str(), index);
-            break;
-        case MoguSyntax::hash:
+            break;}
+        case MoguSyntax::hash:{
             // Ensure that the next token is in fact a key:
-            if (!__tm.currenToken() != MoguSyntax::TOKEN_DELIM) return;
-            std::string key = __tm.fetchStringtoken();
+            if (__tm.currentToken<MoguSyntax>() != MoguSyntax::TOKEN_DELIM) return;
+            std::string key = __tm.fetchStringToken();
             CreateQuery(grpdb, "hget groups.%s.%s %s",
-                    group.c_str(), field.c_str(), key.c_str());
-            break;
+                    group, field.c_str(), key.c_str());
+            break;}
         default: return;
     };
 

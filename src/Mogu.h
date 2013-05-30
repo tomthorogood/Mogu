@@ -45,7 +45,7 @@ class Mogu: public Wt::WApplication
     Parsers::NodeValueParser __interpreter;
 
     std::string __user_keyspace;  //!< Currently active user session
-    std::string __group;    //!< Currently active user group
+    int __group;    //!< Currently active user group
     std::string __instanceid;
 
     UserManager userManager;
@@ -105,7 +105,7 @@ public:
     }
 
     inline UserManager& getUserManager() {return userManager;}
-    inline std::string& getGroup() {return __group;}
+    inline const int& getGroup() const {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
     inline SlotManager& slotManager() { return __slotMgr;}
     inline void alert (const std::string& message) {

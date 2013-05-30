@@ -41,7 +41,7 @@ public:
 
     inline const std::string& getUser() const {return userKeyspace;}
     
-    bool setActiveGroup(const std::string& groupid){} //TODO
+    bool setActiveGroup(const std::string& groupid){return true;} //TODO
 
 private:
     Redis::ContextQuery db;

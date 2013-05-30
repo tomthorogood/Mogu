@@ -1,7 +1,9 @@
 #ifndef GROUPMANAGER_H_
 #define GROUPMANAGER_H_
 
+
 #include <declarations.h>
+#include <Redis/ContextQuery.h>
 
 /* 
  * The GroupManager class determines a user's access level within a group,
@@ -9,26 +11,22 @@
  * the group. The GroupManager may also promote/demote group members provided
  * the caller is a group moderator/administrator.
  */
+enum class AccessLevel {
+    NO_ACCESS       =0
+    , USER_ACCESS   =1
+    , ADMIN_ACCESS  =2
+};
+
 class GroupManager {
 
 public:
-    const static size_t NO_ACCESS = 0;
-    const static size_t USER_ACCESS = 1;
-    const static size_t ADMIN_ACCESS = 2;
-    const static std::string USER_STR = std::to_string(
-            (int) MoguSyntax::user);
-    const static std::string GROUP_STR = std::to_string(
-            (int) MoguSyntax::group);
-    const static std::string ADMIN_STR = std::to_string(
-            (int) MoguSytnax::moderator);
-    
     GroupManager();
-    GroupManger(const std::string& group_id);
+    GroupManager(const int& group_id);
     void promote (const std::string& user_id);
     void demote (const std::string& user_id);
     bool hasReadAccess (const std::string& field_name);
     bool hasWriteAccess (const std::string& field_name);
-    inline const size_t& accessLevel() const {
+    inline const AccessLevel& accessLevel() const {
         return access_level;
     }
 
@@ -41,11 +39,14 @@ public:
         };
     }
 private:
-    std::string     group_id;       // The database location of the group
-    size_t          access_level;   // 0 = no access, 1 = user, 2 = admin
+    int             group_id;       // The database location of the group
+    AccessLevel     access_level;   // 0 = no access, 1 = user, 2 = admin
     Redis::ContextQuery grpdb;      // Context for Group database
     Redis::ContextQuery usrdb;      // Context for user database
     Redis::ContextQuery plcdb;      // Context for policy database
+    std::string USER_STR;
+    std::string GROUP_STR;
+    std::string ADMIN_STR;
 };
 
 #endif

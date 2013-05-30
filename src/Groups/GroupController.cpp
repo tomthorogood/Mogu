@@ -1,13 +1,15 @@
+#include <Mogu.h>
 #include <Redis/ContextQuery.h>
 #include "GroupController.h"
+#include <Security/Encryption.h>
 
 GroupController::GroupController()
-: group_id(EMPTY)
+: group_id(0)
 {
 
 }
 
-GroupController::GroupContoller (const std::string& groupid)
+GroupController::GroupController (const int& groupid)
 : group_id(groupid)
   , manager(groupid)
 {
@@ -17,20 +19,20 @@ GroupController::GroupContoller (const std::string& groupid)
 void GroupController::getSet(const char* setname, 
         std::vector <std::string>& results)
 {
-    if (group_id != EMPTY && results.size() == 0) {
+    if (group_id != 0 && results.size() == 0) {
         Redis::ContextQuery& db = manager.getContext(Prefix::group);
         CreateQuery(db, "smembers groups.%d.%s", group_id, setname);
         results = db.yieldResponse <std::vector <std::string>>();
     }
 }
 
-const std::vector <std::string> GroupController::members()
+const std::vector <std::string>& GroupController::members()
 {
     getSet("members", members_v);
     return members_v;
 }
 
-const std::vector <std::string> GroupControler::administrators()
+const std::vector <std::string>& GroupController::administrators()
 {
     getSet("admins", admins_v);
     return admins_v;
@@ -59,7 +61,7 @@ void GroupController::createGroup (const std::string& group_name,
 // This may only be done through the Mogu engine if the current user is listed
 // as an administrator
 void GroupController::destroyGroup() {
-    if (manager.accessLevel() < manager.ADMIN_ACCESS) return;
+    if (manager.accessLevel() < AccessLevel::ADMIN_ACCESS) return;
     // First, we have to remove this group from the list of available groups
     // for all of its members and administrators
     Redis::ContextQuery& db = manager.getContext(Prefix::user);
@@ -69,7 +71,7 @@ void GroupController::destroyGroup() {
     }
     for (std::string admin : administrators())
     {
-        CreateQuery(db, "srem users.%s.groups %d", member.c_str(), group_id);
+        CreateQuery(db, "srem users.%s.groups %d", admin.c_str(), group_id);
     }
     db.execute();
 }

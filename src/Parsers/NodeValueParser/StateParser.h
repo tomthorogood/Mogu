@@ -43,6 +43,9 @@ class StateParser
         // Looks up the value of a user's data field in Redis.
         void handleUserField (const std::string& identifier, NodeValue& result);
 
+        // Looks up the value of a group's data field in Redis
+        void handleGroupField (const std::string& identifier, NodeValue& result);
+
 };
 
 }	// namespace Parsers

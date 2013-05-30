@@ -89,3 +89,6 @@
 (   member                  ,   member          ,   object attribute state )
 (   get                     ,   get             ,   action          )
 (   children                ,   children        ,   hashkey attribute )
+(   moderator               ,   moderator       ,   descriptor  )
+(   write                   ,   write           ,   access_level )
+(   read                    ,   read            ,   access_level )

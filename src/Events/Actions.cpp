@@ -28,6 +28,7 @@ void policyQuery(
         , bool init = true)
 {
     mApp;
+    std::string group = std::to_string(app->getGroup());
 
     MoguSyntax node_type = getPolicyNodeType(v.getIdentifier());
     if (!init) goto lbl_append_query;
@@ -40,10 +41,7 @@ void policyQuery(
                     + v.getIdentifier());
             break;
         case Prefix::group:
-            v.setIdentifier(
-                    app->getGroup() 
-                    + std::string(".") 
-                    + v.getIdentifier());
+            v.setIdentifier( group + "." + v.getIdentifier());
             break;
         default:return;
     }
@@ -712,10 +710,8 @@ void remove (Moldable& broadcaster, CommandValue& v)
 
         case MoguSyntax::group:{
             mApp;
-            std::string node =
-                app->getGroup()
-                + std::string(".")
-                + v.getIdentifier();
+            std::string group = std::to_string (app->getGroup());
+            std::string node = group + "." + v.getIdentifier();
             Redis::ContextQuery db(Prefix::group);
 
             MoguSyntax node_type = getPolicyNodeType(v.getIdentifier());

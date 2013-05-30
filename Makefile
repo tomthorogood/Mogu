@@ -61,6 +61,7 @@ branch_subs := \
 	Events \
 	FiniteAutomaton \
 	Factories \
+	Groups \
 	Moldable \
 	Parsers \
 	Parsers/NodeValueParser \

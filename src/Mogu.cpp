@@ -28,7 +28,7 @@ Mogu::Mogu(
     TurnLeft::Utils::RandomCharSet rchar;
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
 
-    __group = DEFAULT_GROUP;
+    __group = 0;
     __instanceid = rchar.generate(4);
 
     std::string styleSheet("/resources/mogu/style.css");
