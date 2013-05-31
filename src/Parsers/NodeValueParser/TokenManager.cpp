@@ -9,7 +9,6 @@
 
 //debug
 #include <iostream>
-
 namespace Parsers {
 
 TokenManager::TokenManager()
@@ -60,91 +59,95 @@ void TokenManager::addToken(std::string strToken)
 void TokenManager::setIterator()
 {
 
+	//place iterator at end of numerical token vector
 	__it = --(__numTokens.end());
-	__strIndex = __strTokens.size();	//starts out-of-bounds
 
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
+	//start our string index out-of-bounds since we update it upon
+	//ENTERING a vector position which has a token delim
+	__strIndex = __strTokens.size();
+
+	//if the last element in our string vector is TOKEN_DELIM, we need
+	//to update strIndex manually since next() or prev() is not called
+	if(isTokenDelim())
 		__strIndex--;
-
-	std::cout << "setIterator(): strIndex = " << __strIndex << std::endl;
 }
 
 std::string TokenManager::fetchStringToken()
 {
-	//debug
-	printStringTokens();
-	std::cout << "fetchStringToken(): strIndex = " << __strIndex << std::endl;
-
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
+	if(isTokenDelim())
 		return __strTokens[__strIndex];
-
 	else
 		return R"(ERR: DEREFERENCING NON-TOKENDELIM)";
 }
 
 //TODO: we are dereferencing our iterator twice; once on iterator
 //incr/decr, and again when/if we fetchStringToken.  refactor
-
 void TokenManager::next()
 {
 	__it++;
 
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM && __strIndex < (int) __strTokens.size()-1)
+	//if the token we just moved into is TOKEN_DELIM, we need to 
+	//update strIndex to point to the right string
+	if(isTokenDelim() && __strIndex ) //< (int) __strTokens.size()-1)
 	   __strIndex++;	
 
-	if(__delStringCount >= 0 && *__it == (int) MoguSyntax::TOKEN_DELIM )
+	//if we're between a call to saveLocation() and a subsequent call
+	//to deleteFromSaved/deleteToSaved(), keep track of how many
+	//strings we pass so can update strIndex accordingly when the
+	//delete actually happens 
+	if(__delStringCount >= 0 && isTokenDelim() )
 		__delStringCount++;
-
-	std::cout << "next(): currentToken = " << currentToken<int>() << 
-		" || strIndex = " << __strIndex << std::endl;
 }
 
 void TokenManager::prev()
 {
-	if(__delStringCount >= 0 && *__it == (int) MoguSyntax::TOKEN_DELIM )
+	//if we're between a call to saveLocation() and a subsequent call
+	//to deleteFromSaved/deleteToSaved(), keep track of how many
+	//strings we pass so can update strIndex accordingly when the
+	//delete actually happens 
+	if(__delStringCount >= 0 && isTokenDelim() )
 		__delStringCount--;
 
 	__it--;
 
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM && __strIndex > 0)
+	if(isTokenDelim() && ) //__strIndex > 0)
 		__strIndex--;
-
-	
-	std::cout << "prev(): currentToken = " << currentToken<int>() << 
-		" || strIndex = " << __strIndex << std::endl;
 }
 
 void TokenManager::saveLocation()
 {
 	__savedit = __it;
 
+	//begin tracking how many strings we are about to delete
 	__delStringCount = 0;
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
+	if(isTokenDelim())
 		__delStringCount++;
 }
 
 void TokenManager::deleteToSaved()
 {
 	__it = __numTokens.erase(__it, __savedit+1);
+	
+	//update strIndex as appropriate
 	__strIndex -= __delStringCount;
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
+	if(isTokenDelim())
 		__strIndex++;
+
+	//stop tracking how many strings we pass
 	__delStringCount = -1;
 }
 
 void TokenManager::deleteFromSaved()
 {
-	std::cout << "deleteFromSaved(BEFORE): strIndex=" << __strIndex
-		<< "  delStringCount=" << __delStringCount << std::endl;
-
 	__it = __numTokens.erase(__savedit, __it+1);
-	__strIndex -= __delStringCount;
-	if(*__it == (int) MoguSyntax::TOKEN_DELIM)
-		__strIndex++;
-	__delStringCount = -1;
 
-	std::cout << "deleteFromSaved(AFTER): strIndex=" << __strIndex
-		<< "  delStringCount=" << __delStringCount << std::endl;
+	//update strIndex as appropriate
+	__strIndex -= __delStringCount;
+	if(isTokenDelim())
+		__strIndex++;
+	
+	//stop tracking how many strings we pass
+	__delStringCount = -1;
 }
 
 //call this directly after deleteToSaved()!
@@ -156,15 +159,11 @@ void TokenManager::injectToken(int numToken)
 //call this directly after deleteToSaved()!
 void TokenManager::injectToken(std::string strToken)
 {
-	std::cout << "injectToken(strToken)" << std::endl;
 	__it = __numTokens.insert(__it, (int) MoguSyntax::TOKEN_DELIM);
-	std::cout << "hi" << std::endl;
-	std::cout << __FUNCTION__ << "(): strIndex=" << __strIndex << " strSize=" << __strTokens.size() << std::endl;
-	std::cout << "blarr" << std::endl;
 	__strTokens.insert(__strTokens.begin()+__strIndex+1, strToken);
 }
 
-//debug method
+//debug methods
 void TokenManager::printTokens()
 {
 	int tempStrIndex = 0;

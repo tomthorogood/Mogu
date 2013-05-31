@@ -97,19 +97,20 @@ class TokenManager
 		//TODO: refactor using generated syntax
 		enum class OutOfRange { Begin = 2147483640, End = 2147483641 };
 
+		//initialization methods
 		TokenManager();
 		void reset();
 		void addToken(int numToken);
 		void addToken(std::string strToken);
-		//MUST set the iterator after input command has been tokenized
-		void setIterator();
+		void setIterator(); //must call directly after adding all tokens!
 
 		//methods for navigating the token list.
-        template <typename T> T currentToken();
-
-        std::string fetchStringToken();
 		void next();
 		void prev();
+
+		//token access methods
+        template <typename T> T currentToken();
+        std::string fetchStringToken();
 
 		//set of functions for replacing sets of tokens with a single
 		//token (i.e. upon completion of StateParser and MathParser)
@@ -129,9 +130,16 @@ class TokenManager
 		void printStringTokens();
 
 	private:
+		//readability method
+		inline bool isTokenDelim()
+		{
+			return *__it == (int) MoguSyntax::TOKEN_DELIM;
+		}
+		//token vectors
 		std::vector<int> __numTokens;
 		std::vector<std::string> __strTokens;
 
+		//indexes our current token/stringToken
 		fwd_iterator __it;
 		fwd_iterator __savedit;
 
