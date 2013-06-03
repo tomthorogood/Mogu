@@ -13,6 +13,8 @@ QuerySet::QuerySet(Context& context)
     rdb = redisConnect(context.host,context.port);
     auto select = std::make_shared<Query>(
         Query("select %d", context.db_num));
+
+    // Delays the execution of this query until needed.
     appendQuery(select, IGNORE_RESPONSE);
 }
 
@@ -44,12 +46,14 @@ template <> int
 template <> std::string
     QuerySet::yieldResponse <std::string> ()
 {
+    execute_nongreedy();
     return reply_str;
 }
 
 template <> MoguSyntax
     QuerySet::yieldResponse <MoguSyntax>()
 {
+    execute_nongreedy();
     if (reply_type == REDIS_REPLY_STRING) 
         return (MoguSyntax) atoi(reply_str.c_str());
     else if (reply_type == REDIS_REPLY_INTEGER)
@@ -76,7 +80,7 @@ template <> bool
     }
 
     else if (reply_type == REDIS_REPLY_INTEGER) {
-        return bool(reply_int);
+        return static_cast<bool>(reply_int);
     }
 
     else if (reply_type == REDIS_REPLY_ARRAY) return true;

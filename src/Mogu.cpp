@@ -38,9 +38,9 @@ Mogu::Mogu(
     Redis::ContextQuery db(Prefix::meta);
     CreateQuery(db, "get meta.root");
 
+    std::string root_widget = db.yieldResponse <std::string>();
 
-    __wrapper = moldableFactory.createMoldableWidget(
-           db.yieldResponse <std::string> ());
+    __wrapper = moldableFactory.createMoldableWidget(root_widget);
 
     root()->addWidget(__wrapper);
 

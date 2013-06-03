@@ -59,10 +59,11 @@ private:
      * increases the flag iterator. 
      */
     inline redisReply* getNextReply() {
-        queryflags.pop(); //reveal the next flag.
         last_flags = queryflags.front(); // make it easy to see.
+        queryflags.pop(); //reveal the next flag.
         redisGetReply(rdb,&vreply);
         reply = static_cast<redisReply*>(vreply); //!< in cpp, have to explicitly cast this.
+        reply_type = reply->type;
         return reply;
     }
 
@@ -148,7 +149,7 @@ public:
         queryflags.push(flags);
     }
 
-    inline bool hasQueue() { return queryflags.size() > 1; }
+    inline bool hasQueue() { return queryflags.size() > 0; }
 
     /*!\brief If no type is expected, the default is to store
      * the value of the reply object, but make no returns. 
