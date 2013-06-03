@@ -88,7 +88,7 @@ void TokenManager::next()
 
 	//if the token we just moved into is TOKEN_DELIM, we need to 
 	//update strIndex to point to the right string
-	if(isTokenDelim() && __strIndex ) //< (int) __strTokens.size()-1)
+	if(isTokenDelim() && __strIndex < (int) __strTokens.size()-1)
 	   __strIndex++;	
 
 	//if we're between a call to saveLocation() and a subsequent call
@@ -110,7 +110,7 @@ void TokenManager::prev()
 
 	__it--;
 
-	if(isTokenDelim() && ) //__strIndex > 0)
+	if(isTokenDelim()  && __strIndex > 0)
 		__strIndex--;
 }
 
@@ -161,6 +161,19 @@ void TokenManager::injectToken(std::string strToken)
 {
 	__it = __numTokens.insert(__it, (int) MoguSyntax::TOKEN_DELIM);
 	__strTokens.insert(__strTokens.begin()+__strIndex+1, strToken);
+}
+
+void TokenManager::returnToSaved()
+{
+	__it = __savedit;
+
+	//update strIndex as appropriate
+	__strIndex -= __delStringCount;
+	if(isTokenDelim())
+		__strIndex++;
+	
+	//stop tracking how many strings we pass
+	__delStringCount = -1;
 }
 
 //debug methods

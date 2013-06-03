@@ -95,7 +95,7 @@ class TokenManager
 	//TODO: inline where appropriate
 	public:
 		//TODO: refactor using generated syntax
-		enum class OutOfRange { Begin = 2147483640, End = 2147483641 };
+		enum class OutOfRange { Begin = 2147483640, End = 2147483639 };
 
 		//initialization methods
 		TokenManager();
@@ -123,6 +123,11 @@ class TokenManager
 		void deleteFromSaved();
 		void injectToken(int numToken);
 		void injectToken(std::string strToken);
+
+		//in the case that our object-chain turns out to be
+		//non-resolvable, return to our saved location without
+		//deleting any tokens
+		void returnToSaved();
 
 		//debug methods
 		void printTokens();
