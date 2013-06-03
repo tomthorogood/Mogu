@@ -2,9 +2,11 @@
 
 import moguio
 import sys
+import os
 from moguio import RedisWriter
 from moguio import PathImporter
 from moguio.Exporter.DatabaseExporter import DatabaseExporter
+import redis
 
 import src
 #import src.cli_parser
@@ -33,3 +35,49 @@ if __name__ == "__main__":
         exports.extend (exporter.export_policies())
         for entry in exports:
             sys.stdout.write(entry)
+
+    if command == "start":
+        # First, check to make sure that the root widget has been set.
+        config = RedisWriter.parseDBConfig(args.dbconfig)
+        dbconfig = config["meta"]
+        root = None
+        try:
+            db = redis.Redis(
+                    db=dbconfig['db'],
+                    host=dbconfig['host'],
+                    port=dbconfig['port'])
+            root= db.exists('meta.root')
+            assert root,\
+                "You have not configured your root widget."
+                " Mogu does not know how to start!"
+                "\nUse 'mogu set-root rootname',"
+                " and make sure that widget exists."
+        except redis.exceptions.ConnectionError:
+            sys.stderr.write(
+                    "Could not connect to the database configured in the\n "
+                    "'meta' section of your dbconfig.conf file. Please check\n "
+                    "your configuration, and that the Redis instance is\n "
+                    "running at the specified location, and try again.\n")
+            sys.exit(1)
+        dbconfig = config['widgets']
+        try:
+            db = redis.Redis(
+                    db=dbconfig['db'],
+                    host=dbconfig['host'],
+                    port=dbconfig['port'])
+            assert db.exists("widgets.%s" % root),
+                "You have configured a root widget, but it does not exist. "
+                "Please make sure to write and import the '%s' widget for "
+                "Mogu to load." % root
+        except redis.exceptions.ConnectionError:
+            sys.stderr.write(
+                    "Could not connect to the database configured in the\n"
+                    "'widgets' section of your dbconfig.conf file.\n"
+                    "Please check your configuration and try again.")
+            sys.exit(1)
+        start = \
+                'mogu-server --docroot "/usr/share/mogu;/resources"'
+                '--http-address 0.0.0.0 --http-port 8080'
+        if args.debug:
+            start += " --gdb"
+        os.system(start)

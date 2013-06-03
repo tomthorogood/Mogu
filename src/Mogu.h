@@ -48,7 +48,7 @@ class Mogu: public Wt::WApplication
     int __group;    //!< Currently active user group
     std::string __instanceid;
 
-    UserManager userManager;
+    UserManager* userManager;
 
     SlotManager __slotMgr;
 
@@ -82,6 +82,7 @@ public:
         } catch (const std::out_of_range& e) {
             return nullptr;
         }
+        return nullptr;
     }
 
     //TODO
@@ -101,10 +102,10 @@ public:
 
     inline const std::string& getUser() const
     {
-        return userManager.getUser();
+        return userManager->getUser();
     }
 
-    inline UserManager& getUserManager() {return userManager;}
+    inline UserManager& getUserManager() {return *userManager;}
     inline const int& getGroup() const {return __group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
     inline SlotManager& slotManager() { return __slotMgr;}

@@ -54,9 +54,11 @@ Prefix matchPrefix(const std::string& prefix)
 int extractInteger(const std::string& line) {
     auto digit_start = line.find_first_of("1234567890");
     auto digit = line.substr(digit_start);
-    auto digit_end = line.find_first_not_of("1234567890");
+    auto digit_end = digit.find_first_not_of("1234567890");
     digit = digit.substr(0,digit_end);
-    return atoi(digit.c_str());
+    const char* c_digit = digit.c_str();
+    int i_digit = atoi(c_digit);
+    return i_digit;
 }
 
 std::string getHost(const std::string& line) {
@@ -78,6 +80,11 @@ void loadDatabaseContexts() {
     /* First, we have to load the config file defined at compile time. */
     std::ifstream infile;
     infile.open(DBCONFIG_FILE);
+    if(!infile.is_open()) {
+        std::cout << "Warning: No database config file found! Expect a "
+            "segfault soon..." << std::endl;
+        return;
+    }
 
     /* Initialize the line string, which will be used to hold
      * each line of the config file in turn. */
@@ -100,7 +107,7 @@ void loadDatabaseContexts() {
             // Complete at 00000111 (7)
             // One bit is set each time one of the above is found.
             // This allows for any number of newlines or comments.
-            uint8_t completion;
+            uint8_t completion =0;
             Prefix prefix = matchPrefix(line);
 
             while (completion != 7 && !infile.eof())
@@ -110,6 +117,7 @@ void loadDatabaseContexts() {
                 // Explicitly consume commented lines, as they may
                 // have the words 'port','host', or 'number' in them.
                 if (line.find('#') != std::string::npos) continue;
+                if (line == "") continue;
 
                 else if (line.find("port") != std::string::npos)
                 {
@@ -129,9 +137,10 @@ void loadDatabaseContexts() {
             }
             //!\todo Throw an error if a context not fully defined.
             if (completion < 7) return;
-            auto context =
-                std::make_shared<Redis::Context>(port,host.c_str(),dbnum);
-            contextMap[prefix] = context;
+
+            Redis::Context& context_ref = contextMap[prefix];
+            context_ref = Redis::Context(port,host.c_str(),dbnum);
+            Redis::Context& c_test = contextMap[prefix];
         }
     }
     //!\todo Throw an error if not everything was loaded.

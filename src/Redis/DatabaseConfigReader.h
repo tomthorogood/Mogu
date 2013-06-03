@@ -60,10 +60,28 @@ const std::unordered_map <Prefix, std::string, IntHash<Prefix>> prefixMap = {
 
 namespace Application { //static namespace
 
-
-
-static std::unordered_map <Prefix, std::shared_ptr <Redis::Context>, IntHash<Prefix>>
-    contextMap;
+struct ContextMap {
+    Redis::Context  __widgets;
+    Redis::Context  __user;
+    Redis::Context  __meta;
+    Redis::Context  __validators;
+    Redis::Context  __policies;
+    Redis::Context  __data;
+    Redis::Context  __group;
+    Redis::Context& operator[] (Prefix prefix) {
+        switch(prefix)
+        {
+        case Prefix::widgets:   return __widgets;
+        case Prefix::user:      return __user;
+        case Prefix::meta:      return __meta;
+        case Prefix::group:     return __group;
+        case Prefix::validators:return __validators;
+        case Prefix::policies:  return __policies;
+        case Prefix::data:      return __data;
+        default: return __widgets;
+        }
+    }
+} static contextMap;
 
 /* These bits are used as flags in PREFIX_MASK to ensure
  * that an application has all database prefixes properly configured.

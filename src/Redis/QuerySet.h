@@ -78,6 +78,7 @@ private:
                 break;
             case REDIS_REPLY_STRING:
                 reply_str = reply->str;
+                break;
             case REDIS_REPLY_ARRAY:
                 assignArray();
                 break;

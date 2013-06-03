@@ -24,6 +24,11 @@ public:
     Context(int port_ = 6379, const char* host_ = "localhost", int db_num_=0)
     : port(port_), host(host_), db_num(db_num) {
     }
+    Context(const Context& other) {
+        port = other.port;
+        host = other.host;
+        db_num = other.db_num;
+    }
 };
 
 }//Redis

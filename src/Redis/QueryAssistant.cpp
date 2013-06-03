@@ -84,6 +84,7 @@ QueryBlueprint blueprintFactory (
                     break;
                 default: break;
             }//end switch node_type
+            break;
         }//end case get
         default: break;
     }//end switch cmd_type;
