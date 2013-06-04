@@ -101,6 +101,13 @@ void TokenManager::next()
 
 void TokenManager::prev()
 {
+    /* --NOTE: Not sure of side effects. Cameron, double check this.
+     * If the iterator is already at the beginning, return immediately.
+     * This was causing segfaults before...
+     */
+    if(__it < __numTokens.begin()) return;
+
+
 	//if we're between a call to saveLocation() and a subsequent call
 	//to deleteFromSaved/deleteToSaved(), keep track of how many
 	//strings we pass so can update strIndex accordingly when the
