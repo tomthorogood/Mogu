@@ -105,13 +105,18 @@ private:
      * Otherwise, the elements are ignored.
      */
     inline void assignArray() {
-
+        bool cleared = false; // only clear once per new array
         int num_elements = reply->elements;
+
         int first_element_type = reply->element[0]->type;
+
         for (int e = 0; e < num_elements; ++e) {
             switch (first_element_type) {
                 case REDIS_REPLY_INTEGER:
-                    reply_array_int.clear();
+                    if (!cleared) {
+                        reply_array_int.clear();
+                        cleared = true;
+                    }
                     if (reply->element[e]->type == REDIS_REPLY_INTEGER) {
                         reply_array_int.push_back(reply->element[e]->integer);
                     }
@@ -120,7 +125,10 @@ private:
                     }
                     break;
                 case REDIS_REPLY_STRING:
-                    reply_array_str.clear();
+                    if (!cleared) {
+                        reply_array_str.clear();
+                        cleared = true;
+                    }
                     if (reply->element[e]->type == REDIS_REPLY_STRING) {
                         reply_array_str.push_back(reply->element[e]->str);
                     }

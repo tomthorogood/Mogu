@@ -57,7 +57,9 @@ void MoldableAbstractParent::load(){
                 num_children);
         
         auto children_v = db.yieldResponse <std::vector <std::string>>();
+        int s_children_v = (int) children_v.size();
 
+        assert(s_children_v == num_children);
         for (int i = 0; i < num_children; ++i)
         {
            std::string s_child = children_v[i];

@@ -67,6 +67,8 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 
 		//lastToken = __tm.currentToken<MoguSyntax>();
 		__tm.prev();
+
+		currToken = __tm.currentToken<MoguSyntax>();
 	}
 
 	return hasPreposition;
