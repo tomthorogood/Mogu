@@ -1,6 +1,7 @@
 #include "Mogu.h"
 #include <exception>
 #include <Types/syntax.h>
+#include <Redis/DatabaseConfigReader.h>
 
 
 Wt::WApplication* createApplication(
@@ -12,7 +13,6 @@ Wt::WApplication* createApplication(
 int main(
     int argc, char** argv)
 {
-
     Wt::ApplicationCreator fn = &createApplication;
     return Wt::WRun(argc, argv, fn);
 }

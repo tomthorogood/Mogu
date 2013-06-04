@@ -5,13 +5,13 @@
  *      Author: tom
  */
 #include "DatabaseConfigReader.h"
+#include "ContextMap.h"
+#include <cassert>
 
 namespace Application {
-static int PREFIX_MASK = 0;
 
-static bool contextsLoaded = false;
 
-Prefix matchPrefix(const std::string& prefix)
+Prefix matchPrefix(int& PREFIX_MASK, const std::string& prefix)
 {
     if (prefix.find("widgets") != std::string::npos) {
         PREFIX_MASK |= (int) Prefix::widgets;
@@ -73,17 +73,17 @@ std::string getHost(const std::string& line) {
     return tail.substr(0,end);
 }
 
-void loadDatabaseContexts() {
+ContextMap* loadDatabaseContexts() {
+    int PREFIX_MASK = 0;
+    ContextMap* contextMap = new ContextMap();
     // Only perform this when the application first starts up
     // and its first user connects.
-    if (contextsLoaded) return;
-    /* First, we have to load the config file defined at compile time. */
     std::ifstream infile;
     infile.open(DBCONFIG_FILE);
     if(!infile.is_open()) {
         std::cout << "Warning: No database config file found! Expect a "
             "segfault soon..." << std::endl;
-        return;
+        return nullptr;
     }
 
     /* Initialize the line string, which will be used to hold
@@ -108,7 +108,7 @@ void loadDatabaseContexts() {
             // One bit is set each time one of the above is found.
             // This allows for any number of newlines or comments.
             uint8_t completion =0;
-            Prefix prefix = matchPrefix(line);
+            Prefix prefix = matchPrefix(PREFIX_MASK, line);
 
             while (completion != 7 && !infile.eof())
             {
@@ -136,16 +136,17 @@ void loadDatabaseContexts() {
                 }
             }
             //!\todo Throw an error if a context not fully defined.
-            if (completion < 7) return;
-
-            Redis::Context& context_ref = contextMap[prefix];
-            context_ref = Redis::Context(port,host.c_str(),dbnum);
-            Redis::Context& c_test = contextMap[prefix];
+            if (completion < 7)
+                return nullptr;
+            contextMap->set(prefix, new Redis::Context(port, host.c_str(), dbnum));
+            assert(contextMap->get(prefix) != 0x0);
         }
     }
     //!\todo Throw an error if not everything was loaded.
-    if (PREFIX_MASK < MAX_PREFIX_MASK) return;
-    contextsLoaded = true;
+    if (PREFIX_MASK < MAX_PREFIX_MASK)
+        return nullptr;
+    assert(contextMap != 0x0);
+    return contextMap;
 }
 
 }

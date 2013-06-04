@@ -11,7 +11,7 @@
 namespace Redis {
 
 ContextQuery::ContextQuery(Prefix prefix) :
-    QuerySet(Application::contextMap[prefix])
+    QuerySet(prefix)
 {
 
 }

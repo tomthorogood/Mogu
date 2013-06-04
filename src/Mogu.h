@@ -33,6 +33,7 @@ class Mogu: public Wt::WApplication
     void handlePathChange(
         std::string path);
     MoldableFactory moldableFactory;
+    ContextMap* contextMap_;
 
     /*!\brief A map of named widgets. */
     std::unordered_map <std::string, Moldable*> widgetRegister;
@@ -113,6 +114,8 @@ public:
         std::string jsalert = "alert(\""+message+"\");";
 	    doJavaScript(jsalert);
     }
+
+    inline ContextMap* contextMap() { return contextMap_;}
     void removeWidget(const std::string& identifier);
 };
 

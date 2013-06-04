@@ -23,8 +23,8 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     MoguSyntax widget_type;
 
     Redis::ContextQuery db(Prefix::widgets);
-    db.appendQuery("hexists widgets.%s %s", c_node, MoguSyntax::template_);
-    db.appendQuery("hexists widgets.%s %s", c_node, MoguSyntax::text);
+    db.appendQuery("hexists widgets.%s %d", c_node, MoguSyntax::template_);
+    //  db.appendQuery("hexists widgets.%s %d", c_node, MoguSyntax::text);
     db.appendQuery("hget widgets.%s %d", c_node, MoguSyntax::type);
     bool has_tmpl = db.yieldResponse <bool>();
     //bool has_content = db.yieldResponse <bool>();

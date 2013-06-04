@@ -5,13 +5,20 @@
  */
 
 #include "QuerySet.h"
-
+#include "ContextMap.h"
+#include <Mogu.h>
 namespace Redis {
 
-QuerySet::QuerySet(Context& context_) : context(context_)
+QuerySet::QuerySet(Context* context_) : context(context_)
 {
-    rdb = redisConnect(context.host,context.port);
-    appendQuery("select %d", context.db_num);
+    rdb = redisConnect(context->host(),context->port);
+    appendQuery(Query("select %d", context->db_num), IGNORE_RESPONSE);
+}
+
+QuerySet::QuerySet(Prefix prefix) {
+    mApp;
+    context = app->contextMap()->get(prefix);
+    rdb = redisConnect(context->host(), context->port);
 }
 
 /*!\brief Forces the return of an integer response, and continues

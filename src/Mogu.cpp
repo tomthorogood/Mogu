@@ -19,12 +19,13 @@
 #include "Factories/MoldableFactory.h"
 #include "hash.h"
 #include "Redis/DatabaseConfigReader.h"
+#include "Redis/ContextMap.h"
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)
     : Wt::WApplication(env), widgetRegister()
 {
-    Application::loadDatabaseContexts();
+    contextMap_ = Application::loadDatabaseContexts();
     userManager = new UserManager();
     TurnLeft::Utils::RandomCharSet rchar;
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
@@ -62,4 +63,5 @@ void Mogu::handlePathChange(
 
 Mogu::~Mogu()
 {
+    delete contextMap_;
 }

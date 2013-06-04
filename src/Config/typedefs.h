@@ -36,4 +36,18 @@ typedef uint8_t masked;
  */
 typedef uint8_t mapped;
 
+enum class Prefix {
+    widgets     =1,
+    data        =2,
+    user        =4,
+    group       =8,
+    templates   =16,
+    validators  =32,
+    policies    =64,
+    /* If adding prefixes, add them BEFORE META, and UPDATE META to reflect
+     * a new bit-aligned number.
+     */
+    meta        =128
+};
+
 #endif /* TYPEDEFS_H_ */

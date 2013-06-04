@@ -5,22 +5,21 @@
 namespace Redis {
 
 
-Query::Query(const char* querystring_, ...)
+Query::Query(std::string querystring_, ...)
+: querystring(querystring_)
 {
-    strcpy(querystring,querystring_);
-    this->querystring = querystring;
     va_start (args, querystring_);
 }
 
 Query::Query(Query& other)
+: querystring(other.querystring)
 {
-    strcpy(querystring, other.querystring);
     va_copy(args,other.args);
 }
 
-Query::Query(const char* qstring, va_list args_)
+Query::Query(std::string qstring, va_list args_)
+: querystring(qstring)
 {
-    strcpy(querystring,qstring);
     va_copy(args, args_);
 }
 

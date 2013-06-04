@@ -72,6 +72,7 @@ class WRegExpValidator;
 }
 
 class Mogu;
+struct ContextMap;
 class MoguNode;
 class MoldableFactory;
 class Moldable;

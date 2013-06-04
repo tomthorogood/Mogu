@@ -7,44 +7,45 @@
 #include "Context.h"
 #include <queue>
 #include <memory>
+#include <cassert>
 namespace Redis {
 
 class QuerySet 
 {
 private:
-    Context& context;
+    Context* context;
 
     //!\brief The flags for each query given to the set
     std::queue <uint8_t>    queryflags;
-    std::queue <Query*>      queries;
+    std::queue <Query*>     queries;
 
     uint8_t last_flags;
     Query* last_query;
 
     //!\brief The type of the reply returned from a Redis query
-    int         reply_type = -1;
+    int         reply_type  = -1;
 
     //!\brief The type of the array returned from a relevant Redis query
-    uint8_t     array_type = 0;
+    uint8_t     array_type  = 0;
 
     //!\brief The context (populated by the Context reference passed in
     redisContext* rdb;
 
     //!\brief The reply from the last query sent to the Redis context
-    redisReply* reply = nullptr;
+    redisReply* reply       = nullptr;
 
     //!\brief Holds the last integer returned, where Redis stated the
     // response was an integer
-    int         reply_int =-1;
+    int         reply_int   = -1;
 
     //!\brief Holds the last string returned, where Redis states the
     //response was a string.
-    std::string reply_str = EMPTY;
+    std::string reply_str   = EMPTY;
 
 
     //!\brief Holds the last string returned where Redis stated the
     // response was a string, as a pointer to an array of chars.
-    bool allow_free = false;
+    bool allow_free         = false;
 
     //!\brief Holds a vector of the last set of responses where REdis
     // stated the response was a reply_array, and it was determined
@@ -57,7 +58,7 @@ private:
     std::vector <int> reply_array_int;
 
 
-    void* vreply =nullptr;
+    void* vreply            = nullptr;
 
     /*! Executes the next command sent to Redis, and
      * increases the flag iterator. 
@@ -68,8 +69,10 @@ private:
         queryflags.pop(); //reveal the next flag.
         queries.pop();
         redisGetReply(rdb,&vreply);
+        assert(vreply != nullptr);
         reply = static_cast<redisReply*>(vreply); //!< in cpp, have to explicitly cast this.
         reply_type = reply->type;
+        delete last_query;
         return reply;
     }
 
@@ -146,23 +149,36 @@ public:
     static const uint8_t ARRAY_TYPE_INT     = 0;
     static const uint8_t ARRAY_TYPE_STR     = 1;
     
-    //TODO set flag_iter to 0?
-    QuerySet(Context& context);
+    QuerySet(Context* context);
+    QuerySet(Prefix prefix);
 
     /*!\brief Add a query to the command queue. */
     inline void appendQuery(Query&& query,uint8_t flags=0)
     {
         queries.push(new Query(query));
         Query* scoped_query = queries.back();
-        redisvAppendCommand(rdb, scoped_query->querystring, scoped_query->args);
+        redisvAppendCommand(rdb, scoped_query->c_str(), scoped_query->args);
         queryflags.push(flags);
     }
 
-    inline void appendQuery(const char* querystring, ...)
+    inline void appendQuery(const char* query, ...)
+    {
+        va_list args;
+        va_start(args, query);
+        queries.push(new Query(query, args));
+        Query* scoped_query = queries.back();
+        redisvAppendCommand(rdb, scoped_query->c_str(), scoped_query->args);
+        queryflags.push(0);
+    }
+
+    inline void appendQuery(std::string&& querystring, ...)
     {
         va_list args;
         va_start(args, querystring);
         queries.push(new Query(querystring,args));
+        Query* scoped_query = queries.back();
+        redisvAppendCommand(rdb, scoped_query->c_str(), scoped_query->args);
+        queryflags.push(0);
 
     }
 

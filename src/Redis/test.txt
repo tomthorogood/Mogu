@@ -9,45 +9,25 @@ using std::endl;
 
 int main() {
     Context testContext;
-    std::string meta = "meta";
-    std::string root = "root";
-    QuerySet testQuerySet(testContext);
+    std::string exists = "exists";
+    std::string foo = "foo";
+    QuerySet db(&testContext);
 
-    auto q1 = std::make_shared <Query>("exists meta.root");
-    cout << q1->args << endl;
-    auto q2 = std::make_shared <Query>("exists meta.%s", "root");
-    cout << q2->args << endl;
-    auto q3 = std::make_shared <Query>("exists %s.root", meta.c_str());
-    cout << q3->args << endl;
-    auto q4 = std::make_shared <Query>("exists %s.%s", meta.c_str(), root.c_str());
-    cout << q4->args << endl;
-    auto q5 = std::make_shared <Query>("get meta.root");
-    cout << q5->args << endl;
+    db.appendQuery("exists foo");
+    db.appendQuery("exists %s", "foo");
+    db.appendQuery("%s %s", "exists", "foo");
+    db.appendQuery("exists %s", foo.c_str());
+    db.appendQuery("%s %s", exists.c_str(), foo.c_str());
 
-    testQuerySet.appendQuery(q1);
-    testQuerySet.appendQuery(q2);
-    testQuerySet.appendQuery(q3);
-    testQuerySet.appendQuery(q4);
-    testQuerySet.appendQuery(q5);
+    bool a1 = db.yieldResponse <bool>();
+    bool a2 = db.yieldResponse <bool>();
+    bool a3 = db.yieldResponse <bool>();
+    bool a4 = db.yieldResponse <bool>();
+    bool a5 = db.yieldResponse <bool>();
 
-    bool a1 = testQuerySet.yieldResponse <bool>();
-    cout << "Reply Type,        3 expected: " << testQuerySet.replyType() << endl;
-    cout << "Reply Int,         1 expected: " << testQuerySet.replyInt() << endl;
-    bool a2 = testQuerySet.yieldResponse <bool>();
-    cout << "Reply Type,        3 expected: " << testQuerySet.replyType() << endl;
-    cout << "Reply Int,         1 expected: " << testQuerySet.replyInt() << endl;
-    bool a3 = testQuerySet.yieldResponse <bool>();
-    cout << "Reply Type,        3 expected: " << testQuerySet.replyType() << endl;
-    cout << "Reply Int,         1 expected: " << testQuerySet.replyInt() << endl;
-    bool a4 = testQuerySet.yieldResponse <bool>();
-    cout << "Reply Type,        3 expected: " << testQuerySet.replyType() << endl;
-    cout << "Reply Int,         1 expected: " << testQuerySet.replyInt() << endl;
-    std::string a5 = testQuerySet.yieldResponse <std::string>();
-    cout << "Reply Type,        1 expected: " << testQuerySet.replyType() << endl;
-
-    cout << "Hardcoded,         1 expected: " << a1 << endl;
-    cout << "hard const char*,  1 expected: " << a2 << endl;
-    cout << "c_str(),           1 expected: " << a3 << endl;
-    cout << "2x c_str(),        1 expected: " << a4 << endl;
-    cout << "Hardcoded,   wrapper expected: " << a5 << endl;
+    cout << "a1 -> " << a1 << endl;
+    cout << "a2 -> " << a2 << endl;
+    cout << "a3 -> " << a3 << endl;
+    cout << "a4 -> " << a4 << endl;
+    cout << "a5 -> " << a5 << endl;
 }
