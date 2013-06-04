@@ -73,7 +73,7 @@ void Moldable::__init__ ()
     // The widgets.[id].events key will be a list of the event triggers.
     // Therefore, the llen query will show how many triggers we have for
     // this widget.
-    CreateQuery(db,"llen widgets.%s.events", __node.c_str());
+    db.appendQuery("llen widgets.%s.events", __node.c_str());
     num_triggers = (size_t) db.yieldResponse <int>();
 }
 
@@ -85,7 +85,7 @@ void Moldable::load()
 
 std::string Moldable::getParameter(Redis::ContextQuery& db, MoguSyntax param)
 {
-    CreateQuery(db, "hget widgets.%s %d",__node.c_str(), (int) param);
+    db.appendQuery( "hget widgets.%s %d",__node.c_str(), (int) param);
     return db.yieldResponse <std::string>();
 }
 

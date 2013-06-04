@@ -36,7 +36,7 @@ Mogu::Mogu(
     useStyleSheet(styleSheet);
 
     Redis::ContextQuery db(Prefix::meta);
-    CreateQuery(db, "get meta.root");
+    db.appendQuery("get meta.root");
 
     std::string root_widget = db.yieldResponse <std::string>();
 

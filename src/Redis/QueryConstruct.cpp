@@ -57,22 +57,22 @@ void QueryConstruct::appendQuery(ContextQuery& db)
     switch(blueprint.specs)
     {
         case 1:
-            CreateQuery(db, blueprint.query.c_str(),node.c_str());
+            db.appendQuery( blueprint.query.c_str(),node.c_str());
             break;
 
         case 2:
-            CreateQuery(db, blueprint.query.c_str(), node.c_str(), iarg1);
+            db.appendQuery( blueprint.query.c_str(), node.c_str(), iarg1);
             break;
         case 3:
-            CreateQuery(db,blueprint.query.c_str(), node.c_str(),
+            db.appendQuery(blueprint.query.c_str(), node.c_str(),
                     sarg1.c_str());
             break;
         case 5:
-            CreateQuery(db,blueprint.query.c_str(), node.c_str(), iarg1,
+            db.appendQuery(blueprint.query.c_str(), node.c_str(), iarg1,
                     sarg2.c_str());
             break;
         case 7:
-            CreateQuery(db,blueprint.query.c_str(), node.c_str(),
+            db.appendQuery(blueprint.query.c_str(), node.c_str(),
                     sarg1.c_str(), sarg2.c_str());
            break; 
     }

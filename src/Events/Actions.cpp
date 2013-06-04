@@ -16,8 +16,8 @@ namespace Actions {
 MoguSyntax getPolicyNodeType(const std::string& identifier)
 {
     Redis::ContextQuery policydb(Prefix::policies);
-    CreateQuery(policydb,
-        "hget policies.%s %d", identifier.c_str(), MoguSyntax::type);
+    policydb.appendQuery("hget policies.%s %d", identifier.c_str(),
+            MoguSyntax::type);
     return policydb.yieldResponse<MoguSyntax>();
 }
 
@@ -100,7 +100,7 @@ void set (Moldable& broadcaster, CommandValue& v)
             break;}
         case MoguSyntax::data:{ // set data field
             Redis::ContextQuery db(Prefix::data);
-            CreateQuery(db, "type data.%s", v.getIdentifier().c_str());
+            db.appendQuery("type data.%s", v.getIdentifier().c_str());
             MoguSyntax node_type = db.yieldResponse <MoguSyntax> ();
             Redis::addQuery(
                 db
@@ -181,7 +181,7 @@ void increment (Moldable& broadcaster, CommandValue& v)
         case MoguSyntax::data:{
             Redis::ContextQuery db(Prefix::data);
             final.setInt(value);
-            CreateQuery(db, "type data.%s", v.getIdentifier().c_str());
+            db.appendQuery("type data.%s", v.getIdentifier().c_str());
             MoguSyntax node_type = db.yieldResponse <MoguSyntax>();
             v.setValue(final);
             Redis::addQuery(
@@ -281,7 +281,7 @@ void decrement (Moldable& broadcaster, CommandValue& v)
             Redis::ContextQuery db(Prefix::data);
             final.setInt(value);
             v.setValue(final);
-            CreateQuery(db,"type data.%s", v.getIdentifier().c_str());
+            db.appendQuery("type data.%s", v.getIdentifier().c_str());
             MoguSyntax node_type = db.yieldResponse<MoguSyntax>();
             Redis::addQuery(
                 db
@@ -361,7 +361,7 @@ void test(Moldable& broadcaster, CommandValue& v)
 
         case MoguSyntax::data:{
             Redis::ContextQuery db(Prefix::data);
-            CreateQuery(db,"type data.%s", v.getIdentifier().c_str());
+            db.appendQuery("type data.%s", v.getIdentifier().c_str());
             Redis::addQuery(
                 db
                 , MoguSyntax::get
@@ -491,7 +491,7 @@ void append(Moldable& broadcaster, CommandValue& v)
             switch(node_type)
             {
                 case MoguSyntax::list:
-                    CreateQuery(db,"rpush user.%s %s",
+                    db.appendQuery("rpush user.%s %s",
                             node.c_str(), v.getValue().getString().c_str());
                     db.execute();
                     return;
@@ -519,7 +519,7 @@ void append(Moldable& broadcaster, CommandValue& v)
             switch(node_type)
             {
                 case MoguSyntax::list:
-                    CreateQuery(db,"rpush group.%s %s", node.c_str(), 
+                    db.appendQuery("rpush group.%s %s", node.c_str(),
                             v.getValue().getString().c_str());
                     db.execute();
                     return;
@@ -541,15 +541,15 @@ void append(Moldable& broadcaster, CommandValue& v)
          * a 'list' type, the entry will default be appended to the list. */
         case MoguSyntax::data:{
             Redis::ContextQuery db(Prefix::data);
-            CreateQuery(db, "type data.%s", v.getIdentifier().c_str());
+            db.appendQuery("type data.%s", v.getIdentifier().c_str());
             MoguSyntax storage_type = db.yieldResponse <MoguSyntax>();
             MoguSyntax node_type;
             switch(storage_type)
             {
                 case MoguSyntax::list:
-                    CreateQuery(db,"rpush data.%s %s", 
-                            v.getIdentifier().c_str()
-                            , v.getValue().getString().c_str());
+                    db.appendQuery("rpush data.%s %s",
+                        v.getIdentifier().c_str()
+                        , v.getValue().getString().c_str());
                     return;
                 default:return;
             }
@@ -676,7 +676,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::list:
                     if (v.getValue().getString() != EMPTY)
                     {
-                        CreateQuery(db, "ldel user.%s 1 %s"
+                        db.appendQuery("ldel user.%s 1 %s"
                                 , node.c_str()
                                 , v.getValue().getString().c_str());
                         db.execute();
@@ -687,7 +687,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::hash:
                     if (v.getArg().getString() != EMPTY)
                     {
-                        CreateQuery(db, "hdel user.%s %s"
+                        db.appendQuery("hdel user.%s %s"
                                 , node.c_str()
                                 , v.getArg().getString().c_str());
                         db.execute();
@@ -703,7 +703,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
 
             if (del_node)
             {
-                CreateQuery(db,"del user.%s", node.c_str());
+                db.appendQuery("del user.%s", node.c_str());
                 return;
             }
             break;}
@@ -723,7 +723,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::list:
                     if (v.getValue().getString() != EMPTY)
                     {
-                        CreateQuery(db,"ldel group.%s 1 %s"
+                        db.appendQuery("ldel group.%s 1 %s"
                                 , node.c_str()
                                 , v.getValue().getString().c_str());
                         db.execute();
@@ -734,7 +734,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::hash:
                     if (v.getArg().getString() != EMPTY)
                     {
-                        CreateQuery(db,"hdel group.%s %s"
+                        db.appendQuery("hdel group.%s %s"
                                 , node.c_str()
                                 , v.getArg().getString().c_str());
                         db.execute();
@@ -751,7 +751,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
 
             if (del_node)
             {
-                CreateQuery(db, "del group.%s", node.c_str());
+                db.appendQuery("del group.%s", node.c_str());
                 db.execute();
                 return;
             }
@@ -763,8 +763,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
         case MoguSyntax::data:{
             Redis::ContextQuery db(Prefix::data);
 
-            CreateQuery(db,
-                "type data.%s", v.getIdentifier().c_str());
+            db.appendQuery("type data.%s", v.getIdentifier().c_str());
             MoguSyntax node_type = db.yieldResponse<MoguSyntax>();
             bool del_node = false;
             switch(node_type)
@@ -772,7 +771,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::list:
                     if (v.getArg().getString() != EMPTY) 
                     {
-                        CreateQuery(db,
+                        db.appendQuery(
                             "ldel data.%s 1 %s"
                             , v.getIdentifier().c_str()
                             , v.getArg().getString().c_str());
@@ -783,7 +782,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::hash:
                     if (v.getArg().getString() != EMPTY)
                     {
-                        CreateQuery(db,
+                        db.appendQuery(
                             "hdel data.%s %s"
                             , v.getIdentifier().c_str()
                             , v.getArg().getString().c_str());
@@ -798,8 +797,7 @@ void remove (Moldable& broadcaster, CommandValue& v)
             }
             if (del_node)
             {
-                CreateQuery(db,
-                    "del data.%s", v.getIdentifier().c_str());
+                db.appendQuery("del data.%s", v.getIdentifier().c_str());
                 db.execute();
             }
 
@@ -869,8 +867,7 @@ void email(Moldable& broadcaster, CommandValue& v)
 
         case MoguSyntax::data:{
             Redis::ContextQuery db(Prefix::data);
-            CreateQuery(db,
-                "type data.%s", v.getIdentifier().c_str());
+            db.appendQuery("type data.%s", v.getIdentifier().c_str());
             MoguSyntax node_type = db.yieldResponse <MoguSyntax>();
             Redis::addQuery(
                 db

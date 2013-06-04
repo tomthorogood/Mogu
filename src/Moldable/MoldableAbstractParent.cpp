@@ -27,7 +27,7 @@ void MoldableAbstractParent::__init__()
     //
     // widgets.[id].children will hold a list of the children's identifiers.
     // llen will thus show how many default children this widget will have.
-    CreateQuery(db,"llen widgets.%s.children", c_node);
+    db.appendQuery("llen widgets.%s.children", c_node);
     num_children = db.yieldResponse <int>();
 }
 
@@ -53,7 +53,7 @@ void MoldableAbstractParent::load(){
 
         // We will first populate a vector with the list of children's 
         // identifiers.
-        CreateQuery(db,"lrange widgets.%s.children 0 %d", getNode().c_str(),
+        db.appendQuery("lrange widgets.%s.children 0 %d", getNode().c_str(),
                 num_children);
         
         auto children_v = db.yieldResponse <std::vector <std::string>>();

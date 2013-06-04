@@ -14,11 +14,7 @@ TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
 {
     Redis::ContextQuery db(Prefix::widgets);
     const char* c_node = widget.c_str();
-    db.appendQuery(
-        std::make_shared <Redis::Query>(
-            Redis::Query(
-                "lrange widgets.%s.events 0 %d", c_node, num_triggers))
-    );
+    db.appendQuery("lrange widgets.%s.events 0 %d", c_node, num_triggers);
 
     /* Retrieve the list of all event triggers for the widget
      * and for each of those retrieve the list of commands, appending
@@ -32,18 +28,11 @@ TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
         triggers.insert((MoguSyntax) trigger);
         // Get the number of commands associated with that trigger
         db.appendQuery(
-            std::make_shared <Redis::Query>(
-                Redis::Query("llen widgets.%s.events.%d", c_node, trigger)
-            ),
-        Redis::ContextQuery::REQUIRE_INT);
+                Redis::Query("llen widgets.%s.events.%d", c_node, trigger),
+                db.REQUIRE_INT);
 
-        // Get the commands associated with that trigger
-        CreateQuery(db,
-                "lrange widgets.%s.events.%d 0 %d",
-                c_node,
-                trigger,
-                db.yieldResponse <int>()
-        );
+        db.appendQuery("lrange widgets.%s.events.%d 0 %d",
+                c_node, trigger, db.yieldResponse<int>());
 
         // Store the commands in the trigger queue
         for (std::string command : db.yieldResponse <std::vector <std::string>>())

@@ -17,9 +17,9 @@ GroupManager::GroupManager (const int& grpid)
 {
     mApp;
     std::string user = app->getUser();
-    CreateQuery(grpdb, "sismember groups.%d.admins %s",
+    grpdb.appendQuery("sismember groups.%d.admins %s",
             group_id, user.c_str());
-    CreateQuery(grpdb, "sismember groups.%d.members %s", 
+    grpdb.appendQuery("sismember groups.%d.members %s", 
             group_id, user.c_str());
 
     access_level = 
@@ -36,13 +36,13 @@ GroupManager::GroupManager (const int& grpid)
 void GroupManager::promote (const std::string& userid)
 {
     if (access_level != AccessLevel::ADMIN_ACCESS) return;
-    CreateQuery(grpdb, "sismember groups.%d.members %s",
+    grpdb.appendQuery("sismember groups.%d.members %s",
             group_id, userid.c_str());
     if (grpdb.yieldResponse<bool>())
-        CreateQuery(grpdb, "sadd groups.%d.admins %s",
+        grpdb.appendQuery( "sadd groups.%d.admins %s",
                 group_id, userid.c_str());
     else
-        CreateQuery(grpdb, "sadd grups.%d.members %s",
+        grpdb.appendQuery( "sadd grups.%d.members %s",
                 group_id, userid.c_str());
     grpdb.execute();
 }
@@ -54,29 +54,28 @@ void GroupManager::promote (const std::string& userid)
 void GroupManager::demote (const std::string& userid)
 {
     if (access_level != AccessLevel::ADMIN_ACCESS) return;
-    CreateQuery(grpdb, "sismember groups.%d.admins %s",
+    grpdb.appendQuery( "sismember groups.%d.admins %s",
             group_id, userid.c_str());
-    CreateQuery(grpdb, "sismember groups.%d.members %s",
+    grpdb.appendQuery( "sismember groups.%d.members %s",
             group_id, userid.c_str());
     if (grpdb.yieldResponse <bool>()) 
-        CreateQuery(grpdb, "srem groups.%d.admins %s", 
+        grpdb.appendQuery( "srem groups.%d.admins %s", 
                 group_id, userid.c_str());
     else if (grpdb.yieldResponse <bool>())
-        CreateQuery(grpdb, "srem groups.%d.members %s",
+        grpdb.appendQuery( "srem groups.%d.members %s",
                 group_id, userid.c_str());
     grpdb.execute();
 }
 
 bool GroupManager::hasReadAccess (const std::string& field)
 {
-    CreateQuery(grpdb,
-            "exists groups.%d", group_id);
+    grpdb.appendQuery("exists groups.%d", group_id);
     
     // Nobody has read access to something that doesn't exist
     if (! grpdb.yieldResponse <bool>()) 
         return false;   
     
-    CreateQuery(plcdb,
+    plcdb.appendQuery(
             "hget policies.%s %d", field.c_str(), MoguSyntax::read);
     auto access = plcdb.yieldResponse <std::string>();
     std::string test_str = 
@@ -92,7 +91,7 @@ bool GroupManager::hasReadAccess (const std::string& field)
 
 bool GroupManager::hasWriteAccess(const std::string& field)
 {
-    CreateQuery(plcdb,
+    plcdb.appendQuery(
             "hget policies.%s %d", field.c_str(), MoguSyntax::write);
 
     // If the user is not a member of the group, they do not have write access

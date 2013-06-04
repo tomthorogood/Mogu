@@ -12,10 +12,14 @@ namespace Redis {
 class QuerySet 
 {
 private:
+    Context& context;
+
     //!\brief The flags for each query given to the set
-    std::queue <uint8_t> queryflags;
+    std::queue <uint8_t>    queryflags;
+    std::queue <Query*>      queries;
 
     uint8_t last_flags;
+    Query* last_query;
 
     //!\brief The type of the reply returned from a Redis query
     int         reply_type = -1;
@@ -60,7 +64,9 @@ private:
      */
     inline redisReply* getNextReply() {
         last_flags = queryflags.front(); // make it easy to see.
+        last_query = queries.front();
         queryflags.pop(); //reveal the next flag.
+        queries.pop();
         redisGetReply(rdb,&vreply);
         reply = static_cast<redisReply*>(vreply); //!< in cpp, have to explicitly cast this.
         reply_type = reply->type;
@@ -144,9 +150,20 @@ public:
     QuerySet(Context& context);
 
     /*!\brief Add a query to the command queue. */
-    inline void appendQuery(std::shared_ptr<Query> query,uint8_t flags=0) {
-        redisvAppendCommand(rdb, query->querystring, query->args);
+    inline void appendQuery(Query&& query,uint8_t flags=0)
+    {
+        queries.push(new Query(query));
+        Query* scoped_query = queries.back();
+        redisvAppendCommand(rdb, scoped_query->querystring, scoped_query->args);
         queryflags.push(flags);
+    }
+
+    inline void appendQuery(const char* querystring, ...)
+    {
+        va_list args;
+        va_start(args, querystring);
+        queries.push(new Query(querystring,args));
+
     }
 
     inline bool hasQueue() { return queryflags.size() > 0; }

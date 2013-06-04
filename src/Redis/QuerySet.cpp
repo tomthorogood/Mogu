@@ -8,14 +8,10 @@
 
 namespace Redis {
 
-QuerySet::QuerySet(Context& context)
+QuerySet::QuerySet(Context& context_) : context(context_)
 {
     rdb = redisConnect(context.host,context.port);
-    auto select = std::make_shared<Query>(
-        Query("select %d", context.db_num));
-
-    // Delays the execution of this query until needed.
-    appendQuery(select, IGNORE_RESPONSE);
+    appendQuery("select %d", context.db_num);
 }
 
 /*!\brief Forces the return of an integer response, and continues
@@ -30,7 +26,8 @@ template <> int
 
     if (reply_type == REDIS_REPLY_STRING) {
         if (last_flags & REQUIRE_INT) return 0;
-        return std::atoi(reply_str.c_str());
+        const char* cstr = reply_str.c_str();
+        return std::atoi(cstr);
     }
     else if (reply_type != REDIS_REPLY_INTEGER) {
         return 0;

@@ -6,9 +6,12 @@
 namespace Redis {
 
 struct Query {
+    Query() {};
     Query(const char* querystring, ...);
+    Query(Query&);
+    Query(const char* querystring, va_list);
     
-    const char* querystring;
+    char* querystring;
     
     va_list args;
 

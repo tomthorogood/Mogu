@@ -19,20 +19,19 @@ UserManager::UserManager()
 int8_t UserManager::loginUser(
     const std::string& username, const std::string& password)
 {
-    using Redis::Query;
     std::string enc_username = Security::encrypt(username);
     std::string enc_password = Security::encrypt(password);
 
     const char* c_enc_username = enc_username.c_str();
 
     /* First, we have to see whether the encrypted username exists at all:*/
-    CreateQuery(db, "hexists user.iterations %s", c_enc_username);
+    db.appendQuery( "hexists user.iterations %s", c_enc_username);
     /* After that, we'll see how many times we have to hash their information
      * to prevent a collision with another user's keyspace.
      */
-    CreateQuery(db, "hget user.iterations %s", c_enc_username);
+    db.appendQuery( "hget user.iterations %s", c_enc_username);
     /* Then we'll retrieve their salt. */
-    CreateQuery(db, "hget user.salt %s", c_enc_username);
+    db.appendQuery( "hget user.salt %s", c_enc_username);
 
 
     if (! db.yieldResponse <bool>()) return 0;
@@ -42,9 +41,8 @@ int8_t UserManager::loginUser(
 
     userKeyspace = hashTogether(
         enc_username, salt, enc_password, hash_iters);
-    std::shared_ptr <Query> keyspace_exists = std::make_shared <Query>(
-        "hexists user.%s", userKeyspace.c_str());
-    db.appendQuery(keyspace_exists, db.REQUIRE_INT);
+    db.appendQuery(Redis::Query(
+        "hexists user.%s", userKeyspace.c_str()), db.REQUIRE_INT);
     if (!db.yieldResponse <bool> ())
     {
         userKeyspace = EMPTY;
@@ -52,9 +50,8 @@ int8_t UserManager::loginUser(
     }
     else
     {
-        std::shared_ptr <Query> salt_matches = std::make_shared <Query>(
-            "get user.%s", enc_username.c_str());
-        db.appendQuery(salt_matches, db.REQUIRE_STRING);
+        db.appendQuery(
+            "get user.%s", enc_username.c_str(), db.REQUIRE_STRING);
         std::string auth_salt = db.yieldResponse<std::string>();
         int retval = (auth_salt == salt) ? 1 : -1;
         return retval;
@@ -67,7 +64,6 @@ int8_t UserManager::registerUser(
     const std::string& username, const std::string& password)
 {
     using TurnLeft::Utils::RandomCharSet;
-    using Redis::Query;
 
     std::string enc_username = Security::encrypt(username);
     std::string enc_password = Security::encrypt(password);
@@ -76,14 +72,14 @@ int8_t UserManager::registerUser(
     std::string salt = rchar.generate(1); // three characters long
     std::string enc_salt = Security::encrypt(salt);
 
-    std::shared_ptr <Query> user_already_exists = std::make_shared <Query>(
-        "hexists user.salt %s", enc_username.c_str());
+    db.appendQuery(
+        Redis::Query("hexists user.salt %s", enc_username.c_str()), 
+            db.REQUIRE_INT);
 
-    std::shared_ptr <Query> store_salt = std::make_shared <Query>(
-        "hset user.salt %s %s", enc_username.c_str(), enc_salt.c_str());
+    db.appendQuery(
+        Redis::Query("hse user.salt %s %s", enc_username.c_str(), enc_salt.c_str()),
+        db.IGNORE_RESPONSE);
 
-    db.appendQuery(user_already_exists, db.REQUIRE_INT);
-    db.appendQuery(store_salt, db.IGNORE_RESPONSE);
     if (db.yieldResponse <bool>()) return 0;
     db.execute(); //store the salt
 
@@ -93,10 +89,9 @@ int8_t UserManager::registerUser(
         // We'll store the encrypted user salt at that location in
         // the database to let future calls know that the user was created,
         // and also allow us to verify that there hasn't been a collision error
-        std::shared_ptr <Query> create_keyspace =
-            std::make_shared <Query> ("set user.%s %s",
-                userKeyspace.c_str(), enc_salt.c_str());
-        db.appendQuery(create_keyspace, db.IGNORE_RESPONSE);
+        db.appendQuery(Redis::Query(
+            "set user.%s %s", userKeyspace.c_str(), enc_salt.c_str()),
+            db.IGNORE_RESPONSE);
         db.execute();
         return 1;
     }
@@ -127,7 +122,6 @@ std::string UserManager::createHash(
     , const std::string& salt
     )
 {
-    using Redis::Query;
     std::string long_source = username + salt + password;
     std::string hashed = Hash::toHash(long_source);
 
@@ -139,9 +133,9 @@ std::string UserManager::createHash(
         ++num_iters;
     }
 
-    std::shared_ptr <Query> set_num_iters = std::make_shared <Query>(
-        "hset user.iterations %s %d", username.c_str(), num_iters);
-    db.appendQuery(set_num_iters, db.IGNORE_RESPONSE);
+    db.appendQuery(
+        Redis::Query("hset user.iterations %s %d", username.c_str(), num_iters),
+        db.IGNORE_RESPONSE);
     db.execute();
 
     return hashed;
@@ -149,9 +143,6 @@ std::string UserManager::createHash(
 
 bool UserManager::keyspaceExists(const std::string& userhash)
 {
-    using Redis::Query;
-    std::shared_ptr <Query> hash_exists = std::make_shared <Query> (
-        "hexists user.%s", userhash.c_str());
-    db.appendQuery(hash_exists);
+    db.appendQuery("hexists user.%s", userhash.c_str());
     return db.yieldResponse<bool>();
 }
