@@ -5,7 +5,7 @@
  *      Author: cameron
  */
 
-#include <Parsers/NodeValueParser/TokenManager.h>
+#include "TokenManager.h"
 
 //debug
 #include <iostream>
@@ -85,12 +85,18 @@ std::string TokenManager::fetchStringToken()
 	     * when returning
 	     */
 	    std::string stringToken = __strTokens[__strIndex];
-	    if (stringToken.at(0) != '"') return __strTokens[__strIndex];
+	    if (!isQuotedString()) return __strTokens[__strIndex];
 	    int last_quote = stringToken.find_last_of('"');
 	    return stringToken.substr(1,last_quote-1);
 	}
 	else
 		return R"(ERR: DEREFERENCING NON-TOKENDELIM)";
+}
+
+bool TokenManager::isQuotedString()
+{
+    std::string token = __strTokens[__strIndex];
+    return token.at(0) == '"';
 }
 
 //TODO: we are dereferencing our iterator twice; once on iterator

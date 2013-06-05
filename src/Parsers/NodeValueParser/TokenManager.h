@@ -111,6 +111,7 @@ class TokenManager
 		//token access methods
         template <typename T> T currentToken();
         std::string fetchStringToken();
+        bool isQuotedString();
 
 		//set of functions for replacing sets of tokens with a single
 		//token (i.e. upon completion of StateParser and MathParser)
