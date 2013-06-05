@@ -136,10 +136,8 @@ class TokenManager
 
 	private:
 		//readability method
-		inline bool isTokenDelim()
-		{
-			return *__it == (int) MoguSyntax::TOKEN_DELIM;
-		}
+		bool isTokenDelim();
+
 		//token vectors
 		std::vector<int> __numTokens;
 		std::vector<std::string> __strTokens;
