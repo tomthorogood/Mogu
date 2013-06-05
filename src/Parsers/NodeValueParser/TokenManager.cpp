@@ -85,6 +85,7 @@ std::string TokenManager::fetchStringToken()
 	     * when returning
 	     */
 	    std::string stringToken = __strTokens[__strIndex];
+	    if (stringToken.at(0) != '"') return __strTokens[__strIndex];
 	    int last_quote = stringToken.find_last_of('"');
 	    return stringToken.substr(1,last_quote-1);
 	}
