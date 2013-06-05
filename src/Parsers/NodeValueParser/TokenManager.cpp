@@ -95,6 +95,7 @@ std::string TokenManager::fetchStringToken()
 
 bool TokenManager::isQuotedString()
 {
+    if (!isTokenDelim()) return false;
     std::string token = __strTokens[__strIndex];
     return token.at(0) == '"';
 }

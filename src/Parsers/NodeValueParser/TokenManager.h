@@ -25,6 +25,14 @@ namespace Parsers {
 		(int) MoguSyntax::widget
 	};
 
+	const std::unordered_set <int> __stateTokens = {
+	    (int) MoguSyntax::style,
+	    (int) MoguSyntax::text,
+	    (int) MoguSyntax::hidden,
+	    (int) MoguSyntax::source,
+	    (int) MoguSyntax::location
+	};
+
 	const std::unordered_set<int> __dbTokens = {
 		(int) MoguSyntax::user,
 		(int) MoguSyntax::session,
@@ -54,6 +62,11 @@ namespace Parsers {
 		(int) MoguSyntax::as,
 		(int) MoguSyntax::at
 	};
+
+	inline bool isStateToken(MoguSyntax token)
+	{
+	    return __stateTokens.count((int) token) == 1;
+	}
 
 	inline bool isWidgetToken(MoguSyntax token)
 	{

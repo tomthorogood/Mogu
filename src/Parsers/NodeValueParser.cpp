@@ -86,31 +86,13 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 
 		currToken = __tm.currentToken<MoguSyntax>();
 	}
+    __tm.next();    /* Since the 'reduceExpressions function iterates to before
+                     * the first token, we have to advance back to the first
+                     * token before interacting with it.
+                     */
 
 	return hasPreposition;
 }
-
-/*void NodeValueParser::parseListener(std::vector<int>::iterator& it,
-									CommandValue& cv)
-{
-	cv.setObject(*it++);
-
-	if(it == __numTokens.end() || isPrepositionToken((MoguSyntax) *it))
-		return;
-	cv.setIdentifier(*it++);
-
-	if(it == __numTokens.end() || isPrepositionToken((MoguSyntax) *it))
-		return;
-	cv.setArg(*it++);
-}
-
-void NodeValueParser::parseMessage(std::vector<int>::iterator& it,
-								   CommandValue& cv)
-{
-	//TODO: handling of edge cases
-	//e.g. 'append widget foo to widget bar'
-	cv.setValue(*it);
-}*/
 
 void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 {
@@ -120,12 +102,6 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 	//if we have more than one token in __numTokens at this point (or
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
-	__tm.next();    /* Since the 'reduceExpressions function iterates to before
-	                 * the first token, we have to advance back to the first
-	                 * token before interacting with it.
-	                 */
-
-
 	if(__tm.currentToken<MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
 		nv.setString(__tm.fetchStringToken());
 	else
@@ -134,29 +110,68 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 
 }
 
-void NodeValueParser::giveInput(std::string input, CommandValue& cv)
+void NodeValueParser::giveInput(std::string input, CommandValue& cv,
+    Moldable* bc)
 {
-	//CV PROCESSING PENDING CHANGES
-	/*tokenizeInput(input);
-	bool hasPreposition = reduceExpressions(&cv.getWidget());
-	cv.setAction(__numTokens.front());
+    tokenizeInput(input);
 
-	auto it = ++__numTokens.begin();
-	if(isFlippedActionToken(cv.getAction()))
-	{
-		//flip-flopped command syntax
-		//e.g. 'remove', 'append'
-		parseMessage(it, cv);
-		if(hasPreposition)
-			parseListener(++it, cv);
-	}
-	else
-	{
-		//regular ordering
-		parseListener(it, cv);
-		if(hasPreposition)
-			parseMessage(++it, cv);
-	}*/
+    // The first token is always an action
+    cv.setAction(__tm.currentToken<MoguSyntax>());
+
+    // The second token is awlays the start of the object set.
+    __tm.next();
+    cv.setObject(__tm.currentToken<MoguSyntax>());
+
+    /* Before we continue, we're going to clear the tokens we've already
+     * used, so we can more easily determine what to do next.
+     */
+    __tm.saveLocation();
+    __tm.next();
+    __tm.deleteToSaved();
+
+    while (__tm.currentToken <int>() != __tm.OutOfRange::End)
+    {
+        MoguSyntax token = __tm.currentToken<MoguSyntax>();
+        if (token == MoguSyntax::TOKEN_DELIM)
+        {
+            std::string string_token = __tm.fetchStringToken();
+            // There should never be a quoted literal before the preposition
+            if (__tm.isQuotedString()) {
+                __tm.reset();
+                return;
+            }
+            /* The identifier shoudl always be the first TOKEN_DELIM
+             * encountered.
+             */
+            if (cv.getIdentifier() == EMPTY) {
+                cv.setIdentifier(string_token);
+            }
+            else {
+                /* The only other TOKEN_DELIM that should be encountered before
+                 * a preposition should be an argument (ie: database hash field)
+                 */
+                cv.getArg().setString(string_token);
+            }
+        }
+        else if (isStateToken(token)) {
+            cv.getArg().setInt((int) token);
+        }
+        else if (isPrepositionToken(token)) {
+
+            __tm.next();
+            __tm.saveLocation();
+            __tm.deleteToSaved();
+            reduceExpressions(bc);
+            if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
+                cv.getValue().setString(__tm.fetchStringToken());
+            else
+                // Any integral value here will be a true integer, not MoguSyn.
+                cv.getValue().setInt(__tm.currentToken<int>());
+            break; // After parsing a prepositional, there is nothing left to do.
+        }
+        __tm.next();
+    }
+    __tm.reset();
 }
 
 }	// namespace Parsers
