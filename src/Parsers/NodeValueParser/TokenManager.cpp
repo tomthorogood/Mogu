@@ -80,7 +80,14 @@ void TokenManager::setIterator()
 std::string TokenManager::fetchStringToken()
 {
 	if(isTokenDelim())
-		return __strTokens[__strIndex];
+	{
+	    /* Strip the literal quotation marks we've used as delimiters
+	     * when returning
+	     */
+	    std::string stringToken = __strTokens[__strIndex];
+	    int last_quote = stringToken.find_last_of('"');
+	    return stringToken.substr(1,last_quote-1);
+	}
 	else
 		return R"(ERR: DEREFERENCING NON-TOKENDELIM)";
 }

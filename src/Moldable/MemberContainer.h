@@ -7,7 +7,6 @@ class MemberContainer : public MoldableContainer
 {
 public:
     MemberContainer(const std::string& node);
-}
 
 private:
     virtual void __init__();

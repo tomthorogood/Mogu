@@ -22,15 +22,18 @@ NodeValueParser::NodeValueParser() : __stateParser(__tm), __mathParser(__tm)
 
 void NodeValueParser::tokenizeInput(std::string input)
 {
-	unsigned int inputIndex = 0;
+	size_t inputIndex = 0;
 	while(inputIndex < input.size())
 	{
 		int endTokenIndex; 
 		if(input[inputIndex] == '"')
-			endTokenIndex = input.find('"', inputIndex);
+		    // Search from the next token to the next occurence of a quotation.
+			endTokenIndex = input.find('"', inputIndex+1);
 		else
+		    // Search for the next space delimiter.
 			endTokenIndex = input.find(' ', inputIndex) - 1;
 
+		// Extract the entire token between the indexes
 		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
 		if(isdigit(token[0]))
@@ -38,24 +41,37 @@ void NodeValueParser::tokenizeInput(std::string input)
 		else
 			__tm.addToken(token);
 
-		inputIndex += 2;
+		// Consume any ' ' delimiters.
+		inputIndex = endTokenIndex +2;
 	}
 
 	//tell TokenManager that we're done adding tokens
 	__tm.setIterator();
 }
 
+/* Iterates through a vector of tokens and applies the core NvP logic
+ * to reduce them down to one expression.
+ */
 bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
 	//MoguSyntax lastToken = MoguSyntax::__NONE__;
 	MoguSyntax currToken = __tm.currentToken<MoguSyntax>();
 	bool hasPreposition = false;
 
+	/* Iterate backwards through the vector of tokens until the
+	 * 'Begin' token is reached.
+	 */
 	while((int) currToken != (int) TokenManager::OutOfRange::Begin)
 	{
+	    /* The '(' syntax will always signify a mathematical expression.
+	     * Hand this job over to the MathParser.
+	     */
 		if(currToken == MoguSyntax::OPER_OPPAREN) 
 			__mathParser.processInput();
 			
+		/*  Object tokens will refer to a database field or widget state
+		 *  that will be reduced to a string or integer.
+		 */
 		else if(isObjectToken(currToken))
 		{
 			//if(lastToken < MoguSyntax::OPER_OPPAREN)
@@ -104,10 +120,18 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 	//if we have more than one token in __numTokens at this point (or
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
+	__tm.next();    /* Since the 'reduceExpressions function iterates to before
+	                 * the first token, we have to advance back to the first
+	                 * token before interacting with it.
+	                 */
+
+
 	if(__tm.currentToken<MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
 		nv.setString(__tm.fetchStringToken());
 	else
 		nv.setInt(__tm.currentToken<int>());
+	__tm.reset(); // Clear the TokenManager to prepare for the next input
+
 }
 
 void NodeValueParser::giveInput(std::string input, CommandValue& cv)
