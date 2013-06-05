@@ -75,6 +75,8 @@ void Moldable::__init__ ()
     // this widget.
     db.appendQuery("llen widgets.%s.events", __node.c_str());
     num_triggers = (size_t) db.yieldResponse <int>();
+    if (num_triggers > 0)
+        __bindery = new EventHandler(*this);
 }
 
 void Moldable::load()

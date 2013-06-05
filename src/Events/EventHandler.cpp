@@ -43,6 +43,14 @@ EventHandler::EventHandler(Moldable& broadcaster)
             broadcaster.indexChanged().connect(
                 this,&EventHandler::handleTrigger <MoguSyntax::index_changed>);
             break;
+        case MoguSyntax::click:
+            broadcaster.clicked().connect(
+                this, &EventHandler::handleTrigger <MoguSyntax::click>);
+            break;
+        case MoguSyntax::mouseover:
+            broadcaster.clicked().connect(
+                this, &EventHandler::handleTrigger <MoguSyntax::mouseover>);
+            break;
         default: continue; // just ignore bad input
         }
     }

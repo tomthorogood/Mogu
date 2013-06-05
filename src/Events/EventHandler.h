@@ -13,7 +13,7 @@
 #include <Parsers/NodeValueParser.h>
 #include "TriggerMap.h"
 
-class EventHandler
+class EventHandler : public Wt::WObject
 {
 public:
     EventHandler(Moldable& broadcaster);
