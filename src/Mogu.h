@@ -86,8 +86,9 @@ public:
         return nullptr;
     }
 
-    //TODO
-    inline void setPath(const std::string&){}
+    inline void setPath(const std::string& path){
+        setInternalPath(path, true);
+    }
 
     /*!\brief Removes a widget from the registry. */
     inline void deregisterWidget(

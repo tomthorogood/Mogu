@@ -115,7 +115,8 @@ class TokenManager
 		void reset();
 		void addToken(int numToken);
 		void addToken(std::string strToken);
-		void setIterator(); //must call directly after adding all tokens!
+		void end(); // Called for NodeValue input
+		void begin(); // Called for CommandValue input
 
 		//methods for navigating the token list.
 		void next();
@@ -135,6 +136,7 @@ class TokenManager
 		void saveLocation();
 		void deleteToSaved();
 		void deleteFromSaved();
+		void truncateHead();
 		void injectToken(int numToken);
 		void injectToken(std::string strToken);
 

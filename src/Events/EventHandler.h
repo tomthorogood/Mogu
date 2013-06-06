@@ -33,10 +33,13 @@ template <MoguSyntax T> void EventHandler::handleTrigger()
     //COPY the queue, do not use the reference, or commands will only be fired
     //once per element!
     std::queue <std::string> commands = triggerMap.getEvents(T);
-    CommandValue v(broadcaster);
     while (!commands.empty())
     {
+        CommandValue v(broadcaster);
         std::string cmd = commands.front();
+#ifdef DEBUG
+        std::cout << "Processing command: " << cmd << std::endl;
+#endif
         commands.pop();
         nvp.giveInput(cmd,v);
         processCommand(v);

@@ -117,6 +117,7 @@ void set (Moldable& broadcaster, CommandValue& v)
         case MoguSyntax::widget:{   // set arbitrary widget attribute
             mApp;
             Moldable* widget = app->registeredWidget(v.getIdentifier());
+            if (widget == nullptr) break;
             widget->setAttribute((MoguSyntax) v.getArg(), v.getValue());
             break;}
         default: return; // If bad input, stop immediately

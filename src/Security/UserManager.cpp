@@ -41,7 +41,7 @@ int8_t UserManager::loginUser(
 
     userKeyspace = hashTogether(
         enc_username, salt, enc_password, hash_iters);
-    db.appendQuery(Redis::Query(
+    db.appendQuery(new Redis::Query(
         "hexists user.%s", userKeyspace.c_str()), db.REQUIRE_INT);
     if (!db.yieldResponse <bool> ())
     {
@@ -73,11 +73,11 @@ int8_t UserManager::registerUser(
     std::string enc_salt = Security::encrypt(salt);
 
     db.appendQuery(
-        Redis::Query("hexists user.salt %s", enc_username.c_str()), 
+        new Redis::Query("hexists user.salt %s", enc_username.c_str()),
             db.REQUIRE_INT);
 
     db.appendQuery(
-        Redis::Query("hse user.salt %s %s", enc_username.c_str(), enc_salt.c_str()),
+        new Redis::Query("hse user.salt %s %s", enc_username.c_str(), enc_salt.c_str()),
         db.IGNORE_RESPONSE);
 
     if (db.yieldResponse <bool>()) return 0;
@@ -89,7 +89,7 @@ int8_t UserManager::registerUser(
         // We'll store the encrypted user salt at that location in
         // the database to let future calls know that the user was created,
         // and also allow us to verify that there hasn't been a collision error
-        db.appendQuery(Redis::Query(
+        db.appendQuery(new Redis::Query(
             "set user.%s %s", userKeyspace.c_str(), enc_salt.c_str()),
             db.IGNORE_RESPONSE);
         db.execute();
@@ -134,7 +134,7 @@ std::string UserManager::createHash(
     }
 
     db.appendQuery(
-        Redis::Query("hset user.iterations %s %d", username.c_str(), num_iters),
+        new Redis::Query("hset user.iterations %s %d", username.c_str(), num_iters),
         db.IGNORE_RESPONSE);
     db.execute();
 

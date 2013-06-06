@@ -12,7 +12,7 @@ namespace Redis {
 QuerySet::QuerySet(Context* context_) : context(context_)
 {
     rdb = redisConnect(context->host(),context->port);
-    appendQuery(Query("select %d", context->db_num), IGNORE_RESPONSE);
+    appendQuery(new Query("select %d", context->db_num), IGNORE_RESPONSE);
 }
 
 QuerySet::QuerySet(Prefix prefix) {

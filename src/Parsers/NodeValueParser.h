@@ -35,7 +35,7 @@ class NodeValueParser
 		MathParser __mathParser;
 		TokenManager __tm;
 
-		void tokenizeInput(std::string input);
+		void tokenizeInput(std::string input, bool setAtBeginning=false);
 		bool reduceExpressions(Moldable* bc);
 };
 

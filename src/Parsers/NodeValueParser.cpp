@@ -20,33 +20,43 @@ NodeValueParser::NodeValueParser() : __stateParser(__tm), __mathParser(__tm)
 }
 
 
-void NodeValueParser::tokenizeInput(std::string input)
+void NodeValueParser::tokenizeInput(std::string input, bool setAtBeginning)
 {
 	size_t inputIndex = 0;
-	while(inputIndex < input.size())
+	size_t input_size = input.size(); // save from doing repeated calls.
+    int endTokenIndex = 0;
+	while(inputIndex < input_size)
 	{
-		int endTokenIndex; 
 		if(input[inputIndex] == '"')
 		    // Search from the next token to the next occurence of a quotation.
 			endTokenIndex = input.find('"', inputIndex+1);
-		else
+		else {
 		    // Search for the next space delimiter.
-			endTokenIndex = input.find(' ', inputIndex) - 1;
+		    size_t search = input.find(' ',inputIndex);
+		    if (search == std::string::npos) break;
+		    else
+		        endTokenIndex = search - 1;
+		}
 
 		// Extract the entire token between the indexes
 		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
 
-		if(isdigit(token[0]))
-			__tm.addToken(std::stoi(token));
-		else
-			__tm.addToken(token);
-
+		if (token != "") // handle cases where two spaces were input.
+		{
+            if(isdigit(token[0]))
+                __tm.addToken(std::stoi(token));
+            else
+                __tm.addToken(token);
+		}
 		// Consume any ' ' delimiters.
 		inputIndex = endTokenIndex +2;
 	}
 
 	//tell TokenManager that we're done adding tokens
-	__tm.setIterator();
+	if (setAtBeginning)
+	    __tm.begin();
+	else
+	    __tm.end();
 }
 
 /* Iterates through a vector of tokens and applies the core NvP logic
@@ -113,7 +123,8 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 void NodeValueParser::giveInput(std::string input, CommandValue& cv,
     Moldable* bc)
 {
-    tokenizeInput(input);
+    tokenizeInput(input, true); // Make sure to return the iterator to
+                                // the BEGINNING
 
     // The first token is always an action
     cv.setAction(__tm.currentToken<MoguSyntax>());
@@ -129,7 +140,7 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
     __tm.next();
     __tm.deleteToSaved();
 
-    while (__tm.currentToken <int>() != __tm.OutOfRange::End)
+    while (__tm.currentToken <int>() != (int)TokenManager::OutOfRange::End)
     {
         MoguSyntax token = __tm.currentToken<MoguSyntax>();
         if (token == MoguSyntax::TOKEN_DELIM)
@@ -158,9 +169,9 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
         }
         else if (isPrepositionToken(token)) {
 
-            __tm.next();
             __tm.saveLocation();
-            __tm.deleteToSaved();
+            __tm.truncateHead();
+            __tm.end(); // Allow __tm to treat it as standard input.
             reduceExpressions(bc);
             if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
                 cv.getValue().setString(__tm.fetchStringToken());

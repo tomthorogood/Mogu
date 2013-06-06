@@ -70,7 +70,7 @@ private:
         queries.pop();
         redisGetReply(rdb,&vreply);
         assert(vreply != nullptr);
-        reply = static_cast<redisReply*>(vreply); //!< in cpp, have to explicitly cast this.
+        reply = static_cast<redisReply*>(vreply);
         reply_type = reply->type;
         delete last_query;
         return reply;
@@ -150,9 +150,9 @@ private:
     }
 
 public:
-    static const int IGNORE_RESPONSE        = 1;
-    static const int REQUIRE_INT            = 2;
-    static const int REQUIRE_STRING         = 4;
+    static const uint8_t IGNORE_RESPONSE        = 1;
+    static const uint8_t REQUIRE_INT            = 2;
+    static const uint8_t REQUIRE_STRING         = 4;
 
     static const uint8_t ARRAY_TYPE_INT     = 0;
     static const uint8_t ARRAY_TYPE_STR     = 1;
@@ -161,9 +161,9 @@ public:
     QuerySet(Prefix prefix);
 
     /*!\brief Add a query to the command queue. */
-    inline void appendQuery(Query&& query,uint8_t flags=0)
+    inline void appendQuery(Query* query, const uint8_t flags=0)
     {
-        queries.push(new Query(query));
+        queries.push(query);
         Query* scoped_query = queries.back();
         redisvAppendCommand(rdb, scoped_query->c_str(), scoped_query->args);
         queryflags.push(flags);

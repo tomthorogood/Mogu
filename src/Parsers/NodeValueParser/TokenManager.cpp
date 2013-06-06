@@ -61,7 +61,7 @@ void TokenManager::addToken(std::string strToken)
 
 //must call this function directly after all tokens are added
 //or else we will have undefined behavior!
-void TokenManager::setIterator()
+void TokenManager::end()
 {
 
 	//place iterator at end of numerical token vector
@@ -75,6 +75,15 @@ void TokenManager::setIterator()
 	//to update strIndex manually since next() or prev() is not called
 	if(isTokenDelim())
 		__strIndex--;
+}
+
+/* Like 'setiterator', but returns to the beginning, for when
+ * we will not be stepping backward through the input.
+ */
+void TokenManager::begin() {
+    __it = __numTokens.begin();
+    __strIndex = -1;
+
 }
 
 std::string TokenManager::fetchStringToken()
@@ -146,6 +155,7 @@ void TokenManager::saveLocation()
 
 void TokenManager::deleteToSaved()
 {
+    // Note: save point is deleted also
 	__it = __numTokens.erase(__it, __savedit+1);
 	
 	//update strIndex as appropriate
@@ -155,6 +165,16 @@ void TokenManager::deleteToSaved()
 
 	//stop tracking how many strings we pass
 	__delStringCount = -1;
+}
+
+// Deletes from the beginning of the vector to the save point.
+void TokenManager::truncateHead()
+{
+    // NOTE: save point is deleted also
+    __it = __numTokens.erase(__numTokens.begin(), __savedit+1);
+    __strIndex -= __delStringCount;
+    if (isTokenDelim())
+        __strIndex++;
 }
 
 void TokenManager::deleteFromSaved()

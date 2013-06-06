@@ -26,7 +26,7 @@ enum class ReadType
 union NumericUnion
 {
     int as_int      =-1;
-    float as_float  =-1.0;
+    float as_float;
 };
 
 /*!\brief The NodeValue class holds a parsed node value of any valid type,

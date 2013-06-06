@@ -24,15 +24,17 @@ TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
     {
 
         //Convert "12" to 12
-        int trigger = atoi(s_trigger.c_str());
+        const char* c_trigger = s_trigger.c_str();
+        int trigger = atoi(c_trigger);
         triggers.insert((MoguSyntax) trigger);
         // Get the number of commands associated with that trigger
-        db.appendQuery(
-                Redis::Query("llen widgets.%s.events.%d", c_node, trigger),
-                db.REQUIRE_INT);
+        db.appendQuery("llen widgets.%s.events.%d", c_node, trigger);
+
+        int mrange = db.yieldResponse <int>();
 
         db.appendQuery("lrange widgets.%s.events.%d 0 %d",
-                c_node, trigger, db.yieldResponse<int>());
+                c_node, trigger, mrange);
+
 
         // Store the commands in the trigger queue
         for (std::string command : db.yieldResponse <std::vector <std::string>>())
