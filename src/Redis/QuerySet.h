@@ -159,6 +159,9 @@ public:
     
     QuerySet(Context* context);
     QuerySet(Prefix prefix);
+    ~QuerySet() {
+        redisFree(rdb);
+    }
 
     /*!\brief Add a query to the command queue. */
     inline void appendQuery(Query* query, const uint8_t flags=0)

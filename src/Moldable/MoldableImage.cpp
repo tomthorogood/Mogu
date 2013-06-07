@@ -19,7 +19,6 @@ MoldableImage::MoldableImage (const std::string& node)
 void MoldableImage::__init__()
 {
     mApp;
-    Moldable::__init__();
     NodeValue v;
     Redis::ContextQuery db(Prefix::widgets);
     std::string param = getParameter(db, MoguSyntax::source);

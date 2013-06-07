@@ -18,7 +18,6 @@ MoldableImageLink::MoldableImageLink(const std::string& node)
 
 void MoldableImageLink::__init__()
 {
-    MoldableLink::__init__();
     Redis::ContextQuery db(Prefix::widgets);
     mApp;
     NodeValue v;

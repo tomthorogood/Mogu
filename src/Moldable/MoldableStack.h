@@ -11,6 +11,10 @@
 #include "MoldableAbstractParent.h"
 #include <Wt/WStackedWidget>
 
+/*
+ * Since Wt standard behaviour does not allow external widgets to add children
+ * to others, we have to override this default behaviour for Mogu to work.
+ */
 class WFriendlyStack : public Wt::WStackedWidget
 {
 public:
@@ -28,14 +32,14 @@ public:
 class MoldableStack : public MoldableAbstractParent
 {
 private:
-    WFriendlyStack* __stack;
+    WFriendlyStack* __stack = nullptr;
     Wt::Signal <> __stack_index_changed;
 
 public:
     MoldableStack (const std::string& node);
 
-    //Stacked containers do not have textual values
-    inline virtual std::string moldableValue() { return EMPTY; }
+    //Stacked containers do not have textual values.
+    inline virtual std::string moldableValue() { return __node; }
     inline virtual void setMoldableValue(const std::string& str) {}
 
     virtual void appendChild(Moldable* child) {
@@ -52,6 +56,8 @@ public:
     inline virtual void reload()
     {
         force_reload = true;
+        Moldable::__init__();
+        MoldableAbstractParent::__init__();
         __init__();
         load();
         force_reload = false;
@@ -59,7 +65,12 @@ public:
 
     inline virtual void __init__()
     {
-        MoldableAbstractParent::__init__();
+        // Don't cause memory leaks when we reload the widget.
+        if (__stack != nullptr) {
+            removeWidget(__stack);
+            delete __stack;
+        }
+
         __stack = new WFriendlyStack();
     }
 

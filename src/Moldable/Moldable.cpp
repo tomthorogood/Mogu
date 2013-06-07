@@ -24,12 +24,16 @@ Moldable::Moldable (const std::string& node)
     ,__index_changed(this)
     ,__node(node)
 {
+#ifdef DEBUG
+    std::cout << "Moldable Constructor: " << __node << std::endl;
+#endif
     __init__();
 }
 
 Moldable::~Moldable()
 {
-    mApp; app->deregisterWidget(__node);
+    mApp; 
+    app->deregisterWidget(__node);
     if (__bindery != nullptr) delete __bindery;
 }
 

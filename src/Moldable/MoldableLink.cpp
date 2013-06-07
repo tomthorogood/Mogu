@@ -17,8 +17,6 @@ MoldableLink::MoldableLink (const std::string& node)
 
 void MoldableLink::__init__()
 {
-    Moldable::__init__();
-    ///Moldable::__init__();
     mApp;
     NodeValue v;
     Redis::ContextQuery db(Prefix::widgets);

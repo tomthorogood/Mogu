@@ -34,6 +34,7 @@ public:
     {
         force_reload = true;
         clear();
+        Moldable::__init__();
         __init__();
         load();
         force_reload = false;

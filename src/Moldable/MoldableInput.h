@@ -40,6 +40,7 @@ public:
 
     inline virtual void reload()
     {
+        Moldable::__init__();
         __init__();
         load();
         force_reload = false;
