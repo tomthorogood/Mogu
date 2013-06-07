@@ -92,3 +92,4 @@
 (   moderator               ,   moderator       ,   descriptor  )
 (   write                   ,   write           ,   access_level )
 (   read                    ,   read            ,   access_level )
+(   default                 ,   default_        ,   hashkey )

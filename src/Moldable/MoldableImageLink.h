@@ -15,6 +15,9 @@ class MoldableImageLink : public MoldableLink
     Wt::WImage* __image;
 protected:
     virtual void __init__();
+    inline virtual void setWidgetType() {
+        __widget_type = MoguSyntax::image_link;
+    }
 public:
     MoldableImageLink(const std::string& node);
     inline virtual void reload()

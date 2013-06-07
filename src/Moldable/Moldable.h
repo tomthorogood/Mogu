@@ -54,12 +54,15 @@ class Moldable :
     size_t num_triggers;
 
 protected:
+    MoguSyntax __widget_type   = MoguSyntax::__NONE__;
     bool force_reload;
     std::string __node;
     const char* template_name = EMPTY;
 
     virtual void __init__();
     std::string getParameter(Redis::ContextQuery&,MoguSyntax);
+
+    virtual void setWidgetType() {}
 
 public:
 

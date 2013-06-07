@@ -59,12 +59,15 @@ void StateParser::processInput(Moldable* broadcaster)
 		case MoguSyntax::data:
             identifier = getIdentifier();
             handleData(identifier, result);
+            break;
 		case MoguSyntax::user:
             identifier = getIdentifier();
             handleUserField(identifier, result);
+            break;
 		case MoguSyntax::group:
             identifier = getIdentifier();
             handleGroupField(identifier, result);
+            break;
 		case MoguSyntax::slot:{
             mApp;
             identifier = getIdentifier();
@@ -87,6 +90,7 @@ void StateParser::processInput(Moldable* broadcaster)
         default:
             // We'll figure out floats or bad values later (TODO)
             __tm.injectToken(0); 
+            break;
     }
 
 }

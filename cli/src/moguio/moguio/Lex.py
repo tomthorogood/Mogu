@@ -11,6 +11,8 @@ from lex_base import regexlib
 from lex_base import NEWLINES
 from lex_base import POLICY_MODE
 from lex_base import POLICY_DATA
+from lex_base import POLICY_DEFAULT
+from lex_base import POLICY_ENCRYPTION
 from lex_base import VALIDATOR_TYPE
 from lex_base import VALIDATOR_TEST
 from lex_base import HASH_DEFINITION
@@ -57,11 +59,6 @@ MOGU_CMD = Lexer.ParseMap((
 # refer to other consumers, but are depended upon.    #
 #######################################################
 
-PolicyConsumer = Consumer.Consumer([
-    POLICY_MODE,
-    POLICY_DATA,
-    NEWLINES
-], help="A list of key : value attributes defining a particular storage policy")
 
 ValidatorConsumer = Consumer.Consumer([
     VALIDATOR_TYPE,
@@ -145,6 +142,16 @@ POLICY_BLOCK = Lexer.ParseMap((
 ################################
 # BEGIN NEXT TIER OF CONSUMERS #
 ################################
+
+PolicyConsumer = Consumer.Consumer([
+    POLICY_MODE,
+    POLICY_DATA,
+    POLICY_ENCRYPTION,
+    POLICY_DEFAULT,
+    HASH_BLOCK,
+    LIST_BLOCK,
+    NEWLINES
+], help="A list of key : value attributes defining a particular storage policy")
 
 DataConsumer = Consumer.Consumer([
     HASH_BLOCK,      

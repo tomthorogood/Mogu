@@ -125,58 +125,70 @@ LIST_DEFINITION = pyboro.Lexer.ParseMap([
 # end widget
 
 WIDGET_TYPE = pyboro.Lexer.ParseMap((
-        ("begin",   DIRECTIVE_START(syntax.as_integer("type"))  , IGNORE),
-        ("type",    regexlib["widget_types"]                    , LITERAL),
-        ("end",     r"\S*"                                      , IGNORE)
+    ("begin",   DIRECTIVE_START(syntax.as_integer("type"))  , IGNORE),
+    ("type",    regexlib["widget_types"]                    , LITERAL),
+    ("end",     r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_STYLE = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer("css"))   , IGNORE),
-        ("css_classes", regexlib['value']                           , trim),
-        ("end",         r"\S*"                                      , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer("css"))   , IGNORE),
+    ("css_classes", regexlib['value']                           , trim),
+    ("end",         r"\S*"                                      , IGNORE)
 ))
 
 
 WIDGET_CONTENT = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer("text"))  , IGNORE),
-        ("content",     r"[^\n]*"                                   , trim),
-        ("end",         r"\S*"                                      , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer("text"))  , IGNORE),
+    ("content",     r"[^\n]*"                                   , trim),
+    ("end",         r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_SOURCE = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer('source')), IGNORE),
-        ("source",      "[^\n]*"                                    , trim),
-        ("end",         r"\S*"                                      , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer('source')), IGNORE),
+    ("source",      "[^\n]*"                                    , trim),
+    ("end",         r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_LOCATION = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer("location"))  , IGNORE),
-        ("location",    "[^\n]*"                                        , trim),
-        ("end",         r"\S*"                                          , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer("location"))  , IGNORE),
+    ("location",    "[^\n]*"                                        , trim),
+    ("end",         r"\S*"                                          , IGNORE)
 ))
 
 WIDGET_VALIDATOR = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer('validator')), IGNORE),
-        ("validator",    "[^\n]*"                                        , trim),
-        ("end",          r"\S*"                                          , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer('validator')), IGNORE),
+    ("validator",    "[^\n]*"                                        , trim),
+    ("end",          r"\S*"                                          , IGNORE)
 ))
 
 WIDGET_TEMPLATE = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer("template"))  , IGNORE),
-        ("template",    regexlib["identifier"]                          , reference_template),
-        ("end",         r"\S*"                                          , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer("template"))  , IGNORE),
+    ("template",    regexlib["identifier"]                          , reference_template),
+    ("end",         r"\S*"                                          , IGNORE)
 ))
 
 WIDGET_TOOLTIP = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer("tooltip"))   , IGNORE),
-        ("tooltip",     "[^\n]*"                                        , trim),
-        ("end",         r"\S*"                                          , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer("tooltip"))   , IGNORE),
+    ("tooltip",     "[^\n]*"                                        , trim),
+    ("end",         r"\S*"                                          , IGNORE)
 ))
 
 POLICY_MODE  = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(syntax.as_integer("mode"))  , IGNORE),
-        ("mode",        "[0-9]+"                                    , LITERAL),
-        ("end",         r"\S*"                                      , IGNORE)
+    ("begin",       DIRECTIVE_START(syntax.as_integer("mode"))  , IGNORE),
+    ("mode",        "[0-9]+"                                    , LITERAL),
+    ("end",         r"\S*"                                      , IGNORE)
+))
+
+POLICY_ENCRYPTION = pyboro.Lexer.ParseMap((
+    ("begin",       DIRECTIVE_START(syntax.as_integer("encrypted")), IGNORE),
+    ("encrypted",   "(yes|no)"                                     , trim),
+    ("end",         r"\S*"                                         , IGNORE)
+))
+
+POLICY_DEFAULT  =   pyboro.Lexer.ParseMap((
+    ("begin",   DIRECTIVE_START(syntax.as_integer("default"))   , IGNORE),
+    ("default", "[^\n]*"                                        , trim),
+    ("end",     r"\S*"                                          , IGNORE)
 ))
 
 # Data or type:

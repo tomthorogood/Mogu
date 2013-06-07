@@ -16,6 +16,9 @@ class MoldableLink : public Moldable
 protected:
     Wt::WAnchor* __link;
     virtual void __init__() override;
+    inline virtual void setWidgetType() {
+        __widget_type = MoguSyntax::anchor;
+    }
 
 public:
     MoldableLink (const std::string& node);

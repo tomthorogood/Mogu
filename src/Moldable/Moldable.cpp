@@ -27,6 +27,7 @@ Moldable::Moldable (const std::string& node)
 #ifdef DEBUG
     std::cout << "Moldable Constructor: " << __node << std::endl;
 #endif
+    setWidgetType();
     __init__();
 }
 
@@ -92,6 +93,7 @@ void Moldable::load()
 std::string Moldable::getParameter(Redis::ContextQuery& db, MoguSyntax param)
 {
     db.appendQuery( "hget widgets.%s %d",__node.c_str(), (int) param);
+    db.clear();
     return db.yieldResponse <std::string>();
 }
 
@@ -141,7 +143,8 @@ bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
 {
     switch(state) {
         case MoguSyntax::index: {
-            Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
+            if (__widget_type != MoguSyntax::stack) return false;
+            Wt::WStackedWidget* stack = dynamic_cast <Wt::WStackedWidget*>(widget(0));
             stack->setCurrentIndex(val.getInt());
             __index_changed.emit();
             break;

@@ -94,7 +94,8 @@ public:
     inline void deregisterWidget(
         std::string name)
     {
-        widgetRegister.erase(name);
+        if (registeredWidget(name) != nullptr)
+            widgetRegister.erase(name);
     }
 
     inline std::string& instanceID()

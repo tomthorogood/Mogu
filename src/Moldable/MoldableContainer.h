@@ -21,6 +21,11 @@ public:
 
     // public access for adding children to the widget
     virtual void appendChild(Moldable* child) { addChild(child);}
+
+protected:
+    inline virtual void setWidgetType() {
+        __widget_type = MoguSyntax::container;
+    }
 };
 
 

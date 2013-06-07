@@ -33,6 +33,11 @@ void MoldableAbstractParent::__init__()
 // This is called when the widget is to be rendered on screen.
 void MoldableAbstractParent::load(){
 
+#ifdef DEBUG
+    std::cout << "MoldableAbstractParent::load:"
+        << __LINE__ <<" " <<  __node << std::endl;
+#endif
+
     // Do not reload unless the reload action is explicitly called.
     if (loaded() && !force_reload) return;
 
@@ -46,6 +51,10 @@ void MoldableAbstractParent::load(){
     // longer loading times up front.
     if (num_children > 0) 
     {
+#ifdef DEBUG
+        std::cout << "MoldableAbstractParent::load:"<<__LINE__
+            <<" " << __node << std::endl;
+#endif
         mApp;
         const MoldableFactory& factory = app->getFactory();
         Redis::ContextQuery db(Prefix::widgets);
@@ -57,13 +66,26 @@ void MoldableAbstractParent::load(){
         
         auto children_v = db.yieldResponse <std::vector <std::string>>();
         int s_children_v = (int) children_v.size();
-
         assert(s_children_v == num_children);
         for (int i = 0; i < num_children; ++i)
         {
            std::string s_child = children_v[i];
+#ifdef DEBUG
+           std::cout << "MoldableAbstractParent::load:"<< __LINE__
+               << " " << __node << ", child found: " << s_child << std::endl;
+#endif
            Moldable* m_child = factory.createMoldableWidget(s_child);
+#ifdef DEBUG
+           std::cout << "MoldableAbstractParent::load:"<<__LINE__
+               << " " << __node << ", child created: " << m_child->getNode()
+               <<std::endl;
+#endif
            addWidget(m_child);
+#ifdef DEBUG
+           std::cout << "MoldableAbstractParent::load:"<<__LINE__
+               << " " << __node << ", child added: " << m_child->getNode()
+               << std::endl;
+#endif
         }
    }
 }

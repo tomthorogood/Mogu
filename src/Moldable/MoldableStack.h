@@ -19,13 +19,11 @@ class WFriendlyStack : public Wt::WStackedWidget
 {
 public:
     inline virtual void addChild(Moldable* child) {
-        Wt::WStackedWidget::addChild(
-                static_cast<Wt::WWebWidget*>(child));
+        Wt::WStackedWidget::addChild(child);
     }
 
     inline virtual void removeChild(Moldable* child) {
-        Wt::WStackedWidget::removeChild(
-                static_cast<Wt::WWebWidget*>(child));
+        Wt::WStackedWidget::removeChild(child);
     }
 };
 
@@ -34,6 +32,11 @@ class MoldableStack : public MoldableAbstractParent
 private:
     WFriendlyStack* __stack = nullptr;
     Wt::Signal <> __stack_index_changed;
+
+public:
+    inline virtual void setWidgetType() {
+        __widget_type = MoguSyntax::stack;
+    }
 
 public:
     MoldableStack (const std::string& node);
@@ -56,6 +59,7 @@ public:
     inline virtual void reload()
     {
         force_reload = true;
+        clear();
         Moldable::__init__();
         MoldableAbstractParent::__init__();
         __init__();
@@ -72,13 +76,14 @@ public:
         }
 
         __stack = new WFriendlyStack();
+        MoldableAbstractParent::addWidget(__stack);
     }
 
-    inline virtual void addChild(Moldable* child) override {
+    inline virtual void addChild(Moldable* child)  {
         __stack->addChild(child);
     }
 
-    inline virtual void removeChild(Moldable* child) override {
+    inline virtual void removeChild(Moldable* child)  {
         __stack->removeChild(child);
     }
 };

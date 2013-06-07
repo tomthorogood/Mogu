@@ -19,7 +19,9 @@ MoldableFactory::MoldableFactory ()
 Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 {
     const char* c_node = node.c_str();
-
+#ifdef DEBUG
+    std::cout << "Moldable Factory: " << c_node << std::endl;
+#endif
     MoguSyntax widget_type;
 
     Redis::ContextQuery db(Prefix::widgets);

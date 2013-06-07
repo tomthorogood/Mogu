@@ -172,6 +172,14 @@ public:
         queryflags.push(flags);
     }
 
+    inline void clear() {
+        reply_str = EMPTY;
+        reply_int = 0;
+        reply_array_str.clear();
+        reply_array_int.clear();
+
+    }
+
     inline void appendQuery(const char* query, ...)
     {
         va_list args;
