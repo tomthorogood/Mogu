@@ -139,21 +139,44 @@ class PythonObjectConverter(object):
         the POLICY_BLOCK.parse method, and contains the building blocks
         of a storage policy.
         """
+
+        def init_default(master,key):
+            if key not in master:
+                master[key] = OrderedDict()
+
         master_dict = OrderedDict()
         redis_objects = []
         identifier = result_dict["identifier"]
         master_key = "policies.%s" % identifier
+        default_key = "%s.%d" % (master_key, syntax.as_integer("default"))
         master_dict[master_key] = OrderedDict()
         params = result_dict["policy_def"]
+
         for param in params:
             o_dict = param[0]
             parsemap = param[1]
             if parsemap is lex_base.POLICY_MODE:
-                master_dict[master_key][syntax.as_integer("mode")] = o_dict["mode"]
-            if parsemap is lex_base.POLICY_DATA:
-                master_dict[master_key][syntax.as_integer("type")] = o_dict["datatype"]
+                master_dict[master_key][syntax.as_integer("mode")] = \
+                        o_dict["mode"]
+            elif parsemap is lex_base.POLICY_DATA:
+                master_dict[master_key][syntax.as_integer("type")] = \
+                        o_dict["datatype"]
+            elif parsemap is lex_base.POLICY_ENCRYPTION:
+                master_dict[master_key][syntax.as_integer("encrypted")] = \
+                        o_dict["encrypted"]
+            elif parsemap is lex_base.POLICY_DEFAULT:
+                init_default(master_dict,default_key)
+                master_dict[default_key] = o_dict["default"]
+            elif parsemap is Lex.HASH_BLOCK:
+                init_default(master_dict,default_key)
+                master_dict[default_key] = self.convert_hash_block(o_dict)
+            elif parsemap is Lex.LIST_BLOCK:
+                init_default(master_dict, default_key)
+                master_dict[default_key] = self.convert_list_block(o_dict)
+
         for entry in master_dict:
-            redis_objects.append(self.convert_to_redis_object(entry, master_dict[entry]))
+            redis_objects.append(
+                self.convert_to_redis_object(entry, master_dict[entry]))
         return redis_objects 
         
     def convert_widget(self, result_dict, prefix="widgets"):

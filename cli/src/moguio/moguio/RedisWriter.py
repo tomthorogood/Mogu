@@ -10,22 +10,30 @@ import RedisObjects
 DB_CONFIG_PATH = "../../../../"
 DB_CONFIG_FILE = "dbconfig.conf"
 
+
 def parseDBConfig(filename):
+    """
+
+
+    :param filename: The full path and filename to be parsed.
+    """
     if not filename:
         raise IOError("No filename listed")
+
     def important(string):
-        """Removes comments and blank lines"""
-        if len(string) <= 1:
-            return False
-        if string[0] == "#":
+        """Removes comments and blank lines
+        :param string: The string to be tested.
+        """
+        if len(string) <= 1 or string[0] == "#":
             return False
         return True
+
     lines = None
 
     with open(filename,"r") as f:
         lines = f.readlines()
 
-    lines = [line.strip() for line in lines] # Strip whitespace
+    lines = [line.strip() for line in lines]  # Strip whitespace
     lines = filter(important,lines)
     
     confdict    = {}
@@ -37,7 +45,7 @@ def parseDBConfig(filename):
         if line[0] == '@':
             prefix = line[1:]   # '@meta will resolve to 'meta'
             confdict[prefix] = {}
-        if ":" in line:         # The ilne contains an attribute definition
+        if ":" in line:         # The line contains an attribute definition
             delim_loc = line.index(":")
             attr = line[:delim_loc].strip()
             value = line[delim_loc+1:].strip()
@@ -53,7 +61,7 @@ class RedisWriter(object):
                 verbal = True
                 flushdb = False
         """
-        self.dbconfig   = None # Will be set in try...except below
+        self.dbconfig   = None  # Will be set in try...except below
         self.verbal     = args.v if args else True
         self.flushdb    = args.flushdb if args else False
         self.yes        = args.y if args else False

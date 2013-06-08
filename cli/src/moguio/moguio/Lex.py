@@ -119,7 +119,7 @@ VALUE_DEFINITION = Lexer.ParseMap((
 t = "validator"
 VALIDATOR_BLOCK = Lexer.ParseMap((
         ("begin",           "\s*%s "%t,                            IGNORE),
-        ("identifier",      regexlib["identifier"],                     register_validator),
+        ("identifier",      regexlib["identifier"],                register_validator),
         ("validator_def",   everything_until("end %s"%t),          ValidatorConsumer.parse),
         ("end",             "end %s"%t,                            IGNORE)
 ))
@@ -132,13 +132,6 @@ WHEN_BLOCK = Lexer.ParseMap ((
         ("block_end",   r"\}$",                     IGNORE)
 ),strip=True,flags=re.M)
 
-t = "policy"
-POLICY_BLOCK = Lexer.ParseMap((
-        ("begin",           "\s*%s\s+"%t,                               IGNORE),
-        ("identifier",      regexlib["identifier"],                     register_policy),
-        ("policy_def",      everything_until(r"end\s+%s"%t),             PolicyConsumer.parse),
-        ("end",             r"end\s+%s"%t,                               IGNORE)
-))
 ################################
 # BEGIN NEXT TIER OF CONSUMERS #
 ################################
@@ -168,6 +161,13 @@ EventConsumer = Consumer.Consumer([
 #################################
 # BEGIN NEXT TIER OF PARSE MAPS #
 #################################
+t = "policy"
+POLICY_BLOCK = Lexer.ParseMap((
+        ("begin",           "\s*%s\s+"%t,                               IGNORE),
+        ("identifier",      regexlib["identifier"],                     register_policy),
+        ("policy_def",      everything_until(r"end\s+%s"%t),            PolicyConsumer.parse),
+        ("end",             r"end\s+%s"%t,                              IGNORE)
+))
 
 EVENT_BLOCK = Lexer.ParseMap ((
     ("begin",           r"\s*events\s*"                      , IGNORE),

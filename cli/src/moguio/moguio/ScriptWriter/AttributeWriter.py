@@ -28,11 +28,11 @@ class AttributeWriter(object):
         self.attributes[key] = value
         
 
-class PolicyWriter(object):
+class PolicyWriter(AttributeWriter):
     def __init__(self,identifier,attrdict):
         super(PolicyWriter,self).__init__('policy',identifier,attrdict)
 
-class ValidatorWriter(object):
+class ValidatorWriter(AttributeWriter):
     def __init__(self,identifier,attrdict):
         super(ValidatorWriter,self).__init__('validator',identifier,attrdict)
 
