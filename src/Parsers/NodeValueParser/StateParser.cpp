@@ -170,38 +170,97 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
     std::string userid = app->getUser();
     Redis::ContextQuery policies(Prefix::policies);
     Redis::ContextQuery user(Prefix::user);
+    const char* c_user = userid.c_str();
+    const char* c_field = field.c_str();
+    MoguSyntax type;
 
     // Determine the expected type and encryption
     // of the field in question:
     policies.appendQuery(
-        "hget policies.%s %d", field.c_str(), MoguSyntax::encrypted);
+        "hexists policies.%s.%d", c_field, MoguSyntax::default_);
     policies.appendQuery(
-        "hget policies.%s %d", field.c_str(), MoguSyntax::type);
-    bool encrypted = policies.yieldResponse <bool>();
-    MoguSyntax type = policies.yieldResponse <MoguSyntax>();
+        "hget policies.%s %d", c_field, MoguSyntax::encrypted);
     
-    switch(type)
+    user.appendQuery("hexists user.%s.%s", c_field, c_user);
+   
+    bool has_default = policies.yieldResponse <bool>();
+    
+    // Avoids any unnecessary queries to the user database.
+    bool user_has_field = 
+       userid != EMPTY ? user.yieldResponse <bool>() : false;
+    
+    // Note that default values are never encrypted. This is to provide
+    // an extra layer of security, because otherwise encrypted data would
+    // have to reside in MoguScripts.
+    bool encrypted = (policies.yieldResponse <std::string >() == "yes")
+        && user_has_field;
+
+    if (user_has_field) 
     {
-        case MoguSyntax::string:
-            user.appendQuery( "get user.%s.%s", field.c_str(), userid.c_str());
-            break;
-        case MoguSyntax::list:{
-            int index = __tm.currentToken <int> ();
-            user.appendQuery( "lindex user.%s.%s %d",
-                    field.c_str(), userid.c_str(), index);
-            break;}
-        case MoguSyntax::hash:
-            // Make sure that the current token is a TOKEN_DELIM:
-            if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
-            {
-                std::string key = __tm.fetchStringToken();
-                user.appendQuery( "hget user.%s.%s %s",
-                        field.c_str(), userid.c_str(), key.c_str());
+        policies.appendQuery(
+            "hget policies.%s %d", c_field, MoguSyntax::type);
+        type = policies.yieldResponse <MoguSyntax>();
+    }
+    else if (has_default)
+    {
+        policies.appendQuery(
+            "type policies.%s.%d", c_field, MoguSyntax::default_);
+        std::string redistype = policies.yieldResponse <std::string>();
+        type = 
+            (redistype == "string") ? MoguSyntax::string :
+            (redistype == "hash")   ? MoguSyntax::hash : MoguSyntax::list;
+    }
+    
+
+    if (user_has_field)
+    {
+        switch(type)
+        {
+            case MoguSyntax::string:
+                user.appendQuery( "get user.%s.%s", c_field, c_user);
                 break;
-            }
-            else return;
-        default: return;
-    };
+            case MoguSyntax::list:{
+                int index = __tm.currentToken <int> ();
+                user.appendQuery( "lindex user.%s.%s %d",
+                        c_field, c_user, index);
+                break;}
+            case MoguSyntax::hash:
+                // Make sure that the current token is a TOKEN_DELIM:
+                if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
+                {
+                    std::string key = __tm.fetchStringToken();
+                    user.appendQuery( "hget user.%s.%s %s",
+                            c_field, c_user, key.c_str());
+                    break;
+                }
+                else return;
+            default: return;
+        };
+    } else {
+        switch(type)
+        {
+            case MoguSyntax::string:
+                policies.appendQuery("get policies.%s.default", c_field);
+                break;
+            case MoguSyntax::list:{
+                int index = __tm.currentToken <int>();
+                policies.appendQuery("lindex policies.%s.default %d",
+                        c_field, index);
+                }
+                break;
+            case MoguSyntax::hash:
+                if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
+                {
+                    std::string key = __tm.fetchStringToken();
+                    policies.appendQuery("hget policies.%s.default %s",
+                        c_field, key.c_str());
+                    break;
+                }
+                else return;
+            default: return;
+        };
+    }
+
     if (encrypted)
         result.setString(
                 Security::decrypt( user.yieldResponse <std::string>()));
