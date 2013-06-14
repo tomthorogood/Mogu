@@ -10,7 +10,7 @@
 #include <Mogu.h>
 
 MoldableInput::MoldableInput (const std::string& node)
-: Moldable(node)
+: Moldable(node, MoguSyntax::input)
 {
     __init__();
 }

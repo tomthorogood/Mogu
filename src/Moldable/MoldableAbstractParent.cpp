@@ -9,8 +9,9 @@
 #include <Redis/ContextQuery.h>
 #include <Mogu.h>
 
-MoldableAbstractParent::MoldableAbstractParent (const std::string& node)
-: Moldable(node)
+MoldableAbstractParent::MoldableAbstractParent
+    (const std::string& node, const MoguSyntax widget_type)
+: Moldable(node, widget_type)
 {
     __init__();
 }

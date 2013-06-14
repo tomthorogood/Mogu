@@ -17,7 +17,7 @@ protected:
     std::vector <Moldable*> __moldable_children;
     virtual void __init__() override;
 public:
-    MoldableAbstractParent (const std::string& node);
+    MoldableAbstractParent (const std::string& node, const MoguSyntax);
     virtual void load() override;
 
     virtual void appendChild(Moldable*) =0;

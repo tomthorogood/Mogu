@@ -14,7 +14,7 @@
 #include <Events/EventHandler.h>
 #include <Wt/WAnchor>
 
-Moldable::Moldable (const std::string& node)
+Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
 :
     __style_changed(this)
     ,__failed_test(this)
@@ -23,11 +23,13 @@ Moldable::Moldable (const std::string& node)
     ,__hidden_changed(this)
     ,__index_changed(this)
     ,__node(node)
+    ,__widget_type(widget_type)
 {
 #ifdef DEBUG
-    std::cout << "Moldable Constructor: " << __node << std::endl;
+    static size_t num_constructed = 0;
+    std::cout << "Moldable Constructor("<< ++num_constructed <<
+        "): " << __node << std::endl;
 #endif
-    setWidgetType();
     __init__();
 }
 

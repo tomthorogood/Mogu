@@ -34,11 +34,6 @@ private:
     Wt::Signal <> __stack_index_changed;
 
 public:
-    inline virtual void setWidgetType() {
-        __widget_type = MoguSyntax::stack;
-    }
-
-public:
     MoldableStack (const std::string& node);
 
     //Stacked containers do not have textual values.

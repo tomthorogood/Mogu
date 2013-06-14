@@ -86,6 +86,7 @@ private:
             case REDIS_REPLY_INTEGER: 
                 reply_int = reply->integer;
                 break;
+            case REDIS_REPLY_STATUS:
             case REDIS_REPLY_STRING:
                 reply_str = reply->str;
                 break;

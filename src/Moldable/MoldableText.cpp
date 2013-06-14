@@ -10,7 +10,7 @@
 #include <Mogu.h>
 
 MoldableText::MoldableText(const std::string& node)
-: Moldable(node)
+: Moldable(node, MoguSyntax::text)
 {
     __init__();
 }

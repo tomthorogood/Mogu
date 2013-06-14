@@ -16,9 +16,7 @@ class MoldableText : public Moldable
     Wt::WText* __text;
 protected:
     virtual void __init__() override;
-    inline virtual void setWidgetType() {
-        __widget_type = MoguSyntax::text;
-    }
+
 public:
     MoldableText(const std::string& node);
 

@@ -30,7 +30,8 @@ namespace Parsers {
 	    (int) MoguSyntax::text,
 	    (int) MoguSyntax::hidden,
 	    (int) MoguSyntax::source,
-	    (int) MoguSyntax::location
+	    (int) MoguSyntax::location,
+	    (int) MoguSyntax::index
 	};
 
 	const std::unordered_set<int> __dbTokens = {

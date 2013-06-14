@@ -18,9 +18,6 @@ class MoldableImage : public Moldable
 
 protected:
     virtual void __init__() override;
-    inline virtual void setWidgetType() {
-        __widget_type = MoguSyntax::image;
-    }
 
 public:
     MoldableImage(const std::string& node);

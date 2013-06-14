@@ -17,9 +17,7 @@ class MoldableInput : public Moldable
 protected:
     Wt::WLineEdit* __input;
     virtual void __init__() override;
-    virtual void setWidgetType() {
-        __widget_type = MoguSyntax::input;
-    }
+
 public:
     MoldableInput (const std::string& node);
 

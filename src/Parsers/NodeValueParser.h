@@ -37,6 +37,7 @@ class NodeValueParser
 
 		void tokenizeInput(std::string input, bool setAtBeginning=false);
 		bool reduceExpressions(Moldable* bc);
+		int find_full_quote(std::string str);
 };
 
 }	// namespace Parsers

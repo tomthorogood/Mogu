@@ -10,7 +10,7 @@
 #include <Mogu.h>
 
 MoldableLink::MoldableLink (const std::string& node)
-: Moldable(node)
+: Moldable(node, MoguSyntax::anchor)
 {
     __init__();
 }

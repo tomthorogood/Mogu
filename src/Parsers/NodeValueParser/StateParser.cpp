@@ -74,7 +74,10 @@ void StateParser::processInput(Moldable* broadcaster)
             result = app->slotManager().retrieveSlot(identifier);
             break;
           }
-        default:break;
+        default:{
+            result.setInt((int)currentToken);
+            break;
+        }
 	}
 
     __tm.deleteFromSaved();
@@ -161,6 +164,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
 
 void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 {
+    if (widget == nullptr) return;
     widget->getAttribute(__tm.currentToken <MoguSyntax>(), result);
 }
 
@@ -173,11 +177,12 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
     const char* c_user = userid.c_str();
     const char* c_field = field.c_str();
     MoguSyntax type;
+    MoguSyntax token;
 
     // Determine the expected type and encryption
     // of the field in question:
     policies.appendQuery(
-        "hexists policies.%s.%d", c_field, MoguSyntax::default_);
+        "exists policies.%s.%d", c_field, MoguSyntax::default_);
     policies.appendQuery(
         "hget policies.%s %d", c_field, MoguSyntax::encrypted);
     
@@ -224,48 +229,54 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
                 user.appendQuery( "lindex user.%s.%s %d",
                         c_field, c_user, index);
                 break;}
-            case MoguSyntax::hash:
-                // Make sure that the current token is a TOKEN_DELIM:
-                if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
-                {
-                    std::string key = __tm.fetchStringToken();
-                    user.appendQuery( "hget user.%s.%s %s",
-                            c_field, c_user, key.c_str());
-                    break;
-                }
-                else return;
+            case MoguSyntax::hash:{
+                std::string key;
+                token = __tm.currentToken <MoguSyntax>();
+                if (token == MoguSyntax::TOKEN_DELIM)
+                    key = __tm.fetchStringToken();
+                else
+                    key = std::to_string(__tm.currentToken<int>());
+                user.appendQuery("hget user.%s.%s %s",
+                    c_field, c_user, key.c_str());
+                break;}
             default: return;
         };
     } else {
         switch(type)
         {
             case MoguSyntax::string:
-                policies.appendQuery("get policies.%s.default", c_field);
+                policies.appendQuery("get policies.%s.%d", c_field,
+                    MoguSyntax::default_);
                 break;
             case MoguSyntax::list:{
                 int index = __tm.currentToken <int>();
-                policies.appendQuery("lindex policies.%s.default %d",
-                        c_field, index);
+                policies.appendQuery("lindex policies.%s.%d %d",
+                        c_field, MoguSyntax::default_, index);
                 }
                 break;
-            case MoguSyntax::hash:
-                if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
-                {
-                    std::string key = __tm.fetchStringToken();
-                    policies.appendQuery("hget policies.%s.default %s",
-                        c_field, key.c_str());
-                    break;
-                }
-                else return;
+            case MoguSyntax::hash:{
+                std::string key;
+                token = __tm.currentToken <MoguSyntax>();
+                if (token == MoguSyntax::TOKEN_DELIM)
+                    key = __tm.fetchStringToken();
+                else
+                    key = std::to_string((int) token);
+                const char* c_key = key.c_str();
+                policies.appendQuery("hget policies.%s.%d %s",
+                    c_field, MoguSyntax::default_, c_key);
+                break;}
             default: return;
         };
     }
 
+    Redis::ContextQuery& final =
+        user_has_field ? user : policies;
+
     if (encrypted)
         result.setString(
-                Security::decrypt( user.yieldResponse <std::string>()));
+                Security::decrypt( final.yieldResponse <std::string>()));
     else
-        result.setString(user.yieldResponse <std::string>());
+        result.setString(final.yieldResponse <std::string>());
 }
 
 void StateParser::handleGroupField(const std::string& field, NodeValue& result)

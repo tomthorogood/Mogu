@@ -11,7 +11,7 @@
 #include <Mogu.h>
 
 MoldableImage::MoldableImage (const std::string& node)
-: Moldable(node)
+: Moldable(node, MoguSyntax::image)
 {
     __init__();
 }

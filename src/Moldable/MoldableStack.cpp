@@ -13,7 +13,7 @@
 #include <Wt/WAnimation>
 
 MoldableStack::MoldableStack(const std::string& node)
-: MoldableAbstractParent(node)
+: MoldableAbstractParent(node, MoguSyntax::stack)
 {
     __init__();
 }

@@ -179,7 +179,10 @@ void TokenManager::truncateHead()
 
 void TokenManager::deleteFromSaved()
 {
-	__it = __numTokens.erase(__savedit, __it+1);
+    if (__it >= __numTokens.end())
+         __it = __numTokens.erase(__savedit, __numTokens.end());
+    else
+        __it = __numTokens.erase(__savedit, __it+1);
 
 	//update strIndex as appropriate
 	__strIndex -= __delStringCount;

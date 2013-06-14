@@ -19,7 +19,34 @@ NodeValueParser::NodeValueParser() : __stateParser(__tm), __mathParser(__tm)
 {
 }
 
+/*!\brief When given a string where a second quote is expected, extracts
+ * the full string, even if there are internal quotes. The opening quote does
+ * not need to be passed in. If there is more than one quoted string present,
+ * only extracts the first one:
+ *
+ * "Hello, my name is Tom \"Mountain\" Murphy," said the man, "I eat figs."
+ * Would return the index of the last character in:
+ * "Hello, my name is Tom \"Mountain\" Murphy,"
+ *
+ * !\return the index of the final quotation mark.
+ */
 
+int NodeValueParser::find_full_quote(std::string quoted_string) {
+    // Trim the leading quote.
+    if (quoted_string.at(0) == '"')
+        quoted_string = quoted_string.substr(1);
+
+    int q = quoted_string.find_first_of('"');
+    if ((size_t) q == std::string::npos) return 0;
+    /* Determine whether the character preceeding the quotation mark is
+     * an escape delimiting slash.
+     */
+    while (quoted_string.at(q-1) == '\\')
+    {
+        q = quoted_string.find('"',q+1);
+    };
+    return q;
+}
 void NodeValueParser::tokenizeInput(std::string input, bool setAtBeginning)
 {
 	size_t inputIndex = 0;
@@ -29,11 +56,15 @@ void NodeValueParser::tokenizeInput(std::string input, bool setAtBeginning)
 	{
 		if(input[inputIndex] == '"')
 		    // Search from the next token to the next occurence of a quotation.
-			endTokenIndex = input.find('"', inputIndex+1);
+			endTokenIndex =
+			    find_full_quote(input.substr(inputIndex+1))
+			    + inputIndex
+			    + 1;
 		else {
 		    // Search for the next space delimiter.
 		    size_t search = input.find(' ',inputIndex);
-		    if (search == std::string::npos) break;
+		    if (search == std::string::npos)
+		        endTokenIndex = input.size();
 		    else
 		        endTokenIndex = search - 1;
 		}

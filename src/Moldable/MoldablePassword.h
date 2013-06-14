@@ -13,9 +13,7 @@
 class MoldablePassword : public MoldableInput
 {
 protected:
-    inline virtual void setWidgetType() {
-        __widget_type = MoguSyntax::password;
-    }
+
 public:
     MoldablePassword (const std::string& node);
 };
