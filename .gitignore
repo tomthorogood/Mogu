@@ -22,5 +22,6 @@ src/Types/syntax.h
 *.swp
 syntax/syntax.h
 syntax/syntax.py
+syntax/operators
 Testing/*
 .idea*

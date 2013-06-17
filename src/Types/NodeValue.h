@@ -89,7 +89,7 @@ public:
 
     inline bool operator==(const NodeValue& v)
     {
-        if (__type != getType()) return false;
+        if (__type != v.getType()) return false;
         switch(getType())
         {
             case ReadType::int_value:
@@ -121,7 +121,14 @@ public:
     }
 
     operator std::string() const {
-        return as_string;
+        if (__type == ReadType::string_value)
+            return as_string;
+        else if (__type == ReadType::int_value)
+            return std::to_string (getInt());
+        else if (__type == ReadType::float_value)
+            return std::to_string (getFloat());
+        else
+            return EMPTY;
     }
 
     operator int() const {

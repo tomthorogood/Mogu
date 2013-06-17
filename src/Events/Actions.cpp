@@ -36,8 +36,8 @@ void policyQuery(
     {
         case Prefix::user:
             v.setIdentifier(
-                    app->getUser() 
-                    + std::string(".") 
+                    app->getUser()
+                    + std::string(".")
                     + v.getIdentifier());
             break;
         case Prefix::group:
@@ -56,6 +56,7 @@ lbl_append_query:
 
 void set (Moldable& broadcaster, CommandValue& v)
 {
+    mApp;
     switch(v.getObject())
     {
         case MoguSyntax::own:{  // set attribute of calling widget
@@ -328,63 +329,18 @@ void decrement (Moldable& broadcaster, CommandValue& v)
 
 void test(Moldable& broadcaster, CommandValue& v)
 {
+    mApp;
+
     bool result = false;
     NodeValue value;
-    // Here we will be testing to see whether the 
-    // value in the first clause ('object') matches
-    // the value in the second clause ('value'). This one is 
-    // a bit odd, admittedly. There's probably a much better way to handle it.
 
-    switch(v.getObject())
-    {
-        case MoguSyntax::own:{
-            broadcaster.getAttribute( (MoguSyntax) v.getArg(), value);
-            break;
-        case MoguSyntax::user:
-            Redis::ContextQuery db(Prefix::user);
-            policyQuery(
-                MoguSyntax::get
-                , db
-                , Prefix::user
-                ,v);
-            value.setString(db.yieldResponse<std::string>()); 
-            break;}
+    // This is a little bit of reverse engineering, because it undoes some of
+    // tokenization that's already been done, which is inefficient, but it's
+    // much easier to understand than the previous implementation.
+    std::string state_str = v.stitchState();
 
-        case MoguSyntax::group:{
-            Redis::ContextQuery db(Prefix::group);
-            policyQuery(
-                MoguSyntax::get
-                , db
-                , Prefix::group
-                ,v);
-            value.setString(db.yieldResponse<std::string>()); 
-            break;}
+    app->interpreter().giveInput(state_str, value);
 
-        case MoguSyntax::data:{
-            Redis::ContextQuery db(Prefix::data);
-            db.appendQuery("type data.%s", v.getIdentifier().c_str());
-            Redis::addQuery(
-                db
-                , MoguSyntax::get
-                , Prefix::data
-                , db.yieldResponse <MoguSyntax>()
-                , v);
-            value.setString(db.yieldResponse <std::string>());
-            break;}
-
-        case MoguSyntax::slot:{
-            mApp;
-            value = app->slotManager().peekSlot(v.getIdentifier());
-            break;}
-
-        case MoguSyntax::widget:{
-            mApp;
-            Moldable* widget = app->registeredWidget(v.getIdentifier());
-            widget->getAttribute( (MoguSyntax) v.getArg(), value);
-            break;}
-
-        default: return;
-    }
     result = (value == v.getValue());
     if (!result) broadcaster.fail().emit();
     else broadcaster.succeed().emit();

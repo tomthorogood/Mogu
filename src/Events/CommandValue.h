@@ -70,6 +70,25 @@ public:
     inline const uint8_t& getFlags() const        { return flags;}
     inline Moldable& getWidget()  { return broadcaster;}
 
+    inline std::string stitchState()
+    {
+        std::string str;
+        if (!flags & OBJECT) return EMPTY;
+        str += std::to_string((int) object);
+
+        if (flags & IDENTIFIER) {
+            str += " ";
+            str += (std::string) identifier;
+        }
+
+        if (flags & ARG)
+        {
+            str += " ";
+            str += (std::string) arg;
+        }
+        return str;
+    }
+
     /* To meet minimum requirements, both the action and object must
      * be set.
      */
