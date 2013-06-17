@@ -141,14 +141,25 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
 
 }
 
+bool Moldable::updateStackIndex (size_t index)
+{
+    // If this is attempted on a widget without a stack, do nothing.
+    if (__widget_type != MoguSyntax::stack) return false;
+    Wt::WStackedWidget* stack = static_cast<Wt::WStackedWidget*>( widget(0) );
+    size_t max_index = stack->children().size() -1;
+
+    // Ensure the index exists.
+    if (index > max_index) return false;
+
+    stack->setCurrentIndex(index);
+    return true;
+}
+
 bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
 {
     switch(state) {
         case MoguSyntax::index: {
-            if (__widget_type != MoguSyntax::stack) return false;
-            Wt::WStackedWidget* stack = dynamic_cast <Wt::WStackedWidget*>(widget(0));
-            stack->setCurrentIndex(val.getInt());
-            __index_changed.emit();
+            updateStackIndex(val.getInt());
             break;
         }
         case MoguSyntax::hidden: {

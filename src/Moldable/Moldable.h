@@ -54,6 +54,8 @@ class Moldable :
     size_t num_triggers;
     MoguSyntax __widget_type   = MoguSyntax::__NONE__;
 
+    bool updateStackIndex(size_t  index);
+
 protected:
     bool force_reload;
     std::string __node;
@@ -65,6 +67,16 @@ protected:
 public:
 
     Moldable(const std::string& node, const MoguSyntax widget_type);
+
+    operator std::string() {
+        std::string s_type = std::to_string((int)__widget_type);
+        std::string s_num_children = std::to_string(children().size());
+        return "Widget "
+            + getNode()
+            + ": Type "
+            + s_type + ": # Children: "
+            + s_num_children;
+    }
 
     virtual ~Moldable();
 
