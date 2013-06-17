@@ -84,5 +84,6 @@ class UniqueHashPackage;
 class CommandValue;
 class TriggerMap;
 class EventHandler;
+class StringMap;
 
 #endif /* FORWARD_DECLARATIONS_H_ */

@@ -137,6 +137,11 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 
 void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 {
+#ifdef DEBUG
+    static size_t num_iters = 0;
+    const char* current_input = input.c_str();
+    ++num_iters;
+#endif
 	tokenizeInput(input);
 	reduceExpressions(bc);
 
@@ -178,11 +183,13 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
         {
             std::string string_token = __tm.fetchStringToken();
             // There should never be a quoted literal before the preposition
-            if (__tm.isQuotedString()) {
+            // ^^ THAT IS A LIE. FIX! ^^
+            // ie: append "hello I am Tom" to widget foo text
+            if (__tm.isQuotedString(string_token)) {
                 __tm.reset();
                 return;
             }
-            /* The identifier shoudl always be the first TOKEN_DELIM
+            /* The identifier should always be the first TOKEN_DELIM
              * encountered.
              */
             if (cv.getIdentifier() == EMPTY) {

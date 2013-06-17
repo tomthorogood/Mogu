@@ -9,6 +9,7 @@
 #define TOKENMANAGER_H_
 
 #include <declarations.h>
+#include <Types/StringMap.h>
 
 #include <string>
 #include <unordered_set>
@@ -126,7 +127,10 @@ class TokenManager
 		//token access methods
         template <typename T> T currentToken();
         std::string fetchStringToken();
-        bool isQuotedString();
+        bool isQuotedString(const std::string& str) const
+        {
+            return str[0] == '"';
+        }
 
 		//set of functions for replacing sets of tokens with a single
 		//token (i.e. upon completion of StateParser and MathParser)
@@ -157,20 +161,26 @@ class TokenManager
 
 		//token vectors
 		std::vector<int> __numTokens;
-		std::vector<std::string> __strTokens;
+		StringMap __strTokens;
+
 
 		//indexes our current token/stringToken
 		fwd_iterator __it;
 		fwd_iterator __savedit;
+		size_t __index;
 
-		//when we save a location for deletion, this variable keeps
-		//track of how many strings are to be deleted so we can
-		//updated strIndex accordingly.
-		int __delStringCount = -1;
+		/* After a more complicated operation, this makes sure the index
+		 * is correctly updated. As this is an expensive method, it's always
+		 * better to use ++ and -- when possible.
+		 */
 
+		inline void updateIndex() {
+		    __index = __numTokens.size() - (__numTokens.end()-__it);
+		}
 
-		//keeps track of which string corresponds to which tokendelim
-		int __strIndex;
+		inline size_t getIndex(fwd_iterator& iter) {
+		    return __numTokens.size() - (__numTokens.end()-iter);
+		}
 };
 
 
