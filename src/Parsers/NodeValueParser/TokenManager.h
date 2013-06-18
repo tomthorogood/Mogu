@@ -150,6 +150,8 @@ class TokenManager
 		//deleting any tokens
 		void returnToSaved();
 
+		size_t size() { return __numTokens.size();}
+
 		//debug methods
 		void printTokens();
 		void printNumTokens();

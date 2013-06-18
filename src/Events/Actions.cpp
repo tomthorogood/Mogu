@@ -65,7 +65,7 @@ void set (Moldable& broadcaster, CommandValue& v)
             break;}
         case MoguSyntax::path:{ // set application URL
             mApp;
-            app->setPath((std::string) v.getValue());
+            app->setPath(stripquotes((std::string) v.getValue()));
             break;}
         case MoguSyntax::user:{ // set user field
             mApp;

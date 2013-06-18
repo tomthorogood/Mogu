@@ -95,7 +95,7 @@ public:
         std::string name)
     {
         if (registeredWidget(name) != nullptr)
-            widgetRegister.erase(name);
+            widgetRegister[name] = nullptr;
     }
 
     inline std::string& instanceID()

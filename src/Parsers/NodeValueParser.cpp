@@ -95,7 +95,9 @@ void NodeValueParser::tokenizeInput(std::string input, bool setAtBeginning)
  */
 bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
-	//MoguSyntax lastToken = MoguSyntax::__NONE__;
+    // If there is only one token, it cannot be reduced any further.
+    // Leave it alone.
+	if (__tm.size() == 1) return false;
 	MoguSyntax currToken = __tm.currentToken<MoguSyntax>();
 	bool hasPreposition = false;
 
