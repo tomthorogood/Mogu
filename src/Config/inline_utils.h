@@ -10,6 +10,11 @@
 
 #include <sstream>
 
+inline std::string stripquotes(const std::string& str) {
+    if (str[0] != '"') return str;
+    return str.substr(1,str.size()-2);
+}
+
 template<typename T, typename U>
 class create_map
 {

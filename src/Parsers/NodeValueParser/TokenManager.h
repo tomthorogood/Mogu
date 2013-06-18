@@ -159,6 +159,8 @@ class TokenManager
 		//readability method
 		bool isTokenDelim();
 
+		void updateStringIndexes();
+
 		//token vectors
 		std::vector<int> __numTokens;
 		StringMap __strTokens;
@@ -167,6 +169,7 @@ class TokenManager
 		//indexes our current token/stringToken
 		fwd_iterator __it;
 		fwd_iterator __savedit;
+		fwd_iterator __begin;
 		size_t __index;
 
 		/* After a more complicated operation, this makes sure the index
@@ -180,6 +183,24 @@ class TokenManager
 
 		inline size_t getIndex(fwd_iterator& iter) {
 		    return __numTokens.size() - (__numTokens.end()-iter);
+		}
+
+		/* If the vector was completely reallocated, its start pointer will
+		 * have changed.
+		 */
+		inline bool wasReallocated() { return __begin != __numTokens.begin();}
+
+		/* In the case of a reallocation, we must update the __it
+		 * , __savedit, and __begin variables.
+		 */
+		inline void realignIterators() {
+		    int saved_offset = __savedit - __begin;
+		    __begin = __numTokens.begin();
+		    __it = __begin + __index;
+		    if (saved_offset > 0)
+		        __savedit = __begin + saved_offset;
+		    else
+		        __savedit = __begin;
 		}
 };
 

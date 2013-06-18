@@ -127,10 +127,7 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 
 		currToken = __tm.currentToken<MoguSyntax>();
 	}
-    __tm.next();    /* Since the 'reduceExpressions function iterates to before
-                     * the first token, we have to advance back to the first
-                     * token before interacting with it.
-                     */
+    __tm.begin();
 
 	return hasPreposition;
 }
@@ -161,20 +158,15 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
 {
     tokenizeInput(input, true); // Make sure to return the iterator to
                                 // the BEGINNING
-
+#ifdef DEBUG
+    __tm.printTokens();
+#endif
     // The first token is always an action
     cv.setAction(__tm.currentToken<MoguSyntax>());
 
     // The second token is awlays the start of the object set.
     __tm.next();
     cv.setObject(__tm.currentToken<MoguSyntax>());
-
-    /* Before we continue, we're going to clear the tokens we've already
-     * used, so we can more easily determine what to do next.
-     */
-    __tm.saveLocation();
-    __tm.next();
-    __tm.deleteToSaved();
 
     while (__tm.currentToken <int>() != (int)TokenManager::OutOfRange::End)
     {
@@ -207,8 +199,11 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
         }
         else if (isPrepositionToken(token)) {
 
-            __tm.saveLocation();
-            __tm.truncateHead();
+            __tm.saveLocation(); // We've done what we need with the preceeding
+            __tm.truncateHead(); // tokens, so get rid of them.
+#ifdef DEBUG
+            __tm.printTokens();
+#endif
             __tm.end(); // Allow __tm to treat it as standard input.
             reduceExpressions(bc);
             if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)

@@ -24,7 +24,7 @@ void MoldableInput::__init__()
     __input = new Wt::WLineEdit();
 
     app->interpreter().giveInput(getParameter(db, MoguSyntax::text),v);
-    __input->setEmptyText(v.getString());
+    __input->setEmptyText(stripquotes(v.getString()));
     addWidget(__input);
 
     std::string param = getParameter(db,MoguSyntax::validator);;

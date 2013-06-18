@@ -15,12 +15,7 @@ class StringMap {
 public:
     StringMap(){}
 
-    inline void erase_through(size_t first, size_t last) {
-        for (size_t i = first; i <= last; ++i) {
-            if (key_exists(i))
-                __map.erase(i);
-        }
-    }
+    void erase_through(size_t first, size_t last);
 
     inline bool key_exists(size_t key) const {
         try {
@@ -45,7 +40,7 @@ public:
     inline size_t size() const { return __map.size(); }
 
 private:
-    std::unordered_map <size_t, std::string> __map;
+    std::map <size_t, std::string> __map;
 
 };
 

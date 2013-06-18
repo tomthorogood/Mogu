@@ -105,7 +105,7 @@ void StateParser::handleWidget(const std::string& identifier, NodeValue& result)
     Moldable* widget = app->registeredWidget(identifier);
 
     // For now, just ignore everything if the widget is not actually registered
-    // due to premature deletion, or a mistyped name (which would hopefulyl be 
+    // due to premature deletion, or a mistyped name (which would hopefully be
     // caught on import).
     // TODO
     if (widget == nullptr) return; 
@@ -272,11 +272,14 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
     Redis::ContextQuery& final =
         user_has_field ? user : policies;
 
+    // Now, we have to send the output through the NVP, in case it's a
+    // recursive call:
+    Parsers::NodeValueParser nvp;
+    nvp.giveInput(final.yieldResponse <std::string>(), result);
+
     if (encrypted)
         result.setString(
-                Security::decrypt( final.yieldResponse <std::string>()));
-    else
-        result.setString(final.yieldResponse <std::string>());
+                Security::decrypt( result.getString() ));
 }
 
 void StateParser::handleGroupField(const std::string& field, NodeValue& result)

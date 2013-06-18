@@ -6,7 +6,7 @@
  */
 
 #include "TokenManager.h"
-
+#include <cassert>
 //debug
 #include <iostream>
 namespace Parsers {
@@ -14,6 +14,7 @@ namespace Parsers {
 TokenManager::TokenManager()
 : __index(0)
 {
+
 }
 
 void TokenManager::reset()
@@ -53,19 +54,20 @@ bool TokenManager::isTokenDelim()
 void TokenManager::addToken(int numToken)
 {
 	__numTokens.push_back(numToken);
+    __begin = __numTokens.begin();
 }
 
 void TokenManager::addToken(std::string strToken)
 {
 	__numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
 	__strTokens.set(__numTokens.size()-1, strToken);
+    __begin = __numTokens.begin();
 }
 
 //must call this function directly after all tokens are added
 //or else we will have undefined behavior!
 void TokenManager::end()
 {
-
 	//place iterator at end of numerical token vector
     __it = __numTokens.end() - 1;
     updateIndex();
@@ -82,15 +84,7 @@ void TokenManager::begin() {
 std::string TokenManager::fetchStringToken()
 {
 	if(isTokenDelim())
-	{
-	    /* Strip the literal quotation marks we've used as delimiters
-	     * when returning
-	     */
-	    std::string strtoken = __strTokens.get(__index);
-	    if (!isQuotedString(strtoken)) return strtoken;
-	    int last_quote = strtoken.find_last_of('"');
-	    return strtoken.substr(1,last_quote-1);
-	}
+	    return __strTokens.get(__index);
 	else
 		return R"(ERR: DEREFERENCING NON-TOKENDELIM)";
 }
@@ -120,6 +114,8 @@ void TokenManager::deleteToSaved()
     size_t saved_index = getIndex(__savedit);
     __strTokens.erase_through(__index, saved_index);
 	__it = __numTokens.erase(__it, __savedit+1);
+	if (wasReallocated())
+	    realignIterators();
 	updateIndex();
 }
 
@@ -128,10 +124,18 @@ void TokenManager::truncateHead()
 {
     // NOTE: save point is deleted also
     size_t saved_index = getIndex(__savedit);
-    __it = __numTokens.erase(__numTokens.begin(), __savedit+1);
+#ifdef DEBUG
+    printTokens();
+#endif
+    if (wasReallocated())
+        realignIterators();
+    assert(__savedit == __it);
+    __it = __numTokens.erase(__begin, __savedit+1);
     __strTokens.erase_through(0, saved_index);
+#ifdef DEBUG
+    printTokens();
+#endif
     updateIndex();
-
 }
 /* Deletes from the save point THROUGH the current index.
  */
@@ -143,6 +147,8 @@ void TokenManager::deleteFromSaved()
          __it = __numTokens.erase(__savedit, __numTokens.end());
     else
         __it = __numTokens.erase(__savedit, __it+1);
+    if (wasReallocated())
+        realignIterators();
     updateIndex();
 }
 
@@ -171,9 +177,12 @@ void TokenManager::returnToSaved()
 void TokenManager::printTokens()
 {
 	std::cout << "[TokenManager]: ";
+	size_t sz = __numTokens.size();
 	for(unsigned int i=0; i<__numTokens.size(); i++)
 	{
-		if(__numTokens[i] == (int) MoguSyntax::TOKEN_DELIM)
+	    std::cout << "(" << i+1 << "/" << sz << "): ";
+	    int token = __numTokens[i];
+		if(token == (int) MoguSyntax::TOKEN_DELIM)
 		    std::cout << __strTokens.get(i) << " ";
 		else
 			std::cout << __numTokens[i] << " ";
@@ -196,6 +205,5 @@ void TokenManager::printStringTokens()
 		std::cout << i << ":" << __strTokens.get(i);
 	std::cout << std::endl;
 }
-
 
 }	// namespace Parsers

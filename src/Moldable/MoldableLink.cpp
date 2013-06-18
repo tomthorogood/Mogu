@@ -22,9 +22,9 @@ void MoldableLink::__init__()
     Redis::ContextQuery db(Prefix::widgets);
 
     app->interpreter().giveInput(getParameter(db,MoguSyntax::location),v);
-    std::string href = v.getString();
+    std::string href = stripquotes(v.getString());
     app->interpreter().giveInput(getParameter(db,MoguSyntax::text),v);
-    std::string text = v.getString();
+    std::string text = stripquotes(v.getString());
 
     __link = new Wt::WAnchor(href, text);
     //TODO Add support for toggling target

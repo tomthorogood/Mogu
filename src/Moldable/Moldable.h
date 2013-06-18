@@ -88,7 +88,7 @@ public:
     inline size_t getNumTriggers() { return num_triggers;}
 
     virtual void getAttribute(MoguSyntax state, NodeValue& val);
-    virtual bool setAttribute(const MoguSyntax state, const NodeValue& val);
+    virtual bool setAttribute(const MoguSyntax state, NodeValue& val);
 
     inline virtual void setStyleClass (const Wt::WString& style)
     {
@@ -122,7 +122,8 @@ public:
         int amt = val.getInt();
         getAttribute(MoguSyntax::index,val);
         amt += val.getInt();
-        setAttribute(MoguSyntax::index,amt);
+        val.setInt(amt);
+        setAttribute(MoguSyntax::index,val);
     }
 
     inline void decrement(int byAmount=1) {

@@ -187,6 +187,10 @@ public:
         return __type;
     }
 
+    inline bool isString() const { return __type == ReadType::string_value;}
+    inline bool isInt() const { return __type == ReadType::int_value;}
+    inline bool isFloat() const { return __type == ReadType::float_value;}
+
 };
 // end NodeValue
 

@@ -60,7 +60,7 @@ void Moldable::__init__ ()
         // input will either be a string literal or a resolvable Mogu command
         // pointing to a string literal (eventually)
         nvp.giveInput(param,v);
-        setStyleClass(v.getString());
+        setAttribute(MoguSyntax::style, v);
     }
 
     param = getParameter(db, MoguSyntax::tooltip);
@@ -71,7 +71,7 @@ void Moldable::__init__ ()
         // have valid HTML markup embedded, which is allowed as long as it's
         // well formed.
         nvp.giveInput(param,v);
-        setToolTip(v.getString());
+        setAttribute(MoguSyntax::tooltip, v);
     }
 
     // And any widget can have events. We only see if they exist now; we
@@ -155,8 +155,11 @@ bool Moldable::updateStackIndex (size_t index)
     return true;
 }
 
-bool Moldable::setAttribute(const MoguSyntax state, const NodeValue& val)
+bool Moldable::setAttribute(const MoguSyntax state, NodeValue& val)
 {
+    if (val.isString()) {
+        val.setString(stripquotes(val.getString()));
+    }
     switch(state) {
         case MoguSyntax::index: {
             updateStackIndex(val.getInt());

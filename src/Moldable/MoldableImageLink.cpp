@@ -23,7 +23,7 @@ void MoldableImageLink::__init__()
     NodeValue v;
     app->interpreter().giveInput(
         getParameter(db,MoguSyntax::source),v);
-    std::string src = v.getString();
+    std::string src = stripquotes(v.getString());
     __image = new Wt::WImage(src, moldableValue());
     __link->setImage(__image);
     __link->setTarget(Wt::TargetNewWindow);

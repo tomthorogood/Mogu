@@ -27,7 +27,7 @@ void MoldableImage::__init__()
 
     param = getParameter(db, MoguSyntax::text);
     app->interpreter().giveInput(param,v);
-    std::string alt = v.getString();
+    std::string alt = stripquotes(v.getString());
     __image = new Wt::WImage(src, alt);
     addWidget(__image);
 //!TODO Re-add properties

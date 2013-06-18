@@ -579,8 +579,10 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::text:
                     broadcaster.setMoldableValue("");
                     break;
-                case MoguSyntax::index:
-                    broadcaster.setAttribute(attribute, NodeValue(0));
+                case MoguSyntax::index:{
+                    NodeValue tmp(0);
+                    broadcaster.setAttribute(attribute, tmp);}
+                    break;
                 default: return;
             }
             break;}
@@ -602,8 +604,11 @@ void remove (Moldable& broadcaster, CommandValue& v)
                 case MoguSyntax::text:
                     widget->setMoldableValue("");
                     break;
-                case MoguSyntax::index:
-                    widget->setAttribute(attribute, NodeValue(0));
+                case MoguSyntax::index:{
+                    NodeValue tmp(0);
+                    widget->setAttribute(attribute, tmp);
+                    break;
+                }
                 case MoguSyntax::widget:{//remove widget foo from widget bar
                     Moldable* child = app->registeredWidget(
                             v.getValue().getString());
