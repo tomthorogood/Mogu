@@ -158,6 +158,7 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 void NodeValueParser::giveInput(std::string input, CommandValue& cv,
     Moldable* bc)
 {
+    NodeValue tmp;
     tokenizeInput(input, true); // Make sure to return the iterator to
                                 // the BEGINNING
 #ifdef DEBUG
@@ -193,11 +194,13 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
                 /* The only other TOKEN_DELIM that should be encountered before
                  * a preposition should be an argument (ie: database hash field)
                  */
-                cv.getArg().setString(string_token);
+                tmp.setString(string_token);
+                cv.setArg(tmp);
             }
         }
         else if (isStateToken(token)) {
-            cv.getArg().setInt((int) token);
+            tmp.setInt((int) token);
+            cv.setArg(tmp);
         }
         else if (isPrepositionToken(token)) {
 
@@ -209,10 +212,15 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
             __tm.end(); // Allow __tm to treat it as standard input.
             reduceExpressions(bc);
             if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
-                cv.getValue().setString(__tm.fetchStringToken());
-            else
+            {
+                tmp.setString(__tm.fetchStringToken());
+                cv.setValue(tmp);
+            }
+            else {
                 // Any integral value here will be a true integer, not MoguSyn.
-                cv.getValue().setInt(__tm.currentToken<int>());
+                tmp.setInt(__tm.currentToken<int>());
+                cv.setValue(tmp);
+            }
             break; // After parsing a prepositional, there is nothing left to do.
         }
         __tm.next();

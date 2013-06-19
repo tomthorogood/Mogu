@@ -12,7 +12,9 @@
 #include <Redis/QueryAssistant.h>
 #include <Types/SlotManager.h>
 #include <Types/EmailManager.h>
+
 namespace Actions {
+
 MoguSyntax getPolicyNodeType(const std::string& identifier)
 {
     Redis::ContextQuery policydb(Prefix::policies);
@@ -340,7 +342,10 @@ void test(Moldable& broadcaster, CommandValue& v)
     std::string state_str = v.stitchState();
 
     app->interpreter().giveInput(state_str, value);
-
+    if (value.isString())
+        value.setString(stripquotes(value.getString()));
+    if (v.getValue().isString())
+        v.getValue().setString(stripquotes(v.getValue().getString()));
     result = (value == v.getValue());
     if (!result) broadcaster.fail().emit();
     else broadcaster.succeed().emit();
