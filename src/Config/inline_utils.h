@@ -12,7 +12,15 @@
 
 inline std::string stripquotes(const std::string& str) {
     if (str[0] != '"') return str;
-    return str.substr(1,str.size()-2);
+    std::string newstr = str.substr(1,str.size()-2);
+    size_t escape;
+    do {
+        escape = newstr.find("\\\"");
+        if (escape == std::string::npos) break;
+        std::string temp = newstr.substr(0,escape) + newstr.substr(escape+1);
+        newstr = temp;
+    } while (escape != std::string::npos);
+    return newstr;
 }
 
 template<typename T, typename U>

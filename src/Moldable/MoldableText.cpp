@@ -26,7 +26,8 @@ void MoldableText::__init__()
     const std::string& content = v.getString();
     if (content != EMPTY)
     {
-        __text->setText(stripquotes(v.getString()));
+        std::string txt = stripquotes(v.getString());
+        __text->setText(Wt::WString(stripquotes(v.getString()), Wt::UTF8));
     }
     addWidget(__text);
 }

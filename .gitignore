@@ -25,3 +25,4 @@ syntax/syntax.py
 syntax/operators
 Testing/*
 .idea*
+tests/*

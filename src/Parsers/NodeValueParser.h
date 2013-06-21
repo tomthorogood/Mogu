@@ -38,6 +38,12 @@ class NodeValueParser
 		void tokenizeInput(std::string input, bool setAtBeginning=false);
 		bool reduceExpressions(Moldable* bc);
 		int find_full_quote(std::string str);
+        void handleAppendCommand(std::string, CommandValue&, Moldable*);
+        void setCommandValueObject(CommandValue&, bool r_object=false); 
+        
+        inline bool isQuotedString(const std::string& str) {
+            return str[0] == '"';
+        }
 };
 
 }	// namespace Parsers

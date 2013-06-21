@@ -51,13 +51,14 @@ class NodeValue
 
 public:
     NodeValue();
-    NodeValue(const int i) {
+    NodeValue(const int i) : __numerics(new NumericUnion()){
+
         setInt(i);
     }
-    NodeValue(const std::string& s) {
+    NodeValue(const std::string& s) : __numerics(new NumericUnion()){
         setString(s);
     }
-    NodeValue(const float f) {
+    NodeValue(const float f) : __numerics(new NumericUnion()){
         setFloat(f);
     }
     /*!\brief Copies the value of another node value into this one. */

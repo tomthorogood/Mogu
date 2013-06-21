@@ -63,5 +63,14 @@ void Mogu::handlePathChange(
 
 Mogu::~Mogu()
 {
+    /* Stop the widgets from trying to communicate with the base application
+     * during the application's destruction, as it leads to a segfault.
+     */
+    auto iterator = widgetRegister.begin();
+    while (iterator != widgetRegister.end())
+    {
+        iterator->second->shun();
+        ++iterator;
+    }
     delete contextMap_;
 }

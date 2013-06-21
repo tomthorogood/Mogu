@@ -15,15 +15,15 @@ QueryConstruct::QueryConstruct(
     {
         if (blueprint.specs == 2)
         {
-            if (command.getArg().getType() == ReadType::string_value)
-                iarg1 = atoi(command.getArg().getString().c_str());
-            else iarg1 = command.getArg().getInt();
+            if (command.get(CommandFlags::ARG).getType() == ReadType::string_value)
+                iarg1 = atoi(command.get(CommandFlags::ARG).getString().c_str());
+            else iarg1 = command.get(CommandFlags::ARG).getInt();
         }
         else if (blueprint.specs == 3)
         {
-            if (command.getArg().getType() == ReadType::int_value)
-                sarg1 = std::to_string(command.getArg().getInt());
-            else sarg1 = command.getArg().getString();
+            if (command.get(CommandFlags::ARG).getType() == ReadType::int_value)
+                sarg1 = std::to_string(command.get(CommandFlags::ARG).getInt());
+            else sarg1 = command.get(CommandFlags::ARG).getString();
         }
     }
 
@@ -31,23 +31,23 @@ QueryConstruct::QueryConstruct(
     {
         if (blueprint.specs == 5)
         {
-            if (command.getArg().getType() == ReadType::string_value)
-                iarg1 = atoi(command.getArg().getString().c_str());
-            else iarg1 = command.getArg().getInt();
+            if (command.get(CommandFlags::ARG).getType() == ReadType::string_value)
+                iarg1 = atoi(command.get(CommandFlags::ARG).getString().c_str());
+            else iarg1 = command.get(CommandFlags::ARG).getInt();
 
-            if (command.getValue().getType() == ReadType::int_value)
-                sarg2 = std::to_string(command.getValue().getInt());
-            else sarg2 = command.getValue().getString();
+            if (command.get(CommandFlags::VALUE).getType() == ReadType::int_value)
+                sarg2 = std::to_string(command.get(CommandFlags::VALUE).getInt());
+            else sarg2 = command.get(CommandFlags::VALUE).getString();
         }
         else if (blueprint.specs == 7)
         {
-            if (command.getArg().getType() == ReadType::int_value)
-                sarg1 = std::to_string(command.getArg().getInt());
-            else sarg1 = command.getArg().getString();
+            if (command.get(CommandFlags::ARG).getType() == ReadType::int_value)
+                sarg1 = std::to_string(command.get(CommandFlags::ARG).getInt());
+            else sarg1 = command.get(CommandFlags::ARG).getString();
 
-            if (command.getValue().getType() == ReadType::int_value)
-                sarg2 = std::to_string(command.getValue().getInt());
-            else sarg2 = command.getValue().getString();
+            if (command.get(CommandFlags::VALUE).getType() == ReadType::int_value)
+                sarg2 = std::to_string(command.get(CommandFlags::VALUE).getInt());
+            else sarg2 = command.get(CommandFlags::VALUE).getString();
         }
     }
 }

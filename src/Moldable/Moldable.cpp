@@ -36,7 +36,8 @@ Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
 Moldable::~Moldable()
 {
     mApp; 
-    app->deregisterWidget(__node);
+    if (!shunned)
+        app->deregisterWidget(__node);
     if (__bindery != nullptr) delete __bindery;
 }
 

@@ -1,12 +1,15 @@
+#ifndef CONTEXTMAP_H_
+#define CONTEXTMAP_H_
 
 struct ContextMap {
-    Redis::Context*  __widgets;
-    Redis::Context*  __user;
-    Redis::Context*  __meta;
-    Redis::Context*  __validators;
-    Redis::Context*  __policies;
-    Redis::Context*  __data;
-    Redis::Context*  __group;
+    Redis::Context*  __widgets      = nullptr;
+    Redis::Context*  __user         = nullptr;
+    Redis::Context*  __meta         = nullptr;
+    Redis::Context*  __validators   = nullptr;
+    Redis::Context*  __policies     = nullptr;
+    Redis::Context*  __data         = nullptr;
+    Redis::Context*  __group        = nullptr;
+
     Redis::Context* get (Prefix prefix) {
         switch(prefix)
         {
@@ -46,12 +49,14 @@ struct ContextMap {
     ContextMap(){}
 
     ~ContextMap() {
-        delete __widgets;
-        delete __user;
-        delete __meta;
-        delete __validators;
-        delete __policies;
-        delete __data;
-        delete __group;
+        if (__widgets != nullptr) delete __widgets;
+        if (__user != nullptr) delete __user;
+        if (__meta != nullptr) delete __meta;
+        if (__validators != nullptr) delete __validators;
+        if (__policies != nullptr) delete __policies;
+        if (__data != nullptr) delete __data;
+        if (__group != nullptr) delete __group;
     }
 };
+
+#endif

@@ -5,8 +5,8 @@
  *      Author: tom
  */
 
-#ifndef PREVIEW_H_
-#define PREVIEW_H_
+#ifndef MOGU_H_
+#define MOGU_H_
 
 #include <declarations.h>
 #include <Wt/WApplication>
@@ -18,40 +18,26 @@
 #include <Types/SlotManager.h>
 #include <Parsers/NodeValueParser.h>
 
-
-#ifndef AUTH_TOKEN
-#define AUTH_TOKEN "BendTheWeb"
-#endif
-
-#ifndef GLOBAL_SESSION
-#define GLOBAL_SESSION "global"
-#endif
-
 class Mogu: public Wt::WApplication
 {
     /*!\brief Changes the state of the application based on the URL */
-    void handlePathChange(
-        std::string path);
     MoldableFactory moldableFactory;
-    ContextMap* contextMap_;
+    ContextMap* contextMap_         =nullptr;
+    Moldable* __wrapper             =nullptr;
+    UserManager* userManager        =nullptr;
 
     /*!\brief A map of named widgets. */
     std::unordered_map <std::string, Moldable*> widgetRegister;
+    Parsers::NodeValueParser __interpreter;
+    std::string __user_keyspace;  //!< Currently active user session
+    int __group                     =0;    //!< Currently active user group
+    std::string __instanceid;
+    SlotManager __slotMgr;
 
     void loadMoguStyles();
+    void handlePathChange( std::string path);
 
     /*!\brief The widget that started it all... */
-    Moldable* __wrapper;
-
-    Parsers::NodeValueParser __interpreter;
-
-    std::string __user_keyspace;  //!< Currently active user session
-    int __group;    //!< Currently active user group
-    std::string __instanceid;
-
-    UserManager* userManager;
-
-    SlotManager __slotMgr;
 
 public:
     Mogu(const Wt::WEnvironment& env);
@@ -121,4 +107,4 @@ public:
     void removeWidget(const std::string& identifier);
 };
 
-#endif /* PREVIEW_H_ */
+#endif /* MOGU_H_ */

@@ -162,6 +162,12 @@ public:
     QuerySet(Prefix prefix);
     ~QuerySet() {
         redisFree(rdb);
+        while (!queries.empty())
+        {
+            Query* q = queries.front();
+            queries.pop();
+            if (q != nullptr) delete q;
+        }
     }
 
     /*!\brief Add a query to the command queue. */

@@ -3,7 +3,7 @@
 
 #include <declarations.h>
 #include "QueryBlueprint.h"
-#include <Events/CommandValue.h>
+#include <Types/CommandValue.h>
 #include "ContextQuery.h"
 namespace Redis {
 

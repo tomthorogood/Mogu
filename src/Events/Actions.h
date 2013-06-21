@@ -10,6 +10,14 @@
 namespace Actions
 {
 
+MoguSyntax getPolicyNodeType(const std::string& identifier);
+void policyQuery(
+        MoguSyntax queryType
+        , Redis::ContextQuery& db
+        , Prefix prefix
+        , CommandValue& v
+        , bool init = true);
+
 void set(Moldable& broadcaster, CommandValue& command);
 void increment(Moldable& broadcaster, CommandValue& command);
 void decrement(Moldable& broadcaster, CommandValue& command);

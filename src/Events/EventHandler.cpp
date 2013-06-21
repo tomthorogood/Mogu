@@ -9,7 +9,7 @@
 #include "EventHandler.h"
 #include "Actions.h"
 #include "TriggerMap.h"
-#include "CommandValue.h"
+#include <Types/CommandValue.h>
 
 EventHandler::EventHandler(Moldable& broadcaster)
 : triggerMap(broadcaster.getNumTriggers(), broadcaster.getNode()),

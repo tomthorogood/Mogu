@@ -76,13 +76,13 @@ std::string getHost(const std::string& line) {
 ContextMap* loadDatabaseContexts() {
     int PREFIX_MASK = 0;
     ContextMap* contextMap = new ContextMap();
-    // Only perform this when the application first starts up
-    // and its first user connects.
+    
     std::ifstream infile;
     infile.open(DBCONFIG_FILE);
     if(!infile.is_open()) {
         std::cout << "Warning: No database config file found! Expect a "
-            "segfault soon..." << std::endl;
+            << "segfault soon..." << std::endl;
+        delete contextMap;
         return nullptr;
     }
 
@@ -137,11 +137,15 @@ ContextMap* loadDatabaseContexts() {
             }
             //!\todo Throw an error if a context not fully defined.
             if (completion < 7)
+            {
+                delete contextMap;
                 return nullptr;
+            }
             contextMap->set(prefix, new Redis::Context(port, host.c_str(), dbnum));
-            assert(contextMap->get(prefix) != 0x0);
+            assert(contextMap->get(prefix) != nullptr);
         }
     }
+    infile.close();
     //!\todo Throw an error if not everything was loaded.
     if (PREFIX_MASK < MAX_PREFIX_MASK)
         return nullptr;

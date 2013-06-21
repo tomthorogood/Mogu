@@ -4,7 +4,7 @@
 #include <declarations.h>
 #include "QueryBlueprint.h"
 #include "QueryConstruct.h"
-#include <Events/CommandValue.h>
+#include <Types/CommandValue.h>
 #include "DatabaseConfigReader.h"
 namespace Redis {
 

@@ -59,6 +59,7 @@ branch_subs := \
 	crypt \
 	Config \
 	Events \
+	Events/Actions \
 	FiniteAutomaton \
 	Factories \
 	Groups \
@@ -113,6 +114,9 @@ SYNTAX_PY := $(MOGUIO_DIR)/moguio/syntax.py
 
 
 all: $(objects) | $(turnleft)
+ifeq ($(dbg),on)
+	@echo "Performing build with DEBUG flags"
+endif
 	@echo "Linking object files and creating executable..."
 	@g++ $(flags) -o $(EXECUTABLE) $(objects) $(libs)
 

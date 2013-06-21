@@ -7,7 +7,7 @@
 #include <Parsers/NodeValueParser.h>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
-#include <Events/CommandValue.h>
+#include <Types/CommandValue.h>
 #include <cctype>
 
 //debug
@@ -155,6 +155,117 @@ void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
 
 }
 
+void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
+{
+    MoguSyntax currTok;
+    NodeValue tmp;
+
+    CommandFlags obj_flag    = r_tokens ? CommandFlags::R_OBJECT :
+        CommandFlags::OBJECT;
+    CommandFlags id_flag     = r_tokens ? CommandFlags::R_IDENTIFIER :
+        CommandFlags::IDENTIFIER;
+    CommandFlags arg_flag    = r_tokens ? CommandFlags::R_ARG :
+        CommandFlags::ARG;
+
+    // Fast forward to the next object token.
+    do {
+        currTok = __tm.currentToken<MoguSyntax>();
+        __tm.next();
+    } while (!isObjectToken(currTok));
+    __tm.prev();
+
+    cv.set(obj_flag, currTok);
+    __tm.next();
+
+    // If the next token is a string, it is necessarily an identifier.
+    // It can also be another arbitrary token, however, representing a 
+    // state/attribute("own content", or "app path"). In the latter case,
+    // we need nothing more, though, so we return.
+    currTok = __tm.currentToken<MoguSyntax>();
+    if (currTok == MoguSyntax::TOKEN_DELIM)
+    {
+        tmp.setString(__tm.fetchStringToken());
+        cv.set(id_flag, tmp);
+    }
+    else if ((int)currTok != (int)TokenManager::OutOfRange::End)
+    {
+        tmp.setInt( (int) currTok );
+        cv.set(arg_flag, tmp);
+        return;
+    }
+
+    // If we've reached this part, we're setting an arg, no ifs, ands, or buts.
+    __tm.next();
+    currTok = __tm.currentToken <MoguSyntax>();
+    if (currTok == MoguSyntax::TOKEN_DELIM)
+        tmp.setString(__tm.fetchStringToken());
+    else
+        tmp.setInt( (int) currTok);
+    cv.set(arg_flag, tmp);
+}
+
+void NodeValueParser::handleAppendCommand(
+        std::string input, CommandValue& cv, Moldable* bc)
+{
+    NodeValue tmp_nv;
+    MoguSyntax tmp_syn;
+    std::string str_tok;
+    __tm.next();
+    __tm.saveLocation();
+    __tm.truncateHead();
+
+    tmp_syn = __tm.currentToken<MoguSyntax>();
+    if (tmp_syn == MoguSyntax::TOKEN_DELIM) {
+        str_tok = __tm.fetchStringToken();
+        // If this is a string value, it must be quoted.
+        if (!isQuotedString(str_tok)) return;
+        tmp_nv.setString(str_tok);
+        cv.set(CommandFlags::VALUE, tmp_nv);
+    }
+    else if (tmp_syn == MoguSyntax::OPER_OPPAREN) {
+        /* Spawn a new NVP for just the mathematical operation
+         * parse that information, and get rid of the operation from
+         * the token manager. Then set that information as the 
+         * CommandValue.value:
+         *
+         * "append (17-45) to own content"
+         */
+        int paren_level = 1;
+        while (paren_level > 0)
+        {
+            __tm.next();
+            MoguSyntax tok = __tm.currentToken<MoguSyntax>();
+            if (tok == MoguSyntax::OPER_OPPAREN)
+                ++ paren_level;
+            else if (tok == MoguSyntax::OPER_CLPAREN)
+                -- paren_level;
+        }
+        __tm.saveLocation();
+        setCommandValueObject(cv, /*not the r_object*/false);
+        __tm.deleteFromSaved(); // erase everything but the math bits.
+        __tm.end();
+        reduceExpressions(bc);
+        __tm.begin();
+        tmp_nv.setInt(__tm.currentToken <int>());
+        cv.set(CommandFlags::VALUE, tmp_nv);
+
+    }
+
+    else if (isObjectToken(tmp_syn)) {
+        /* Determine if we're adding an actual object or just a value;
+         * If an actual value, reduce it and set it; otherwise, set the
+         * r_obj, r_identifier, r_arg properties of cv.
+         */
+        setCommandValueObject(cv, /*this is the r_object*/true);
+        __tm.next();
+        // After the r_object, what follows must be the 'to' delimiter.
+        if (!isPrepositionToken(__tm.currentToken<MoguSyntax>())) return;
+        __tm.next();
+        setCommandValueObject(cv, false);
+    }
+    else return;
+}
+
 void NodeValueParser::giveInput(std::string input, CommandValue& cv,
     Moldable* bc)
 {
@@ -167,9 +278,16 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
     // The first token is always an action
     cv.setAction(__tm.currentToken<MoguSyntax>());
 
+    if ( cv.get(CommandFlags::ACTION) == MoguSyntax::append) 
+    {
+        handleAppendCommand(input,cv,bc);
+        return;
+    }
+
     // The second token is awlays the start of the object set.
     __tm.next();
-    cv.setObject(__tm.currentToken<MoguSyntax>());
+    MoguSyntax tok = __tm.currentToken<MoguSyntax>();
+    cv.set(CommandFlags::OBJECT, tok);
 
     while (__tm.currentToken <int>() != (int)TokenManager::OutOfRange::End)
     {
@@ -188,19 +306,21 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
              * encountered.
              */
             if (cv.getIdentifier() == EMPTY) {
-                cv.setIdentifier(string_token);
+                NodeValue tmp;
+                tmp.setString(string_token);
+                cv.set(CommandFlags::IDENTIFIER, tmp);
             }
             else {
                 /* The only other TOKEN_DELIM that should be encountered before
                  * a preposition should be an argument (ie: database hash field)
                  */
                 tmp.setString(string_token);
-                cv.setArg(tmp);
+                cv.set(CommandFlags::ARG, tmp);
             }
         }
         else if (isStateToken(token)) {
             tmp.setInt((int) token);
-            cv.setArg(tmp);
+            cv.set(CommandFlags::ARG, tmp);
         }
         else if (isPrepositionToken(token)) {
 
@@ -214,12 +334,12 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
             if (__tm.currentToken <MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
             {
                 tmp.setString(__tm.fetchStringToken());
-                cv.setValue(tmp);
+                cv.set(CommandFlags::VALUE, tmp);
             }
             else {
                 // Any integral value here will be a true integer, not MoguSyn.
                 tmp.setInt(__tm.currentToken<int>());
-                cv.setValue(tmp);
+                cv.set(CommandFlags::VALUE, tmp);
             }
             break; // After parsing a prepositional, there is nothing left to do.
         }

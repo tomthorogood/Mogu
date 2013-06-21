@@ -56,6 +56,9 @@ class Moldable :
 
     bool updateStackIndex(size_t  index);
 
+    // Whether or not the base application allows this widget to talk to it.
+    bool shunned = false;
+
 protected:
     bool force_reload;
     std::string __node;
@@ -89,6 +92,8 @@ public:
 
     virtual void getAttribute(MoguSyntax state, NodeValue& val);
     virtual bool setAttribute(const MoguSyntax state, NodeValue& val);
+    inline virtual bool setAttribute(const MoguSyntax state, NodeValue&& val)
+        { return setAttribute(state, val);}
 
     inline virtual void setStyleClass (const Wt::WString& style)
     {
@@ -152,6 +157,9 @@ public:
     }
 
     inline virtual void reset()     {__init__();}
+
+    inline void shun() { shunned = true;}
+    inline void unshun() { shunned = false;}
 };
 
 
