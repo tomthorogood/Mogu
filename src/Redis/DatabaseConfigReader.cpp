@@ -109,7 +109,6 @@ ContextMap* loadDatabaseContexts() {
             // This allows for any number of newlines or comments.
             uint8_t completion =0;
             Prefix prefix = matchPrefix(PREFIX_MASK, line);
-
             while (completion != 7 && !infile.eof())
             {
 

@@ -23,7 +23,7 @@ void MoldableImage::__init__()
     Redis::ContextQuery db(Prefix::widgets);
     std::string param = getParameter(db, MoguSyntax::source);
     app->interpreter().giveInput(param,v);
-    std::string src = v.getString();
+    std::string src = stripquotes(v.getString());
 
     param = getParameter(db, MoguSyntax::text);
     app->interpreter().giveInput(param,v);
