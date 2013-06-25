@@ -39,7 +39,7 @@ public:
      */
     int8_t registerUser(const std::string& username, const std::string& password);
 
-    inline const std::string& getUser() const {return userKeyspace;}
+    inline const int& getUser() const {return userKeyspace;}
     
     bool setActiveGroup(const std::string& groupid){return true;} //TODO
 
@@ -48,8 +48,7 @@ private:
     /*!\brief The address within the user database where this user's
      * information lives.
      */
-    std::string userKeyspace = EMPTY;
-
+    int userKeyspace    =0;
     /*!\brief Given a username, password, and salt, creates a
      * collision proofed hash of user data.
      *

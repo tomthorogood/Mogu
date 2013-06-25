@@ -29,7 +29,7 @@ class Mogu: public Wt::WApplication
     /*!\brief A map of named widgets. */
     std::unordered_map <std::string, Moldable*> widgetRegister;
     Parsers::NodeValueParser __interpreter;
-    std::string __user_keyspace;  //!< Currently active user session
+    int __user;
     int __group                     =0;    //!< Currently active user group
     std::string __instanceid;
     SlotManager __slotMgr;
@@ -88,8 +88,8 @@ public:
     {
         return __instanceid;
     }
-
-    inline const std::string& getUser() const
+    
+    inline const int& getUser() const
     {
         return userManager->getUser();
     }
