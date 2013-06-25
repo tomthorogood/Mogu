@@ -157,7 +157,8 @@ public:
 
     static const uint8_t ARRAY_TYPE_INT     = 0;
     static const uint8_t ARRAY_TYPE_STR     = 1;
-    
+   
+    QuerySet(){} 
     QuerySet(Context* context);
     QuerySet(Prefix prefix);
     ~QuerySet() {
@@ -168,6 +169,14 @@ public:
             queries.pop();
             if (q != nullptr) delete q;
         }
+    }
+
+    inline void setPrefix(Prefix prefix)
+    {
+        if (rdb != nullptr) delete rdb;
+        mApp;
+        context = app->contextMap()->get(prefix);
+        rdb = redisConnect(context->host(), context->port);
     }
 
     /*!\brief Add a query to the command queue. */

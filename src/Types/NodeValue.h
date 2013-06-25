@@ -140,6 +140,34 @@ public:
         return __numerics->as_float;
     }
 
+    /* Appends values to strings, sums numeric values. */
+    void operator+= (const NodeValue& other)
+    {
+        if (isString())
+        {
+            if (other.isString())
+                as_string += (std::string) other;
+            else if (other.isInt())
+                as_string += std::to_string( (int) other);
+            else if (other.isFloat())
+                as_string += std::to_string( (float) other);
+        }
+        else if (other.isInt())
+        {
+            if (isInt())
+                __numerics->as_int += (int) other;
+            else if (isFloat())
+                __numerics->as_float += (int) other;
+        }
+        else if (other.isFloat())
+        {
+            if (isInt())
+                __numerics->as_int += (float) other;
+            else if (other.isFloat())
+                __numerics->as_float += (float) other;
+        }
+    }
+
     /*!\brief Sets the string as well as __type */
     inline void setString(std::string val)
     {

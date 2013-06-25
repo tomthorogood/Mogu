@@ -44,7 +44,15 @@ const std::unordered_map <Prefix, std::string, IntHash<Prefix>> prefixMap = {
     { Prefix::policies,     "policies"}
 };
 
-
+const std::unordered_map <MoguSyntax, Prefix, IntHash<MoguSyntax>> syntax_to_prefix = {
+    { MoguSyntax::widget,   Prefix::widgets },
+    { MoguSyntax::data,     Prefix::data    },
+    { MoguSyntax::user,     Prefix::user    },
+    { MoguSyntax::group,    Prefix::group   },
+    { MoguSyntax::template_,Prefix::templates},
+    { MoguSyntax::validator,Prefix::validators},
+    { MoguSyntax::policy,   Prefix::policies}
+}
 
 namespace Application { //static namespace
 

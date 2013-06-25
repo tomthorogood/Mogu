@@ -25,6 +25,14 @@ public:
     const std::vector <std::string>& members();
     const std::vector <std::string>& administrators();
     void createGroup (const std::string& group_name, bool userIsAdmin);
+    inline int getGroupId(const std::string& group_name)
+    {
+        const char* c_name = group_name.c_str();
+        Redis::ContextQuery db(Prefix::meta);
+        db.appendQuery("hget meta.groups %s", c_name);
+        std::string g_id = db.yieldResponse <std::string>();
+        return std::atoi(g_id.c_str());
+    }
     void destroyGroup ();
 
     // Allows a member to join the group without being manually added

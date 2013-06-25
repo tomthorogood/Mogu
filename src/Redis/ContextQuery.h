@@ -20,6 +20,7 @@ namespace Redis {
 class ContextQuery : public QuerySet {
 
 public:
+    ContextQuery() : QuerySet(){}
     ContextQuery(Prefix);
 };
 

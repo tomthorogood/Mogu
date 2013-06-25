@@ -82,6 +82,10 @@ public:
 
     inline bool isReversed() const { return reversed;}
 
+    inline bool test (CommandFlags flag) const {
+        return flags & (uint8_t) flag; 
+    }
+
 private:
     bool reversed = false;
     /*!\brief The enumerated action that starts the command. This is guaranteed

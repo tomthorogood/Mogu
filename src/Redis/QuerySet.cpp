@@ -16,9 +16,7 @@ QuerySet::QuerySet(Context* context_) : context(context_)
 }
 
 QuerySet::QuerySet(Prefix prefix) {
-    mApp;
-    context = app->contextMap()->get(prefix);
-    rdb = redisConnect(context->host(), context->port);
+    setPrefix(prefix);
 }
 
 /*!\brief Forces the return of an integer response, and continues
