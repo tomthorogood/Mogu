@@ -112,6 +112,13 @@ template <> std::vector <std::string>
     return reply_array_str;
 }
 
+void QuerySet::setPrefix(Prefix prefix)
+{
+    if (rdb != nullptr) delete rdb;
+    mApp;
+    context = app->contextMap()->get(prefix);
+    rdb = redisConnect(context->host(), context->port);
+}
 
 
 }//namespace Redis

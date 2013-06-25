@@ -8,6 +8,7 @@
 #include <queue>
 #include <memory>
 #include <cassert>
+
 namespace Redis {
 
 class QuerySet 
@@ -171,14 +172,8 @@ public:
         }
     }
 
-    inline void setPrefix(Prefix prefix)
-    {
-        if (rdb != nullptr) delete rdb;
-        mApp;
-        context = app->contextMap()->get(prefix);
-        rdb = redisConnect(context->host(), context->port);
-    }
-
+    void setPrefix(Prefix prefix);
+    
     /*!\brief Add a query to the command queue. */
     inline void appendQuery(Query* query, const uint8_t flags=0)
     {
