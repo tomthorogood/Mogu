@@ -51,8 +51,7 @@ const std::unordered_map <MoguSyntax, Prefix, IntHash<MoguSyntax>> syntax_to_pre
     { MoguSyntax::group,    Prefix::group   },
     { MoguSyntax::template_,Prefix::templates},
     { MoguSyntax::validator,Prefix::validators},
-    { MoguSyntax::policy,   Prefix::policies}
-}
+};
 
 namespace Application { //static namespace
 
