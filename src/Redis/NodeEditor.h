@@ -1,3 +1,5 @@
+#include "ContextQuery.h"
+
 namespace Redis {
 
 //!\brief Performs reads and writes from the Redis database.
@@ -11,7 +13,7 @@ public:
     inline bool fieldHasEncryption()
     {
         __policies.appendQuery("hget policies.%s %d", __node,
-                MoguSyntax::encryption);
+                MoguSyntax::encrypted);
         return __policies.yieldResponse <bool>();
     }
 
@@ -20,7 +22,7 @@ public:
     inline MoguSyntax getNodeType()
     {
         __db.appendQuery("type %s.%s", c_prefix, __node);
-        return string_to_node_type(db.yieldResponse <std::string>());
+        return string_to_node_type.at(__db.yieldResponse <std::string>());
     }
     inline int getObjectId()
     {
@@ -31,9 +33,12 @@ public:
                 return app->getGroup();
             case Prefix::user:
                 return app->getUser();
-            deafault:return -1;
+            default:return -1;
         };
     }
+
+    std::string read();
+    void write (NodeValue&);
 
 private:
 
