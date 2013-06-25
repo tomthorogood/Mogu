@@ -1,6 +1,9 @@
 #include "../Actions.h"
 #include "Includes.h"
 
+#include <Groups/GroupManager.h>
+#include <Redis/NodeEditor.h>
+
 namespace Actions {
 
 namespace {
@@ -19,21 +22,21 @@ const uint8_t VALUE_TO_FIELD        =3;
 // of 'append' construct we have (of the 
 const uint8_t getConstruct(CommandValue& v)
 {
-    uint8_t flags = v.getFlags();
-
     // OBJECT_TO_OBJECT will always have an R_IDENTIFIER, 
     // but the main object may be "self" OR another widget.
     if (v.test(CommandFlags::R_IDENTIFIER) &&
             (v.test(CommandFlags::IDENTIFIER) 
-            || MoguSyntax::self == 
+            || MoguSyntax::own == 
             (MoguSyntax) v.get(CommandFlags::OBJECT))
        )
         return OBJECT_TO_OBJECT;
 
     if (v.test(CommandFlags::VALUE))
+    {
         if (MoguSyntax::widget == (MoguSyntax) v.get(CommandFlags::OBJECT))
             return VALUE_TO_ATTRIBUTE;
         else return VALUE_TO_FIELD;
+    }
 
     return INVALID_CONSTRUCT;
 }
@@ -49,7 +52,7 @@ void handleObjectToObject(Moldable& broadcaster, CommandValue& v)
     std::string new_obj_id = (std::string) v.get(CommandFlags::R_IDENTIFIER);
     Moldable* new_widget = app->getFactory().createMoldableWidget(new_obj_id); 
 
-    std::string curr_widget = app->registeredWidget( 
+    Moldable* curr_widget = app->registeredWidget( 
             (std::string) v.get(CommandFlags::IDENTIFIER));
     if (curr_widget != nullptr) app->addChild(new_widget);
 }
@@ -78,8 +81,9 @@ void handleValueToAttribute(Moldable& broadcaster, CommandValue& v)
 void handleValueToField(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
-    NodeValue* arg = v.test(CommandFlags::ARG) ? 
-       &(v.get(CommandFlags::ARG)) : nullptr;
+    NodeValue arg;
+    if (v.test(CommandFlags::ARG))
+        arg = v.get(CommandFlags::ARG);
 
     bool writeable = true;
     int id;
@@ -98,7 +102,7 @@ void handleValueToField(Moldable& broadcaster, CommandValue& v)
 
     if (!writeable) return;
 
-    Redis::NodeEditor editor(obj, node, arg);
+    Redis::NodeEditor editor(obj, node, &arg);
     editor.setIsListValue(v.test(CommandFlags::ARG));
     NodeValue current_value(editor.read());
     current_value += v.get(CommandFlags::VALUE);
