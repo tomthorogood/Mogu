@@ -9,6 +9,9 @@
 #define INLINE_UTILS_H_
 
 #include <sstream>
+#include <Types/syntax.h>
+#include <string>
+#include <map>
 
 inline std::string stripquotes(const std::string& str) {
     if (str[0] != '"') return str;
@@ -23,28 +26,10 @@ inline std::string stripquotes(const std::string& str) {
     return newstr;
 }
 
-template<typename T, typename U>
-class create_map
-{
-private:
-    std::map<T, U> m_map;
-public:
-    create_map(
-        const T& key, const U& val)
-    {
-        m_map[key] = val;
-    }
-
-    create_map<T, U>& operator()(
-        const T& key, const U& val)
-    {
-        m_map[key] = val;
-        return *this;
-    }
-
-    operator std::map<T, U>()
-    {
-        return m_map;
-    }
+const std::map <std::string, MoguSyntax> string_to_node_type = {
+    {   "string"    ,   MoguSyntax::string  },
+    {   "hash"      ,   MoguSyntax::hash    },
+    {   "list"      ,   MoguSyntax::list    }
 };
+
 #endif /* INLINE_UTILS_H_ */
