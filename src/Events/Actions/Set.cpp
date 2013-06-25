@@ -52,66 +52,30 @@ void set (Moldable& broadcaster, CommandValue& v)
             mApp;
             app->setPath(stripquotes((std::string) v.get(CommandFlags::VALUE)));
             break;}
-
-        /* Either sets a user field, or logs in a user:
-         *
-         * "set user" will attempt to retrieve a USERNAME and PASSWORD from
-         * the respective application slots.
-         *
-         * "set user to [value]" will retrieve the PASSWORD from the application
-         * slot, but use the username resolved in [value].
-         *
-         * "set user [field [arg] ] to [value]" will set a field in the user's
-         * database.
-         */
-        case MoguSyntax::user:{
-            const uint8_t flags = logic_flags(v);
-            if (flags == SET_USER_FROM_SLOT) 
-            {
-                set_user_from_slot();
-                return;
-            }
-            if (flags == SET_USER_FROM_VALUE)
-            {
-                set_user_from_value( (std::string) v.get(CommandFlags::VALUE) );
-                return;
-            }
-            Redis::ContextQuery db(Prefix::user);
-            policyQuery(
-                    MoguSyntax::set
-                    , db
-                    , Prefix::user
-                    , v);
-            db.execute();
-            break;}
-        case MoguSyntax::group:{// set group field
-            mApp;
-            if (v.getIdentifier() == EMPTY)
-            {
-                app->getUserManager().setActiveGroup(
-                        (std::string) v.get(CommandFlags::VALUE));
-                return;
-            }
-            Redis::ContextQuery db(Prefix::group);
-            policyQuery(
-                MoguSyntax::set
-                , db
-                , Prefix::group
-                , v);
-            db.execute();
-            break;}
-        case MoguSyntax::data:{ // set data field
-            Redis::ContextQuery db(Prefix::data);
-            db.appendQuery("type data.%s", v.getIdentifier().c_str());
-            MoguSyntax node_type = db.yieldResponse <MoguSyntax> ();
-            Redis::addQuery(
-                db
-                , MoguSyntax::set 
-                , Prefix::data
-                , node_type
-                , v);
-            db.execute();                    
-            break;}
+        case MoguSyntax::user:
+                const uint8_t flags = logic_flags(v);
+                if (flags == SET_USER_FROM_SLOT) 
+                {
+                    set_user_from_slot();
+                    return;
+                }
+                if (flags == SET_USER_FROM_VALUE)
+                {
+                    set_user_from_value( (std::string) v.get(CommandFlags::VALUE) );
+                    return;
+                }
+                // NOT BREAKING ON PURPOSE! If we're setting a user field, 
+                // the same logic will apply as with data/meta/group.
+        case MoguSyntax::data:
+        case MoguSyntax::meta:
+        case MoguSyntax::group:{
+             bool is_list_value = v.test(CommandFlags::ARG);
+             NodeValue* arg = is_list_value ? &(v.get(CommandFlags::arg)) : nullptr;
+             Redis::NodeEditor editor(
+                 v.get(CommandFlags::OBJECT),(std::string)v.get(CommandFlags::IDENTIFIER), arg);
+             editor.setIsListValue(is_list_value);
+             editor.write(v.get(Commandflags::VALUE));
+              }break;
         case MoguSyntax::slot:{ // set application slot
             mApp;
             app->slotManager().setSlot(v.getIdentifier(), v.get(CommandFlags::VALUE));
