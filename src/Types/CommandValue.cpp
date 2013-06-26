@@ -71,7 +71,7 @@ void CommandValue::set(const CommandFlags& flag, MoguSyntax& v)
     flags |= (uint8_t)flag;
 }
 
-NodeValue CommandValue::get(CommandFlags& flag)
+NodeValue CommandValue::get(CommandFlags& flag) const
 {
     switch(flag)
     {

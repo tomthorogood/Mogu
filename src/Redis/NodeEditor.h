@@ -1,5 +1,5 @@
 #include "ContextQuery.h"
-
+#include <Types/NodeValue.h>
 namespace Redis {
 
 //!\brief Performs reads and writes from the Redis database.
@@ -18,27 +18,20 @@ public:
     }
 
     inline void setIsListValue(bool tf) { list_value = tf;}
+    inline void setIsHashValue(bool tf) { hash_value = tf;}
     inline bool isListValue() { return list_value;}
+    inline bool isHashValue() { return hash_value;}
     inline MoguSyntax getNodeType()
     {
         __db.appendQuery("type %s.%s", c_prefix, __node);
         return string_to_node_type.at(__db.yieldResponse <std::string>());
     }
-    inline int getObjectId()
-    {
-        mApp;
-        switch(__prefix)
-        {
-            case Prefix::group:
-                return app->getGroup();
-            case Prefix::user:
-                return app->getUser();
-            default:return -1;
-        };
-    }
+    inline int getObjectId();
+    inline MoguSyntax getType() const { return __type;}
 
     std::string read();
     void write (NodeValue&);
+    void remove(std::string value = EMPTY);
 
 private:
 
@@ -54,6 +47,7 @@ private:
 
     bool encrypted;
     bool list_value =   false;
+    bool hash_value =   true;
     const char* c_prefix;
 
     const char* __hashkey       = EMPTY;

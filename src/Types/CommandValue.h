@@ -33,7 +33,7 @@ public:
 
     void set(const CommandFlags& flag, const NodeValue& v);
     void set(const CommandFlags& flag, MoguSyntax& v);
-    NodeValue get( CommandFlags& flag) ;
+    NodeValue get ( CommandFlags& flag) const ;
     inline NodeValue get (CommandFlags&& flag) {
         return get(flag);
     }

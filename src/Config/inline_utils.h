@@ -26,6 +26,22 @@ inline std::string stripquotes(const std::string& str) {
     return newstr;
 }
 
+inline std::string sreplace(std::string str, const std::string& needle,
+        std::string replacement = "")
+{
+    size_t needle_len = needle.size();
+    size_t start_index = str.find(needle);
+
+    while (start_index != std::string::npos)
+    {
+        std::string part_a = str.substr(0,start_index);
+        std::string part_b = str.substr(start_index+needle_len);
+        str = part_a + replacement + part_b;
+        start_index = str.find(needle);    
+    }
+    return str;
+}
+
 const std::map <std::string, MoguSyntax> string_to_node_type = {
     {   "string"    ,   MoguSyntax::string  },
     {   "hash"      ,   MoguSyntax::hash    },
