@@ -10,7 +10,7 @@
 
 #include <declarations.h>
 #include <Types/NodeValue.h>
-
+#include <Parsers/NodeValueParser.h>
 /*!\brief Holds parsed values from the CommandParser which can then be used
  * to handle events.
  */
@@ -31,59 +31,39 @@ class CommandValue
 public:
     CommandValue(Moldable& widget);
 
-    void set(const CommandFlags& flag, const NodeValue& v);
-    void set(const CommandFlags& flag, MoguSyntax& v);
-    NodeValue get ( CommandFlags& flag) const ;
-    inline NodeValue get (CommandFlags&& flag) {
-        return get(flag);
-    }
-
-    inline void setAction(MoguSyntax action_)
-    {
-        set(CommandFlags::ACTION, action_);
-        if (action == MoguSyntax::append) reversed = true;
-    }
+    uint8_t set(const CommandFlags& flag, NodeValue v);
+    uint8_t set(const CommandFlags& flag, const MoguSyntax v);
+    NodeValue get ( CommandFlags flag) const ;
 
 
-    inline const MoguSyntax& getAction() const    { return action;}
-    inline const MoguSyntax& getObject() const    { return object;}
     inline const std::string& getIdentifier() const 
         { return identifier.getString();}
     inline const uint8_t& getFlags() const        { return flags;}
     inline Moldable& getWidget()  { return broadcaster;}
-
-    inline std::string stitchState()
-    {
-        std::string str;
-        if (!flags & (uint8_t) CommandFlags::OBJECT) return EMPTY;
-        str += std::to_string((int) object);
-
-        if (flags & (uint8_t) CommandFlags::IDENTIFIER) {
-            str += " ";
-            str += (std::string) identifier;
-        }
-
-        if (flags & (uint8_t) CommandFlags::ARG)
-        {
-            str += " ";
-            str += (std::string) arg;
-        }
-        return str;
-    }
-
-    /* To meet minimum requirements, both the action and object must
-     * be set.
-     */
-    inline bool valid()
-    {
-        return (flags & (uint8_t) CommandFlags::ACTION) &&
-            (flags & (uint8_t) CommandFlags::OBJECT);
-    }
+    
+    std::string stitchState(bool reverse=false);
 
     inline bool isReversed() const { return reversed;}
 
     inline bool test (CommandFlags flag) const {
         return flags & (uint8_t) flag; 
+    }
+
+    bool objectIsReduceable(bool reverse_object=false);
+    inline void reduceObject(bool reverse=false, Moldable* broadcaster=nullptr)
+    {
+        Parsers::NodeValueParser nvp;
+        nvp.giveInput(stitchState(reverse), value);
+        set(CommandFlags::VALUE, value);
+
+        CommandFlags arg_flag = reverse ? CommandFlags::R_ARG : CommandFlags::ARG;
+        CommandFlags obj_flag = reverse ? CommandFlags::R_OBJECT : CommandFlags::OBJECT;
+        CommandFlags id_flag  = reverse ? CommandFlags::R_IDENTIFIER : CommandFlags::IDENTIFIER;
+
+        if (test(arg_flag)) flags -= (uint8_t) arg_flag;
+        if (test(obj_flag)) flags -= (uint8_t) obj_flag;
+        if (test(id_flag)) flags -= (uint8_t) id_flag;
+
     }
 
 private:

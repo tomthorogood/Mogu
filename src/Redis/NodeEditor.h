@@ -30,7 +30,7 @@ public:
     inline MoguSyntax getType() const { return __type;}
 
     std::string read();
-    void write (NodeValue&);
+    void write (NodeValue);
     void remove(std::string value = EMPTY);
 
 private:

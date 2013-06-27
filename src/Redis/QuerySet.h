@@ -30,7 +30,7 @@ private:
     uint8_t     array_type  = 0;
 
     //!\brief The context (populated by the Context reference passed in
-    redisContext* rdb;
+    redisContext* rdb   =nullptr;
 
     //!\brief The reply from the last query sent to the Redis context
     redisReply* reply       = nullptr;

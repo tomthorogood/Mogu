@@ -1,15 +1,25 @@
 #include "../Actions.h"
 #include "Includes.h"
-
+#include <Redis/NodeEditor.h>
+#include <Groups/GroupManager.h>
 namespace Actions {
 
 void increment (Moldable& broadcaster, CommandValue& v)
 {
+    mApp;
+    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+    std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
+    NodeValue arg;
+    if (v.test(CommandFlags::ARG))
+        arg = v.get(CommandFlags::ARG);
+    Redis::NodeEditor node(object, identifier, &arg);
+
     int value = 
         (v.getFlags() & (uint8_t) CommandFlags::VALUE) ?
         v.get(CommandFlags::VALUE).getInt() : 1;
     NodeValue final;
-    switch(v.getObject())
+
+    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
     {
         case MoguSyntax::own:{
             NodeValue current;
@@ -21,68 +31,17 @@ void increment (Moldable& broadcaster, CommandValue& v)
                     (MoguSyntax) v.get(CommandFlags::ARG), current);
             break;}
 
-        case MoguSyntax::user:{
-            Redis::ContextQuery db(Prefix::user);
-            policyQuery(
-                MoguSyntax::get
-                , db
-                , Prefix::user
-                , v);
-            policyQuery(
-                MoguSyntax::set
-                , db
-                , Prefix::user
-                , v);
-
-            final.setInt(
-                final.getInt() + atoi(db.yieldResponse<std::string>().c_str())
-            );
-            db.execute();
-            break;}
-
         case MoguSyntax::group:{
-            Redis::ContextQuery db(Prefix::group);
-            policyQuery(
-                MoguSyntax::get
-                , db
-                , Prefix::group
-                , v);
-            policyQuery(
-                MoguSyntax::set
-                , db
-                , Prefix::group
-                , v);
-
+            GroupManager groupMgr(app->getGroup());
+            if (!groupMgr.hasWriteAccess(identifier)) return;}
+        case MoguSyntax::data:
+        case MoguSyntax::user:{
+            std::string val = node.read();
             final.setInt(
-                final.getInt() + atoi(db.yieldResponse<std::string>().c_str())
-            );
-            db.execute();
+                final.getInt() - atoi(val.c_str()));
+            node.write(final);
             break;}
 
-        case MoguSyntax::data:{
-            Redis::ContextQuery db(Prefix::data);
-            final.setInt(value);
-            db.appendQuery("type data.%s", v.getIdentifier().c_str());
-            MoguSyntax node_type = db.yieldResponse <MoguSyntax>();
-            v.set(CommandFlags::VALUE, final);
-            Redis::addQuery(
-                db
-                , MoguSyntax::get
-                , Prefix::data
-                , node_type
-                , v);
-            Redis::addQuery(
-                db
-                , MoguSyntax::set
-                , Prefix::data
-                , node_type
-                , v);
-            final.setInt(
-                final.getInt() + atoi(db.yieldResponse<std::string>().c_str())
-            );
-            db.execute();
-
-            break;}
         case MoguSyntax::slot:{
             mApp;
             final.setInt(

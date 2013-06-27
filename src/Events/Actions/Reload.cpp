@@ -5,7 +5,7 @@ namespace Actions {
 
 void reload(Moldable& broadcaster, CommandValue& v)
 {
-    switch(v.getObject())
+    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
     {
         case MoguSyntax::own:{
             broadcaster.reload();

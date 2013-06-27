@@ -1,6 +1,6 @@
 #include "Includes.h"
 #include "../Actions.h"
-
+#include <Redis/NodeEditor.h>
 namespace Actions {
 
 namespace {
@@ -42,7 +42,7 @@ namespace {
 
 void set (Moldable& broadcaster, CommandValue& v)
 {
-    switch(v.getObject())
+    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
     {
         case MoguSyntax::own:{  // set attribute of calling widget
             MoguSyntax attr = (MoguSyntax) v.get(CommandFlags::ARG);
@@ -53,6 +53,7 @@ void set (Moldable& broadcaster, CommandValue& v)
             app->setPath(stripquotes((std::string) v.get(CommandFlags::VALUE)));
             break;}
         case MoguSyntax::user:
+            {
                 const uint8_t flags = logic_flags(v);
                 if (flags == SET_USER_FROM_SLOT) 
                 {
@@ -64,18 +65,22 @@ void set (Moldable& broadcaster, CommandValue& v)
                     set_user_from_value( (std::string) v.get(CommandFlags::VALUE) );
                     return;
                 }
-                // NOT BREAKING ON PURPOSE! If we're setting a user field, 
-                // the same logic will apply as with data/meta/group.
+             }
+        // NOT BREAKING ON PURPOSE! If we're setting a user field, 
+        // the same logic will apply as with data/meta/group.
         case MoguSyntax::data:
         case MoguSyntax::meta:
-        case MoguSyntax::group:{
-             bool is_list_value = v.test(CommandFlags::ARG);
-             NodeValue* arg = is_list_value ? &(v.get(CommandFlags::arg)) : nullptr;
-             Redis::NodeEditor editor(
-                 v.get(CommandFlags::OBJECT),(std::string)v.get(CommandFlags::IDENTIFIER), arg);
-             editor.setIsListValue(is_list_value);
-             editor.write(v.get(Commandflags::VALUE));
-              }break;
+        case MoguSyntax::group:
+             {
+                 bool is_list_value = v.test(CommandFlags::ARG);
+                 NodeValue arg;
+                 if (is_list_value) arg = v.get(CommandFlags::ARG);
+                 Redis::NodeEditor editor(
+                     v.get(CommandFlags::OBJECT),(std::string)v.get(CommandFlags::IDENTIFIER), &arg);
+                 editor.setIsListValue(is_list_value);
+                 editor.write(v.get(CommandFlags::VALUE));
+             }
+             break;
         case MoguSyntax::slot:{ // set application slot
             mApp;
             app->slotManager().setSlot(v.getIdentifier(), v.get(CommandFlags::VALUE));

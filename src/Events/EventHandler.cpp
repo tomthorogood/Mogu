@@ -58,7 +58,7 @@ EventHandler::EventHandler(Moldable& broadcaster)
 
 void EventHandler::processCommand(CommandValue& v)
 {
-    switch(v.getAction())
+    switch((MoguSyntax) v.get(CommandFlags::ACTION))
     {
         case MoguSyntax::set:                   
             Actions::set(broadcaster,v);

@@ -16,11 +16,11 @@ GroupManager::GroupManager (const int& grpid)
     , ADMIN_STR(std::to_string((int) MoguSyntax::moderator))
 {
     mApp;
-    std::string user = app->getUser();
-    grpdb.appendQuery("sismember groups.%d.admins %s",
-            group_id, user.c_str());
-    grpdb.appendQuery("sismember groups.%d.members %s", 
-            group_id, user.c_str());
+    int user = app->getUser();
+    grpdb.appendQuery("sismember groups.%d.admins %d",
+            group_id, user);
+    grpdb.appendQuery("sismember groups.%d.members %d", 
+            group_id, user);
 
     access_level = 
         grpdb.yieldResponse <bool>() ? AccessLevel::ADMIN_ACCESS : 

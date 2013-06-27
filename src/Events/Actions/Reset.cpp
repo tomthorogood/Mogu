@@ -5,11 +5,11 @@ namespace Actions {
 
 void reset(Moldable& broadcaster, CommandValue& v)
 {
-    if (v.getObject() == MoguSyntax::own)
+    if ((MoguSyntax) v.get(CommandFlags::OBJECT) == MoguSyntax::own)
     {
         broadcaster.reset();
     }
-    else if (v.getObject() == MoguSyntax::widget)
+    else if ((MoguSyntax) v.get(CommandFlags::OBJECT) == MoguSyntax::widget)
     {
         mApp;
         Moldable* widget = app->registeredWidget(v.getIdentifier());

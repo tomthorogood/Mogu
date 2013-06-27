@@ -57,7 +57,7 @@ std::string NodeEditor::read()
     else return __db.yieldResponse <std::string>();
 }
 
-void NodeEditor::write(NodeValue& raw_value)
+void NodeEditor::write(NodeValue raw_value)
 {
     std::string val = 
         raw_value.isString()    ?  (std::string) raw_value

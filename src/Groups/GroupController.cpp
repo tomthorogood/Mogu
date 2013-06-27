@@ -43,7 +43,7 @@ void GroupController::createGroup (const std::string& group_name,
         bool userIsAdmin=false)
 {
     mApp;
-    std::string user_id = app->getUser();
+    int user_id = app->getUser();
     // Assign an id to the new group
     Redis::ContextQuery& db = manager.getContext(Prefix::group);
     db.appendQuery( "incr groups");
@@ -52,9 +52,9 @@ void GroupController::createGroup (const std::string& group_name,
             group_id, group_name.c_str());
 
     if (userIsAdmin) 
-        db.appendQuery( "sadd groups.%d.admins %s", group_id, user_id.c_str());
+        db.appendQuery( "sadd groups.%d.admins %d", group_id, user_id);
     else
-        db.appendQuery( "sadd groups.%d.members %s", group_id, user_id.c_str());
+        db.appendQuery( "sadd groups.%d.members %d", group_id, user_id);
     db.execute();
 }
 
@@ -79,14 +79,14 @@ void GroupController::destroyGroup() {
 bool GroupController::joinGroup(const std::string& auth_code)
 {
     mApp;
-    const char* user = app->getUser().c_str();
+    int user = app->getUser();
     Redis::ContextQuery& gdb = manager.getContext(Prefix::group);
     Redis::ContextQuery& udb = manager.getContext(Prefix::user);
     gdb.appendQuery( "hget groups.%d.meta auth", group_id);
     if (auth_code != Security::decrypt(gdb.yieldResponse <std::string>()))
         return false;
-    udb.appendQuery( "sadd users.%s.groups %d", user, group_id);
-    gdb.appendQuery( "sadd groups.%d.members %s", group_id, user);
+    udb.appendQuery( "sadd users.%d.groups %d", user, group_id);
+    gdb.appendQuery( "sadd groups.%d.members %d", group_id, user);
     udb.execute();
     gdb.execute();
     return true;

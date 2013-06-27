@@ -39,19 +39,22 @@ int8_t UserManager::loginUser(
     std::string salt = db.yieldResponse <std::string>();
     salt = Security::encrypt(salt);
 
-    userKeyspace = hashTogether(
+    std::string userhash = hashTogether(
         enc_username, salt, enc_password, hash_iters);
+    Redis::ContextQuery meta(Prefix::meta);
+    meta.appendQuery(new Redis::Query("hget meta.users %s", userhash.c_str()),
+            db.REQUIRE_INT);
+    userKeyspace = meta.yieldResponse <int>();
     db.appendQuery(new Redis::Query(
-        "hexists user.%s", userKeyspace.c_str()), db.REQUIRE_INT);
+        "hexists user.%d", userKeyspace), db.REQUIRE_INT);
     if (!db.yieldResponse <bool> ())
     {
-        userKeyspace = EMPTY;
+        userKeyspace = -1;
         return 0;
     }
     else
     {
-        db.appendQuery(
-            "get user.%s", enc_username.c_str(), db.REQUIRE_STRING);
+        db.appendQuery("get user.%d", userKeyspace);
         std::string auth_salt = db.yieldResponse<std::string>();
         int retval = (auth_salt == salt) ? 1 : -1;
         return retval;
@@ -82,15 +85,18 @@ int8_t UserManager::registerUser(
 
     if (db.yieldResponse <bool>()) return 0;
     db.execute(); //store the salt
-
-    userKeyspace = createHash(enc_username, enc_password, enc_salt);
-    if (userKeyspace != EMPTY)
+    
+    std::string userhash = createHash(enc_username, enc_password, enc_salt);
+    Redis::ContextQuery meta(Prefix::meta);
+    meta.appendQuery(new Redis::Query("hget meta.users %s", userhash.c_str()), meta.REQUIRE_INT);
+    userKeyspace = meta.yieldResponse <int>();
+    if (userKeyspace != -1)
     {
         // We'll store the encrypted user salt at that location in
         // the database to let future calls know that the user was created,
         // and also allow us to verify that there hasn't been a collision error
         db.appendQuery(new Redis::Query(
-            "set user.%s %s", userKeyspace.c_str(), enc_salt.c_str()),
+            "set user.%d %s", userKeyspace, enc_salt.c_str()),
             db.IGNORE_RESPONSE);
         db.execute();
         return 1;

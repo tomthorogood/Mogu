@@ -93,3 +93,4 @@
 (   write                   ,   write           ,   access_level )
 (   read                    ,   read            ,   access_level )
 (   default                 ,   default_        ,   hashkey )
+(   meta                    ,   meta            ,   prefix )

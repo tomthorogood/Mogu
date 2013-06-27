@@ -207,63 +207,123 @@ void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
 void NodeValueParser::handleAppendCommand(
         std::string input, CommandValue& cv, Moldable* bc)
 {
-    NodeValue tmp_nv;
-    MoguSyntax tmp_syn;
-    std::string str_tok;
+    MoguSyntax token;
+    NodeValue tmpValue;
+    std::string str;
+    uint8_t flags = cv.getFlags();
+    bool preposition_found = false;
+
+    // This is used for checking unexpected input to see if it's actually
+    // supposed to be represented as an integer used as a list index.
+    bool check_if_list;
+
+    if (__tm.currentToken <MoguSyntax>() != MoguSyntax::append) return;
     __tm.next();
-    __tm.saveLocation();
-    __tm.truncateHead();
+    token = __tm.currentToken<MoguSyntax>();
 
-    tmp_syn = __tm.currentToken<MoguSyntax>();
-    if (tmp_syn == MoguSyntax::TOKEN_DELIM) {
-        str_tok = __tm.fetchStringToken();
-        // If this is a string value, it must be quoted.
-        if (!isQuotedString(str_tok)) return;
-        tmp_nv.setString(str_tok);
-        cv.set(CommandFlags::VALUE, tmp_nv);
-    }
-    else if (tmp_syn == MoguSyntax::OPER_OPPAREN) {
-        /* Spawn a new NVP for just the mathematical operation
-         * parse that information, and get rid of the operation from
-         * the token manager. Then set that information as the 
-         * CommandValue.value:
-         *
-         * "append (17-45) to own content"
-         */
-        int paren_level = 1;
-        while (paren_level > 0)
+    // Cycle through the input, testing flag combinations and setting 
+    // things where appropriate, until we're out of tokens.
+    while ((int)token != (int)TokenManager::OutOfRange::End)
+    {
+        // A string will either be a value or an identifier.
+        if (MoguSyntax::TOKEN_DELIM == token)
         {
-            __tm.next();
-            MoguSyntax tok = __tm.currentToken<MoguSyntax>();
-            if (tok == MoguSyntax::OPER_OPPAREN)
-                ++ paren_level;
-            else if (tok == MoguSyntax::OPER_CLPAREN)
-                -- paren_level;
+            str = __tm.fetchStringToken();
+            tmpValue.setString(str);
+            // If the only thing that has been set is the action, 
+            // then the token delimiter will be a quoted string.
+            if ((flags == (uint8_t)CommandFlags::ACTION) && isQuotedString(str))
+            {
+                flags = cv.set(CommandFlags::VALUE, tmpValue);
+            }
+            // If the R_OBJECT has been set, but there's no identifier,
+            // the next string encountered must be the identifier.
+            else if (cv.test(CommandFlags::R_OBJECT) && 
+                    !cv.test(CommandFlags::R_IDENTIFIER))
+            {
+                flags = cv.set(CommandFlags::R_IDENTIFIER, tmpValue);
+            }
+            // Same as above, but for standard objects.
+            else if (cv.test(CommandFlags::OBJECT) && 
+                    !cv.test(CommandFlags::IDENTIFIER))
+            {
+                flags = cv.set(CommandFlags::IDENTIFIER, tmpValue);
+            }
+            // In all other cases, this is unexpected input, but it might
+            // be a list index. 'continue' not present here because we want to
+            // keep moving through the decision tree.
+            else check_if_list = true;
         }
-        __tm.saveLocation();
-        setCommandValueObject(cv, /*not the r_object*/false);
-        __tm.deleteFromSaved(); // erase everything but the math bits.
-        __tm.end();
-        reduceExpressions(bc);
-        __tm.begin();
-        tmp_nv.setInt(__tm.currentToken <int>());
-        cv.set(CommandFlags::VALUE, tmp_nv);
+        // Object tokens will either be the OBJECT or R_OBJECT, depending
+        // on if it was reached before the preposition or not.
+        else if (isObjectToken(token))
+        {
+            if (!preposition_found && !cv.test(CommandFlags::R_OBJECT))
+            {
+                flags = cv.set(CommandFlags::R_OBJECT, token);
+            }
+            else if (preposition_found && !cv.test(CommandFlags::OBJECT))
+            {
+                flags = cv.set(CommandFlags::OBJECT, token);
+            }
+            else
+                check_if_list = true;
+                // Do not continue.
+        }
+        else if (isStateToken(token))
+        {
+            tmpValue.setInt((int) token);
+            if (!preposition_found && !cv.test(CommandFlags::R_ARG))
+            {
+                flags = cv.set(CommandFlags::R_ARG, token);
+            }
+            else if (preposition_found && !cv.test(CommandFlags::ARG))
+            {
+                flags = cv.set(CommandFlags::ARG, token);
+            }
+            else
+                check_if_list = true;
+                // Do not continue;
+        }
+        else if (isPrepositionToken(token))
+        {
+            preposition_found = true;
+        }
+        // This would be reached in the event of unexpected input.
+        // If the check_if_list flag is turned on, we're going to give the 
+        // input the benefit of the doubt and see whether or not the previous
+        // token was a list token. If so, that's what this is. Otherwise, 
+        // we're going to return without doing anything.
+        else if (check_if_list)
+        {
+            __tm.prev();
+            if (! (MoguSyntax::list == __tm.currentToken <MoguSyntax>()))
+                return;
+            __tm.next(); // Make sure to go back where we were in the input.
+            tmpValue.setInt((int) token);
+            if (!preposition_found && !cv.test(CommandFlags::R_ARG)) 
+            {
+                cv.set(CommandFlags::R_ARG, tmpValue);
+            }
+            else if (preposition_found && !cv.test(CommandFlags::ARG))
+            {
+                cv.set(CommandFlags::ARG, tmpValue);
+            }
+            // We have no clue what the hell this is. 
+            else return;
+        }
 
-    }
+        __tm.next();
+        token = __tm.currentToken <MoguSyntax>();
+    } // end while loop
 
-    else if (isObjectToken(tmp_syn)) {
-        /* Determine if we're adding an actual object or just a value;
-         * If an actual value, reduce it and set it; otherwise, set the
-         * r_obj, r_identifier, r_arg properties of cv.
-         */
-        setCommandValueObject(cv, /*this is the r_object*/true);
-        __tm.next();
-        // After the r_object, what follows must be the 'to' delimiter.
-        if (!isPrepositionToken(__tm.currentToken<MoguSyntax>())) return;
-        __tm.next();
-        setCommandValueObject(cv, false);
+    // After this, there is the possibility that we'll have a reduceable value
+    // with R_OBJ/R_ID/R_ARG. If so, we'll go ahead and reduce that now:
+    if (cv.objectIsReduceable(true))
+    {
+        cv.reduceObject(true, bc);
     }
-    else return;
+       
 }
 
 void NodeValueParser::giveInput(std::string input, CommandValue& cv,
@@ -276,11 +336,12 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
     __tm.printTokens();
 #endif
     // The first token is always an action
-    cv.setAction(__tm.currentToken<MoguSyntax>());
+    cv.set(CommandFlags::ACTION, __tm.currentToken<MoguSyntax>());
 
     if ( cv.get(CommandFlags::ACTION) == MoguSyntax::append) 
     {
         handleAppendCommand(input,cv,bc);
+        __tm.reset();
         return;
     }
 

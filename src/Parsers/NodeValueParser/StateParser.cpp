@@ -171,10 +171,9 @@ void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 void StateParser::handleUserField(const std::string& field, NodeValue& result)
 {
     mApp;
-    std::string userid = app->getUser();
+    int userid = app->getUser();
     Redis::ContextQuery policies(Prefix::policies);
     Redis::ContextQuery user(Prefix::user);
-    const char* c_user = userid.c_str();
     const char* c_field = field.c_str();
     MoguSyntax type;
     MoguSyntax token;
@@ -186,13 +185,13 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
     policies.appendQuery(
         "hget policies.%s %d", c_field, MoguSyntax::encrypted);
     
-    user.appendQuery("hexists user.%s.%s", c_field, c_user);
+    user.appendQuery("hexists user.%d.%s", userid, c_field);
    
     bool has_default = policies.yieldResponse <bool>();
     
     // Avoids any unnecessary queries to the user database.
     bool user_has_field = 
-       userid != EMPTY ? user.yieldResponse <bool>() : false;
+       userid != -1 ? user.yieldResponse <bool>() : false;
     
     // Note that default values are never encrypted. This is to provide
     // an extra layer of security, because otherwise encrypted data would
@@ -222,12 +221,12 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
         switch(type)
         {
             case MoguSyntax::string:
-                user.appendQuery( "get user.%s.%s", c_field, c_user);
+                user.appendQuery( "get user.%d.%s", userid, c_field);
                 break;
             case MoguSyntax::list:{
                 int index = __tm.currentToken <int> ();
-                user.appendQuery( "lindex user.%s.%s %d",
-                        c_field, c_user, index);
+                user.appendQuery( "lindex user.%d.%s %d",
+                       userid, c_field, index);
                 break;}
             case MoguSyntax::hash:{
                 std::string key;
@@ -236,8 +235,8 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
                     key = __tm.fetchStringToken();
                 else
                     key = std::to_string(__tm.currentToken<int>());
-                user.appendQuery("hget user.%s.%s %s",
-                    c_field, c_user, key.c_str());
+                user.appendQuery("hget user.%d.%s %s",
+                    userid, c_field, key.c_str());
                 break;}
             default: return;
         };
@@ -285,7 +284,6 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
 void StateParser::handleGroupField(const std::string& field, NodeValue& result)
 {
     mApp;
-    std::string user = app->getUser();
     int group = app->getGroup();
     GroupManager group_mgr(group);
     bool read_enabled = group_mgr.hasReadAccess(field);

@@ -54,7 +54,7 @@ void handleObjectToObject(Moldable& broadcaster, CommandValue& v)
 
     Moldable* curr_widget = app->registeredWidget( 
             (std::string) v.get(CommandFlags::IDENTIFIER));
-    if (curr_widget != nullptr) app->addChild(new_widget);
+    if (curr_widget != nullptr) curr_widget->addWidget(new_widget);
 }
 
 /* Appends a resolved value to an existing attribute. Sums two numbers. */
