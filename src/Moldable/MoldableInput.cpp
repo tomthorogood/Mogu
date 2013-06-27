@@ -22,9 +22,12 @@ void MoldableInput::__init__()
     Redis::ContextQuery db(Prefix::widgets);
 
     __input = new Wt::WLineEdit();
-
-    app->interpreter().giveInput(getParameter(db, MoguSyntax::text),v);
-    __input->setEmptyText(stripquotes(v.getString()));
+    std::string strval = getParameter(db, MoguSyntax::text);
+    if (strval != EMPTY)
+    {
+        app->interpreter().giveInput(getParameter(db, MoguSyntax::text),v);
+        __input->setEmptyText(stripquotes(v.getString()));
+    }
     addWidget(__input);
 
     std::string param = getParameter(db,MoguSyntax::validator);;

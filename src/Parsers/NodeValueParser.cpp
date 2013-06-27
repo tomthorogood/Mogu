@@ -275,7 +275,7 @@ void NodeValueParser::handleAppendCommand(
             tmpValue.setInt((int) token);
             if (!preposition_found && !cv.test(CommandFlags::R_ARG))
             {
-                flags = cv.set(CommandFlags::R_ARG, token);
+                flags = cv.set(CommandFlags::R_ARG, tmpValue);
             }
             else if (preposition_found && !cv.test(CommandFlags::ARG))
             {

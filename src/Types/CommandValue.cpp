@@ -180,7 +180,7 @@ std::string CommandValue::stitchState(bool is_r_object)
     if (test(arg_flag))
     {
         str += " ";
-        if (arg.isString()) str += (std::string) local_arg;
+        if (local_arg.isString()) str += (std::string) local_arg;
         else str += std::to_string( (int) local_arg);
     }
     return str;
