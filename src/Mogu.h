@@ -41,7 +41,7 @@ class Mogu: public Wt::WApplication
 
 public:
     Mogu(const Wt::WEnvironment& env);
-    virtual ~Mogu();
+    ~Mogu();
     
     /*!\brief Adds a widget into the widget registry.
      *

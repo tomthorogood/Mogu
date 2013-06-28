@@ -1,0 +1,24 @@
+widget example
+    type    :   container
+    children
+        :input
+        :submit
+    end children
+end widget
+
+widget example:input
+    type    :   input
+end widget
+
+widget example:submit
+    type    :   text
+    text    :   "Click to Submit"
+    
+    events
+        when clicked {
+            append widget example:input text to data examples
+            remove widget example:input
+            set widget example:submit text to "Thanks! We'll keep you updated."
+        }
+    end events
+end widget

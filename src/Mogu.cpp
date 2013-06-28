@@ -69,7 +69,8 @@ Mogu::~Mogu()
     auto iterator = widgetRegister.begin();
     while (iterator != widgetRegister.end())
     {
-        iterator->second->shun();
+        if (iterator->second != nullptr)
+            iterator->second->shun();
         ++iterator;
     }
     delete contextMap_;

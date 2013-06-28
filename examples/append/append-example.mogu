@@ -1,0 +1,22 @@
+widget example
+    type    :   container
+    children
+        :interactive
+    end children
+end widget
+
+widget example:interactive
+    type    :   text
+    text    :   "Click Me!"
+
+    events
+        when clicked {
+            append widget example:appended to widget example
+        }
+    end events
+end widget
+
+widget example:appended
+    type    :   text
+    text    :   "I've been appended!"
+end widget
