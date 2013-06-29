@@ -47,20 +47,12 @@ popd
 rm -rf %s
 """ % (REDIS_LINK, "%s.tar.gz" % REDIS_FOLDER, REDIS_FOLDER, REDIS_FOLDER)
 )
-ac.if_fail("wt", ac.ALL, """
-wget %s
-tar xvf %s
-pushd %s
-mkdir build
-pushd build
-cmake ../
-make
-sudo make install 
-popd
-popd
-rm -rf %s
-""" % (WT_LINK, "%s.tar.gz" % WT_FOLDER, WT_FOLDER, WT_FOLDER
-))
+
+wt_alternative = None
+with open("build_wt.sh") as f:
+    wt_alternative = f.read()
+
+ac.if_fail("wt", ac.ALL, wt_alternative)
 ac.if_fail("pango-1.0", "debian", "sudo apt-get install libpango1.0-dev")
 ac.if_fail("ssl", "debian", "sudo apt-get install libssl-dev")
 ac.if_fail("hiredis", ac.ALL, """
