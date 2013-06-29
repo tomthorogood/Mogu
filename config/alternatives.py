@@ -23,23 +23,23 @@ popd
 rm -rf TurnLeftLib
 """)
 ac.if_fail("boost_system", "debian",
-    "sudo apt-get install libboost-system%s-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-system%s-dev --yes" % BOOST_VERSION)
 ac.if_fail("boost_signals", "debian", 
-    "sudo apt-get install libboost-signals%s-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-signals%s-dev --yes" % BOOST_VERSION)
 ac.if_fail("boost_random", "debian",
-    "sudo apt-get install libboost-random%s-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-random%s-dev --yes" % BOOST_VERSION)
 ac.if_fail("boost_program_options", "debian",
-    "sudo apt-get install libboost-program-options%s-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-program-options%s-dev --yes" % BOOST_VERSION)
 ac.if_fail("boost_filesystem", "debian",
-    "sudo apt-get install libboost-filesystem%s-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-filesystem%s-dev --yes" % BOOST_VERSION)
 ac.if_fail("boost_thread", "debian",
-    "sudo apt-get install libboost-thread%s-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-thread%s-dev --yes" % BOOST_VERSION)
 ac.if_fail("boost_regex", "debian",
-    "sudo apt-get install libboost-regex%s-dev" % BOOST_VERSION)
-ac.if_fail("cmake", ("debian","ubuntu"), "sudo apt-get install cmake")
-ac.if_fail("cmake", ("centos","redhat"), "sudo yum install cmake")
-ac.if_fail("fontconfig", "debian", "sudo apt-get install libfontconfig-dev")
-ac.if_fail("glib-2.0", "debian", "sudo apt-get install libglib-2.0-dev")
+    "sudo apt-get install libboost-regex%s-dev --yes" % BOOST_VERSION)
+ac.if_fail("cmake", ("debian","ubuntu"), "sudo apt-get install cmake --yes")
+ac.if_fail("cmake", ("centos","redhat"), "sudo yum install cmake --yes")
+ac.if_fail("fontconfig", "debian", "sudo apt-get install libfontconfig-dev --yes")
+ac.if_fail("glib-2.0", "debian", "sudo apt-get install libglib2.0-dev --yes")
 ac.if_fail("redis-cli", ac.ALL, """
 wget %s
 tar xvf %s
@@ -55,8 +55,8 @@ with open("build_wt.sh") as f:
     wt_alternative = f.read()
 
 ac.if_fail("wt", ac.ALL, wt_alternative)
-ac.if_fail("pango-1.0", "debian", "sudo apt-get install libpango1.0-dev")
-ac.if_fail("ssl", "debian", "sudo apt-get install libssl-dev")
+ac.if_fail("pango-1.0", "debian", "sudo apt-get install libpango1.0-dev --yes")
+ac.if_fail("ssl", "debian", "sudo apt-get install libssl-dev --yes")
 ac.if_fail("hiredis", ac.ALL, """
 git clone git://github.com/redis/hiredis.git
 pushd hiredis
