@@ -34,6 +34,8 @@ ac.if_fail("boost_filesystem", "debian",
     "sudo apt-get install libboost-filesystem%s-dev" % BOOST_VERSION)
 ac.if_fail("boost_thread", "debian",
     "sudo apt-get install libboost-thread%s-dev" % BOOST_VERSION)
+ac.if_fail("boost_regex", "debian",
+    "sudo apt-get install libboost-regex%s-dev" % BOOST_VERSION)
 ac.if_fail("cmake", ("debian","ubuntu"), "sudo apt-get install cmake")
 ac.if_fail("cmake", ("centos","redhat"), "sudo yum install cmake")
 ac.if_fail("fontconfig", "debian", "sudo apt-get install libfontconfig-dev")
