@@ -1,6 +1,6 @@
 import ac
 
-BOOST_VERSION=1.49
+BOOST_VERSION="1.49"
 REDIS_VERSION="2.6.13"
 WT_VERSION="3.3.0"
 
@@ -23,17 +23,17 @@ popd
 rm -rf TurnLeftLib
 """)
 ac.if_fail("boost_system", "debian",
-    "sudo apt-get install libboost-system%f-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-system%s-dev" % BOOST_VERSION)
 ac.if_fail("boost_signals", "debian", 
-    "sudo apt-get install libboost-signals%f-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-signals%s-dev" % BOOST_VERSION)
 ac.if_fail("boost_random", "debian",
-    "sudo apt-get install libboost-random%f-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-random%s-dev" % BOOST_VERSION)
 ac.if_fail("boost_program_options", "debian",
-    "sudo apt-get install libboost-program-options%f-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-program-options%s-dev" % BOOST_VERSION)
 ac.if_fail("boost_filesystem", "debian",
-    "sudo apt-get install libboost-filesystem%f-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-filesystem%s-dev" % BOOST_VERSION)
 ac.if_fail("boost_thread", "debian",
-    "sudo apt-get install libboost-thread%f-dev" % BOOST_VERSION)
+    "sudo apt-get install libboost-thread%s-dev" % BOOST_VERSION)
 ac.if_fail("cmake", ("debian","ubuntu"), "sudo apt-get install cmake")
 ac.if_fail("cmake", ("centos","redhat"), "sudo yum install cmake")
 ac.if_fail("fontconfig", "debian", "sudo apt-get install libfontconfig-dev")
