@@ -4,15 +4,12 @@
 namespace Redis {
 
 NodeEditor::NodeEditor(
-        MoguSyntax m_prefix
-        , const std::string& node_name
-        , NodeValue* arg)
-    :
-         __db(__prefix)
-        , __policies(Prefix::policies)
-        , __arg(arg)
+    Prefix p_prefix
+    , const std::string& node_name
+    , NodeValue* arg)
+    : __policies(Prefix::policies) , __arg(arg)
 {
-    __prefix = syntax_to_prefix.at(m_prefix);
+    __db.setPrefix(__prefix);
     __node = node_name.c_str();
     encrypted = fieldHasEncryption();
     __id = getObjectId();
@@ -21,6 +18,38 @@ NodeEditor::NodeEditor(
     __type = getNodeType();
     setKey();
     id_required = !(__prefix == Prefix::data || __prefix == Prefix::meta);
+}
+
+
+NodeEditor::NodeEditor(
+        MoguSyntax m_prefix
+        , const std::string& node_name
+        , NodeValue* arg)
+    : NodeEditor(syntax_to_prefix.at(m_prefix), node_name, arg)
+{
+}
+
+void NodeEditor::readAll(std::map <std::string,std::string>& iomap)
+{
+    if (id_required)
+        __db.appendQuery("hgetall %s.%d.%s", c_prefix, __id, __node);
+    else
+        __db.appendQuery("hgetall %s.%s", c_prefix, __node);
+
+    std::vector <std::string> ovec =
+        __db.yieldResponse <std::vector <std::string>>();
+
+    // Since the output from hiredis will be in the form of
+    //
+    // { key0, val0, key1, val1, ... , keyn ,valn }
+    // we can simply iterate through the vector, assigning responses as needed 
+    // to the map.
+    for (size_t i =0; i < ovec.size() ; ++i)
+    {
+        std::string key = ovec[i++];
+        std::string val = ovec[i];
+        iomap[key] = val;
+    }
 }
 
 std::string NodeEditor::read()
@@ -55,6 +84,21 @@ std::string NodeEditor::read()
 
     if (encrypted) return Security::decrypt(__db.yieldResponse <std::string>());
     else return __db.yieldResponse <std::string>();
+}
+
+void NodeEditor::writeAll(std::map <std::string, std::string>& source)
+{
+    NodeValue nv;
+    __type = MoguSyntax::hash;
+    for (auto iter = source.begin(); iter != source.end(); ++iter)
+    {
+        std::string key = iter->first;
+        std::string val = iter->second;
+        nv.setString(key);
+        *__arg = nv;
+        nv.setString(val);
+        write(nv);
+    }
 }
 
 void NodeEditor::write(NodeValue raw_value)

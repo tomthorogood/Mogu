@@ -9,6 +9,11 @@ public:
         MoguSyntax m_prefix
         , const std::string& node_name
         , NodeValue* arg = nullptr);
+
+    NodeEditor(
+        Prefix p_prefix
+        , const std::string& node_name
+        , NodeValue* arg = nullptr);
     
     inline bool fieldHasEncryption()
     {
@@ -28,6 +33,8 @@ public:
     }
     inline int getObjectId();
     inline MoguSyntax getType() const { return __type;}
+    void readAll (std::map <std::string,std::string>&);
+    void writeAll (std::map <std::string, std::string>&);
 
     std::string read();
     void write (NodeValue);
