@@ -93,6 +93,20 @@ void Moldable::load()
     Wt::WContainerWidget::load();
 }
 
+void Moldable::setPrefix(Redis::ContextQuery& db)
+{
+    getParameter(db, MoguSyntax::template_);
+    std::string tpl = db.yieldResponse <std::string>();
+    if (tpl == EMPTY) return;
+    Redis::NodeMerger merger(node_name);
+    std::map <std::string, std::string> iomap;
+    merger.addPrefix(Prefix::widgets, 1);
+    merger.addPrefix(Prefix::template_, 2);
+    merger.merge(iomap);
+    merger.writeTemporary(iomap);
+    db.setPrefix(Prefix::tmp);
+}
+
 std::string Moldable::getParameter(Redis::ContextQuery& db, MoguSyntax param)
 {
     db.appendQuery( "hget widgets.%s %d",__node.c_str(), (int) param);

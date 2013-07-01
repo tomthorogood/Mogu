@@ -58,6 +58,7 @@ class Moldable :
 
     // Whether or not the base application allows this widget to talk to it.
     bool shunned = false;
+    bool is_templated;
 
 protected:
     bool force_reload;

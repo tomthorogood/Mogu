@@ -9,18 +9,22 @@ class NodeMerger {
 public:
     NodeMerger(std::string);
 
-    inline void addPrefix(Prefix prefix, size_t priority)
+    inline void addPrefix(Prefix prefix, const std::string& name, size_t priority)
     {
-        std::pair <Prefix,size_t> pr =
-            std::make_pair(prefix,priority);
-        prefixes.push_back(pr);
+        NodePairing pairing = std::make_pair(prefix, name);
+        NodePriority priority_pr = std::make_pair(pairing, priority);
+        prefixes.push_back(priority_pr);
     }
 
     std::map <std::string,std::string>  merge();
     void writeTemporary (std::map <std::string, std::string>);
 
 private:
-    std::vector <std::pair <Prefix, uint8_t>> prefixes;
+    typedef std::pair <Prefix, std::string> NodePairing;
+    typedef std::pair <NodePairing, size_t> NodePriority;
+    typedef std::vector <NodePriority> NodeVector;
+
+    NodeVector prefixes;
     
     std::string node_name;
     

@@ -12,7 +12,7 @@ std::map <std::string, std::string> NodeMerger::merge()
     // simply be overwritten by higher priority entries.
     for (auto pr : prefixes)
     {
-        NodeEditor node(pr.first, node_name);
+        NodeEditor node(pr.first.first, pr.first.second);
         node.readAll(ret_map);
     }
 
