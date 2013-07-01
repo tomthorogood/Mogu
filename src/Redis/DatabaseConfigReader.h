@@ -41,7 +41,9 @@ const std::unordered_map <Prefix, std::string, IntHash<Prefix>> prefixMap = {
     { Prefix::group,        "group"},
     { Prefix::templates,    "templates"},
     { Prefix::validators,   "validators"},
-    { Prefix::policies,     "policies"}
+    { Prefix::policies,     "policies"},
+    { Prefix::meta,         "meta"},
+    { Prefix::temp,         "temp"}
 };
 
 const std::unordered_map <MoguSyntax, Prefix, IntHash<MoguSyntax>> syntax_to_prefix = {
