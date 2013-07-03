@@ -7,26 +7,62 @@ NodeEditor::NodeEditor(
     Prefix p_prefix
     , const std::string& node_name
     , NodeValue* arg)
-    : __policies(Prefix::policies) , __arg(arg)
+    : __policies(Prefix::policies) , __arg(arg), __list_index(0)
 {
-    __db.setPrefix(__prefix);
-    __node = node_name.c_str();
+    setPrefix(p_prefix);
+    setNodeName(node_name);
     encrypted = fieldHasEncryption();
     __id = getObjectId();
-    std::string s_prefix = prefixMap.at(__prefix);
-    c_prefix = s_prefix.c_str();
     __type = getNodeType();
     setKey();
-    id_required = !(__prefix == Prefix::data || __prefix == Prefix::meta);
+    __db.clear();
 }
 
+NodeEditor::NodeEditor(
+    Prefix p_prefix
+    , const std::string& node_name
+    , MoguSyntax node_type
+    )
+:   __policies(Prefix::policies) , __arg(nullptr), __list_index(0)
+{
+    setPrefix(p_prefix);
+    setNodeName(node_name);
+    encrypted = fieldHasEncryption();
+    __id = getObjectId();
+    __type = node_type;
+    setKey();
+    __db.clear();
+}
 
 NodeEditor::NodeEditor(
         MoguSyntax m_prefix
         , const std::string& node_name
         , NodeValue* arg)
-    : NodeEditor(syntax_to_prefix.at(m_prefix), node_name, arg)
+    :
+        NodeEditor(syntax_to_prefix.at(m_prefix), node_name, arg)
 {
+}
+
+void NodeEditor::setArg(NodeValue* arg)
+{
+    key_cached = false;
+    __arg = arg;
+    setKey();
+}
+
+void NodeEditor::setNodeName(const std::string& node)
+{
+    __node = node.c_str();
+}
+
+void NodeEditor::setPrefix(Prefix prefix)
+{
+    __prefix = prefix;
+    __db.setPrefix(__prefix);
+    std::string s_prefix = prefixMap.at(__prefix);
+    c_prefix = s_prefix.c_str();
+    id_required =
+        (__prefix == Prefix::user || __prefix == Prefix::group);
 }
 
 void NodeEditor::readAll(std::map <std::string,std::string>& iomap)
@@ -67,7 +103,7 @@ std::string NodeEditor::read()
                 __db.appendQuery(
                     "hget %s.%d.%s %s", c_prefix, __id, __node, __hashkey);
             else
-                __db.appendQuery("hget %s.%s. %s", c_prefix, __node, __hashkey);
+                __db.appendQuery("hget %s.%s %s", c_prefix, __node, __hashkey);
             break;
         case MoguSyntax::list:
             if (!list_value) return EMPTY;
@@ -88,16 +124,19 @@ std::string NodeEditor::read()
 
 void NodeEditor::writeAll(std::map <std::string, std::string>& source)
 {
-    NodeValue nv;
+    NodeValue key_nv;
+    __arg = &key_nv;
+    NodeValue val_nv;
     __type = MoguSyntax::hash;
     for (auto iter = source.begin(); iter != source.end(); ++iter)
     {
         std::string key = iter->first;
         std::string val = iter->second;
-        nv.setString(key);
-        *__arg = nv;
-        nv.setString(val);
-        write(nv);
+        key_nv.setString(key);
+        key_cached = false;
+        setKey();
+        val_nv.setString(val);
+        write(val_nv);
     }
 }
 
@@ -106,7 +145,7 @@ void NodeEditor::write(NodeValue raw_value)
     std::string val = 
         raw_value.isString()    ?  (std::string) raw_value
         : raw_value.isInt()     ?  std::to_string ((int) raw_value)
-            : std::to_string((float) raw_value);
+        : std::to_string((float) raw_value);
 
     if (encrypted)
         val = Security::encrypt(val);
@@ -165,7 +204,6 @@ void NodeEditor::remove(std::string value)
                 __db.appendQuery("hdel %s.%s %s", c_prefix, __node, __hashkey);
                 break;
             }
-
             // No break on purpose! If the node's a hash, 'list_value' will be
             // false, meaning the next two tests will fail, and we'll continue to
             // standard key deletion.
@@ -194,7 +232,6 @@ void NodeEditor::remove(std::string value)
                 __db.appendQuery("lrem %s.%s 1 %s", c_prefix, __node, c_value);
                 break;
             }
-
             // No break on purpose! All keys are deleted the same way.
         case MoguSyntax::string:
             if (id_required)
@@ -217,6 +254,7 @@ inline int NodeEditor::getObjectId()
             return app->getUser();
         default:return -1;
     };
+    return -1;
 }
 
 }//namespace NodeEditor

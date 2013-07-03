@@ -11,8 +11,8 @@
 #include "TriggerMap.h"
 #include <Types/CommandValue.h>
 
-EventHandler::EventHandler(Moldable& broadcaster)
-: triggerMap(broadcaster.getNumTriggers(), broadcaster.getNode()),
+EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node)
+: triggerMap(broadcaster.getNumTriggers(), prefix, node),
   broadcaster(broadcaster)
 {
     for (MoguSyntax trigger : triggerMap.getTriggers())

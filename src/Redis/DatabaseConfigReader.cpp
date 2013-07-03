@@ -17,32 +17,36 @@ Prefix matchPrefix(int& PREFIX_MASK, const std::string& prefix)
         PREFIX_MASK |= (int) Prefix::widgets;
         return Prefix::widgets;
     }
-    if (prefix.find("data") != std::string::npos) {
+    else if (prefix.find("data") != std::string::npos) {
         PREFIX_MASK |= (int) Prefix::data;
         return Prefix::data;
     }
-    if (prefix.find("user") != std::string::npos) {
+    else if (prefix.find("user") != std::string::npos) {
         PREFIX_MASK |= (int) Prefix::user;
         return Prefix::user;
     }
-    if (prefix.find("group") != std::string::npos)
+    else if (prefix.find("group") != std::string::npos)
     {
         PREFIX_MASK |= (int) Prefix::group;
         return Prefix::group;
     }
-    if (prefix.find("templates") != std::string::npos)
+    else if (prefix.find("templates") != std::string::npos)
     {
         PREFIX_MASK |= (int) Prefix::templates;
         return Prefix::templates;
     }
-    if (prefix.find("validators") != std::string::npos)
+    else if (prefix.find("validators") != std::string::npos)
     {
         PREFIX_MASK |= (int) Prefix::validators;
         return Prefix::validators;
     }
-    if (prefix.find("policies") != std::string::npos) {
+    else if (prefix.find("policies") != std::string::npos) {
         PREFIX_MASK |= (int) Prefix::policies;
         return Prefix::policies;
+    }
+    else if (prefix.find("temp") != std::string::npos) {
+        PREFIX_MASK |= (int) Prefix::temp;
+        return Prefix::temp;
     }
     else {
         PREFIX_MASK |= (int) Prefix::meta;

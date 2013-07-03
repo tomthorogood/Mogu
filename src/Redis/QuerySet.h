@@ -109,7 +109,7 @@ private:
     inline void assignArray() {
         bool cleared = false; // only clear once per new array
         int num_elements = reply->elements;
-
+        if (num_elements ==0) return;
         int first_element_type = reply->element[0]->type;
 
         for (int e = 0; e < num_elements; ++e) {

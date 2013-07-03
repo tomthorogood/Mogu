@@ -16,6 +16,18 @@
 
 class Moldable;
 
+enum class MoldableFlags
+{
+    is_templated        =1
+    , has_children      =2
+    , template_children =4
+    , has_events        =8
+    , template_events   =16
+    , is_cached         =32
+    , allow_reload      =64
+    , shun              =128
+};
+
 /* Simply an interface that can be implemented to expose widgets to 
  * manipulation by external forces.
  */
@@ -50,29 +62,29 @@ class Moldable :
     Wt::Signal <> __hidden_changed;
     Wt::Signal <> __index_changed;
 
-
-    size_t num_triggers;
     MoguSyntax __widget_type   = MoguSyntax::__NONE__;
 
-    bool updateStackIndex(size_t  index);
+    size_t num_triggers;
 
-    // Whether or not the base application allows this widget to talk to it.
-    bool shunned = false;
-    bool is_templated;
+    bool updateStackIndex(size_t  index);
+    void setFlags(Redis::NodeEditor&);
 
 protected:
-    bool force_reload;
+    uint8_t __flags     = 0;
     std::string __node;
-    const char* template_name = EMPTY;
+    std::string __template_name;
 
     virtual void __init__();
-    std::string getParameter(Redis::ContextQuery&,MoguSyntax);
+    std::string getParameter(Redis::NodeEditor&,MoguSyntax);
+
+    void initializeNodeEditor(Redis::NodeEditor& node);
 
 public:
 
     Moldable(const std::string& node, const MoguSyntax widget_type);
 
-    operator std::string() {
+    operator std::string()
+    {
         std::string s_type = std::to_string((int)__widget_type);
         std::string s_num_children = std::to_string(children().size());
         return "Widget "
@@ -150,17 +162,20 @@ public:
 
     virtual void inline reload()
     {
-        force_reload = true;
+        __flags |= (uint8_t)MoldableFlags::allow_reload;
         clear();
         __init__();
         load();
-        force_reload = false;
+        __flags -= (uint8_t)MoldableFlags::allow_reload;
     }
 
     inline virtual void reset()     {__init__();}
+    void setFlag(MoldableFlags);
+    void unsetFlag(MoldableFlags);
+    bool testFlag(MoldableFlags);
+    inline void shun() { setFlag(MoldableFlags::shun); }
+    inline void unshun() { unsetFlag(MoldableFlags::shun); }
 
-    inline void shun() { shunned = true;}
-    inline void unshun() { shunned = false;}
 };
 
 

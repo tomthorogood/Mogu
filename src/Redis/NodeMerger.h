@@ -7,7 +7,7 @@ namespace Redis {
 
 class NodeMerger {
 public:
-    NodeMerger(std::string);
+    NodeMerger(const std::string&);
 
     inline void addPrefix(Prefix prefix, const std::string& name, size_t priority)
     {
@@ -29,13 +29,6 @@ private:
     std::string node_name;
     
     MoguSyntax node_type        = MoguSyntax::__NONE__;
-
-    // Sorts in descending order.
-    inline bool sort_assist(
-        std::pair <Prefix,size_t> alpha, std::pair <Prefix,size_t> beta)
-    {
-        return alpha.second > beta.second;
-    }
 };
 
 }//namespace Redis

@@ -28,11 +28,11 @@ public:
     inline virtual void reload()
     {
         clear();
-        force_reload = true;
+        setFlag(MoldableFlags::allow_reload);
         Moldable::__init__();
         __init__();
         load();
-        force_reload = false;
+        unsetFlag(MoldableFlags::allow_reload);
     }
 };
 

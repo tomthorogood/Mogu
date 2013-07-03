@@ -16,7 +16,7 @@
 class TriggerMap {
 public:
     TriggerMap();
-    TriggerMap(const int& num_triggers,const std::string& widgetname);
+    TriggerMap(const int& num_triggers,Prefix prefix, const std::string& node_name);
     inline void addEvent(const MoguSyntax trigger, const std::string& command)
     {
         __map[trigger].push(command);

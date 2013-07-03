@@ -27,6 +27,7 @@ class ContextQuery;
 class StorageRequeset;
 class StoragePolicyLookup;
 class SessionValueRequest;
+class NodeEditor;
 }
 
 namespace Hash {

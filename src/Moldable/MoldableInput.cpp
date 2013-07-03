@@ -8,6 +8,7 @@
 #include "MoldableInput.h"
 #include <Validators/Validators.h>
 #include <Mogu.h>
+#include <Redis/NodeEditor.h>
 
 MoldableInput::MoldableInput (const std::string& node)
 : Moldable(node, MoguSyntax::input)
@@ -19,18 +20,20 @@ void MoldableInput::__init__()
 {
     mApp;
     NodeValue v;
-    Redis::ContextQuery db(Prefix::widgets);
+
+    Redis::NodeEditor node(Prefix::widgets, __node);
+    initializeNodeEditor(node);
 
     __input = new Wt::WLineEdit();
-    std::string strval = getParameter(db, MoguSyntax::text);
+    std::string strval = getParameter(node, MoguSyntax::text);
     if (strval != EMPTY)
     {
-        app->interpreter().giveInput(getParameter(db, MoguSyntax::text),v);
+        app->interpreter().giveInput(getParameter(node, MoguSyntax::text),v);
         __input->setEmptyText(stripquotes(v.getString()));
     }
     addWidget(__input);
 
-    std::string param = getParameter(db,MoguSyntax::validator);;
+    std::string param = getParameter(node,MoguSyntax::validator);;
     if (param != EMPTY)
     {
         app->interpreter().giveInput(param,v);

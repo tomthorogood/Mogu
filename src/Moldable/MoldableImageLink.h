@@ -23,9 +23,9 @@ public:
         Moldable::__init__();
         MoldableLink::__init__();
         __init__();
-        force_reload = true;
+        testFlag(MoldableFlags::allow_reload);;
         load();
-        force_reload = false;
+        testFlag(MoldableFlags::allow_reload);;
     }
 };
 

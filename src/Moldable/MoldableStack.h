@@ -53,13 +53,13 @@ public:
 
     inline virtual void reload()
     {
-        force_reload = true;
+        testFlag(MoldableFlags::allow_reload);;
         clear();
         Moldable::__init__();
         MoldableAbstractParent::__init__();
         __init__();
         load();
-        force_reload = false;
+        testFlag(MoldableFlags::allow_reload);;
     }
 
     inline virtual void __init__()

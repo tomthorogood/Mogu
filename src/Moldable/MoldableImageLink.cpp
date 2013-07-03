@@ -9,6 +9,7 @@
 #include <Mogu.h>
 #include <Wt/WAnchor>
 #include <Wt/WImage>
+#include <Redis/NodeEditor.h>
 
 MoldableImageLink::MoldableImageLink(const std::string& node)
 : MoldableLink(node)
@@ -18,11 +19,12 @@ MoldableImageLink::MoldableImageLink(const std::string& node)
 
 void MoldableImageLink::__init__()
 {
-    Redis::ContextQuery db(Prefix::widgets);
+    Redis::NodeEditor node(Prefix::widgets, __node);
+    initializeNodeEditor(node);
     mApp;
     NodeValue v;
     app->interpreter().giveInput(
-        getParameter(db,MoguSyntax::source),v);
+        getParameter(node,MoguSyntax::source),v);
     std::string src = stripquotes(v.getString());
     __image = new Wt::WImage(src, moldableValue());
     __link->setImage(__image);

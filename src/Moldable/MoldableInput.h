@@ -44,7 +44,7 @@ public:
         Moldable::__init__();
         __init__();
         load();
-        force_reload = false;
+        testFlag(MoldableFlags::allow_reload);;
     }
 };
 

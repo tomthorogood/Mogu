@@ -16,7 +16,7 @@
 class EventHandler : public Wt::WObject
 {
 public:
-    EventHandler(Moldable& broadcaster);
+    EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node);
 
 private:
     TriggerMap triggerMap;

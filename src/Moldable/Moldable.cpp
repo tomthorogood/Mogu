@@ -13,6 +13,9 @@
 #include <Wt/WStackedWidget>
 #include <Events/EventHandler.h>
 #include <Wt/WAnchor>
+#include <Redis/NodeEditor.h>
+#include <Redis/ContextQuery.h>
+#include <Redis/NodeMerger.h>
 
 Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
 :
@@ -22,8 +25,8 @@ Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
     ,__loaded(this)
     ,__hidden_changed(this)
     ,__index_changed(this)
-    ,__node(node)
     ,__widget_type(widget_type)
+    ,__node(node)
 {
 #ifdef DEBUG
     static size_t num_constructed = 0;
@@ -36,7 +39,7 @@ Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
 Moldable::~Moldable()
 {
     mApp; 
-    if (!shunned)
+    if (!testFlag(MoldableFlags::shun))
         app->deregisterWidget(__node);
     if (__bindery != nullptr) delete __bindery;
 }
@@ -53,10 +56,11 @@ void Moldable::__init__ ()
 
     std::string param;
     NodeValue v;
-    Redis::ContextQuery db(Prefix::widgets);
+    Redis::NodeEditor node(Prefix::widgets, __node);
+    setFlags(node);
 
     // Any widget type can have style or tooltip declarations
-    param = getParameter(db, MoguSyntax::style);
+    param = getParameter(node, MoguSyntax::style);
     if (param != EMPTY) {
         // input will either be a string literal or a resolvable Mogu command
         // pointing to a string literal (eventually)
@@ -64,7 +68,7 @@ void Moldable::__init__ ()
         setAttribute(MoguSyntax::style, v);
     }
 
-    param = getParameter(db, MoguSyntax::tooltip);
+    param = getParameter(node, MoguSyntax::tooltip);
     if (param != EMPTY)
     {
         // input will either be a string literal or a resolvable Mogu command
@@ -81,37 +85,117 @@ void Moldable::__init__ ()
     // The widgets.[id].events key will be a list of the event triggers.
     // Therefore, the llen query will show how many triggers we have for
     // this widget.
-    db.appendQuery("llen widgets.%s.events", __node.c_str());
-    num_triggers = (size_t) db.yieldResponse <int>();
+   
+    Prefix event_prefix =
+        testFlag(MoldableFlags::template_events) ? 
+        Prefix::templates : Prefix::widgets;
+    std::string event_node =
+        testFlag(MoldableFlags::template_events) ?
+        __template_name :  __node;
+    std::string s_prefix = prefixMap.at(event_prefix);
+    Redis::ContextQuery events(event_prefix);
+    events.appendQuery(
+        "llen %s.%s.events", s_prefix.c_str(), event_node.c_str());
+    num_triggers = (size_t) events.yieldResponse <int>();
+
     if (num_triggers > 0)
-        __bindery = new EventHandler(*this);
+        __bindery = new EventHandler(*this, event_prefix, event_node);
 }
 
 void Moldable::load()
 {
-    if (loaded() && !force_reload) return;
+    if (loaded() && !testFlag(MoldableFlags::allow_reload)) return;
     Wt::WContainerWidget::load();
 }
 
-void Moldable::setPrefix(Redis::ContextQuery& db)
+void Moldable::setFlag(MoldableFlags flag)
 {
-    getParameter(db, MoguSyntax::template_);
-    std::string tpl = db.yieldResponse <std::string>();
-    if (tpl == EMPTY) return;
-    Redis::NodeMerger merger(node_name);
-    std::map <std::string, std::string> iomap;
-    merger.addPrefix(Prefix::widgets, 1);
-    merger.addPrefix(Prefix::template_, 2);
-    merger.merge(iomap);
-    merger.writeTemporary(iomap);
-    db.setPrefix(Prefix::tmp);
+    __flags |= (uint8_t) flag;
 }
 
-std::string Moldable::getParameter(Redis::ContextQuery& db, MoguSyntax param)
+bool Moldable::testFlag(MoldableFlags flag)
 {
-    db.appendQuery( "hget widgets.%s %d",__node.c_str(), (int) param);
-    db.clear();
-    return db.yieldResponse <std::string>();
+    return __flags & (uint8_t) flag;
+}
+
+void Moldable::unsetFlag(MoldableFlags flag)
+{
+    if (testFlag(flag))
+        __flags -= (uint8_t) flag;
+}
+
+void Moldable::initializeNodeEditor(Redis::NodeEditor& node)
+{
+    if (testFlag(MoldableFlags::is_templated))
+        node.setPrefix(Prefix::temp);
+}
+
+
+void Moldable::setFlags(Redis::NodeEditor& node)
+{
+    const char* c_node = __node.c_str();
+    std::string tpl = getParameter(node, MoguSyntax::template_);
+    Redis::ContextQuery& db = node.getContext();
+
+    if (tpl != EMPTY)
+        __flags |= (uint8_t) MoldableFlags::is_templated;
+
+    /* Set flags whether or not this widget has children or events */
+    db.appendQuery("exists widgets.%s.events", c_node);
+    db.appendQuery("exists widgets.%s.children", c_node);
+    if (db.yieldResponse <bool>())
+        setFlag(MoldableFlags::has_events);
+    if (db.yieldResponse <bool>())
+        setFlag(MoldableFlags::has_children);
+
+    /* If there's no template, we're done. */
+    if (tpl == EMPTY) return;
+
+    __template_name = tpl;
+   
+    Redis::ContextQuery tpldb(Prefix::templates);
+
+    /* If the children and event flags aren't already set, check to see
+     * whether the template has those.
+     */
+    if (! (__flags & (uint8_t) MoldableFlags::has_events) )
+    {
+        tpldb.appendQuery("exists templates.%s.events", tpl.c_str());
+        if (tpldb.yieldResponse <bool>())
+            setFlag(MoldableFlags::template_events);
+    }
+    if (! (__flags & (uint8_t) MoldableFlags::has_children))
+    {
+        tpldb.appendQuery("exists templates.%s.children", tpl.c_str());
+        if (tpldb.yieldResponse <bool>())
+            setFlag(MoldableFlags::template_children);
+    }
+
+    /* Check to see whether the template has already been cached.*/
+    Redis::ContextQuery temp(Prefix::temp);
+    temp.appendQuery("exists temp.%s", __node.c_str());
+
+    if (temp.yieldResponse <bool>()) 
+    {
+        setFlag(MoldableFlags::is_cached);
+        return;
+    }
+
+
+    Redis::NodeMerger merger(__node);
+    merger.addPrefix(Prefix::widgets, __node, 1);
+    merger.addPrefix(Prefix::templates, __template_name, 2);
+    std::map <std::string, std::string> iomap = merger.merge();
+    merger.writeTemporary(iomap);
+    node.setPrefix(Prefix::temp);
+    setFlag(MoldableFlags::is_cached);
+}
+
+std::string Moldable::getParameter(Redis::NodeEditor& node, MoguSyntax param)
+{
+    NodeValue nv(std::to_string((int) param));
+    node.setArg(&nv);
+    return node.read();
 }
 
 void Moldable::getAttribute(MoguSyntax state, NodeValue& val)

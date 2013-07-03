@@ -9,12 +9,15 @@
 #include <Redis/ContextQuery.h>
 TriggerMap::TriggerMap() : __map() {}
 
-TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
+TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string& node)
 :__map()
 {
-    Redis::ContextQuery db(Prefix::widgets);
-    const char* c_node = widget.c_str();
-    db.appendQuery("lrange widgets.%s.events 0 %d", c_node, num_triggers);
+    Redis::ContextQuery db(prefix);
+    std::string s_prefix = prefixMap.at(prefix);
+    const char* c_prefix = s_prefix.c_str();
+
+    const char* c_node = node.c_str();
+    db.appendQuery("lrange %s.%s.events 0 %d", c_prefix, c_node, num_triggers);
 
     /* Retrieve the list of all event triggers for the widget
      * and for each of those retrieve the list of commands, appending
@@ -28,12 +31,12 @@ TriggerMap::TriggerMap(const int& num_triggers, const std::string& widget)
         int trigger = atoi(c_trigger);
         triggers.insert((MoguSyntax) trigger);
         // Get the number of commands associated with that trigger
-        db.appendQuery("llen widgets.%s.events.%d", c_node, trigger);
+        db.appendQuery("llen %s.%s.events.%d", c_prefix, c_node, trigger);
 
         int mrange = db.yieldResponse <int>();
 
-        db.appendQuery("lrange widgets.%s.events.%d 0 %d",
-                c_node, trigger, mrange);
+        db.appendQuery("lrange %s.%s.events.%d 0 %d",
+                c_prefix, c_node, trigger, mrange);
 
 
         // Store the commands in the trigger queue

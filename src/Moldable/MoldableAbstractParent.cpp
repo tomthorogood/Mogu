@@ -18,8 +18,15 @@ MoldableAbstractParent::MoldableAbstractParent
 
 void MoldableAbstractParent::__init__()
 {
-    const char* c_node = __node.c_str();
-    Redis::ContextQuery db(Prefix::widgets);
+    Prefix children_prefix = 
+        testFlag(MoldableFlags::template_children) ?
+        Prefix::templates : Prefix::widgets;
+    std::string children_node = 
+        testFlag(MoldableFlags::template_children) ?
+        __template_name : __node;
+    Redis::ContextQuery db(children_prefix);
+    std::string s_prefix = prefixMap.at(children_prefix);
+    const char* c_prefix = s_prefix.c_str();
 
     // Only containers can have children, though they may not 
     // (if they are only being instantiated to hold children 
@@ -27,7 +34,8 @@ void MoldableAbstractParent::__init__()
     //
     // widgets.[id].children will hold a list of the children's identifiers.
     // llen will thus show how many default children this widget will have.
-    db.appendQuery("llen widgets.%s.children", c_node);
+    
+    db.appendQuery("llen %s.%s.children", c_prefix, children_node.c_str());
     num_children = db.yieldResponse <int>();
 }
 
@@ -40,7 +48,7 @@ void MoldableAbstractParent::load(){
 #endif
 
     // Do not reload unless the reload action is explicitly called.
-    if (loaded() && !force_reload) return;
+    if (loaded() && !testFlag(MoldableFlags::allow_reload)) return;
 
     // First run through standard loading procedures for the parent class.
     Moldable::load();
@@ -58,7 +66,14 @@ void MoldableAbstractParent::load(){
 #endif
         mApp;
         const MoldableFactory& factory = app->getFactory();
-        Redis::ContextQuery db(Prefix::widgets);
+        
+        Prefix children_prefix = 
+            testFlag(MoldableFlags::template_children) ?
+            Prefix::templates : Prefix::widgets;
+        std::string children_node = 
+            testFlag(MoldableFlags::template_children) ?
+            __node : __template_name;
+        Redis::ContextQuery db(children_prefix);
 
         // We will first populate a vector with the list of children's 
         // identifiers.

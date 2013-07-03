@@ -15,6 +15,11 @@ public:
         , const std::string& node_name
         , NodeValue* arg = nullptr);
     
+    NodeEditor(
+        Prefix p_prefix
+        , const std::string& node_name
+        , MoguSyntax nodetype);
+
     inline bool fieldHasEncryption()
     {
         __policies.appendQuery("hget policies.%s %d", __node,
@@ -32,13 +37,19 @@ public:
         return string_to_node_type.at(__db.yieldResponse <std::string>());
     }
     inline int getObjectId();
+    inline ContextQuery& getContext() { return __db;}
     inline MoguSyntax getType() const { return __type;}
+    inline Prefix getPrefix() { return __prefix;}
     void readAll (std::map <std::string,std::string>&);
     void writeAll (std::map <std::string, std::string>&);
+    void setArg(NodeValue*);
+    void setNodeName(const std::string&);
+    void setPrefix(Prefix);
 
     std::string read();
     void write (NodeValue);
     void remove(std::string value = EMPTY);
+
 
 private:
 
