@@ -13,6 +13,8 @@
 #include <Wt/WSignal>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
+#include <Redis/NodeEditor.h>
+#include <Redis/ContextQuery.h>
 
 class Moldable;
 
@@ -77,7 +79,11 @@ protected:
     virtual void __init__();
     std::string getParameter(Redis::NodeEditor&,MoguSyntax);
 
-    void initializeNodeEditor(Redis::NodeEditor& node);
+    inline void initializeNodeEditor(Redis::NodeEditor& node)
+    {
+        if (testFlag(MoldableFlags::is_templated))
+            node.setPrefix(Prefix::temp);
+    }
 
 public:
 
@@ -119,7 +125,11 @@ public:
         return __node;
     }
 
-    virtual void load() override;
+    inline virtual void load() override
+    {
+        if (loaded() && !testFlag(MoldableFlags::allow_reload)) return;
+        Wt::WContainerWidget::load();
+    }
 
     inline Wt::Signal <>& styleChanged()    { return __style_changed; }
     inline Wt::Signal <>& fail()            { return __failed_test; }
@@ -170,9 +180,13 @@ public:
     }
 
     inline virtual void reset()     {__init__();}
-    void setFlag(MoldableFlags);
-    void unsetFlag(MoldableFlags);
-    bool testFlag(MoldableFlags);
+    inline void setFlag(MoldableFlags flag) { __flags |= (uint8_t) flag; }
+
+    inline void unsetFlag(MoldableFlags flag) { 
+        if (testFlag(flag))
+            __flags -= (uint8_t) flag; 
+    }
+    inline bool testFlag(MoldableFlags flag) {return __flags & (uint8_t) flag; }
     inline void shun() { setFlag(MoldableFlags::shun); }
     inline void unshun() { unsetFlag(MoldableFlags::shun); }
 

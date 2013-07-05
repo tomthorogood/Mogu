@@ -1,1 +1,1 @@
-valgrind --tool=memcheck --show-possibly-lost=no --read-var-info=yes --show-reachable=yes --leak-check=full --xml=yes --xml-file=grindout.xml ../mogu-server --docroot /home/tom/dev/clearpoint/FinancialFirsts/ --http-address 0.0.0.0 --http-port 9090 --gdb
+valgrind --tool=memcheck --show-possibly-lost=no --leak-check=full --xml=yes --xml-file=grindout.xml ../mogu-server --docroot /home/tom/dev/clearpoint/FinancialFirsts/ --http-address 0.0.0.0 --http-port 9090 --gdb

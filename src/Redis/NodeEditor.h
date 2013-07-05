@@ -1,3 +1,6 @@
+#ifndef NODEEDITOR_H_
+#define NODEEDITOR_H_
+
 #include "ContextQuery.h"
 #include <Types/NodeValue.h>
 namespace Redis {
@@ -95,3 +98,5 @@ private:
 };
 
 }//namespace Redis
+
+#endif //NODEEDITOR_H_

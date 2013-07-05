@@ -114,7 +114,11 @@ template <> std::vector <std::string>
 
 void QuerySet::setPrefix(Prefix prefix)
 {
-    if (rdb != nullptr) delete rdb;
+    if (rdb != nullptr)
+    {
+        redisFree(rdb);
+        rdb = nullptr;
+    }
     mApp;
     context = app->contextMap()->get(prefix);
     rdb = redisConnect(context->host(), context->port);

@@ -13,8 +13,6 @@
 #include <Wt/WStackedWidget>
 #include <Events/EventHandler.h>
 #include <Wt/WAnchor>
-#include <Redis/NodeEditor.h>
-#include <Redis/ContextQuery.h>
 #include <Redis/NodeMerger.h>
 
 Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
@@ -101,35 +99,6 @@ void Moldable::__init__ ()
     if (num_triggers > 0)
         __bindery = new EventHandler(*this, event_prefix, event_node);
 }
-
-void Moldable::load()
-{
-    if (loaded() && !testFlag(MoldableFlags::allow_reload)) return;
-    Wt::WContainerWidget::load();
-}
-
-void Moldable::setFlag(MoldableFlags flag)
-{
-    __flags |= (uint8_t) flag;
-}
-
-bool Moldable::testFlag(MoldableFlags flag)
-{
-    return __flags & (uint8_t) flag;
-}
-
-void Moldable::unsetFlag(MoldableFlags flag)
-{
-    if (testFlag(flag))
-        __flags -= (uint8_t) flag;
-}
-
-void Moldable::initializeNodeEditor(Redis::NodeEditor& node)
-{
-    if (testFlag(MoldableFlags::is_templated))
-        node.setPrefix(Prefix::temp);
-}
-
 
 void Moldable::setFlags(Redis::NodeEditor& node)
 {

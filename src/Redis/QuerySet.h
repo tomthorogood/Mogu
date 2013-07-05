@@ -98,6 +98,7 @@ private:
                 break;
         };
         freeReplyObject(reply);
+        reply = nullptr;
     }
 
     /*!\brief Iterates through the multi bulk reply object, assigning
@@ -164,6 +165,7 @@ public:
     QuerySet(Prefix prefix);
     ~QuerySet() {
         redisFree(rdb);
+        if (reply != nullptr) freeReplyObject(reply);
         while (!queries.empty())
         {
             Query* q = queries.front();

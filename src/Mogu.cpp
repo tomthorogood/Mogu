@@ -20,6 +20,7 @@
 #include "hash.h"
 #include "Redis/DatabaseConfigReader.h"
 #include "Redis/ContextMap.h"
+#include "Redis/ContextQuery.h"
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)

@@ -4,6 +4,7 @@
 #include <Types/EmailManager.h>
 #include <Redis/ContextQuery.h>
 #include <Redis/NodeEditor.h>
+#include <hash.h>
 SecurityStatus UserManager::registerUser(
         const std::string& username, const std::string& password)
 {
@@ -103,7 +104,7 @@ SecurityStatus UserManager::resetPassword(std::string userid, const std::string&
     return resetPassword(db.yieldResponse <int>(), email);
 }
 
-std::string getUserSalt(std::string userid, Redis::ContextQuery* db)
+std::string UserManager::getUserSalt(std::string userid, Redis::ContextQuery* db)
 {
     if (!Security::isEncrypted(userid))
         userid = Security::encrypt(userid);
@@ -121,7 +122,7 @@ std::string getUserSalt(std::string userid, Redis::ContextQuery* db)
     return salt;
 }
 
-std::string getUserSalt(const int& userid, Redis::ContextQuery* db)
+std::string UserManager::getUserSalt(const int& userid, Redis::ContextQuery* db)
 {
     Redis::NodeEditor node(Prefix::user, "meta.id");
     std::map <std::string,std::string> rlookup;
@@ -137,7 +138,7 @@ std::string getUserSalt(const int& userid, Redis::ContextQuery* db)
     return EMPTY;
 }
 
-int consumeUserId(Redis::ContextQuery& db)
+int UserManager::consumeUserId(Redis::ContextQuery& db)
 {
     // See if we have any abandoned ids to consume.
     db.appendQuery("scard user.meta.abandoned");
@@ -155,38 +156,49 @@ int consumeUserId(Redis::ContextQuery& db)
 }
 
 SecurityStatus UserManager::deleteUser(int userid) 
-
+{
+    Redis::ContextQuery db(Prefix::user);
+    Redis::ContextQuery grpdb(Prefix::group);
+    db.appendQuery("exists user.%d", userid);
+    db.appendQuery("llen user.%d.__meta__.g", userid);
+    std::vector <std::string> groups;
+    if (!db.yieldResponse <bool>()) return SecurityStatus::ERR_USER_NOT_FOUND;
+    int num_groups = db.yieldResponse <int>();
+    if (num_groups > 0)
     {
-        Redis::ContextQuery db(Prefix::user);
-        Redis::ContextQuery grpdb(Prefix::group);
-        db.appendQuery("exists user.%d", userid);
-        db.appendQuery("llen user.%d.__meta__.g", userid);
-        std::vector <std::string> groups;
-        if (!db.yieldResponse <bool>()) return SecurityStatus::ERR_USER_NOT_FOUND;
-        int num_groups = db.yieldResponse <int>();
-        if (num_groups > 0)
-        {
-            db.appendQuery("lrange user.%d.__meta__.g 0 %d", userid, num_groups);
-            groups = db.yieldResponse <std::vector<std::string>>();
-        }
-        
-        db.appendQuery("keys user.%d.*", userid);
-        db.appendQuery("sadd user.meta.abandoned %d", userid);
-
-        std::vector <std::string> userkeys = db.yieldResponse <std::vector <std::string>>();
-
-        for (auto key : userkeys)
-        {
-            const char* c_key = key.c_str();
-            db.appendQuery("del user.%d.%s", userid, c_key);
-        }
-        for (auto group : groups)
-        {
-            const char* c_grp = group.c_str();
-            grpdb.appendQuery("srem groups.%s.__meta__.m %d", c_grp, userid);
-
-        }
-        db.execute();
-        grpdb.execute();
-        return SecurityStatus::OK_REGISTER;
+        db.appendQuery("lrange user.%d.__meta__.g 0 %d", userid, num_groups);
+        groups = db.yieldResponse <std::vector<std::string>>();
     }
+    
+    db.appendQuery("keys user.%d.*", userid);
+    db.appendQuery("sadd user.meta.abandoned %d", userid);
+
+    std::vector <std::string> userkeys = db.yieldResponse <std::vector <std::string>>();
+
+    for (auto key : userkeys)
+    {
+        const char* c_key = key.c_str();
+        db.appendQuery("del user.%d.%s", userid, c_key);
+    }
+    for (auto group : groups)
+    {
+        const char* c_grp = group.c_str();
+        grpdb.appendQuery("srem groups.%s.__meta__.m %d", c_grp, userid);
+
+    }
+    db.execute();
+    grpdb.execute();
+    return SecurityStatus::OK_REGISTER;
+}
+
+std::string UserManager::sanitizePassword(const std::string& password, const std::string& salt)
+{
+    std::string spass = password + salt;
+    char c[1] = {salt[1]};
+    int iters = atoi(c) * 1000;
+    for (int i=0; i < iters; ++i)
+    {
+        spass = Hash::toHash(spass);
+    }
+    return Security::encrypt(spass);
+}

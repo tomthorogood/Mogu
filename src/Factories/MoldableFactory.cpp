@@ -24,13 +24,11 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 #endif
     MoguSyntax widget_type;
     Redis::ContextQuery db(Prefix::widgets);
-    db.appendQuery("hexists widgets.%s %d", c_node, MoguSyntax::template_);
     db.appendQuery("hget widgets.%s %d", c_node, MoguSyntax::type);
-    bool has_tmpl = db.yieldResponse<bool>();
     widget_type = (MoguSyntax) db.yieldResponse <int>();
 
     // If there was an error here, the syntax type will be 'none'
-    if (widget_type == MoguSyntax::__NONE__ && has_tmpl)
+    if (widget_type == MoguSyntax::__NONE__)
     {
         // If there is no type, we have to check to see if there is
         // a template assigned to the widget which may contain this
@@ -40,8 +38,7 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 
         const char* tmpl_id = template_id.c_str();
         Redis::ContextQuery tmpldb(Prefix::templates);
-        tmpldb.appendQuery( "hget templates.%s %d",
-                tmpl_id, MoguSyntax::type);
+        tmpldb.appendQuery("hget templates.%s %d", tmpl_id, MoguSyntax::type);
         widget_type = (MoguSyntax) tmpldb.yieldResponse <int>();
 
         if (widget_type == MoguSyntax::__NONE__)
@@ -55,12 +52,8 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     switch(widget_type)
     {
     case MoguSyntax::container:
-//        if (has_tmpl && has_content)
-//            return new MemberContainer(node);
         return new MoldableContainer(node);
     case MoguSyntax::stack:
-//        if (has_tmpl && has_content)
-//            return new MemberStack(node);
         return new MoldableStack(node);
     case MoguSyntax::text:
         return new MoldableText(node);
