@@ -36,6 +36,7 @@ class Mogu: public Wt::WApplication
 
     void loadMoguStyles();
     void handlePathChange( std::string path);
+    std::string __name__ = EMPTY;
 
     /*!\brief The widget that started it all... */
 
@@ -105,6 +106,7 @@ public:
 
     inline ContextMap* contextMap() { return contextMap_;}
     void removeWidget(const std::string& identifier);
+    inline const std::string& getName() { return __name__;}
 };
 
 #endif /* MOGU_H_ */

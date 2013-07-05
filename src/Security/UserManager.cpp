@@ -1,154 +1,192 @@
-/*
- * UserManager.cpp
- *
- *  Created on: Apr 8, 2013
- *      Author: tom
- */
-
+#include <Mogu.h>
 #include "UserManager.h"
 #include "Encryption.h"
+#include <Types/EmailManager.h>
 #include <Redis/ContextQuery.h>
-#include <TurnLeftLib/Utils/randomcharset.h>
-#include <hash.h>
-
-UserManager::UserManager()
-:   db(Prefix::user)
+#include <Redis/NodeEditor.h>
+SecurityStatus UserManager::registerUser(
+        const std::string& username, const std::string& password)
 {
+    Redis::ContextQuery udb(Prefix::user);
+
+    std::string e_username = Security::encrypt(username);
+    std::string e_password = Security::encrypt(password);
+    std::string salt = generateSalt();
+
+    /* First, check to see whether the user already exists */
+    udb.appendQuery("hexists user.meta.id %s", e_username.c_str());
+    if (udb.yieldResponse <bool>()) return SecurityStatus::ERR_USER_EXISTS;
+
+    /* Next, sanitize the user's password */
+    e_password = sanitizePassword(e_password, salt);
+
+    int userid = consumeUserId(udb);
+
+    udb.appendQuery("hset user.meta.salt %s %s", 
+            e_username.c_str(), salt.c_str()); 
+    udb.appendQuery("hset user.%d.__meta__ u %s", userid, e_username.c_str());
+    udb.appendQuery("hset user.%d.__meta__ p %s", userid, e_password.c_str());
+    udb.execute();
+
+    return SecurityStatus::OK_REGISTER;
 }
 
-int8_t UserManager::loginUser(
-    const std::string& username, const std::string& password)
+SecurityStatus UserManager::loginUser(
+        const std::string& username, const std::string& password)
 {
-    std::string enc_username = Security::encrypt(username);
-    std::string enc_password = Security::encrypt(password);
+    Redis::ContextQuery udb(Prefix::user);
+    std::string e_username = Security::encrypt(username);
+    std::string e_password = Security::encrypt(password);
+    
+   /* Ensure that the user actually exists. */
+   udb.appendQuery("hexists user.meta.id %s", e_username.c_str());
+   udb.appendQuery("hget user.meta.id %s", e_username.c_str());
+   if (!udb.yieldResponse <bool>())
+   {
+       udb.execute();
+       return SecurityStatus::ERR_USER_NOT_FOUND;
+   }
+   int userid = udb.yieldResponse <int>();
+   std::string salt = getUserSalt(e_username, &udb);
+   e_password = sanitizePassword(e_password, salt);
 
-    const char* c_enc_username = enc_username.c_str();
+   udb.appendQuery("hget user.%d.__meta__ u", userid);
+   udb.appendQuery("hget user.%d.__meta__ p", userid);
 
-    /* First, we have to see whether the encrypted username exists at all:*/
-    db.appendQuery( "hexists user.iterations %s", c_enc_username);
-    /* After that, we'll see how many times we have to hash their information
-     * to prevent a collision with another user's keyspace.
-     */
-    db.appendQuery( "hget user.iterations %s", c_enc_username);
-    /* Then we'll retrieve their salt. */
-    db.appendQuery( "hget user.salt %s", c_enc_username);
+   bool success = 
+       (e_username == udb.yieldResponse <std::string>()) 
+       && (e_password == udb.yieldResponse <std::string>());
 
+   if (! success) return SecurityStatus::ERR_BAD_AUTH;
 
-    if (! db.yieldResponse <bool>()) return 0;
-    int hash_iters = db.yieldResponse <int>();
-    std::string salt = db.yieldResponse <std::string>();
-    salt = Security::encrypt(salt);
+   this->userid = userid;
+   return SecurityStatus::OK_LOGIN;
 
-    std::string userhash = hashTogether(
-        enc_username, salt, enc_password, hash_iters);
-    Redis::ContextQuery meta(Prefix::meta);
-    meta.appendQuery(new Redis::Query("hget meta.users %s", userhash.c_str()),
-            db.REQUIRE_INT);
-    userKeyspace = meta.yieldResponse <int>();
-    db.appendQuery(new Redis::Query(
-        "hexists user.%d", userKeyspace), db.REQUIRE_INT);
-    if (!db.yieldResponse <bool> ())
+}
+
+SecurityStatus UserManager::resetPassword(int userid, std::string email_address)
+{
+    if (Security::isEncrypted(email_address))
+        email_address = Security::decrypt(email_address);
+
+    Redis::ContextQuery db(Prefix::user);
+    TurnLeft::Utils::RandomCharSet rchar;
+    std::string newpass = rchar.generate(4);
+    std::string e_newpass = 
+        sanitizePassword(Security::encrypt(newpass), getUserSalt(userid, &db));
+    db.appendQuery("exists user.%d.__meta__", userid);
+    db.appendQuery("hset user.%d.__meta__ p %s", userid, e_newpass.c_str());
+    if (!db.yieldResponse <bool>()) return SecurityStatus::ERR_USER_NOT_FOUND;
+    db.execute();
+
+    mApp;
+    EmailManager email;
+    std::string message = 
+        "We have received your request to reset your password for the " +
+        app->getName() + " application. Your new password is " + newpass + 
+        "\n\nYou may change this password after logging into your account.";
+    email.setMessage(message);
+    email.setSubject(app->getName() + " Password Reset Notification");
+    email.setRecipient(email_address);
+    email.send();
+
+    return SecurityStatus::OK_REGISTER;
+}
+
+SecurityStatus UserManager::resetPassword(std::string userid, const std::string& email)
+{
+    Redis::ContextQuery db(Prefix::user);
+    if (! Security::isEncrypted(userid))
+        userid = Security::encrypt(userid);
+    
+    db.appendQuery("hget user.meta.id %s", userid.c_str());
+    return resetPassword(db.yieldResponse <int>(), email);
+}
+
+std::string getUserSalt(std::string userid, Redis::ContextQuery* db)
+{
+    if (!Security::isEncrypted(userid))
+        userid = Security::encrypt(userid);
+
+    bool del_db_context = false;
+    if (db == nullptr) 
     {
-        userKeyspace = -1;
-        return 0;
+        db = new Redis::ContextQuery(Prefix::user);
+        del_db_context = true;
+    }
+
+    db->appendQuery("hget user.meta.salt %s", userid.c_str()); 
+    std::string salt = db->yieldResponse <std::string>();
+    if (del_db_context) delete db;
+    return salt;
+}
+
+std::string getUserSalt(const int& userid, Redis::ContextQuery* db)
+{
+    Redis::NodeEditor node(Prefix::user, "meta.id");
+    std::map <std::string,std::string> rlookup;
+    node.readAll(rlookup);
+
+    auto iter = rlookup.begin();
+    while (iter != rlookup.end())
+    {
+        if (userid == atoi(iter->second.c_str()))
+            return getUserSalt(iter->first,db);
+        ++iter;
+    }
+    return EMPTY;
+}
+
+int consumeUserId(Redis::ContextQuery& db)
+{
+    // See if we have any abandoned ids to consume.
+    db.appendQuery("scard user.meta.abandoned");
+    if (db.yieldResponse <int>() > 0)
+    {
+        db.appendQuery("spop user.meta.abandoned");
+        return db.yieldResponse <int>();
     }
     else
     {
-        db.appendQuery("get user.%d", userKeyspace);
-        std::string auth_salt = db.yieldResponse<std::string>();
-        int retval = (auth_salt == salt) ? 1 : -1;
-        return retval;
+        // Otherwise, increment and return the next user count.
+        db.appendQuery("incr user.meta.count");
+        return db.yieldResponse <int>();
     }
-
-    return -1;
 }
 
-int8_t UserManager::registerUser(
-    const std::string& username, const std::string& password)
-{
-    using TurnLeft::Utils::RandomCharSet;
+SecurityStatus UserManager::deleteUser(int userid) 
 
-    std::string enc_username = Security::encrypt(username);
-    std::string enc_password = Security::encrypt(password);
-
-    RandomCharSet rchar;
-    std::string salt = rchar.generate(1); // three characters long
-    std::string enc_salt = Security::encrypt(salt);
-
-    db.appendQuery(
-        new Redis::Query("hexists user.salt %s", enc_username.c_str()),
-            db.REQUIRE_INT);
-
-    db.appendQuery(
-        new Redis::Query("hse user.salt %s %s", enc_username.c_str(), enc_salt.c_str()),
-        db.IGNORE_RESPONSE);
-
-    if (db.yieldResponse <bool>()) return 0;
-    db.execute(); //store the salt
-    
-    std::string userhash = createHash(enc_username, enc_password, enc_salt);
-    Redis::ContextQuery meta(Prefix::meta);
-    meta.appendQuery(new Redis::Query("hget meta.users %s", userhash.c_str()), meta.REQUIRE_INT);
-    userKeyspace = meta.yieldResponse <int>();
-    if (userKeyspace != -1)
     {
-        // We'll store the encrypted user salt at that location in
-        // the database to let future calls know that the user was created,
-        // and also allow us to verify that there hasn't been a collision error
-        db.appendQuery(new Redis::Query(
-            "set user.%d %s", userKeyspace, enc_salt.c_str()),
-            db.IGNORE_RESPONSE);
+        Redis::ContextQuery db(Prefix::user);
+        Redis::ContextQuery grpdb(Prefix::group);
+        db.appendQuery("exists user.%d", userid);
+        db.appendQuery("llen user.%d.__meta__.g", userid);
+        std::vector <std::string> groups;
+        if (!db.yieldResponse <bool>()) return SecurityStatus::ERR_USER_NOT_FOUND;
+        int num_groups = db.yieldResponse <int>();
+        if (num_groups > 0)
+        {
+            db.appendQuery("lrange user.%d.__meta__.g 0 %d", userid, num_groups);
+            groups = db.yieldResponse <std::vector<std::string>>();
+        }
+        
+        db.appendQuery("keys user.%d.*", userid);
+        db.appendQuery("sadd user.meta.abandoned %d", userid);
+
+        std::vector <std::string> userkeys = db.yieldResponse <std::vector <std::string>>();
+
+        for (auto key : userkeys)
+        {
+            const char* c_key = key.c_str();
+            db.appendQuery("del user.%d.%s", userid, c_key);
+        }
+        for (auto group : groups)
+        {
+            const char* c_grp = group.c_str();
+            grpdb.appendQuery("srem groups.%s.__meta__.m %d", c_grp, userid);
+
+        }
         db.execute();
-        return 1;
+        grpdb.execute();
+        return SecurityStatus::OK_REGISTER;
     }
-
-    return -1;
-}
-
-std::string UserManager::hashTogether(
-    const std::string& username
-    , const std::string& password
-    , const std::string& salt
-    , const int& hash_iters)
-{
-    std::string long_source = username + salt + password;
-    std::string hashed = Hash::toHash(long_source);
-
-    for (int iter = 0; iter < hash_iters; ++iter) {
-        hashed = Security::encrypt(hashed);
-        hashed = Hash::toHash(hashed);
-    }
-
-    return hashed;
-}
-
-std::string UserManager::createHash(
-    const std::string& username
-    , const std::string& password
-    , const std::string& salt
-    )
-{
-    std::string long_source = username + salt + password;
-    std::string hashed = Hash::toHash(long_source);
-
-    int num_iters = 0;
-    while (keyspaceExists(hashed))
-    {
-        hashed = Security::encrypt(hashed);
-        hashed = Hash::toHash(hashed);
-        ++num_iters;
-    }
-
-    db.appendQuery(
-        new Redis::Query("hset user.iterations %s %d", username.c_str(), num_iters),
-        db.IGNORE_RESPONSE);
-    db.execute();
-
-    return hashed;
-}
-
-bool UserManager::keyspaceExists(const std::string& userhash)
-{
-    db.appendQuery("hexists user.%s", userhash.c_str());
-    return db.yieldResponse<bool>();
-}
