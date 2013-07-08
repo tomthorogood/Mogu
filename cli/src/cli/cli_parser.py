@@ -30,7 +30,7 @@ def getCLIArgs():
             default=False, 
             help="If importing a Mogu database, flushes the selected database first. CAREFUL!")
 
-    parser.add_argument("-y", 
+    parser.add_argument("-y", "--yes",
             dest="y", action="store_true", default=False, 
             help="Will assume yes to all questions. EXTRA CAREFUL!")
 

@@ -1,0 +1,57 @@
+widget example
+    type    :   container
+    children
+        :user
+    end children
+end widget
+
+widget example:user
+    type    :   container
+    children
+        :username
+        :password
+        :passconf
+        :submit
+    end children
+end widget
+
+widget example:user:username
+    type    :   input
+    content :   "Enter a Username"
+end widget
+
+widget example:user:password
+    type    :   password
+    content :   "Enter a Password"
+end widget
+
+widget example:user:passconf
+    type    :   password
+    content :   "Re-Enter the Password"
+end widget
+
+widget example:user:submit
+    type    :   text
+    text    :   "SUBMIT"
+    css     :   "linkified"
+
+    events
+        when clicked {
+            test widget example:user:password content at widget example:user:passconf content
+        }
+
+        when succeeded test {
+            set slot USERNAME to widget example:user:username content
+            set slot PASSWORD to widget example:user:password content
+            append user slot USERNAME
+            set widget example:user:feedback content to "Ok! You're registered!"
+            remove widget example:user:username
+            remove widget example:user:password
+            remove widget example:user:passconf
+        }
+
+        when failed test {
+            set widget example:user:feedback content to "Woops. Your passwords don't match!"
+        }
+    end events
+end widget

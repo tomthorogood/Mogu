@@ -4,6 +4,7 @@
 #== Default: /usr/bin
 #INSTALL_DIR=%(INSTALL_DIR)s
 INSTALL_DIR=/usr/bin
+
 #== This is where the configuration files will live.
 #== Default: /usr/share/Mogu
 #CONFIG_DIR=%(CONFIG_DIR)s
@@ -51,7 +52,7 @@ SOURCE_FILES_ := $(foreach DIR, $(DIRS), $(wildcard $(DIR)/*.cpp))
 SOURCE_FILES := $(patsubst src/%, %, $(SOURCE_FILES_))
 
 # All output object files that have to be created.
-OBJECT_FILES := $(patsubst %.cpp, %.o, $(SOURCE_FILES))
+OBJECT_FILES := $(SOURCE_FILES:.cpp=.o)
 
 # The location of all object files
 ARTIFACTS := $(patsubst %, build/%, $(OBJECT_FILES))
@@ -69,7 +70,7 @@ C_END=\033[0m
 
 #= Compile Recipes
 
-$(EXECUTABLE) : | $(ARTIFACTS)
+$(EXECUTABLE) : $(ARTIFACTS)
 	@echo "Creating bin/ directory."
 	@mkdir -pv bin/
 	@echo -n "Linking objects and creating executable..."
