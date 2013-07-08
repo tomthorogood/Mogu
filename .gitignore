@@ -3,6 +3,8 @@ run
 *.check
 build
 build/*
+log
+log/*
 cli/c/clidec
 cli/c/clihash
 cli/src/moguio/moguio/syntax.py
