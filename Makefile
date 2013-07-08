@@ -3,7 +3,7 @@
 #== This is where the server executable and command line executable will live.
 #== Default: /usr/bin
 #INSTALL_DIR=%(INSTALL_DIR)s
-INSTALL_DIR=/usr/bin
+INSTALL_DIR=/usr
 
 #== This is where the configuration files will live.
 #== Default: /usr/share/Mogu
@@ -84,14 +84,14 @@ build/%.o: src/%.cpp | $(TEMP_DIRS) $(SYNTAX)
 
 #= Generic Recipes
 
-$(SYNTAX):
+$(SYNTAX): moguio
 	@echo "$(C_INFO)Creating syntax files...$(C_END)"
 	@cd syntax && $(MAKE)
 
 $(TEMP_DIRS):
 	mkdir -pv $@
 
-test: $(TEMP_DIRS)
+maketest: $(TEMP_DIRS)
 	@echo "ABSOLUTE CPP FILES: $(SOURCE_FILES_)\n"
 	@echo "COMPILE COMMAND $(COMPILE)"
 	@echo "CPP FILES: $(SOURCE_FILES)\n"
@@ -100,7 +100,24 @@ test: $(TEMP_DIRS)
 	@echo "SOURCE DIRECTORIES:  $(DIRS)\n"
 	@echo "BUILD DIRECTORIES: $(TEMP_DIRS)\n"
 
+install: $(EXECUTABLE) moguio
+	sudo mkdir -p $(CONFIG_DIR)/src 
+	sudo cp $(EXECUTABLE) $(INSTALL_DIR)/$(EXECUTABLE)
+	sudo cp $(CURDIR)/cli/mogu $(CONFIG_DIR)/
+	cd $(INSTALL_DIR)/bin && sudo ln -s $(CONFIG_DIR)/mogu mogu
+	sudo cp $(CURDIR)/cli/src/*.py $(CONFIG_DIR)/src/
+	sudo cp -r $(CURDIR)/cli/src/cli $(CONFIG_DIR)/src/
+	sudo cp *.conf $(CONFIG_DIR)
+
 #= Cleaning house
+
+moguio:
+	sudo pip install $(CURDIR)/cli/src/moguio
+
+uninstall:
+	if [ -h $(INSTALL_DIR)/bin/mogu ]; then sudo unlink $(INSTALL_DIR)/bin/mogu; fi;
+	sudo rm -f $(INSTALL_DIR)/$(EXECUTABLE)
+	sudo rm -rf $(CONFIG_DIR)
 
 clean:
 	@echo "$(C_INFO)Removing generated syntax files...$(C_END)"
@@ -109,3 +126,6 @@ clean:
 	@sudo pip uninstall moguio --yes || echo "$(C_INFO)moguio not installed, so not removed.$(C_END)"
 	@echo "$(C_INFO)Removing temporary files...$(C_END)"
 	@rm -rf $(TEMP_DIRS)
+
+purge: clean
+	rm -rf bin/

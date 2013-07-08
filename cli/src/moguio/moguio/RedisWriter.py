@@ -59,12 +59,12 @@ class RedisWriter(object):
             the 'mogu' command is executed. This is optional. If not passed in,
             sensible defaults will be set:
                 verbal = True
-                flushdb = False
         """
         self.dbconfig   = None  # Will be set in try...except below
         self.verbal     = args.v if args else True
-        self.flushdb    = args.flushdb if args else False
         self.yes        = args.y if args else False
+        self.flushdb    = args.flushdb if args else False
+        self.flushrules = args.flushrules if args else None
         dbconfig        = args.dbconfig if args else os.path.join(
                             DB_CONFIG_PATH,DB_CONFIG_FILE)
         
@@ -94,9 +94,11 @@ class RedisWriter(object):
                             % self.dbconfig['default'])
             else:
                 sys.stderr.write("'yes' assumed due to -y switch\n")
+        
              
         self.databases = {}
         self.pipes = {}
+        
         
         # Create the Redis connection pools and pipelines
         for prefix in self.dbconfig:
@@ -107,14 +109,10 @@ class RedisWriter(object):
                     )
             self.databases[prefix] = db
             self.pipes[prefix] = db.pipeline()
-
-        # Lastly, if we're told to flush the databases, we'll add the 
-        # flush command to each of the pipelines
+        
         if self.flushdb:
-            for pipe in self.pipes:
-                if self.verbal:
-                    sys.stderr.write("NOTICE: %s database will be flushed.\n"%pipe)
-                self.pipes[pipe].flushdb()
+            for prefix in self.dbconfig:
+                self.flush(prefix)
 
     def pipe(self,prefix):
         """
@@ -154,12 +152,39 @@ class RedisWriter(object):
         for key in redis_object.data:
             pipe.hset(redis_object.node, key, redis_object.data[key])
 
+    def flush(self, prefix):
+        pipe = self.pipe(prefix)
+        # Get a list of all relevant keys.
+        keys = pipe.keys("%s.*" % prefix)
+        for k in keys:
+            pipe.delete(k)
+
+    def askflush(self, prefix):
+        if args.y:
+            return True
+        
+        user_input = raw_input("Do you wish to flush the %s prefix?\n[Y]es to continue, anything else to skip: ")
+        return user_input.lower()[0] == 'y'
+
+    def checkflush(self, prefix):
+
+        if (not self.flushrules) or \
+            (prefix not in self.flushrules) or \
+            ('Q' == self.flushrules[prefix].upper()):
+                return self.askflush(prefix)
+
+        if 'A' == self.flushrules[prefix].upper():
+            return True
+        
+        return False
+
     def setWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
         for value in redis_object.data:
             pipe.sadd(redis_object.node, value)
 
     def write(self, collection):
+
         for obj in collection:
             if not isinstance(obj, RedisObjects.RedisObject):
                 raise TypeError("Found type %s. Expected type RedisObject" % \

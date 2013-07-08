@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import moguio
 import sys
 import os
@@ -9,7 +8,6 @@ from moguio.Exporter.DatabaseExporter import DatabaseExporter
 import redis
 
 import src
-#import src.cli_parser
 args = src.cli_parser.getCLIArgs()
 command = args.command[0]
 
@@ -35,3 +33,7 @@ if __name__ == "__main__":
         exports.extend (exporter.export_policies())
         for entry in exports:
             sys.stdout.write(entry)
+
+    if command == "start":
+        src.start.start(args)
+
