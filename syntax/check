@@ -1,7 +1,25 @@
 #!/usr/bin/env python
 
+import os
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+parser.add_argument("-i", "--install", dest="install", action="store_true", default=False)
+parser.add_argument("-u", "--uninstall", dest="uninstall", action="store_true", default=False)
+parser.add_argument("package", nargs="+", type=str, action="store")
+
+args = parser.parse_args()
+
+
+install_cmd = {
+        "pyboro"    : "pyboro",
+        "moguio"    : "../cli/src/moguio"
+        }
+
 try:
-    import pyboro
+    __import__(args.package[0])
+    if args.uninstall:
+        os.system("sudo pip uninstall %s" % args.package[0])
 except ImportError:
-    import os
-    os.system("sudo pip install pyboro")
+    if args.install:
+        os.system("sudo pip install %s" % install_cmd[args.package[0]])

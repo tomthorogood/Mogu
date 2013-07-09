@@ -111,8 +111,9 @@ install: $(EXECUTABLE) moguio
 
 #= Cleaning house
 
-moguio:
-	sudo pip install $(CURDIR)/cli/src/moguio
+moguio: $(SYNTAX) 
+	@echo "Check to see if moguio is installed, and installing if not."
+	@if [ `pip freeze 2> /dev/null | grep moguio`=='' ]; then sudo pip install $(CURDIR)/cli/src/moguio; fi;
 
 uninstall:
 	if [ -h $(INSTALL_DIR)/bin/mogu ]; then sudo unlink $(INSTALL_DIR)/bin/mogu; fi;
@@ -123,7 +124,7 @@ clean:
 	@echo "$(C_INFO)Removing generated syntax files...$(C_END)"
 	@cd syntax && ($(MAKE) clean || echo "$(C_INFO)Syntax files not created, so not removed.$(C_END)")
 	@echo "$(C_INFO)Uninstall moguio python module$(C_END)"
-	@sudo pip uninstall moguio --yes || echo "$(C_INFO)moguio not installed, so not removed.$(C_END)"
+	@if [ ! ''==`pip freeze 2> /dev/null | grep moguio` ]; then sudo pip uninstall moguio; else echo "$(C_INFO)moguio not installed, so not removed.$(C_END)"; fi;
 	@echo "$(C_INFO)Removing temporary files...$(C_END)"
 	@rm -rf $(TEMP_DIRS)
 

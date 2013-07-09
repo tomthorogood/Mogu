@@ -12,15 +12,15 @@ $(CP_SYN_DIR)/syntax.h: syntax.py
 	@ln -s $(CURDIR)/syntax.h $(CP_SYN_DIR)/syntax.h
 
 clean:
-	@unlink $(PY_SYN_DIR)/syntax.py
-	@unlink $(CP_SYN_DIR)/syntax.h
+	@unlink $(PY_SYN_DIR)/syntax.py 2> /dev/null || echo "Python syntax module not installed."
+	@unlink $(CP_SYN_DIR)/syntax.h  2> /dev/null || echo "C++ syntax module not installed."
 	@rm -rf syntax.h syntax.py
 	@rm -rf operators
 	@echo "Removed syntax files."
 
 syntax.py : operators
 	@echo "Checking to see if pyboro is installed. If not, will be installed."
-	@$(CURDIR)/check
+	@$(CURDIR)/check -i pyboro
 	@python syntax_generator.py
 
 operators:
