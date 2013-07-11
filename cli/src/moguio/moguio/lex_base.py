@@ -65,7 +65,7 @@ regexlib["cl_paren"] = str(syntax.MoguOperators[")"])
 #   own content
 #regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(identifier)s(?<!%(preposition)s)|%(attribute)s)?" % regexlib
 
-regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(attribute)s|%(identifier)s)?" % regexlib
+regexlib["object_set"]  = "%(object)s(\s+%(identifier)s)?(\s+%(attribute)s|%(identifier)s)?" % regexlib
 regexlib["object_set"]  = "(%(object_set)s)+" % regexlib
 regexlib["signed_obj"] = "-?\s*(%(object_set)s|[0-9\.]+)" % regexlib
 regexlib["math_expr"] = "%(op_paren)s%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(math_oper)s\s*)*\s*%(signed_obj)s%(cl_paren)s" % regexlib
@@ -238,10 +238,10 @@ NEWLINES = pyboro.Lexer.ParseMap([("newline",r"\n",IGNORE)])
 # valid actions.
 
 
-t = syntax.as_integer("children")
+t = "children"
 CHILDREN_BLOCK = pyboro.Lexer.ParseMap((
-    ("begin",           r"\s*%d\s*"%t                           , IGNORE),
-    ("block",           everything_until(r"end\s*%d"%t)           , reference_widget_list),
-    ("end",             r"end\s*%d"%t                             , IGNORE)
+    ("begin",           r"\s*%s\s*"%t                           , IGNORE),
+    ("block",           everything_until(r"end\s*%s"%t)           , reference_widget_list),
+    ("end",             r"end\s*%s"%t                             , IGNORE)
 ))
 
