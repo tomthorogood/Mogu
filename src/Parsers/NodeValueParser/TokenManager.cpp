@@ -31,10 +31,10 @@ template <typename T> T TokenManager::currentToken() {
 template <> int TokenManager::currentToken()
 {
 	if(__it < __numTokens.begin())
-		return (int) OutOfRange::Begin;
+		return (int) MoguSyntax::OUT_OF_RANGE_BEGIN;
 
 	else if(__it >= __numTokens.end())
-		return (int) OutOfRange::End;
+		return (int) MoguSyntax::OUT_OF_RANGE_END;
 
 	else
 		return *__it;

@@ -18,9 +18,13 @@
 #
 
 (   None                    ,   __NONE__        ,   null bit        )
+
+# A widget that is referring to itself.
 (   own|self                ,   own             ,   object          )
-(   parent                  ,   parent          ,   object          )
+
+# Not yet implemented - handles custom uris.
 (   perspective             ,   perspective     ,   object          )
+
 (   clicked|click           ,   click           ,   event trigger   )
 (   mouseover               ,   mouseover       ,   event trigger   )
 (   mouseout                ,   mouseout        ,   event trigger   )
@@ -32,6 +36,8 @@
 (   hidden changed          ,   hidden_changed  ,   event trigger   )
 (   index changed           ,   index_changed   ,   event trigger   ) 
 (   loaded                  ,   onload          ,   event trigger   )
+
+
 (   clear                   ,   clear           ,   action          )
 (   increment|incr          ,   increment       ,   action          )
 (   decrement|decr          ,   decrement       ,   action          )
@@ -41,18 +47,16 @@
 (   reload                  ,   reload          ,   action          )
 (   emit                    ,   emit            ,   action          )
 (   append                  ,   append          ,   action          )
-(   replace                 ,   replace         ,   attribute       )
 (   set                     ,   set             ,   action datatype )
 (   path                    ,   path            ,   object          )
 (   user                    ,   user            ,   object          )
 (   session                 ,   session         ,   object          )
 (   app                     ,   app             ,   object          )
 (   reset                   ,   reset           ,   action          )
-(   style|css               ,   style           ,   attribute hashkey state )
+(   style|css               ,   style           ,   attribute hashkey  )
 (   group                   ,   group           ,   object          )
 (   remove                  ,   remove          ,   action          )
-(   text|content|contents   ,   text            ,   attribute hashkey widget type state)
-(   child                   ,   child           ,   object          )
+(   text|content|contents   ,   text            ,   attribute hashkey widget type )
 (   validator               ,   validator       ,   object attribute)
 (   regex                   ,   regex           ,   attribute validator type )
 (   list                    ,   list            ,   attribute datatype )
@@ -61,7 +65,13 @@
 (   data                    ,   data            ,   object          )
 (   index                   ,   index           ,   attribute       )
 (   slot                    ,   slot            ,   object          )
-(   javascript              ,   javascript      ,   action          )
+
+# As an action, allows execution of javascript.
+# As a validator type, will run the contents of a field through a
+# script executable on the backend, which must echo 'true' or 'false' 
+# to stderr.
+(   script                  ,   script          ,   action validator type )
+
 (   link                    ,   anchor          ,   widget type     )
 (   image                   ,   image           ,   widget type     )
 (   submit                  ,   submit          ,   widget type     )
@@ -74,23 +84,28 @@
 (   password                ,   password        ,   widget type attribute object )
 (   stack                   ,   stack           ,   widget type     )
 (   name                    ,   name            ,   attribute hashkey )
-(   hidden                  ,   hidden          ,   widget type attribute state )
+(   hidden                  ,   hidden          ,   widget type attribute  )
 (   image link              ,   image_link      ,   widget type     )
-(   to                      ,   to              ,   preposition     )
-(   as                      ,   as              ,   preposition     )
-(   at                      ,   at              ,   preposition     )
+
+# All prepositions are treated equally in the backend. And yes, I know
+# 'is' is not a preposition, but contextually the same for purposes.
+(   to|as|at|with|from|for|is  ,   preposition              ,   preposition     )
 (   widget                  ,   widget          ,   object          )
 (   type                    ,   type            ,   hashkey         )
 (   encrypted               ,   encrypted       ,   hashkey         )
 (   mode                    ,   mode            ,   hashkey         )
-(   source                  ,   source          ,   hashkey attribute state )
-(   location                ,   location        ,   hashkey attribute state )
+(   source                  ,   source          ,   hashkey attribute  )
+(   location                ,   location        ,   hashkey attribute  )
 (   template                ,   template        ,   hashkey         )
-(   member                  ,   member          ,   object attribute state )
+(   member                  ,   member          ,   object attribute  )
 (   get                     ,   get             ,   action          )
-(   children                ,   children        ,   hashkey attribute )
 (   moderator               ,   moderator       ,   descriptor  )
 (   write                   ,   write           ,   access_level )
 (   read                    ,   read            ,   access_level )
 (   default                 ,   default_        ,   hashkey )
 (   meta                    ,   meta            ,   prefix )
+
+# Keys are attached to groups. A given key value will correlate to 
+# at most one group ID, and can be used for reverse lookups of groups,
+# based on a code [the key] given to users.
+(   key                     ,   key             ,   object )

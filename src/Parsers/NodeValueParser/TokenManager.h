@@ -21,8 +21,6 @@ namespace Parsers {
 	//parsers
 	const std::unordered_set<int> __widgetTokens = {
 		(int) MoguSyntax::own,
-		(int) MoguSyntax::parent,
-		(int) MoguSyntax::child,
 		(int) MoguSyntax::widget
 	};
 
@@ -49,11 +47,9 @@ namespace Parsers {
 
 	const std::unordered_set<int> __objectTokens = {
 		(int) MoguSyntax::own,
-		(int) MoguSyntax::parent,
 		(int) MoguSyntax::user,
 		(int) MoguSyntax::session,
 		(int) MoguSyntax::group,
-		(int) MoguSyntax::child,
 		(int) MoguSyntax::data,
 		(int) MoguSyntax::slot,
 		(int) MoguSyntax::widget
@@ -110,7 +106,6 @@ class TokenManager
 	//TODO: inline where appropriate
 	public:
 		//TODO: refactor using generated syntax
-		enum class OutOfRange { Begin = 2147483640, End = 2147483639 };
 
 		//initialization methods
 		TokenManager();

@@ -104,7 +104,7 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 	/* Iterate backwards through the vector of tokens until the
 	 * 'Begin' token is reached.
 	 */
-	while((int) currToken != (int) TokenManager::OutOfRange::Begin)
+	while((int) currToken != (int) MoguSyntax::OUT_OF_RANGE_BEGIN)
 	{
 	    /* The '(' syntax will always signify a mathematical expression.
 	     * Hand this job over to the MathParser.
@@ -187,7 +187,7 @@ void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
         tmp.setString(__tm.fetchStringToken());
         cv.set(id_flag, tmp);
     }
-    else if ((int)currTok != (int)TokenManager::OutOfRange::End)
+    else if ((int)currTok != (int)MoguSyntax::OUT_OF_RANGE_END)
     {
         tmp.setInt( (int) currTok );
         cv.set(arg_flag, tmp);
@@ -223,7 +223,7 @@ void NodeValueParser::handleAppendCommand(
 
     // Cycle through the input, testing flag combinations and setting 
     // things where appropriate, until we're out of tokens.
-    while ((int)token != (int)TokenManager::OutOfRange::End)
+    while ((int)token != (int)MoguSyntax::OUT_OF_RANGE_END)
     {
         // A string will either be a value or an identifier.
         if (MoguSyntax::TOKEN_DELIM == token)
@@ -350,7 +350,7 @@ void NodeValueParser::giveInput(std::string input, CommandValue& cv,
     MoguSyntax tok = __tm.currentToken<MoguSyntax>();
     cv.set(CommandFlags::OBJECT, tok);
 
-    while (__tm.currentToken <int>() != (int)TokenManager::OutOfRange::End)
+    while (__tm.currentToken <int>() != (int)MoguSyntax::OUT_OF_RANGE_END)
     {
         MoguSyntax token = __tm.currentToken<MoguSyntax>();
         if (token == MoguSyntax::TOKEN_DELIM)
