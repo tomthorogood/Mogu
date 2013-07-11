@@ -144,11 +144,13 @@ class RedisWriter(object):
 
     def listWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
+        pipe.delete(redis_object.node)
         for value in redis_object.data:
             pipe.rpush(redis_object.node, value)
 
     def hashWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
+        pipe.delete(redis_object.node)
         for key in redis_object.data:
             pipe.hset(redis_object.node, key, redis_object.data[key])
 
