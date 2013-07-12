@@ -96,6 +96,14 @@ WhenConsumer = Consumer.Consumer([
 # BEGIN NEXT TIER OF PARSE MAPS #
 #################################
 
+t = "perspective"
+PERSPECTIVE_BLOCK = Lexer.ParseMap ((
+        ("begin",          "\s*%s\s+"%t,                IGNORE),
+        ("identifier",     regexlib["identifier"],      LITERAL),
+        ("block",      everything_until(r"end\s+%s"%t), WhenConsumer.parse),
+        ("end",            r"end\s+%s"%t,               IGNORE)
+))
+
 t = syntax.as_integer("hash")
 HASH_BLOCK = Lexer.ParseMap ((
         ("begin",           "\s*%s"%t,                      IGNORE),
@@ -239,6 +247,7 @@ WIDGET_BLOCK = Lexer.ParseMap ((
         ( "end",            r"end\s+%s"%t,                      IGNORE)
 ))
 
+
 ################################
 # BEGIN NEXT TIER OF CONSUMERS #
 ################################
@@ -249,6 +258,7 @@ RootConsumer = Consumer.Consumer([
     POLICY_BLOCK,
     DATA_BLOCK,
     VALIDATOR_BLOCK,
+    PERSPECTIVE_BLOCK,
     NEWLINES,
 ], help="""
 Basic Mogu syntax in the form of object blocks. See http://www.github.com/tomthorogood/gomogu for more assistance.
@@ -257,4 +267,5 @@ Template Regex:     %s
 Policy Regex:       %s
 Data Regex:         %s
 Validator Regex:    %s
-"""%(WIDGET_BLOCK.regex,TEMPLATE_BLOCK.regex,POLICY_BLOCK.regex, DATA_BLOCK.regex,VALIDATOR_BLOCK.regex))
+Perspective Regex:  %s
+"""%(WIDGET_BLOCK.regex,TEMPLATE_BLOCK.regex,POLICY_BLOCK.regex, DATA_BLOCK.regex,VALIDATOR_BLOCK.regex, PERSPECTIVE_BLOCK.regex))

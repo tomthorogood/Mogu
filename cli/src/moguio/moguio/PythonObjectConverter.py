@@ -45,6 +45,8 @@ class PythonObjectConverter(object):
             return self.convert_data(lexed_results)
         elif lex_map is Lex.VALIDATOR_BLOCK:
             return self.convert_validator(lexed_results)
+        elif lex_map is Lex.PERSPECTIVE_BLOCK:
+            return self.convert_perspective(lexed_results)
         else:
             raise TypeError
 
@@ -107,6 +109,17 @@ class PythonObjectConverter(object):
             value = line[0]["value"]
             return_dict[key] = value
         return return_dict
+
+    def convert_perspective(self, result_dict):
+        identifier = result_dict["identifier"]
+        node_name = "perspectives.%s" % identifier
+        event_list = []
+        for result_tuple in result_dict["block"]:
+            result = result_tuple[0]
+            event = " ".join([val.strip() for val in result.values()])
+            event_list.append(event)
+        return self.convert_to_redis_object(node_name, event_list)
+
 
     def convert_validator(self, result_dict):
         """

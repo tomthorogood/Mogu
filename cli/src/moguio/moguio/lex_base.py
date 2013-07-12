@@ -244,4 +244,3 @@ CHILDREN_BLOCK = pyboro.Lexer.ParseMap((
     ("block",           everything_until(r"end\s*%s"%t)           , reference_widget_list),
     ("end",             r"end\s*%s"%t                             , IGNORE)
 ))
-
