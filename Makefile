@@ -109,6 +109,15 @@ install: $(SYNTAX) $(EXECUTABLE) moguio
 	sudo cp -r $(CURDIR)/cli/src/cli $(CONFIG_DIR)/src/
 	sudo cp *.conf $(CONFIG_DIR)
 
+refresh-cli:
+	@echo "Removing syntax files..."
+	@cd syntax && $(MAKE) clean || echo "Syntax files not created, so not removed."
+	@echo "Uninstalling server and CLI executables"
+	@echo "Refreshing files and reinstalling"
+	@$(MAKE) uninstall
+	@$(MAKE) install
+
+
 #= Cleaning house
 
 moguio: $(SYNTAX) 
