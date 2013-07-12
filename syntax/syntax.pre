@@ -23,7 +23,7 @@
 (   own|self                ,   own             ,   object          )
 
 # Not yet implemented - handles custom uris.
-(   perspective             ,   perspective     ,   object          )
+#(   perspective             ,   perspective     ,   object          )
 
 (   clicked|click           ,   click           ,   event trigger   )
 (   mouseover               ,   mouseover       ,   event trigger   )

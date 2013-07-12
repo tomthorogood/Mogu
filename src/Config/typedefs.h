@@ -32,10 +32,11 @@ enum class Prefix {
     validators  =32,
     policies    =64,
     temp        =128,
+    perspectives=256,
     /* If adding prefixes, add them BEFORE META, and UPDATE META to reflect
      * a new bit-aligned number.
      */
-    meta        =256
+    meta        =512
 };
 
 #endif /* TYPEDEFS_H_ */
