@@ -1,0 +1,48 @@
+widget example
+    type    :   container
+    children
+        :username
+        :password
+        :groupcode
+        :submit
+        :feedback
+    end children
+end widget
+
+widget example:username
+    type    :   input
+    text    :   "Your Username"
+end widget
+
+widget example:password
+    type    :   password
+    text    :   "Your Password"
+end widget
+
+widget example:groupcode
+    type    :   input
+    text    :   "Your Group Code"
+end widget
+
+widget example:submit
+    type    :   text
+    css     :   "linkified"
+    text    :   "Log In!"
+
+    events
+        when clicked {
+            set slot USERNAME to widget example:username text
+            set slot PASSWORD to widget example:password text
+            set user
+            set group to widget example:groupcode text
+            set group
+            add user to group
+            set example:feedback text to "You're logged in, and you've been added to The Group!"
+        }
+    end events
+end widget
+
+widget example:feedback
+    type    :   text
+    text    :   " "
+end widget

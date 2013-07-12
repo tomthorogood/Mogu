@@ -20,8 +20,8 @@ namespace Redis {
 struct Context {
     int         port; //<!\b The port on which the redis instance is listening
     std::string host_; //<!\b The host (ip address|localhost) of the instance
-    const char* c_host = EMPTY;
     int         db_num; //<!\b The database number to use
+    const char* c_host = EMPTY;
 public:
     Context(int port_ = 6379, std::string host__ = "localhost", int db_num_=0)
     : port(port_), host_(host__), db_num(db_num_), c_host(host__.c_str()) {

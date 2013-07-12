@@ -1,0 +1,13 @@
+widget example
+    type    :   container
+end widget
+
+widget foo
+    type    :   text
+    content :   "Default text."
+end widget
+
+perspective foo
+    append widget example:bar to widget example
+    set widget example:bar text to "You did it!"
+end perspective

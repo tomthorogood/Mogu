@@ -207,15 +207,6 @@ void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
 
 void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
 {
-    /* We first need to find the preposition token, and 
-     * then step backwards from the end of the command 
-     * through the preposition to see whether we have any
-     * object reduction that needs to take place.
-     */
-}
-
-void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
-{
     MoguSyntax token;
     NodeValue tmpValue;
     std::string str;
@@ -350,7 +341,7 @@ void NodeValueParser::giveInput(const std::string& input, CommandValue& cv,
 
     if ( cv.get(CommandFlags::ACTION) == MoguSyntax::append) 
     {
-        handleAppendCommand(input,cv,bc);
+        handleAppendCommand(cv,bc);
         __tm.reset();
         return;
     }
