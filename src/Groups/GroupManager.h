@@ -22,6 +22,7 @@ class GroupManager {
 public:
     GroupManager();
     GroupManager(const int& group_id);
+    GroupManager(const std::string& group_key);
     void promote (const std::string& user_id);
     void demote (const std::string& user_id);
     bool hasReadAccess (const std::string& field_name);
@@ -47,6 +48,23 @@ private:
     std::string USER_STR;
     std::string GROUP_STR;
     std::string ADMIN_STR;
+
+    inline void setAccessLevel()
+    {
+        mApp;
+        int user = app->getUser();
+        grpdb.appendQuery("sismember groups.%d.__meta__.admins %d",
+                group_id, user);
+        grpdb.appendQuery("sismember groups.%d.__meta__.members %d", 
+                group_id, user);
+         
+        access_level = 
+            grpdb.yieldResponse <bool>() 
+                ? AccessLevel::ADMIN_ACCESS 
+                : grpdb.yieldResponse <bool>() 
+                    ? AccessLevel::USER_ACCESS
+                    : AccessLevel::NO_ACCESS;
+    } 
 };
 
 #endif

@@ -18,10 +18,14 @@ const uint8_t VALUE_TO_ATTRIBUTE    =2;
 // "append [value] to [data|user|group identifier [argument]]"
 const uint8_t VALUE_TO_FIELD        =3;
 
+// "append user"
+const uint8_t USER_TO_APPLICATION   =4;
+
 // Based on the flags set in the CommandValue, determine what kind
 // of 'append' construct we have (of the 
 const uint8_t getConstruct(CommandValue& v)
 {
+
     // OBJECT_TO_OBJECT will always have an R_IDENTIFIER, 
     // but the main object may be "self" OR another widget.
     if (v.test(CommandFlags::R_IDENTIFIER) &&
@@ -37,6 +41,9 @@ const uint8_t getConstruct(CommandValue& v)
             return VALUE_TO_ATTRIBUTE;
         else return VALUE_TO_FIELD;
     }
+
+    if (MoguSyntax::user == (MoguSyntax) v.get(CommandFlags::R_OBJECT))
+        return USER_TO_APPLICATION;
 
     return INVALID_CONSTRUCT;
 }
@@ -109,6 +116,14 @@ void handleValueToField(Moldable& broadcaster, CommandValue& v)
     editor.write(current_value);
 }
 
+void handleUserToApplication(Moldable& broadcaster, CommandValue& v)
+{
+    mApp;
+    app->getUserManager().registerUser(
+        app->slotManager().retrieveSlot("USERNAME"),
+        app->slotManager().retrieveSlot("PASSWORD"));
+}
+
 }//anonymous local namespace
 
 void append(Moldable& broadcaster, CommandValue& v)
@@ -125,6 +140,8 @@ void append(Moldable& broadcaster, CommandValue& v)
        case VALUE_TO_FIELD:
             handleValueToField(broadcaster,v);
             break;
+       case USER_TO_APPLICATION:
+            handleUserToApplication(broadcaster,v);
        default: 
             return;
    }

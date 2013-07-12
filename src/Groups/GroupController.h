@@ -17,6 +17,10 @@ private:
 
     // Retrieve a list fo all members of a set.
     void getSet (const char*, std::vector <std::string>&);
+
+    // Consume a group id from either the current group count or
+    // from the list of abandoned ids.
+    int consumeGroupId(Redis::ContextQuery&);
     GroupManager manager;
 
 public:
@@ -35,10 +39,7 @@ public:
     }
     void destroyGroup ();
 
-    // Allows a member to join the group without being manually added
-    // by an administrator, provided they have the authorization code
-    // specified at groups.[group_id].auth
-    bool joinGroup (const std::string& authorization);
+    void joinGroup ();
 
     // Purge the member list and requery in order to get a more updated
     // list

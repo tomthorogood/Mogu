@@ -21,7 +21,7 @@ void GroupController::getSet(const char* setname,
 {
     if (group_id != 0 && results.size() == 0) {
         Redis::ContextQuery& db = manager.getContext(Prefix::group);
-        db.appendQuery( "smembers groups.%d.%s", group_id, setname);
+        db.appendQuery( "smembers groups.%d.__meta__.%s", group_id, setname);
         results = db.yieldResponse <std::vector <std::string>>();
     }
 }
@@ -39,6 +39,18 @@ const std::vector <std::string>& GroupController::administrators()
 }
 
 
+int GroupController::consumeGroupId(Redis::ContextQuery& db)
+{
+    db.appendQuery("scard groups.meta.abandoned");
+    if (db.yieldResponse <int>() > 0)
+    {
+        db.appendQuery("spop groups.meta.abandoned");
+        return db.yieldResponse <int>();
+    }
+    db.appendQuery("incr groups.meta.count");
+    return db.yieldResponse <int>();
+}
+
 void GroupController::createGroup (const std::string& group_name,
         bool userIsAdmin=false)
 {
@@ -46,15 +58,17 @@ void GroupController::createGroup (const std::string& group_name,
     int user_id = app->getUser();
     // Assign an id to the new group
     Redis::ContextQuery& db = manager.getContext(Prefix::group);
-    db.appendQuery( "incr groups");
-    group_id = db.yieldResponse <int>();
-    db.appendQuery( "hset groups.%d.meta name %s", 
+    
+    group_id = consumeGroupId(db);
+    db.appendQuery( "hset groups.%d.__meta__ name %s", 
             group_id, group_name.c_str());
 
     if (userIsAdmin) 
-        db.appendQuery( "sadd groups.%d.admins %d", group_id, user_id);
+        db.appendQuery( "sadd groups.%d.__meta__.admins %d", group_id, user_id);
     else
-        db.appendQuery( "sadd groups.%d.members %d", group_id, user_id);
+        db.appendQuery( "sadd groups.%d.__meta__.members %d", group_id, user_id);
+    Redis::ContextQuery& usr = manager.getContext(Prefix::user);
+    usr.appendQuery("sadd user.%d.__meta__.groups %d", user_id, group_id);
     db.execute();
 }
 
@@ -67,27 +81,29 @@ void GroupController::destroyGroup() {
     Redis::ContextQuery& db = manager.getContext(Prefix::user);
     for (std::string member : members())
     {
-        db.appendQuery( "srem users.%s.groups %d", member.c_str(), group_id);
+        db.appendQuery(
+                "srem users.%s.__meta__.groups %d", member.c_str(), group_id);
     }
     for (std::string admin : administrators())
     {
-        db.appendQuery( "srem users.%s.groups %d", admin.c_str(), group_id);
+        db.appendQuery(
+                "srem users.%s.__meta__.groups %d", admin.c_str(), group_id);
     }
+
     db.execute();
 }
 
-bool GroupController::joinGroup(const std::string& auth_code)
+void GroupController::joinGroup()
 {
     mApp;
     int user = app->getUser();
     Redis::ContextQuery& gdb = manager.getContext(Prefix::group);
     Redis::ContextQuery& udb = manager.getContext(Prefix::user);
-    gdb.appendQuery( "hget groups.%d.meta auth", group_id);
-    if (auth_code != Security::decrypt(gdb.yieldResponse <std::string>()))
-        return false;
-    udb.appendQuery( "sadd users.%d.groups %d", user, group_id);
-    gdb.appendQuery( "sadd groups.%d.members %d", group_id, user);
-    udb.execute();
+    
+    gdb.appendQuery("sadd groups.%d.__meta__.members %d", 
+        group_id, user_id);
+    udb.appendQuery("sadd user.%d.__meta__.groups %d", 
+        user_id, group_id);
     gdb.execute();
-    return true;
+    udb.execute();
 }

@@ -15,16 +15,25 @@ GroupManager::GroupManager (const int& grpid)
     , GROUP_STR(std::to_string((int) MoguSyntax::group))
     , ADMIN_STR(std::to_string((int) MoguSyntax::moderator))
 {
-    mApp;
-    int user = app->getUser();
-    grpdb.appendQuery("sismember groups.%d.admins %d",
-            group_id, user);
-    grpdb.appendQuery("sismember groups.%d.members %d", 
-            group_id, user);
+    setAccessLevel();
+    grpdb.execute();
+}
 
-    access_level = 
-        grpdb.yieldResponse <bool>() ? AccessLevel::ADMIN_ACCESS : 
-            grpdb.yieldResponse <bool>() ? AccessLevel::USER_ACCESS : AccessLevel::NO_ACCESS;
+GroupManager::GroupManager(const std::string& group_key)
+: 
+    grpdb(Prefix::group)
+    , usrdb(Prefix::user)
+    , plcdb(Prefix::policies)
+    , USER_STR(std::to_string((int) MoguSyntax::user))
+    , GROUP_STR(std::to_string((int) MoguSyntax::group))
+    , ADMIN_STR(std::to_string((int) MoguSyntax::moderator))
+{
+    /* Provided a key instead of the group id, looks up the group id
+     * with this information. 
+     */
+    grpdb.appendQuery("hget groups.meta.keys %s", group_key.c_str());
+    group_id = grpdb.yieldResponse <int>();
+    if (group_id != 0) setAccessLevel();
     grpdb.execute();
 }
 
@@ -42,7 +51,7 @@ void GroupManager::promote (const std::string& userid)
         grpdb.appendQuery( "sadd groups.%d.admins %s",
                 group_id, userid.c_str());
     else
-        grpdb.appendQuery( "sadd grups.%d.members %s",
+        grpdb.appendQuery( "sadd groups.%d.members %s",
                 group_id, userid.c_str());
     grpdb.execute();
 }
@@ -92,14 +101,18 @@ bool GroupManager::hasReadAccess (const std::string& field)
 bool GroupManager::hasWriteAccess(const std::string& field)
 {
     plcdb.appendQuery(
-            "hget policies.%s %d", field.c_str(), MoguSyntax::write);
+        "hget policies.%s %d", field.c_str(), MoguSyntax::write);
 
     // If the user is not a member of the group, they do not have write access
     // no matter what
-    auto access = plcdb.yieldResponse <std::string>();
+    std::string access = plcdb.yieldResponse <std::string>();
     std::string test_str = 
-        access_level == AccessLevel::ADMIN_ACCESS ? ADMIN_STR :
-            access_level == AccessLevel::USER_ACCESS ? GROUP_STR : USER_STR;
-    return (test_str != USER_STR) && (access.find(test_str) != std::string::npos);
+        access_level == AccessLevel::ADMIN_ACCESS 
+        ? ADMIN_STR 
+        : access_level == AccessLevel::USER_ACCESS
+            ? GROUP_STR
+            : USER_STR;
+    return (test_str != USER_STR)
+        && (access.find(test_str) != std::string::npos);
 }
 
