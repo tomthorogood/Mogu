@@ -101,9 +101,9 @@ void GroupController::joinGroup()
     Redis::ContextQuery& udb = manager.getContext(Prefix::user);
     
     gdb.appendQuery("sadd groups.%d.__meta__.members %d", 
-        group_id, user_id);
+        group_id, user);
     udb.appendQuery("sadd user.%d.__meta__.groups %d", 
-        user_id, group_id);
+        user, group_id);
     gdb.execute();
     udb.execute();
 }

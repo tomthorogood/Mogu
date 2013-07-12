@@ -116,3 +116,19 @@ bool GroupManager::hasWriteAccess(const std::string& field)
         && (access.find(test_str) != std::string::npos);
 }
 
+void GroupManager::setAccessLevel()
+{
+    mApp;
+    int user = app->getUser();
+    grpdb.appendQuery("sismember groups.%d.__meta__.admins %d",
+            group_id, user);
+    grpdb.appendQuery("sismember groups.%d.__meta__.members %d", 
+            group_id, user);
+     
+    access_level = 
+        grpdb.yieldResponse <bool>() 
+            ? AccessLevel::ADMIN_ACCESS 
+            : grpdb.yieldResponse <bool>() 
+                ? AccessLevel::USER_ACCESS
+                : AccessLevel::NO_ACCESS;
+} 
