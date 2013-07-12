@@ -35,7 +35,7 @@ class Mogu: public Wt::WApplication
     SlotManager __slotMgr;
 
     void loadMoguStyles();
-    void handlePathChange( std::string path);
+    void handlePathChange(const std::string& path);
     std::string __name__ = EMPTY;
 
     /*!\brief The widget that started it all... */

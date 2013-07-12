@@ -10,12 +10,14 @@ struct ContextMap {
     Redis::Context*  __data         = nullptr;
     Redis::Context*  __group        = nullptr;
     Redis::Context*  __temp         = nullptr;
+    Redis::Context*  __perspectives = nullptr;
 
     Redis::Context* get (Prefix prefix) {
         switch(prefix)
         {
         case Prefix::widgets:   return __widgets;
         case Prefix::user:      return __user;
+        case Prefix::perspectives: return __perspectives;
         case Prefix::meta:      return __meta;
         case Prefix::group:     return __group;
         case Prefix::validators:return __validators;
@@ -46,6 +48,9 @@ struct ContextMap {
                                 break;
         case Prefix::temp:      __temp = context;
                                 break;
+        case Prefix::perspectives:
+                                __perspectives = context;
+                                break;
         default: break;
         }
     }
@@ -61,6 +66,7 @@ struct ContextMap {
         if (__data != nullptr) delete __data;
         if (__group != nullptr) delete __group;
         if (__temp != nullptr) delete __temp;
+        if (__perspectives != nullptr) delete __perspectives;
     }
 };
 

@@ -40,6 +40,11 @@ Prefix matchPrefix(int& PREFIX_MASK, const std::string& prefix)
         PREFIX_MASK |= (int) Prefix::validators;
         return Prefix::validators;
     }
+    else if (prefix.find("perspectives") != std::string::npos)
+    {
+        PREFIX_MASK |= (int) Prefix::perspectives;
+        return Prefix::perspectives;
+    }
     else if (prefix.find("policies") != std::string::npos) {
         PREFIX_MASK |= (int) Prefix::policies;
         return Prefix::policies;

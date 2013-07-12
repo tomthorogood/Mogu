@@ -12,18 +12,17 @@
 #include <Mogu.h>
 #include <Parsers/NodeValueParser.h>
 #include "TriggerMap.h"
+#include "CommandProcessor.h"
 
-class EventHandler : public Wt::WObject
+class EventHandler : public CommandProcessor
 {
 public:
     EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node);
 
 private:
     TriggerMap triggerMap;
-    Moldable& broadcaster;
 
     template <MoguSyntax T> void handleTrigger();
-    void processCommand(CommandValue& v);
 };
 
 template <MoguSyntax T> void EventHandler::handleTrigger()

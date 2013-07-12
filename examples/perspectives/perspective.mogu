@@ -1,13 +1,15 @@
 widget example
     type    :   container
+    children
+        :foo
+    end children
 end widget
 
-widget foo
+widget example:foo
     type    :   text
     content :   "Default text."
 end widget
 
 perspective foo
-    append widget example:bar to widget example
-    set widget example:bar text to "You did it!"
+    set widget example:foo text to "You did it!"
 end perspective

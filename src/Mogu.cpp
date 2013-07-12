@@ -21,6 +21,7 @@
 #include "Redis/DatabaseConfigReader.h"
 #include "Redis/ContextMap.h"
 #include "Redis/ContextQuery.h"
+#include "Events/PerspectiveHandler.h"
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)
@@ -57,9 +58,16 @@ Mogu::Mogu(
     loadMoguStyles();
 }
 
-void Mogu::handlePathChange(
-    std::string path)
+void Mogu::handlePathChange(const std::string& path)
 {
+    // Each perspective will be separated by a '/' character.
+    std::vector <std::string> perspectives;
+    split(path, '/', perspectives);
+    for (auto perspective : perspectives)
+    {
+        PerspectiveHandler proc(*__wrapper, perspective);
+        proc.moldPerspective();
+    }
 }
 
 Mogu::~Mogu()

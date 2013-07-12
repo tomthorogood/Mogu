@@ -7,13 +7,11 @@
 
 
 #include "EventHandler.h"
-#include "Actions.h"
 #include "TriggerMap.h"
 #include <Types/CommandValue.h>
 
 EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node)
-: triggerMap(broadcaster.getNumTriggers(), prefix, node),
-  broadcaster(broadcaster)
+: CommandProcessor(broadcaster), triggerMap(broadcaster.getNumTriggers(), prefix, node)
 {
     for (MoguSyntax trigger : triggerMap.getTriggers())
     {
@@ -53,44 +51,6 @@ EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::stri
             break;
         default: continue; // just ignore bad input
         }
-    }
-}
-
-void EventHandler::processCommand(CommandValue& v)
-{
-    switch((MoguSyntax) v.get(CommandFlags::ACTION))
-    {
-        case MoguSyntax::set:                   
-            Actions::set(broadcaster,v);
-            break;
-        case MoguSyntax::increment:             
-            Actions::increment(broadcaster,v);
-            break;
-        case MoguSyntax::decrement:             
-            Actions::decrement(broadcaster,v);
-            break;
-        case MoguSyntax::test:                   
-            Actions::test(broadcaster,v);
-            break;
-        case MoguSyntax::email:
-            Actions::email(broadcaster,v);
-            break;
-        case MoguSyntax::reload:                
-            Actions::reload(broadcaster,v);
-            break;
-        case MoguSyntax::append:                
-            Actions::append(broadcaster,v);
-            break;
-        case MoguSyntax::reset:                 
-            Actions::reset(broadcaster,v);
-            break;
-        case MoguSyntax::remove:
-            Actions::remove(broadcaster,v);     
-            break;
-        case MoguSyntax::script:            
-            Actions::javascript(broadcaster,v);
-            break;
-        default:return;
     }
 }
 
