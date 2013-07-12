@@ -87,7 +87,7 @@ void EventHandler::processCommand(CommandValue& v)
         case MoguSyntax::remove:
             Actions::remove(broadcaster,v);     
             break;
-        case MoguSyntax::javascript:            
+        case MoguSyntax::script:            
             Actions::javascript(broadcaster,v);
             break;
         default:return;
