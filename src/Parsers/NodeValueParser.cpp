@@ -134,13 +134,14 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 	return hasPreposition;
 }
 
-void NodeValueParser::giveInput(std::string input, NodeValue& nv, Moldable* bc)
+void NodeValueParser::giveInput(const std::string& input, NodeValue& nv, Moldable* bc)
 {
 #ifdef DEBUG
     static size_t num_iters = 0;
     const char* current_input = input.c_str();
     ++num_iters;
 #endif
+    __input = input;
 	tokenizeInput(input);
 	reduceExpressions(bc);
 
@@ -204,8 +205,16 @@ void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
     cv.set(arg_flag, tmp);
 }
 
-void NodeValueParser::handleAppendCommand(
-        std::string input, CommandValue& cv, Moldable* bc)
+void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
+{
+    /* We first need to find the preposition token, and 
+     * then step backwards from the end of the command 
+     * through the preposition to see whether we have any
+     * object reduction that needs to take place.
+     */
+}
+
+void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
 {
     MoguSyntax token;
     NodeValue tmpValue;
@@ -326,10 +335,11 @@ void NodeValueParser::handleAppendCommand(
        
 }
 
-void NodeValueParser::giveInput(std::string input, CommandValue& cv,
+void NodeValueParser::giveInput(const std::string& input, CommandValue& cv,
     Moldable* bc)
 {
     NodeValue tmp;
+    __input = input;
     tokenizeInput(input, true); // Make sure to return the iterator to
                                 // the BEGINNING
 #ifdef DEBUG

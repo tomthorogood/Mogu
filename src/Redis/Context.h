@@ -24,12 +24,13 @@ struct Context {
     int         db_num; //<!\b The database number to use
 public:
     Context(int port_ = 6379, std::string host__ = "localhost", int db_num_=0)
-    : port(port_), host_(host__), db_num(db_num_) {
+    : port(port_), host_(host__), db_num(db_num_), c_host(host__.c_str()) {
     }
     Context(const Context& other) {
         port = other.port;
         host_ = other.host_;
         db_num = other.db_num;
+        c_host = host_.c_str();
     }
     inline const char* host() {
         if (strcmp(c_host,EMPTY)==0)

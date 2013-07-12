@@ -11,6 +11,7 @@ widget example:user
         :username
         :password
         :passconf
+        :feedback
         :submit
     end children
 end widget
@@ -30,6 +31,11 @@ widget example:user:passconf
     content :   "Re-Enter the Password"
 end widget
 
+widget example:user:feedback
+    type    :   text
+    content :   " "
+end widget
+
 widget example:user:submit
     type    :   text
     text    :   "SUBMIT"
@@ -41,9 +47,10 @@ widget example:user:submit
         }
 
         when succeeded test {
+            set widget example:user:feedback to " "
             set slot USERNAME to widget example:user:username content
             set slot PASSWORD to widget example:user:password content
-            append user slot USERNAME
+            append user
             set widget example:user:feedback content to "Ok! You're registered!"
             remove widget example:user:username
             remove widget example:user:password

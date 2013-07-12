@@ -40,11 +40,6 @@ namespace Parsers {
 		(int) MoguSyntax::data
 	};
 	
-	const std::unordered_set<int> __flippedActionTokens = {
-		(int) MoguSyntax::remove,
-		(int) MoguSyntax::append
-	};
-
 	const std::unordered_set<int> __objectTokens = {
 		(int) MoguSyntax::own,
 		(int) MoguSyntax::user,
@@ -52,13 +47,9 @@ namespace Parsers {
 		(int) MoguSyntax::group,
 		(int) MoguSyntax::data,
 		(int) MoguSyntax::slot,
-		(int) MoguSyntax::widget
-	};
+		(int) MoguSyntax::widget,
+        (int) MoguSyntax::key
 
-	const std::unordered_set<int> __prepositionTokens = {
-		(int) MoguSyntax::to,
-		(int) MoguSyntax::as,
-		(int) MoguSyntax::at
 	};
 
 	inline bool isStateToken(MoguSyntax token)
@@ -76,11 +67,6 @@ namespace Parsers {
 		return __dbTokens.count((int) token) == 1;
 	}
 
-	inline bool isFlippedActionToken(MoguSyntax token)
-	{
-		return __flippedActionTokens.count((int) token) == 1;
-	}
-
 	inline bool isObjectToken(MoguSyntax token)
 	{
 		return __objectTokens.count((int) token) == 1;
@@ -88,7 +74,7 @@ namespace Parsers {
 
 	inline bool isPrepositionToken(MoguSyntax token)
 	{
-		return __prepositionTokens.count((int) token) == 1;
+        return token == MoguSyntax::preposition;
 	}
 
 //class for maintaining a consistent list of tokens between

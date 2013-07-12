@@ -122,6 +122,9 @@ void QuerySet::setPrefix(Prefix prefix)
     mApp;
     context = app->contextMap()->get(prefix);
     rdb = redisConnect(context->host(), context->port);
+    selected_db = context->db_num;
+    appendQuery("select %d", selected_db);
+    execute();
 }
 
 

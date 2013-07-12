@@ -84,7 +84,7 @@ build/%.o: src/%.cpp | $(TEMP_DIRS) $(SYNTAX)
 
 #= Generic Recipes
 
-$(SYNTAX): moguio
+$(SYNTAX):
 	@echo "$(C_INFO)Creating syntax files...$(C_END)"
 	@cd syntax && $(MAKE)
 
@@ -100,7 +100,7 @@ maketest: $(TEMP_DIRS)
 	@echo "SOURCE DIRECTORIES:  $(DIRS)\n"
 	@echo "BUILD DIRECTORIES: $(TEMP_DIRS)\n"
 
-install: $(EXECUTABLE) moguio
+install: $(SYNTAX) $(EXECUTABLE) moguio
 	sudo mkdir -p $(CONFIG_DIR)/src 
 	sudo cp $(EXECUTABLE) $(INSTALL_DIR)/$(EXECUTABLE)
 	sudo cp $(CURDIR)/cli/mogu $(CONFIG_DIR)/
@@ -117,6 +117,7 @@ moguio: $(SYNTAX)
 
 uninstall:
 	if [ -h $(INSTALL_DIR)/bin/mogu ]; then sudo unlink $(INSTALL_DIR)/bin/mogu; fi;
+	@sudo pip uninstall --yes moguio 1> /dev/null|| echo "Moguio not installed, so not removed."
 	sudo rm -f $(INSTALL_DIR)/$(EXECUTABLE)
 	sudo rm -rf $(CONFIG_DIR)
 

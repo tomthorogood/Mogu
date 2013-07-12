@@ -144,14 +144,22 @@ ContextMap* loadDatabaseContexts() {
                 delete contextMap;
                 return nullptr;
             }
-            contextMap->set(prefix, new Redis::Context(port, host.c_str(), dbnum));
+            contextMap->set(prefix, new Redis::Context(port, host, dbnum));
             assert(contextMap->get(prefix) != nullptr);
+#ifdef DEBUG
+            std::cout << "Loaded Database Context "
+                << prefixMap.at(prefix) << "with mask " << (int) prefix
+                << std::endl;
+#endif
         }
     }
     infile.close();
     //!\todo Throw an error if not everything was loaded.
     if (PREFIX_MASK < MAX_PREFIX_MASK)
+    {
+        delete contextMap;
         return nullptr;
+    }
     assert(contextMap != 0x0);
     return contextMap;
 }

@@ -25,12 +25,13 @@ class NodeValueParser
 {
 	public:
 		NodeValueParser();
-		void giveInput(std::string input, NodeValue& nv,
+		void giveInput(const std::string& input, NodeValue& nv,
 		    Moldable* bc = nullptr);
-		void giveInput(std::string input, CommandValue& cv,
+		void giveInput(const std::string& input, CommandValue& cv,
 		    Moldable *bc = nullptr);
 
 	private:
+        std::string __input;
 		StateParser __stateParser;
 		MathParser __mathParser;
 		TokenManager __tm;

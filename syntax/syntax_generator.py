@@ -17,11 +17,11 @@ INPUT_FILE  = "syntax.pre"
 OUTPUT_PY   = "syntax.py"
 OUTPUT_H    = "syntax.h"
 
-global_aggregator = 0
+# Start with double digits to avoid clashes.
+global_aggregator = 10
 
 from pyboro import Lexer
 import sys
-
 
 Lexer.VERBAL = False
 
@@ -159,7 +159,7 @@ class CppEnumEntry(OutputLine):
         integer = int(integer)
         align = spaces(enum,str(integer))
         fstring = "%(enum)s%(align)s= %(integer)d"
-        if integer != 0:
+        if integer != 10:
             # since it's easier to edit cpp entries with a preceeding comma,
             # rather than a suffix comma, we'll do it like this.
             fstring = ","+fstring
@@ -221,6 +221,8 @@ for line in lines:
         cpp_entries.append(
                 CppEnumEntry(parsed.enumerated,global_aggregator))
         global_aggregator += 1
+        if global_aggregator >= 100:
+            sys.stderr.write("WARNING: Too much syntax! More than 90 tokens could be a problem. Also, you probably have a problem.")
     except Lexer.InputMatchError as e:
         #sys.stderr.write("Could not parse line: %s" % line)
         continue

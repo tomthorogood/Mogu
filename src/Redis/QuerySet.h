@@ -19,6 +19,7 @@ private:
     //!\brief The flags for each query given to the set
     std::queue <uint8_t>    queryflags;
     std::queue <Query*>     queries;
+    int         selected_db =   0;
 
     uint8_t last_flags;
     Query* last_query;
@@ -37,7 +38,7 @@ private:
 
     //!\brief Holds the last integer returned, where Redis stated the
     // response was an integer
-    int         reply_int   = -1;
+    int         reply_int   =  -1;
 
     //!\brief Holds the last string returned, where Redis states the
     //response was a string.

@@ -2,8 +2,6 @@
 #include <city.h>
 #include <sstream>
 
-using std::stringstream;
-
 namespace Hash {
 
 HashedString::HashedString()
@@ -31,7 +29,7 @@ inline HashedString64& HashedString64::set(
 
 inline std::string HashedString64::as_string()
 {
-    stringstream stream;
+    std::stringstream stream;
     stream << hashedValue;
     return stream.str();
 }
@@ -54,7 +52,7 @@ HashedString128& HashedString128::set( uint128 _value)
 
 std::string HashedString128::as_string()
 {
-    stringstream stream;
+    std::stringstream stream;
     stream << hashedValue.first << hashedValue.second;
     return stream.str();
 }
