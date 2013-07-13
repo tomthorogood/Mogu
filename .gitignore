@@ -12,7 +12,6 @@ Debug/*
 docs/html
 *.dot
 *grindout.xml
-mogu.conf
 mogu-server
 *.o
 *.orig
