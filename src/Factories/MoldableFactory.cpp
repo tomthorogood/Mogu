@@ -25,7 +25,7 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     MoguSyntax widget_type;
     Redis::ContextQuery db(Prefix::widgets);
     db.appendQuery("hget widgets.%s %d", c_node, MoguSyntax::type);
-    widget_type = (MoguSyntax) db.yieldResponse <int>();
+    widget_type = db.yieldResponse <MoguSyntax>();
 
     // If there was an error here, the syntax type will be 'none'
     if (widget_type == MoguSyntax::__NONE__)

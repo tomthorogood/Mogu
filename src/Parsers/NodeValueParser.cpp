@@ -145,6 +145,15 @@ void NodeValueParser::giveInput(const std::string& input, NodeValue& nv, Moldabl
 	tokenizeInput(input);
 	reduceExpressions(bc);
 
+	while (__tm.currentToken<MoguSyntax>()==MoguSyntax::TOKEN_DELIM
+	    && __tm.fetchStringToken().at(0)!='"')
+	{
+	    std::string new_input = __tm.fetchStringToken();
+	    __tm.reset();
+	    tokenizeInput(new_input);
+	    reduceExpressions(bc);
+	}
+
 	//if we have more than one token in __numTokens at this point (or
 	//two if the first token is TOKEN DELIM), something has gone wrong
 

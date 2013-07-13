@@ -14,6 +14,7 @@ namespace Redis {
 class QuerySet 
 {
 private:
+    Prefix __prefix     =Prefix::__NONE__;
     Context* context;
 
     //!\brief The flags for each query given to the set

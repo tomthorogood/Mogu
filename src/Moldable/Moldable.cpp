@@ -162,6 +162,7 @@ void Moldable::setFlags(Redis::NodeEditor& node)
 
 std::string Moldable::getParameter(Redis::NodeEditor& node, MoguSyntax param)
 {
+    node.getContext().clear();
     NodeValue nv(std::to_string((int) param));
     node.setArg(&nv);
     return node.read();
@@ -183,11 +184,11 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
             break;
         }
         case MoguSyntax::text: {
-            val.setString(moldableValue());
+            val.setString("\""+moldableValue()+"\"");
             break;
         }
         case MoguSyntax::style: {
-            val.setString(styleClass().toUTF8());
+            val.setString("\""+styleClass().toUTF8()+"\"");
             break;
         }
         //!\TODO test/verify

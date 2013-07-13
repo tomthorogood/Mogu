@@ -171,114 +171,49 @@ void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 void StateParser::handleUserField(const std::string& field, NodeValue& result)
 {
     mApp;
-    int userid = app->getUser();
     Redis::ContextQuery policies(Prefix::policies);
     Redis::ContextQuery user(Prefix::user);
     const char* c_field = field.c_str();
-    MoguSyntax type;
     MoguSyntax token;
+    NodeValue arg;
 
-    // Determine the expected type and encryption
-    // of the field in question:
-    policies.appendQuery(
-        "exists policies.%s.%d", c_field, MoguSyntax::default_);
-    policies.appendQuery(
-        "hget policies.%s %d", c_field, MoguSyntax::encrypted);
-    
-    user.appendQuery("hexists user.%d.%s", userid, c_field);
-   
-    bool has_default = policies.yieldResponse <bool>();
-    
-    // Avoids any unnecessary queries to the user database.
-    bool user_has_field = 
-       userid != -1 ? user.yieldResponse <bool>() : false;
-    
-    // Note that default values are never encrypted. This is to provide
-    // an extra layer of security, because otherwise encrypted data would
-    // have to reside in MoguScripts.
-    bool encrypted = (policies.yieldResponse <std::string >() == "yes")
-        && user_has_field;
 
-    if (user_has_field) 
+    Redis::NodeEditor node(Prefix::user, field);
+    if (!node.exists())
     {
-        policies.appendQuery(
-            "hget policies.%s %d", c_field, MoguSyntax::type);
-        type = policies.yieldResponse <MoguSyntax>();
-    }
-    else if (has_default)
-    {
-        policies.appendQuery(
-            "type policies.%s.%d", c_field, MoguSyntax::default_);
-        std::string redistype = policies.yieldResponse <std::string>();
-        type = 
-            (redistype == "string") ? MoguSyntax::string :
-            (redistype == "hash")   ? MoguSyntax::hash : MoguSyntax::list;
-    }
-    
-
-    if (user_has_field)
-    {
-        switch(type)
+        token = __tm.currentToken<MoguSyntax>();
+        if (__tm.currentToken<MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
         {
-            case MoguSyntax::string:
-                user.appendQuery( "get user.%d.%s", userid, c_field);
-                break;
-            case MoguSyntax::list:{
-                int index = __tm.currentToken <int> ();
-                user.appendQuery( "lindex user.%d.%s %d",
-                       userid, c_field, index);
-                break;}
-            case MoguSyntax::hash:{
-                std::string key;
-                token = __tm.currentToken <MoguSyntax>();
-                if (token == MoguSyntax::TOKEN_DELIM)
-                    key = __tm.fetchStringToken();
-                else
-                    key = std::to_string(__tm.currentToken<int>());
-                user.appendQuery("hget user.%d.%s %s",
-                    userid, c_field, key.c_str());
-                break;}
-            default: return;
-        };
-    } else {
-        switch(type)
-        {
-            case MoguSyntax::string:
-                policies.appendQuery("get policies.%s.%d", c_field,
-                    MoguSyntax::default_);
-                break;
-            case MoguSyntax::list:{
-                int index = __tm.currentToken <int>();
-                policies.appendQuery("lindex policies.%s.%d %d",
-                        c_field, MoguSyntax::default_, index);
-                }
-                break;
-            case MoguSyntax::hash:{
-                std::string key;
-                token = __tm.currentToken <MoguSyntax>();
-                if (token == MoguSyntax::TOKEN_DELIM)
-                    key = __tm.fetchStringToken();
-                else
-                    key = std::to_string((int) token);
-                const char* c_key = key.c_str();
-                policies.appendQuery("hget policies.%s.%d %s",
-                    c_field, MoguSyntax::default_, c_key);
-                break;}
-            default: return;
-        };
+            arg.setString(__tm.fetchStringToken());
+        }
+        else (arg.setInt(__tm.currentToken<int>()));
+
+        node.setPrefix(Prefix::policies);
+        std::string sub = std::to_string((int) MoguSyntax::default_);
+        node.toggleSub(sub);
+
+        node.setArg(&arg);
+        if (node.subExists(sub))
+            result.setString(node.readSub(
+                std::to_string((int)MoguSyntax::default_)));
+        return;
     }
+    MoguSyntax type = node.getType();
+    if (type == MoguSyntax::hash)
+    {
+        token = __tm.currentToken<MoguSyntax>();
+        if (token == MoguSyntax::TOKEN_DELIM)
+            arg.setString(__tm.fetchStringToken());
+        else
+            arg.setInt(__tm.currentToken <int>());
+    }
+    else if (type == MoguSyntax::list)
+    {
+        arg.setInt(__tm.currentToken<int>());
+    }
+    node.setArg(&arg);
+    result.setString(node.read());
 
-    Redis::ContextQuery& final =
-        user_has_field ? user : policies;
-
-    // Now, we have to send the output through the NVP, in case it's a
-    // recursive call:
-    Parsers::NodeValueParser nvp;
-    nvp.giveInput(final.yieldResponse <std::string>(), result);
-
-    if (encrypted)
-        result.setString(
-                Security::decrypt( result.getString() ));
 }
 
 void StateParser::handleGroupField(const std::string& field, NodeValue& result)

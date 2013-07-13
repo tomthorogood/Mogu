@@ -11,8 +11,10 @@ namespace Redis {
 
 QuerySet::QuerySet(Context* context_) : context(context_)
 {
-    rdb = redisConnect(context->host(),context->port);
-    appendQuery(new Query("select %d", context->db_num), IGNORE_RESPONSE);
+    rdb = redisConnect(context->host(), context->port);
+    selected_db = context->db_num;
+    appendQuery("select %d", selected_db);
+    execute();
 }
 
 QuerySet::QuerySet(Prefix prefix) {
@@ -120,6 +122,8 @@ void QuerySet::setPrefix(Prefix prefix)
         rdb = nullptr;
     }
     mApp;
+    if (__prefix == prefix) return; 
+    __prefix = prefix;
     context = app->contextMap()->get(prefix);
     rdb = redisConnect(context->host(), context->port);
     selected_db = context->db_num;

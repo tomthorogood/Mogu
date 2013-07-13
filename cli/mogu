@@ -6,12 +6,15 @@ from moguio import RedisWriter
 from moguio import PathImporter
 from moguio.Exporter.DatabaseExporter import DatabaseExporter
 import redis
+import pyboro
 
 import src
 args = src.cli_parser.getCLIArgs()
 command = args.command[0]
 
 if __name__ == "__main__":
+    if args.v:
+        pyboro.Lexer.VERBAL = True
     if command == "import":
         writer = RedisWriter.RedisWriter(args)
         paths = args.command[1:]

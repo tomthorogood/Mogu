@@ -8,6 +8,38 @@ namespace Redis {
 //!\brief Performs reads and writes from the Redis database.
 class NodeEditor {
 public:
+    inline bool exists()
+    {
+        if (id_required)
+            __db.appendQuery("exists %s.%d.%s", c_prefix, __id, __node);
+        else
+            __db.appendQuery("exists %s.%s", c_prefix, __node);
+        return __db.yieldResponse <bool>();
+    }
+
+    inline bool subExists(const std::string& sub)
+    {
+        if (id_required)
+            __db.appendQuery("exists %s.%d.%s.%s", c_prefix, __id, __node, sub.c_str());
+        else
+            __db.appendQuery("exists %s.%s.%s", c_prefix, __node, sub.c_str());
+        return __db.yieldResponse<bool>();
+    }
+    inline void toggleSub(const std::string& sub)
+    {
+        if (__sub)
+        {
+            __sub = false;
+            getType();
+            setPrefix(__prefix);
+        }
+        else
+        {
+            __sub = true;
+            __subType = getSubType(sub.c_str());
+        }
+    }
+
     NodeEditor(
         MoguSyntax m_prefix
         , const std::string& node_name
@@ -25,6 +57,7 @@ public:
 
     inline bool fieldHasEncryption()
     {
+        Redis::ContextQuery __policies(Prefix::policies);
         __policies.appendQuery("hget policies.%s %d", __node,
                 MoguSyntax::encrypted);
         return __policies.yieldResponse <bool>();
@@ -36,7 +69,20 @@ public:
     inline bool isHashValue() { return hash_value;}
     inline MoguSyntax getNodeType()
     {
-        __db.appendQuery("type %s.%s", c_prefix, __node);
+        if (!exists()) return MoguSyntax::__NONE__;
+        if (id_required)
+            __db.appendQuery("type %s.%d.%s", c_prefix, __id, __node);
+        else 
+            __db.appendQuery("type %s.%s", c_prefix, __node);
+        return string_to_node_type.at(__db.yieldResponse <std::string>());
+    }
+
+    inline MoguSyntax getSubType(const char* sub)
+    {
+        if (id_required)
+            __db.appendQuery("type %s.%d.%s.%s", c_prefix, __id, __node, sub);
+        else
+            __db.appendQuery("type %s.%s.%s", c_prefix, __node, sub);
         return string_to_node_type.at(__db.yieldResponse <std::string>());
     }
     inline int getObjectId();
@@ -44,6 +90,8 @@ public:
     inline MoguSyntax getType() const { return __type;}
     inline Prefix getPrefix() { return __prefix;}
     void readAll (std::map <std::string,std::string>&);
+    std::string readSub (const std::string&);
+    inline std::string readSub(const std::string&& str) { return readSub(str);}
     void writeAll (std::map <std::string, std::string>&);
     void setArg(NodeValue*);
     void setNodeName(const std::string&);
@@ -59,12 +107,12 @@ private:
     Prefix          __prefix;
     
     ContextQuery __db;
-    ContextQuery __policies;
     
     const char*     __node;
     NodeValue*      __arg;
     int             __id    =-1; // for groups or users;
     MoguSyntax      __type;
+    MoguSyntax      __subType = MoguSyntax::__NONE__;
 
     bool encrypted;
     bool list_value =   false;
@@ -75,26 +123,35 @@ private:
     int         __list_index    = -1;
     bool        key_cached      = false;
     bool        id_required     = false;
+    bool        __sub           = false;
     
+    std::string hashkey_s;
+
     inline void setKey()
     {
         if (__arg == nullptr || key_cached) return;
-        switch(__type)
+        MoguSyntax type = __sub ? __subType : __type;
+        switch(type)
         {
             case MoguSyntax::list:
                 __list_index = __arg->getInt();
                 break;
             case MoguSyntax::hash:
-                {std::string str = __arg->getString();
-                __hashkey   = str.c_str();}
+                {
+                    std::string str;
+                    if (__arg->isString())
+                        hashkey_s = __arg->getString();
+                    else if (__arg->isInt())
+                        hashkey_s = std::to_string(__arg->getInt());
+                    else
+                        hashkey_s = std::to_string(__arg->getFloat());
+                    __hashkey   = hashkey_s.c_str();
+                }
                 break;
             default:return;
         };
-
         key_cached = true;
     }
-
-
 };
 
 }//namespace Redis

@@ -180,6 +180,11 @@ class RedisWriter(object):
         
         return False
 
+    def setRoot(self, root):
+        pipe = self.pipe("meta")
+        pipe.set("meta.root", root)
+        pipe.execute()
+
     def setWriter(self, redis_object):
         pipe = self.pipe(redis_object.node)
         for value in redis_object.data:

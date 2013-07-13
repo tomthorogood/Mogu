@@ -3,15 +3,22 @@
 #include <Security/Encryption.h>
 namespace Redis {
 
+namespace {
+    int ENCRYPTED_FIELDS = (int) Prefix::user | (int) Prefix::group;
+}
+
 NodeEditor::NodeEditor(
     Prefix p_prefix
     , const std::string& node_name
     , NodeValue* arg)
-    : __policies(Prefix::policies) , __arg(arg), __list_index(0)
+    : __arg(arg), __list_index(0)
 {
     setPrefix(p_prefix);
     setNodeName(node_name);
-    encrypted = fieldHasEncryption();
+    if ((int) p_prefix & ENCRYPTED_FIELDS)
+        encrypted = fieldHasEncryption();
+    else 
+        encrypted = false;
     __id = getObjectId();
     __type = getNodeType();
     setKey();
@@ -23,7 +30,7 @@ NodeEditor::NodeEditor(
     , const std::string& node_name
     , MoguSyntax node_type
     )
-:   __policies(Prefix::policies) , __arg(nullptr), __list_index(0)
+:   __arg(nullptr), __list_index(0)
 {
     setPrefix(p_prefix);
     setNodeName(node_name);
@@ -120,6 +127,43 @@ std::string NodeEditor::read()
 
     if (encrypted) return Security::decrypt(__db.yieldResponse <std::string>());
     else return __db.yieldResponse <std::string>();
+}
+
+std::string NodeEditor::readSub(const std::string& sub)
+{
+    const char* c_sub = sub.c_str();
+
+    switch(__subType)
+    {
+        case MoguSyntax::string:
+            if (id_required)
+                __db.appendQuery("get %s.%d.%s.%s", c_prefix, __id, __node, c_sub);
+            else
+                __db.appendQuery("get %s.%s.%s", c_prefix, __node, c_sub);
+            break;
+        case MoguSyntax::hash:
+            if (id_required)
+                __db.appendQuery(
+                    "hget %s.%d.%s.%s %s", c_prefix, __id, __node, c_sub, __hashkey);
+            else
+                __db.appendQuery("hget %s.%s.%s %s", c_prefix, __node, c_sub, __hashkey);
+            break;
+        case MoguSyntax::list:
+            if (!list_value) return EMPTY;
+            if (id_required)
+                __db.appendQuery(
+                    "lindex %s.%d.%s.%s %d",
+                    c_prefix, __id, __node, c_sub, __list_index);
+            else
+                __db.appendQuery(
+                    "lindex %s.%s.%s %d", c_prefix, __node, c_sub, __list_index);
+            break;
+        default:return EMPTY;
+    };
+    std::string result = __db.yieldResponse <std::string>();
+    if (Security::isEncrypted(result))
+        return Security::decrypt(result);
+    return result;
 }
 
 void NodeEditor::writeAll(std::map <std::string, std::string>& source)

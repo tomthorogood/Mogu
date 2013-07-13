@@ -65,8 +65,8 @@ regexlib["cl_paren"] = str(syntax.MoguOperators[")"])
 #   own content
 #regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(identifier)s(?<!%(preposition)s)|%(attribute)s)?" % regexlib
 
-regexlib["object_set"]  = "%(object)s(\s+%(identifier)s)?(\s+%(attribute)s|%(identifier)s)?" % regexlib
-regexlib["object_set"]  = "(%(object_set)s)+" % regexlib
+regexlib["object_set"]  = "%(object)s(\s+%(identifier)s)?(\s+(%(attribute)s|%(identifier)s))?" % regexlib
+regexlib["object_set"]  = "(%(object_set)s\s*)+" % regexlib
 regexlib["signed_obj"] = "-?\s*(%(object_set)s|[0-9\.]+)" % regexlib
 regexlib["math_expr"] = "%(op_paren)s%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(math_oper)s\s*)*\s*%(signed_obj)s%(cl_paren)s" % regexlib
 

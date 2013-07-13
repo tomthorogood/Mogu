@@ -160,7 +160,10 @@ class TokenManager
 		 * better to use ++ and -- when possible.
 		 */
 
+		size_t sz =0;
+
 		inline void updateIndex() {
+		    sz = __numTokens.size();
 		    __index = __numTokens.size() - (__numTokens.end()-__it);
 		}
 

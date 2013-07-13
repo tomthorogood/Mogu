@@ -21,8 +21,8 @@ int main() {
     filestr.close();
 
     filestr.open("syntax.h", std::ios::out | std::ios::app);
-    filestr << "\t,OUT_OF_RANGE_BEGIN\t\t\t\t="<< INT_MAX-6 << std::endl;
-    filestr << "\t,OUT_OF_RANGE_END\t\t\t\t=" << INT_MAX-7 << std::endl;    
+    filestr << "\t,OUT_OF_RANGE_BEGIN\t\t\t\t="<< INT_MAX-7 << std::endl;
+    filestr << "\t,OUT_OF_RANGE_END\t\t\t\t=" << INT_MAX-8 << std::endl;    
     filestr << "\t,OPER_OPPAREN\t\t\t\t=" << op_map['('] << std::endl;
     filestr << "\t,OPER_CLPAREN\t\t\t\t=" << op_map[')'] << std::endl;
     filestr << "\t,OPER_PLUS\t\t\t\t=" << op_map['+'] << std::endl;

@@ -24,6 +24,7 @@ typedef int (*__m_enm_parse)(
     const std::string&);
 
 enum class Prefix {
+    __NONE__    =0,
     widgets     =1,
     data        =2,
     user        =4,
