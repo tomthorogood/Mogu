@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+#TODO ADD OPERATORS TO OUTPUT! @272 imap/smap
+
 # This file parses the syntax.pre file, and is a replacement
 # for "syntax.cpp", since the language is mostly irrelevant 
 # for this piece of building Mogu. 
@@ -11,7 +13,14 @@
 # BASIC SETUP #
 ###############
 
+from pyboro import Lexer
+from argparse import ArgumentParser
+from collections import OrderedDict
+
 import os
+import sys
+
+# CONSTANTS #
 
 INPUT_FILE  = "syntax.pre"
 OUTPUT_PY   = "syntax.py"
@@ -20,10 +29,35 @@ OUTPUT_H    = "syntax.h"
 # Start with double digits to avoid clashes.
 global_aggregator = 10
 
-from pyboro import Lexer
-import sys
+# Command Line Interface #
+parser = ArgumentParser()
+parser.add_argument("-m", type=int, action="store", dest="m")
+parser.add_argument("-v", action="store_true", default=False, dest="v")
+args = parser.parse_args()
 
-Lexer.VERBAL = False
+# Turn on Verbose output for the lexer if requested
+Lexer.VERBAL = args.v
+
+CPP_HEADER="""
+#ifndef SYNTAX_H_
+#define SYNTAX_H_
+
+#include <map>
+#include <string>
+#include <Types/SyntaxDef.h>
+
+namespace MoguSyntax {\n\n
+
+%(syntax_definitions)s
+
+%(syntax_imap)s
+
+%(syntax_smap)s
+
+%(syntax_hmap)s
+
+} //end MoguSyntax 
+"""
 
 PY_ADDITIONS = """
 def as_integer(string):
@@ -34,7 +68,6 @@ def as_string(integer):
     global MoguSyntax
     integer = integer.strip()
     if int(integer) == 0:
-        print "I'm a zero"
         return "0"
     reverseDict = dict.fromkeys(MoguSyntax,None)
     for key in MoguSyntax:
@@ -42,6 +75,43 @@ def as_string(integer):
         reverseDict[ival] = key
     return reverseDict[int(integer)]
 """
+
+OPERATORS=OrderedDict([
+        # Will be in the c++ form: SyntaxDef KEY (VAL[0],"KEY");
+        # Syntactical operators (as opposed to placeholders)
+        # will be represented in Python with:
+        #   MoguOperators[KEY] = (val[0],[val1])
+        ("OUT_OF_RANGE_BEGIN"    , (args.m-8,"")),
+        ("OUT_OF_RANGE_END"      , (args.m-7,"")),
+        ("TOKEN_DELIM"           , (args.m-6,"")),
+        ("OPER_OPPAREN"          , (args.m-5,"(")),
+        ("OPER_CLPARN"           , (args.m-4,")")),
+        ("OPER_PLUS"             , (args.m-3,"+")),
+        ("OPER_MINUS"            , (args.m-2,"-")),
+        ("OPER_MULT"             , (args.m-1,"*")),
+        ("OPER_DIV"              , (args.m,"/")),
+])
+
+OPER_DICT_OUT = """
+MoguOperators = {} 
+"""
+
+for operator in OPERATORS:
+    op_int = OPERATORS[operator][0]
+    op_str = OPERATORS[operator][1]
+    if op_str:
+        OPER_DICT_OUT += \
+            "\nMoguOperators['%s'] = %d" % (op_str,op_int)
+
+class FormatError(Exception):
+    def __init__(self, fstring):
+        self.value = "FString error at %s." % (fstring)
+        self.value += "FormatString must be in dict-parseable format. '%(foo)s' not '%s'."
+
+    def __str__(self):
+        return self.value
+
+
 
 def spaces(s1,s2):
     """
@@ -107,13 +177,48 @@ class SyntaxTableRow(object):
         self.enumerated = EnumeratedValue(parsed_input["enum"])
         self.notes = TokenNotes(parsed_input["notes"])
 
-class FormatError(Exception):
-    def __init__(self, fstring):
-        self.value = "FString error at %s." % (fstring)
-        self.value += "FormatString must be in dict-parseable format. '%(foo)s' not '%s'."
+class SyntaxDefDecl(object):
+    def __init__(self, identifier, integer):
+        self.identifier = identifier
+        self.integer = str(integer)
 
     def __str__(self):
-        return self.value
+        return '\tconst static SyntaxDef %(identifier)s (%(integer)s, "%(identifier)s");' % self.__dict__
+
+class InitializerLine(object):
+    def __init__(self, key, value):
+        self.key = key
+        self.val = value
+
+    def __str__(self):
+        return "\t\t{%(key)s, %(val)s}" % self.__dict__
+
+class InitializerList(object):
+    def __init__(self,dct):
+        self.d = dct
+
+    def __str__(self):
+        output_list = []
+        for entry in self.d:
+            output_list.append(InitializerLine(entry, self.d[entry]))
+        return "{\n%s\n}\n" % ",\n".join([str(e) for e in output_list])
+
+class MapDef(object):
+    def __init__(self, name, t1, t2, initdict):
+        self.name = name
+        self.t1 = t1
+        self.t2 = t2
+        self.idict = initdict
+
+    def __str__(self):
+        initlist = InitializerList(self.idict)
+        mDecl = "const static LockedMap <%(t1)s,%(t2)s> %(name)s = " \
+                % self.__dict__
+        body = str(initlist)
+
+        return "%s%s;\n" % (mDecl,body)
+
+
 
 class OutputLine(object):
     def __init__(self, fstring, args = {}):
@@ -145,63 +250,74 @@ class SyntaxDictEntry(OutputLine):
         }
         super(SyntaxDictEntry,self).__init__(fstring,args)
 
-class CppEnumOpen(OutputLine):
-    def __init__(self, name):
-        fstring = """
-#ifndef SYNTAX_H_
-#define SYNTAX_H_
-
-enum class %(name)s {
-"""
-        super(CppEnumOpen, self).__init__(fstring,{'name':name})
-class CppEnumEntry(OutputLine):
-    def __init__(self, enum, integer):
-        integer = int(integer)
-        align = spaces(enum,str(integer))
-        fstring = "%(enum)s%(align)s= %(integer)d"
-        if integer != 10:
-            # since it's easier to edit cpp entries with a preceeding comma,
-            # rather than a suffix comma, we'll do it like this.
-            fstring = ","+fstring
-        fstring = "\t"+fstring
-        args = {
-            "enum"      :   enum,
-            "align"     :   align,
-            "integer"   :   integer
-        }
-        super(CppEnumEntry, self).__init__(fstring, args)
-
-class CppEnumClose(OutputLine):
-    def __init__(self, name):
-        fstring = "}; // END %(name)s"
-        super(CppEnumClose,self).__init__(fstring,{'name':name})
-
-
 def generate_py(dict_name, entries):
     """
     Given a list of 'SyntaxDictEntry' objects,
     returns a complete string of Python syntax.
     """
+    global OPER_DICT_OUT
+
     start = PythonDictOpen(dict_name)
     end = PythonDictClose(dict_name)
     output = str(start)
     for entry in entries:
         output += str(entry)
+    
     output += str(end)
+    output += "\n\n%s" % OPER_DICT_OUT
     return output
 
 def generate_cpp(enum_name, entries):
     """
-    Given a list of 'CppEnumEntry' objects, returns a complete
-    string of C++ syntax.
+    Given a list of 
+    (identifier,integer) tuples, 
+    generates appropriate C++.
     """
-    start = CppEnumOpen(enum_name)
-#    end = CppEnumClose(enum_name)
-    output = str(start)
+    global CPP_HEADER
+    global OPERATORS
+    output = {
+            "syntax_definitions"    : None,
+            "syntax_imap"           : None,
+            "syntax_hmap"           : None,
+            "syntax_smap"           : None
+            }
+    syntax_definition_list = []
     for entry in entries:
-        output += str(entry)
-    #output += str(end)
-    return output
+        definition = SyntaxDefDecl(entry[0],entry[1])
+        syntax_definition_list.append(str(definition))
+    for entry in OPERATORS:
+        definition = SyntaxDefDecl(entry,OPERATORS[entry][0])
+        syntax_definition_list.append(str(definition))
+    output["syntax_definitions"] = "\n".join(syntax_definition_list)
+
+    imap_tpl = OrderedDict()
+    hmap_tpl = OrderedDict()
+    smap_tpl = OrderedDict()
+    for entry in entries:
+        imap_tpl[str(entry[1])] = "MoguSyntax::%s" % entry[0]
+        hmap_tpl["\"%s\""% entry[0]] = "MoguSyntax::%s" % entry[0]
+        smap_tpl["\"%s\"" %str(entry[1])] = "MoguSyntax::%s" % entry[0]
+
+    for oper in OPERATORS:
+        enum = oper
+        intg = OPERATORS[oper][0]
+        common = OPERATORS[oper][1]
+
+        imap_tpl["%s" % str(intg)] = "MoguSyntax::%s" % enum
+        smap_tpl['"%s"' % str(intg)] = "MoguSyntax::%s" % enum
+        if common:
+            hmap_tpl['"%s"' % common] = "MoguSyntax::%s" % enum 
+
+
+    imap = MapDef("imap","const int", "const SyntaxDef&",imap_tpl)
+    hmap = MapDef("hmap","const std::string", "const SyntaxDef&", hmap_tpl)
+    smap = MapDef("smap", "const std::string", "const SyntaxDef&", smap_tpl);
+
+    output["syntax_imap"] = str(imap)
+    output["syntax_hmap"] = str(hmap)
+    output["syntax_smap"] = str(smap)
+
+    return CPP_HEADER % output
 
 lines = None
 with open(INPUT_FILE,"r") as f:
@@ -218,13 +334,12 @@ for line in lines:
         for human in parsed.human_readable.tokens:
             py_entries.append(
                     SyntaxDictEntry(human, global_aggregator, parsed.notes))
-        cpp_entries.append(
-                CppEnumEntry(parsed.enumerated,global_aggregator))
+        cpp_entries.append((str(parsed.enumerated), global_aggregator))
         global_aggregator += 1
         if global_aggregator >= 100:
-            sys.stderr.write("WARNING: Too much syntax! More than 90 tokens could be a problem. Also, you probably have a problem.")
+            sys.stderr.write(
+                "WARNING: Too much syntax! Redefine the basline for 100.")
     except Lexer.InputMatchError as e:
-        #sys.stderr.write("Could not parse line: %s" % line)
         continue
 
 py_out = generate_py("MoguSyntax",py_entries) 
@@ -237,15 +352,3 @@ with open(OUTPUT_PY,"w") as f:
 
 with open(OUTPUT_H,"w") as f:
     f.write(cpp_out)
-
-os.system("./operators")
-
-with open(OUTPUT_PY, "a") as f:
-    f.write(PY_ADDITIONS)
-
-with open(OUTPUT_H,"a") as f:
-    cl = CppEnumClose("MoguSyntax");
-    f.write("\n%s" % str(cl))
-    f.write("#endif //SYNTAX_H_")
-
-os.system('sed -i "s/template/template_/g" syntax.h')

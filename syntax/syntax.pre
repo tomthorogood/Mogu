@@ -22,9 +22,6 @@
 # A widget that is referring to itself.
 (   own|self                ,   own             ,   object          )
 
-# Not yet implemented - handles custom uris.
-#(   perspective             ,   perspective     ,   object          )
-
 (   clicked|click           ,   click           ,   event trigger   )
 (   mouseover               ,   mouseover       ,   event trigger   )
 (   mouseout                ,   mouseout        ,   event trigger   )
@@ -96,7 +93,7 @@
 (   mode                    ,   mode            ,   hashkey         )
 (   source                  ,   source          ,   hashkey attribute  )
 (   location                ,   location        ,   hashkey attribute  )
-(   template                ,   template        ,   hashkey         )
+(   template                ,   template_       ,   hashkey         )
 (   member                  ,   member          ,   object attribute  )
 (   get                     ,   get             ,   action          )
 (   moderator               ,   moderator       ,   descriptor  )

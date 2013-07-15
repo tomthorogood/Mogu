@@ -25,6 +25,7 @@ src/Types/syntax.h
 syntax/syntax.h
 syntax/syntax.py
 syntax/operators
+syntax/max
 Testing/*
 .idea*
 tests/*
