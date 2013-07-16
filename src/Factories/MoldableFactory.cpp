@@ -22,10 +22,9 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 #ifdef DEBUG
     std::cout << "Moldable Factory: " << c_node << std::endl;
 #endif
-    MoguSyntax widget_type;
     Redis::ContextQuery db(Prefix::widgets);
     db.appendQuery("hget widgets.%s %d", c_node, MoguSyntax::type);
-    widget_type = db.yieldResponse <MoguSyntax>();
+    SyntaxDef widget_type = MoguSyntax::get(db.yieldResponse <MoguSyntax>());
 
     // If there was an error here, the syntax type will be 'none'
     if (widget_type == MoguSyntax::__NONE__)
@@ -33,13 +32,17 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
         // If there is no type, we have to check to see if there is
         // a template assigned to the widget which may contain this
         // information.
-        db.appendQuery( "hget widgets.%s %d", c_node, MoguSyntax::template_);
+        db.appendQuery(
+            "hget widgets.%s %d"
+            , c_node, (int) MoguSyntax::template_);
         std::string template_id = db.yieldResponse <std::string>();
 
         const char* tmpl_id = template_id.c_str();
         Redis::ContextQuery tmpldb(Prefix::templates);
-        tmpldb.appendQuery("hget templates.%s %d", tmpl_id, MoguSyntax::type);
-        widget_type = (MoguSyntax) tmpldb.yieldResponse <int>();
+        tmpldb.appendQuery(
+            "hget templates.%s %d"
+            , tmpl_id, (int) MoguSyntax::type);
+        widget_type = MoguSyntax::get(tmpldb.yieldResponse <int>());
 
         if (widget_type == MoguSyntax::__NONE__)
         {

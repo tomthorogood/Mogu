@@ -17,17 +17,17 @@ class TriggerMap {
 public:
     TriggerMap();
     TriggerMap(const int& num_triggers,Prefix prefix, const std::string& node_name);
-    inline void addEvent(const MoguSyntax trigger, const std::string& command)
+    inline void addEvent(const SyntaxDef& trigger, const std::string& command)
     {
         __map[trigger].push(command);
     }
 
-    inline std::queue <std::string> getEvents(MoguSyntax trigger) const
+    inline std::queue <std::string> getEvents(const SyntaxDef& trigger) const
     {
         return __map.at(trigger);
     }
 
-    inline const std::set <MoguSyntax>& getTriggers()
+    inline const std::set <const SyntaxMap&>& getTriggers()
     {
         if (triggers.size() < __map.size()) populateTriggers();
         return triggers;
@@ -35,8 +35,8 @@ public:
 
 private:
     void populateTriggers();
-    std::set <MoguSyntax> triggers;
-    std::unordered_map <MoguSyntax,std::queue <std::string>, IntHash<MoguSyntax>> __map;
+    std::set <const SyntaxDef&> triggers;
+    std::unordered_map <const SyntaxDef& ,std::queue <std::string>, IntHash<const SyntaxDef&>> __map;
 };
 
 

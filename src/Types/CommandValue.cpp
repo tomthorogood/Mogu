@@ -23,7 +23,7 @@ uint8_t CommandValue::set(const CommandFlags& flag, NodeValue v)
             action = v;
             break;
         case CommandFlags::OBJECT:
-            object = (MoguSyntax) v;
+            object = MoguSyntax::get(v);
             break;
 
         case CommandFlags::IDENTIFIER:
@@ -39,7 +39,7 @@ uint8_t CommandValue::set(const CommandFlags& flag, NodeValue v)
             break;
 
         case CommandFlags::R_OBJECT:
-            r_object = (MoguSyntax) v;
+            r_object = MoguSyntax::get(v);
             break;
 
         case CommandFlags::R_IDENTIFIER:
@@ -55,7 +55,7 @@ uint8_t CommandValue::set(const CommandFlags& flag, NodeValue v)
     return flags;
 }
 
-uint8_t CommandValue::set(const CommandFlags& flag, const MoguSyntax v)
+uint8_t CommandValue::set(const CommandFlags& flag, const SyntaxDef& v)
 {
     switch(flag)
     {
@@ -125,10 +125,10 @@ bool CommandValue::objectIsReduceable(bool is_r_object)
     // The only valid object flag that doesn't require an
     // identifier is 'own'
     if (!test(id_flag) &&
-            MoguSyntax::own != (MoguSyntax) local_arg)
+            MoguSyntax::own != MoguSyntax::get(local_arg))
         return false;
     bool hasArg = test(arg_flag);
-    switch((MoguSyntax) local_obj)
+    switch(MoguSyntax::get(local_obj))
     {
         case MoguSyntax::widget:
         case MoguSyntax::own:
@@ -145,8 +145,8 @@ bool CommandValue::objectIsReduceable(bool is_r_object)
     }
     // If we've reached this point, we have to determine whether
     // or not the node in question is a string, list, or hash.
-    Redis::NodeEditor node((MoguSyntax) local_obj, (std::string) local_id);
-    MoguSyntax node_type = node.getType();
+    Redis::NodeEditor node(MoguSyntax::get(local_obj), (std::string) local_id);
+    const SyntaxDef& node_type = node.getType();
     if (!hasArg)
         return node_type == MoguSyntax::string;
     else

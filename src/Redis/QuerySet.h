@@ -255,7 +255,7 @@ public:
 
 template <> int QuerySet::yieldResponse <int>();
 template <> std::string QuerySet::yieldResponse <std::string>();
-template <> MoguSyntax QuerySet::yieldResponse <MoguSyntax>();
+template <> const SyntaxDef& QuerySet::yieldResponse <const SyntaxDef&>();
 template <> bool QuerySet::yieldResponse <bool>();
 template <> std::vector <int> QuerySet::yieldResponse <std::vector <int>>();
 template <> std::vector <std::string> QuerySet::yieldResponse <std::vector <std::string>>();

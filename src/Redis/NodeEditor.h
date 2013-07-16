@@ -40,9 +40,7 @@ public:
         }
     }
 
-    NodeEditor(
-        MoguSyntax m_prefix
-        , const std::string& node_name
+    NodeEditor(const SyntaxDef& m_prefix , const std::string& node_name
         , NodeValue* arg = nullptr);
 
     NodeEditor(
@@ -53,7 +51,7 @@ public:
     NodeEditor(
         Prefix p_prefix
         , const std::string& node_name
-        , MoguSyntax nodetype);
+        , const SyntaxDef& nodetype);
 
     inline bool fieldHasEncryption()
     {
@@ -67,27 +65,27 @@ public:
     inline void setIsHashValue(bool tf) { hash_value = tf;}
     inline bool isListValue() { return list_value;}
     inline bool isHashValue() { return hash_value;}
-    inline MoguSyntax getNodeType()
+    inline const SyntaxDef& getNodeType()
     {
         if (!exists()) return MoguSyntax::__NONE__;
         if (id_required)
             __db.appendQuery("type %s.%d.%s", c_prefix, __id, __node);
         else 
             __db.appendQuery("type %s.%s", c_prefix, __node);
-        return string_to_node_type.at(__db.yieldResponse <std::string>());
+        return MoguSyntax::get(__db.yieldResponse<std::string>());
     }
 
-    inline MoguSyntax getSubType(const char* sub)
+    inline const SyntaxDef& getSubType(const char* sub)
     {
         if (id_required)
             __db.appendQuery("type %s.%d.%s.%s", c_prefix, __id, __node, sub);
         else
             __db.appendQuery("type %s.%s.%s", c_prefix, __node, sub);
-        return string_to_node_type.at(__db.yieldResponse <std::string>());
+        return MoguSyntax::get(at(__db.yieldResponse <std::string>()));
     }
     inline int getObjectId();
     inline ContextQuery& getContext() { return __db;}
-    inline MoguSyntax getType() const { return __type;}
+    inline const SyntaxDef& getType() const { return __type;}
     inline Prefix getPrefix() { return __prefix;}
     void readAll (std::map <std::string,std::string>&);
     std::string readSub (const std::string&);
@@ -111,8 +109,8 @@ private:
     const char*     __node;
     NodeValue*      __arg;
     int             __id    =-1; // for groups or users;
-    MoguSyntax      __type;
-    MoguSyntax      __subType = MoguSyntax::__NONE__;
+    SyntaxDef       __type;
+    SyntaxDef       __subType = MoguSyntax::__NONE__;
 
     bool encrypted;
     bool list_value =   false;
@@ -130,7 +128,7 @@ private:
     inline void setKey()
     {
         if (__arg == nullptr || key_cached) return;
-        MoguSyntax type = __sub ? __subType : __type;
+        SyntaxDef type = __sub ? __subType : __type;
         switch(type)
         {
             case MoguSyntax::list:

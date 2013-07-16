@@ -36,12 +36,12 @@ const uint8_t getConstruct(CommandValue& v)
 
     if (v.test(CommandFlags::VALUE))
     {
-        if (MoguSyntax::widget == (MoguSyntax) v.get(CommandFlags::OBJECT))
+        if (MoguSyntax::widget == v.get(CommandFlags::OBJECT))
             return VALUE_TO_ATTRIBUTE;
         else return VALUE_TO_FIELD;
     }
 
-    if (MoguSyntax::user == (MoguSyntax) v.get(CommandFlags::R_OBJECT))
+    if (MoguSyntax::user == v.get(CommandFlags::R_OBJECT))
         return USER_TO_APPLICATION;
 
     return INVALID_CONSTRUCT;
@@ -73,7 +73,8 @@ void handleValueToAttribute(Moldable& broadcaster, CommandValue& v)
     
     if (curr_widget == nullptr) return;
 
-    MoguSyntax attribute = (MoguSyntax) v.get(CommandFlags::ARG);
+    const SyntaxDef& attribute = 
+        MoguSyntax::get(v.get(CommandFlags::ARG));
 
     curr_widget->getAttribute(attribute, tmp);
     tmp += v.get(CommandFlags::VALUE);
@@ -93,7 +94,7 @@ void handleValueToField(Moldable& broadcaster, CommandValue& v)
 
     bool writeable = true;
     int id;
-    MoguSyntax obj = v.get(CommandFlags::OBJECT);
+    const SyntaxDef& obj = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     std::string node = (std::string) v.get(CommandFlags::IDENTIFIER);
 
     if (MoguSyntax::group == obj)

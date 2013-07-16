@@ -28,7 +28,7 @@ private:
     
     std::string node_name;
     
-    MoguSyntax node_type        = MoguSyntax::__NONE__;
+    SyntaxDef node_type        = MoguSyntax::__NONE__;
 };
 
 }//namespace Redis

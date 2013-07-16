@@ -19,8 +19,8 @@ NodeEditor::NodeEditor(
         encrypted = fieldHasEncryption();
     else 
         encrypted = false;
-    __id = getObjectId();
     __type = getNodeType();
+    __id = getObjectId();
     setKey();
     __db.clear();
 }
@@ -28,21 +28,19 @@ NodeEditor::NodeEditor(
 NodeEditor::NodeEditor(
     Prefix p_prefix
     , const std::string& node_name
-    , MoguSyntax node_type
+    , const SyntaxDef& node_type
     )
-:   __arg(nullptr), __list_index(0)
+:   __arg(nullptr), __list_index(0), __type(node_type)
 {
     setPrefix(p_prefix);
     setNodeName(node_name);
     encrypted = fieldHasEncryption();
     __id = getObjectId();
-    __type = node_type;
     setKey();
     __db.clear();
 }
 
-NodeEditor::NodeEditor(
-        MoguSyntax m_prefix
+NodeEditor::NodeEditor(const SyntaxDef& m_prefix
         , const std::string& node_name
         , NodeValue* arg)
     :
@@ -171,7 +169,6 @@ void NodeEditor::writeAll(std::map <std::string, std::string>& source)
     NodeValue key_nv;
     __arg = &key_nv;
     NodeValue val_nv;
-    __type = MoguSyntax::hash;
     for (auto iter = source.begin(); iter != source.end(); ++iter)
     {
         std::string key = iter->first;
@@ -195,7 +192,6 @@ void NodeEditor::write(NodeValue raw_value)
         val = Security::encrypt(val);
 
     const char* c_val = val.c_str();
-
     switch (__type)
     {
         case MoguSyntax::string:
@@ -235,7 +231,7 @@ void NodeEditor::remove(std::string value)
 {
     const char* c_value = value.c_str();
     bool remove_by_value = (value != EMPTY);
-    switch(__type)
+    switch(getNodeType())
     {
         case MoguSyntax::hash:
             if (id_required && hash_value)

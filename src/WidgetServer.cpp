@@ -6,14 +6,9 @@ WidgetServer::WidgetServer (Mogu* application)
 
 }
 
-bool getAttribute(MoguSyntax attribute)
+bool getAttribute(const SyntaxDef& attribute)
 {
-    return getAttribute(std::to_string((int) attribute));
-}
-
-bool getAttribute(std::string attribute)
-{
-    NodeValue arg(attribute);
+    NodeValue arg((int)attribute);
     NodeValue result;
     wnode->setArg(&arg);
     result.setString(wnode->read());
@@ -26,8 +21,7 @@ void populateMap(Redis::NodeEditor* node)
     std::map <std::string, std::string>& node_map = node->readAll();
     for (auto key : node_map)
     {
-        int i_key = atoi(key.c_str());
-        MoguSyntax m_key = (MoguSyntax) i_key;
+        const SyntaxDef& m_key = MoguSyntax::get(key);
         map[m_key] = Nodevalue(node_map[key]);
     }
 }
@@ -35,7 +29,7 @@ void populateMap(Redis::NodeEditor* node)
 WidgetMap readWidget(const std::string& node)
 {
     map.clear();
-    NodeValue arg(MoguSyntax::type);
+    NodeValue arg((int)MoguSyntax::type);
     wnode = new Redis::NodeEditor(Prefix::widgets, node);
     bool has_tmpl = getAttribute(MoguSyntax::template_);
 

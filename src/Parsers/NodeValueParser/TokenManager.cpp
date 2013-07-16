@@ -17,94 +17,6 @@ TokenManager::TokenManager()
 
 }
 
-void TokenManager::reset()
-{
-	__numTokens.clear();
-	__strTokens.clear();
-	__index = 0;
-}
-
-template <typename T> T TokenManager::currentToken() {
-    return (T) currentToken <int>();
-}
-
-template <> int TokenManager::currentToken()
-{
-	if(__it < __numTokens.begin())
-		return (int) MoguSyntax::OUT_OF_RANGE_BEGIN;
-
-	else if(__it >= __numTokens.end())
-		return (int) MoguSyntax::OUT_OF_RANGE_END;
-
-	else
-		return *__it;
-}
-
-template <> MoguSyntax TokenManager::currentToken()
-{
-    return static_cast<MoguSyntax>(currentToken <int>());
-}
-
-bool TokenManager::isTokenDelim()
-{
-	return currentToken<MoguSyntax>() == MoguSyntax::TOKEN_DELIM;
-}
-
-
-void TokenManager::addToken(int numToken)
-{
-	__numTokens.push_back(numToken);
-    __begin = __numTokens.begin();
-}
-
-void TokenManager::addToken(std::string strToken)
-{
-	__numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
-	__strTokens.set(__numTokens.size()-1, strToken);
-    __begin = __numTokens.begin();
-}
-
-//must call this function directly after all tokens are added
-//or else we will have undefined behavior!
-void TokenManager::end()
-{
-	//place iterator at end of numerical token vector
-    __it = __numTokens.end() - 1;
-    updateIndex();
-}
-
-/* Like 'setiterator', but returns to the beginning, for when
- * we will not be stepping backward through the input.
- */
-void TokenManager::begin() {
-    __it = __numTokens.begin();
-    __index = 0;
-}
-
-std::string TokenManager::fetchStringToken()
-{
-	if(isTokenDelim())
-	    return __strTokens.get(__index);
-	else
-		return R"(ERR: DEREFERENCING NON-TOKENDELIM)";
-}
-
-void TokenManager::next()
-{
-    ++__it;
-    ++__index;
-}
-
-void TokenManager::prev()
-{
-    --__it;
-    --__index;
-}
-
-void TokenManager::saveLocation()
-{
-	__savedit = __it;
-}
 
 /* Deletes from the current point THROUGH the save point, which is
  * at a greater position.
@@ -150,27 +62,6 @@ void TokenManager::deleteFromSaved()
     if (wasReallocated())
         realignIterators();
     updateIndex();
-}
-
-//call this directly after deleteToSaved()!
-void TokenManager::injectToken(int numToken)
-{
-	__it = __numTokens.insert(__it, numToken);
-	updateIndex();
-}
-
-//call this directly after deleteToSaved()!
-void TokenManager::injectToken(std::string strToken)
-{
-	__it = __numTokens.insert(__it, (int) MoguSyntax::TOKEN_DELIM);
-	__strTokens.set(__index, strToken);
-    updateIndex();
-}
-
-void TokenManager::returnToSaved()
-{
-	__it = __savedit;
-	updateIndex();
 }
 
 //debug methods

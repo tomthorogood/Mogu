@@ -38,44 +38,8 @@ args = parser.parse_args()
 # Turn on Verbose output for the lexer if requested
 Lexer.VERBAL = args.v
 
-CPP_HEADER="""
-#ifndef SYNTAX_H_
-#define SYNTAX_H_
-
-#include <map>
-#include <string>
-#include <Types/SyntaxDef.h>
-#include <Types/LockedMap.h>
-
-namespace MoguSyntax {
-
-%(syntax_definitions)s
-
-%(syntax_imap)s
-
-%(syntax_smap)s
-
-%(syntax_hmap)s
-
-enum strtype {
-    HUMAN,
-    INT
-};
-
-inline const SyntaxDef& get(int i)
-{
-    return imap[i];
-}
-
-inline const SyntaxDef& get(const std::string& s, strtype t=INT)
-{
-    return (t==INT) ? smap[s] : hmap[s];
-}
-
-} // MoguSyntax
-
-#endif //SYNTAX_H_
-"""
+with open("cpp_template.cpp","r") as f:
+    CPP_HEADER = f.read()
 
 PY_ADDITIONS = """
 def as_integer(string):

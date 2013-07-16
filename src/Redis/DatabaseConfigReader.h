@@ -47,7 +47,8 @@ const std::unordered_map <Prefix, std::string, IntHash<Prefix>> prefixMap = {
     { Prefix::perspectives, "perspectives"}
 };
 
-const std::unordered_map <MoguSyntax, Prefix, IntHash<MoguSyntax>> syntax_to_prefix = {
+const std::unordered_map
+    <const SyntaxDef&, Prefix, IntHash<const SyntaxDef&>> syntax_to_prefix = {
     { MoguSyntax::widget,   Prefix::widgets },
     { MoguSyntax::data,     Prefix::data    },
     { MoguSyntax::user,     Prefix::user    },

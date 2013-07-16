@@ -64,7 +64,7 @@ class Moldable :
     Wt::Signal <> __hidden_changed;
     Wt::Signal <> __index_changed;
 
-    MoguSyntax __widget_type   = MoguSyntax::__NONE__;
+    const SyntaxDef&  __widget_type;
 
     size_t num_triggers;
 
@@ -77,7 +77,7 @@ protected:
     std::string __template_name;
 
     virtual void __init__();
-    std::string getParameter(Redis::NodeEditor&,MoguSyntax);
+    std::string getParameter(Redis::NodeEditor&,const SyntaxDef&);
 
     inline void initializeNodeEditor(Redis::NodeEditor& node)
     {
@@ -87,7 +87,7 @@ protected:
 
 public:
 
-    Moldable(const std::string& node, const MoguSyntax widget_type);
+    Moldable(const std::string& node, const SyntaxDef& widget_type);
 
     operator std::string()
     {
@@ -109,9 +109,9 @@ public:
 
     inline size_t getNumTriggers() { return num_triggers;}
 
-    virtual void getAttribute(MoguSyntax state, NodeValue& val);
-    virtual bool setAttribute(const MoguSyntax state, NodeValue& val);
-    inline virtual bool setAttribute(const MoguSyntax state, NodeValue&& val)
+    virtual void getAttribute(const SyntaxDef& state, NodeValue& val);
+    virtual bool setAttribute(const SyntaxDef& state, NodeValue& val);
+    inline virtual bool setAttribute(const SyntaxDef& state, NodeValue&& val)
         { return setAttribute(state, val);}
 
     inline virtual void setStyleClass (const Wt::WString& style)

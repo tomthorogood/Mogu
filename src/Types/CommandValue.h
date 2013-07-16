@@ -32,7 +32,7 @@ public:
     CommandValue(Moldable& widget);
 
     uint8_t set(const CommandFlags& flag, NodeValue v);
-    uint8_t set(const CommandFlags& flag, const MoguSyntax v);
+    uint8_t set(const CommandFlags& flag, const SyntaxDef& v);
     NodeValue get ( CommandFlags flag) const ;
 
 
@@ -72,14 +72,14 @@ private:
      * to be a valid action by the MoguScript import stack. All commands
      * require an action.
      */
-    MoguSyntax action = MoguSyntax::__NONE__;
+    SyntaxDef action    = MoguSyntax::__NONE__;
 
     /*!\brief The enumerated object type which will be changed by the command.
      * This is required for any mogu command (commands must DO something TO
      * something).
      */
-    MoguSyntax object = MoguSyntax::__NONE__;
-    MoguSyntax r_object = MoguSyntax::__NONE__;
+    SyntaxDef object    = MoguSyntax::__NONE__;
+    SyntaxDef r_object  = MoguSyntax::__NONE__;
 
     /*!\brief Most objects will require some sort of identifier, but not all.
      *  The 'self' (or 'own') object is its own identifier, and refers to the

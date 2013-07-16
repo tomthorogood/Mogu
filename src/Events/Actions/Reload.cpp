@@ -5,12 +5,13 @@ namespace Actions {
 
 void reload(Moldable& broadcaster, CommandValue& v)
 {
-    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+    int syn = (int) MoguSyntax::get(v.get(CommandFlags::OBJECT));
+    switch(syn)
     {
-        case MoguSyntax::own:{
+        case (int) MoguSyntax::own:{
             broadcaster.reload();
             break;}
-        case MoguSyntax::widget:{
+        case (int) MoguSyntax::widget:{
             mApp;
             Moldable* widget = app->registeredWidget(v.getIdentifier());
             widget->reload();

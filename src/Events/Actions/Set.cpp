@@ -42,10 +42,11 @@ namespace {
 
 void set (Moldable& broadcaster, CommandValue& v)
 {
-    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+    const SyntaxDef& object = MoguSyntax::get(v.get(Commandflags::OBJECT))
+    switch(object)
     {
         case MoguSyntax::own:{  // set attribute of calling widget
-            MoguSyntax attr = (MoguSyntax) v.get(CommandFlags::ARG);
+            const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
             broadcaster.setAttribute(attr,v.get(CommandFlags::VALUE));
             break;}
         case MoguSyntax::path:{ // set application URL
@@ -89,7 +90,8 @@ void set (Moldable& broadcaster, CommandValue& v)
             mApp;
             Moldable* widget = app->registeredWidget(v.getIdentifier());
             if (widget == nullptr) break;
-            widget->setAttribute((MoguSyntax) v.get(CommandFlags::ARG), v.get(CommandFlags::VALUE));
+            const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
+            widget->setAttribute(attr, v.get(v.get(CommandFlags::VALUE));
             break;}
         default: return; // If bad input, stop immediately
     }

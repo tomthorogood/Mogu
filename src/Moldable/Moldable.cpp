@@ -15,7 +15,7 @@
 #include <Wt/WAnchor>
 #include <Redis/NodeMerger.h>
 
-Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
+Moldable::Moldable (const std::string& node, const SyntaxDef& widget_type)
 :
     __style_changed(this)
     ,__failed_test(this)
@@ -168,31 +168,31 @@ std::string Moldable::getParameter(Redis::NodeEditor& node, MoguSyntax param)
     return node.read();
 }
 
-void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
+void Moldable::getAttribute(const SyntaxDef& state, NodeValue& val)
 {
 
-    switch (state) {
-        case MoguSyntax::index: {
+    switch ((int)state) {
+        case (int) MoguSyntax::index: {
             Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
             int n = stack->currentIndex();
             val.setInt(n);
             break;
         }
-        case MoguSyntax::hidden: {
+        case (int) MoguSyntax::hidden: {
             bool v = isHidden();
             val.setInt((int) v);
             break;
         }
-        case MoguSyntax::text: {
+        case (int) MoguSyntax::text: {
             val.setString("\""+moldableValue()+"\"");
             break;
         }
-        case MoguSyntax::style: {
+        case (int) MoguSyntax::style: {
             val.setString("\""+styleClass().toUTF8()+"\"");
             break;
         }
         //!\TODO test/verify
-        case MoguSyntax::source: {
+        case (int) MoguSyntax::source: {
             Wt::WAnchor* anchor = (Wt::WAnchor*) widget(0);
             std::string attrval("href");
             val.setString(anchor->attributeValue(attrval).toUTF8());
@@ -200,14 +200,13 @@ void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
         }
 
         //!\TODO
-        case MoguSyntax::location: {
+        case (int) MoguSyntax::location: {
            break;
         }
         default:
             val.setInt(0);
             break;
     }
-
 }
 
 bool Moldable::updateStackIndex (size_t index)
@@ -224,7 +223,7 @@ bool Moldable::updateStackIndex (size_t index)
     return true;
 }
 
-bool Moldable::setAttribute(const MoguSyntax state, NodeValue& val)
+bool Moldable::setAttribute(const SyntaxDef& state, NodeValue& val)
 {
     if (val.isString()) {
         val.setString(stripquotes(val.getString()));

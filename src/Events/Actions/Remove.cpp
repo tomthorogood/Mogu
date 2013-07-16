@@ -14,7 +14,7 @@ const uint8_t OBJECT_FROM_APPLICATION   =4;
 
 const uint8_t getConstruct(CommandValue& v)
 {
-    MoguSyntax obj = (MoguSyntax) v.get(CommandFlags::OBJECT);
+    const SyntaxDef& obj = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     bool has_arg = v.test(CommandFlags::ARG);
     bool has_r_object = v.test(CommandFlags::R_OBJECT);
     bool has_value = v.test(CommandFlags::VALUE);
@@ -36,18 +36,18 @@ const uint8_t getConstruct(CommandValue& v)
 inline Moldable* setMoldablePointer(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
+    const SyntaxDef& obj = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     return 
-        (MoguSyntax::own == (MoguSyntax) v.get(CommandFlags::OBJECT))?
-            &broadcaster : 
-            app->registeredWidget(
-                    (std::string) v.get(CommandFlags::IDENTIFIER));
+        (MoguSyntax::own == obj) ?  
+            &broadcaster : app->registeredWidget(
+                (std::string) v.get(CommandFlags::IDENTIFIER));
 }
 
 void handle_value_from_attribute(Moldable& broadcaster, CommandValue& v)
 {
     NodeValue currentValue;
     Moldable* widget = setMoldablePointer(broadcaster,v);
-    MoguSyntax attribute = (MoguSyntax) v.get(CommandFlags::ARG);
+    const SyntaxDef& attribute = MoguSyntax::get(v.get(CommandFlags::ARG));
     widget->getAttribute(attribute, currentValue);
 
     if (currentValue.isString())
@@ -65,8 +65,9 @@ void handle_value_from_attribute(Moldable& broadcaster, CommandValue& v)
 void handle_attribute_from_object(Moldable& broadcaster, CommandValue& v)
 {
     NodeValue emptyValue(EMPTY);
+    const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
     Moldable* widget = setMoldablePointer(broadcaster,v);
-    widget->setAttribute((MoguSyntax) v.get(CommandFlags::ARG), emptyValue);
+    widget->setAttribute(attr, emptyValue);
 }
 
 /* This removes values from collection nodes within Redis. It can be used
@@ -79,7 +80,7 @@ void handle_attribute_from_object(Moldable& broadcaster, CommandValue& v)
  */
 void handle_value_from_field(Moldable& broadcaster, CommandValue& v)
 {
-    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     NodeValue arg = v.get(CommandFlags::ARG);
     std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
     std::string value = EMPTY;
@@ -93,15 +94,14 @@ void handle_value_from_field(Moldable& broadcaster, CommandValue& v)
         if (!groupManager.hasWriteAccess(identifier)) return;
     }
 
-    
     Redis::NodeEditor editor(object, identifier, &arg);
-    if (editor.getType() == MoguSyntax::list) {
+    if (editor.getNodeType() == MoguSyntax::list) {
         editor.setIsListValue(true);
         if (v.test(CommandFlags::VALUE))
             value = (std::string) v.get(CommandFlags::VALUE);
     }
 
-    else if (editor.getType() == MoguSyntax::hash)
+    else if (editor.getNodeType() == MoguSyntax::hash)
         editor.setIsHashValue(true);
 
     editor.remove(value);
@@ -115,8 +115,8 @@ void handle_object_from_application(Moldable& broadcaster, CommandValue& v)
     mApp;
 
     bool has_identifier = v.test(CommandFlags::IDENTIFIER);
-
-    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+    
+    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     if (object == MoguSyntax::widget)
     {
         Moldable* dying_widget = app->registeredWidget(
@@ -134,7 +134,6 @@ void handle_object_from_application(Moldable& broadcaster, CommandValue& v)
     }
     else // We're dealing with a database node.
     {
-        MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
         std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
         // There will not be an arg in this case.
         if (object == MoguSyntax::group)

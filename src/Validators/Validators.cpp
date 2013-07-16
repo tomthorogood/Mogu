@@ -29,7 +29,7 @@ Wt::WValidator* createValidator(
     
     NodeValue vval;
     app->interpreter().giveInput(db.yieldResponse<std::string>(), vval);
-    switch ((MoguSyntax) vval.getInt())
+    switch(MoguSyntax::get((int)vval))
     {
         case MoguSyntax::regex:
             return createRegexValidator(db,c_node);

@@ -54,14 +54,14 @@ template <> std::string
     return reply_str;
 }
 
-template <> MoguSyntax
+template <> const SyntaxDef&
     QuerySet::yieldResponse <MoguSyntax>()
 {
     execute_nongreedy();
     if (reply_type == REDIS_REPLY_STRING) 
-        return (MoguSyntax) atoi(reply_str.c_str());
+        return MoguSyntax::get(reply_str);
     else if (reply_type == REDIS_REPLY_INTEGER)
-        return (MoguSyntax) reply_int;
+        return MoguSyntax::get(reply_int);
     return MoguSyntax::__NONE__;
 }
 

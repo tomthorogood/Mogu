@@ -30,43 +30,42 @@ int MathParser::processInput()
 	bool done = false;
 	while(!done)
 	{
-		int currToken = __tm.currentToken<int>();
+        int currToken = (int) __tm.currentToken();
 		__tm.next();	//move
 
-		if(isOperator(currToken)) {
-			switch((MoguSyntax) currToken) {
+		if(isOperator(MoguSyntax::get(currToken))) {
+            const SyntaxDef& oper;
+			switch(oper) {
 				case MoguSyntax::OPER_OPPAREN:
-				opStack.push(currToken);
-				break;
-
+                    opStack.push(currToken);
+                    break;
 				case MoguSyntax::OPER_CLPAREN:
-				while((MoguSyntax) opStack.top() != MoguSyntax::OPER_OPPAREN) {
-					__postfixExpression.push_back(opStack.top());
-					opStack.pop();
-				}
-
-				done = true;
-				opStack.pop();	//remove open parens
-				break;
+                    while(opStack.top() != MoguSyntax::OPER_OPPAREN) {
+                        __postfixExpression.push_back(opStack.top());
+                        opStack.pop();
+                    }
+                    done = true;
+                    opStack.pop();	//remove open parens
+                    break;
 
 				default:
-				//we have a +,-,* or /
-				if(opStack.empty())
-				{
-					opStack.push(currToken);
-					break;
-				}
+                    //we have a +,-,* or /
+                    if(opStack.empty())
+                    {
+                        opStack.push(currToken);
+                        break;
+                    }
 						
-				while(!hasHigherPrecedence(currToken, opStack.top())) {
-					__postfixExpression.push_back(opStack.top());
-					opStack.pop();
+                    while(!hasHigherPrecedence(currToken, opStack.top())) {
+                        __postfixExpression.push_back(opStack.top());
+                        opStack.pop();
 
-					if(opStack.empty())
-						break;
-				}
-				opStack.push(currToken);
-				break;
-			}
+                        if(opStack.empty())
+                            break;
+                    }
+                    opStack.push(currToken);
+                    break;
+                }
 		}
 		else {
 			__postfixExpression.push_back(currToken);
@@ -85,10 +84,10 @@ int MathParser::processInput()
 
 	// *** EVALUATE POSTFIX EXPRESSION ***
 	for(unsigned int i=0; i<__postfixExpression.size(); i++) {
+        int currToken = __postfixExpression[i];
+        const SyntaxDef& syn_token = MoguSyntax::get(currToken);
 
-		int currToken = __postfixExpression[i];
-
-		if(!isOperator(currToken)) {	//operand 
+		if(!isOperator(syn_token)) {	//operand 
 			__operandStack.push(currToken);
 		}
 		else {							//operator
@@ -98,21 +97,21 @@ int MathParser::processInput()
 			__operandStack.pop();
 
 			int opResult;
-			switch((MoguSyntax) currToken) {
+			switch(syn_token) {
 				case MoguSyntax::OPER_PLUS:
-				opResult = op1 + op2;
-				break;
+                    opResult = op1 + op2;
+                    break;
 				case MoguSyntax::OPER_MINUS:
-				opResult = op1 - op2;
-				break;
+                    opResult = op1 - op2;
+                    break;
 				case MoguSyntax::OPER_MULT:
-				opResult = op1 * op2;
-				break;
+                    opResult = op1 * op2;
+                    break;
 				case MoguSyntax::OPER_DIV:
-				opResult = op1 / op2;
-				break;
+                    opResult = op1 / op2;
+                    break;
 				default:
-				break;
+                    break;
 			}
 		__operandStack.push(opResult);
 		}
@@ -127,15 +126,14 @@ int MathParser::processInput()
 }
 
 // read: has STRICTLY higher precedence
-bool MathParser::hasHigherPrecedence(int op1, int op2)
+bool MathParser::hasHigherPrecedence(const SyntaxDef& op1, const SyntaxDef& op2)
 {
-	if((MoguSyntax) op1 == MoguSyntax::OPER_MULT || (MoguSyntax) op1 == MoguSyntax::OPER_DIV)
-		if((MoguSyntax) op2 == MoguSyntax::OPER_PLUS || (MoguSyntax) op2 == MoguSyntax::OPER_MINUS)
-			return true;
-
-	if((MoguSyntax) op2 == MoguSyntax::OPER_OPPAREN)
-		return true;
-
+    if ((op1 == MoguSyntax::OPER_MULT || op1 == MoguSyntax::OPER_DIV)
+        && (op2 == MoguSyntax::OPER_PLUS || op2 == MoguSyntax::OPER_MINUS))
+        return true;
+        
+    if (op2 == MoguSyntax::OPER_OPPAREN)
+        return true;
 	return false;
 }
 

@@ -29,7 +29,7 @@ TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string
         //Convert "12" to 12
         const char* c_trigger = s_trigger.c_str();
         int trigger = atoi(c_trigger);
-        triggers.insert((MoguSyntax) trigger);
+        triggers.insert(MoguSyntax::get(trigger));
         // Get the number of commands associated with that trigger
         db.appendQuery("llen %s.%s.events.%d", c_prefix, c_node, trigger);
 
@@ -42,7 +42,7 @@ TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string
         // Store the commands in the trigger queue
         for (std::string command : db.yieldResponse <std::vector <std::string>>())
         {
-            __map[(MoguSyntax) trigger].push(command);
+            __map[(MoguSyntax::get(trigger)].push(command);
         }
     }
 }

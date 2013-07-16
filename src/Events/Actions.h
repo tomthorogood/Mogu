@@ -10,7 +10,6 @@
 namespace Actions
 {
 
-MoguSyntax getPolicyNodeType(const std::string& identifier);
 void set(Moldable& broadcaster, CommandValue& command);
 void increment(Moldable& broadcaster, CommandValue& command);
 void decrement(Moldable& broadcaster, CommandValue& command);

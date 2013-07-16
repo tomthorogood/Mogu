@@ -10,7 +10,7 @@
 #include <Mogu.h>
 
 MoldableAbstractParent::MoldableAbstractParent
-    (const std::string& node, const MoguSyntax widget_type)
+    (const std::string& node, const SyntaxDef&  widget_type)
 : Moldable(node, widget_type)
 {
     __init__();

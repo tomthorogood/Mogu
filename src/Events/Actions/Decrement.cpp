@@ -7,7 +7,7 @@ namespace Actions {
 void decrement (Moldable& broadcaster, CommandValue& v)
 {
     mApp;
-    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
     NodeValue arg;
     std::string str;
@@ -21,15 +21,17 @@ void decrement (Moldable& broadcaster, CommandValue& v)
     int value = 
         (v.getFlags() & (uint8_t) CommandFlags::VALUE) ?
             (int) v.get(CommandFlags::VALUE) : 1;
-    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+    switch(object)
     {
         case MoguSyntax::own:{
             NodeValue current;
-            broadcaster.getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+            broadcaster.getAttribute(MoguSyntax::get(
+                        v.get(CommandFlags::ARG)), current);
             if (current.getType() == ReadType::string_value)
                 current.setInt(atoi(current.getString().c_str()));
             current.setInt(current.getInt()-value);
-            broadcaster.setAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+            broadcaster.setAttribute(MoguSyntax::get(
+                        v.get(CommandFlags::ARG), current);
             break;}
 
         case MoguSyntax::user:{
@@ -37,7 +39,6 @@ void decrement (Moldable& broadcaster, CommandValue& v)
             final.setInt(final.getInt() - atoi(str.c_str()));
             node.write(final);
             break;}
-
         case MoguSyntax::group:{
             GroupManager group(app->getGroup());
             if (!group.hasReadAccess(identifier)) return;
@@ -67,11 +68,13 @@ void decrement (Moldable& broadcaster, CommandValue& v)
             mApp;
             Moldable* widget = app->registeredWidget(v.getIdentifier());
             NodeValue current;
-            widget->getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+            widget->getAttribute(MoguSyntax::get(
+                        v.get(CommandFlags::ARG), current));
             if (current.getType() == ReadType::string_value)
                 current.setInt(atoi(current.getString().c_str()));
             current.setInt(current.getInt()-value);
-            widget->setAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current );
+            widget->setAttribute(MoguSyntax::get(
+                        v.get(CommandFlags::ARG), current );
             break;}
 
         default: return;

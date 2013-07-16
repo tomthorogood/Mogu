@@ -11,9 +11,9 @@ GroupManager::GroupManager (const int& grpid)
     , grpdb(Prefix::group)
     , usrdb(Prefix::user)
     , plcdb(Prefix::policies)
-    , USER_STR(std::to_string((int) MoguSyntax::user))
-    , GROUP_STR(std::to_string((int) MoguSyntax::group))
-    , ADMIN_STR(std::to_string((int) MoguSyntax::moderator))
+    , USER_STR((std::string) MoguSyntax::user)
+    , GROUP_STR((std::string) MoguSyntax::group)
+    , ADMIN_STR((std::string) MoguSyntax::moderator)
 {
     setAccessLevel();
     grpdb.execute();
@@ -24,9 +24,9 @@ GroupManager::GroupManager(const std::string& group_key)
     grpdb(Prefix::group)
     , usrdb(Prefix::user)
     , plcdb(Prefix::policies)
-    , USER_STR(std::to_string((int) MoguSyntax::user))
-    , GROUP_STR(std::to_string((int) MoguSyntax::group))
-    , ADMIN_STR(std::to_string((int) MoguSyntax::moderator))
+    , USER_STR((std::string) MoguSyntax::user)
+    , GROUP_STR((std::string) MoguSyntax::group)
+    , ADMIN_STR((std::string) MoguSyntax::moderator)
 {
     /* Provided a key instead of the group id, looks up the group id
      * with this information. 
@@ -85,7 +85,7 @@ bool GroupManager::hasReadAccess (const std::string& field)
         return false;   
     
     plcdb.appendQuery(
-            "hget policies.%s %d", field.c_str(), MoguSyntax::read);
+            "hget policies.%s %d", field.c_str(), (int) MoguSyntax::read);
     auto access = plcdb.yieldResponse <std::string>();
     std::string test_str = 
         // An administrator will have read access if the 
@@ -101,7 +101,7 @@ bool GroupManager::hasReadAccess (const std::string& field)
 bool GroupManager::hasWriteAccess(const std::string& field)
 {
     plcdb.appendQuery(
-        "hget policies.%s %d", field.c_str(), MoguSyntax::write);
+        "hget policies.%s %d", field.c_str(), (int) MoguSyntax::write);
 
     // If the user is not a member of the group, they do not have write access
     // no matter what

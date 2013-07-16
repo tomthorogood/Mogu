@@ -6,7 +6,7 @@ namespace Actions {
 void email(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
-    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
     NodeValue arg;
     if (v.test(CommandFlags::ARG))
@@ -17,16 +17,18 @@ void email(Moldable& broadcaster, CommandValue& v)
     email.setRecipient(v.get(CommandFlags::VALUE).getString());
     email.setSubject(app->slotManager().peekSlot("EMAIL_SUBJECT"));
 
-    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+    switch(object)
     {
         case MoguSyntax::own:{
-            broadcaster.getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), message);
+            const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
+            broadcaster.getAttribute( (MoguSyntax) v.get(attr, message);
             email.setMessage(message.getString());
             break;}
 
         case MoguSyntax::widget:{
             Moldable* widget = app->registeredWidget(v.getIdentifier());
-            widget->getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), message);
+            const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
+            widget->getAttribute(attr, message);
             email.setMessage(message.getString());
             break;}
 

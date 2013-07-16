@@ -9,7 +9,7 @@ CommandProcessor::CommandProcessor(Moldable& broadcaster_)
 
 void CommandProcessor::processCommand(CommandValue& v)
 {
-    switch((MoguSyntax) v.get(CommandFlags::ACTION))
+    switch(MoguSyntax::get(v.get(CommandFlags::ACTION)))
     {
         case MoguSyntax::set:
             Actions::set(broadcaster,v);

@@ -29,7 +29,7 @@ StateParser::StateParser(TokenManager& tm) : __tm(tm)
 std::string StateParser::getIdentifier()
 {
     __tm.next();
-    if (__tm.currentToken <MoguSyntax> () != MoguSyntax::TOKEN_DELIM)
+    if (__tm.currentToken  () != MoguSyntax::TOKEN_DELIM)
     {
         //TODO throw a pretty big error, as this should only happen in the 
         //case of bad syntax checking on import, or database corruption.
@@ -42,7 +42,7 @@ std::string StateParser::getIdentifier()
 void StateParser::processInput(Moldable* broadcaster)
 {
     __tm.saveLocation();
-    MoguSyntax currentToken = __tm.currentToken <MoguSyntax>();
+    SyntaxDef currentToken = __tm.currentToken ();
     NodeValue result;
     std::string identifier;
 
@@ -111,7 +111,7 @@ void StateParser::handleWidget(const std::string& identifier, NodeValue& result)
     if (widget == nullptr) return; 
     
     // getIdentifier will have already advaned the token pointer 
-    MoguSyntax widget_attribute = __tm.currentToken <MoguSyntax>();
+    const SyntaxDef& widget_attribute = __tm.currentToken ();
     widget->getAttribute(widget_attribute, result);
 }
 
@@ -130,7 +130,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
     {
         // If this is the case, the very next argument must inherently be
         // the hash key to resolve the field. There are two possibilities:
-        MoguSyntax hashkey = __tm.currentToken <MoguSyntax> (); 
+        const SyntaxDef& hashkey = __tm.currentToken  (); 
 
         // The key is a string, such as "foo", with syntax like: 
         //  hget data.bar foo 
@@ -144,7 +144,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
         // hget data.bar 17
         else
             db.appendQuery( "hget data.%s %d", c_node,
-                    __tm.currentToken<int>());
+                    __tm.currentToken());
 
         // NOTE that there is the possibility of a collision in the highly
         // unlikely case that the hash key integer value is the same as the 
@@ -155,7 +155,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
     {
         // In this case, there must necessarily be a list index in order
         // to find the value.
-        db.appendQuery( "lindex data.%s %d", c_node, __tm.currentToken<int>());
+        db.appendQuery( "lindex data.%s %d", c_node, __tm.currentToken());
 
     }
 
@@ -165,7 +165,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
 void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 {
     if (widget == nullptr) return;
-    widget->getAttribute(__tm.currentToken <MoguSyntax>(), result);
+    widget->getAttribute(__tm.currentToken (), result);
 }
 
 void StateParser::handleUserField(const std::string& field, NodeValue& result)
@@ -174,42 +174,41 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
     Redis::ContextQuery policies(Prefix::policies);
     Redis::ContextQuery user(Prefix::user);
     const char* c_field = field.c_str();
-    MoguSyntax token;
+    SyntaxDef token;
     NodeValue arg;
 
 
     Redis::NodeEditor node(Prefix::user, field);
     if (!node.exists())
     {
-        token = __tm.currentToken<MoguSyntax>();
-        if (__tm.currentToken<MoguSyntax>() == MoguSyntax::TOKEN_DELIM)
+        token = __tm.currentToken();
+        if (__tm.currentToken() == MoguSyntax::TOKEN_DELIM)
         {
             arg.setString(__tm.fetchStringToken());
         }
-        else (arg.setInt(__tm.currentToken<int>()));
+        else (arg.setInt(__tm.currentToken()));
 
         node.setPrefix(Prefix::policies);
-        std::string sub = std::to_string((int) MoguSyntax::default_);
+        std::string sub = (std::string) MoguSyntax::default_;
         node.toggleSub(sub);
 
         node.setArg(&arg);
         if (node.subExists(sub))
-            result.setString(node.readSub(
-                std::to_string((int)MoguSyntax::default_)));
+            result.setString(node.readSub(sub));
         return;
     }
-    MoguSyntax type = node.getType();
+    const SyntaxDef& type = node.getType();
     if (type == MoguSyntax::hash)
     {
-        token = __tm.currentToken<MoguSyntax>();
+        token = __tm.currentToken();
         if (token == MoguSyntax::TOKEN_DELIM)
             arg.setString(__tm.fetchStringToken());
         else
-            arg.setInt(__tm.currentToken <int>());
+            arg.setInt(__tm.currentToken());
     }
     else if (type == MoguSyntax::list)
     {
-        arg.setInt(__tm.currentToken<int>());
+        arg.setInt(__tm.currentToken());
     }
     node.setArg(&arg);
     result.setString(node.read());
@@ -230,7 +229,7 @@ void StateParser::handleGroupField(const std::string& field, NodeValue& result)
     plcdb.appendQuery( "hget policies.%s %d", field.c_str(), MoguSyntax::type);
     plcdb.appendQuery( "hget policies.%s %d",
             field.c_str(), MoguSyntax::encrypted);
-    MoguSyntax type = plcdb.yieldResponse <MoguSyntax>();
+    const SyntaxDef& type = MoguSyntax::get(plcdb.yieldResponse<std::string>());
     bool encrypted = plcdb.yieldResponse <bool>();
 
     switch(type)
@@ -241,13 +240,13 @@ void StateParser::handleGroupField(const std::string& field, NodeValue& result)
             break;
         case MoguSyntax::list:{
             // Get the index of list item
-            int index = __tm.currentToken <int>();
+            int index = __tm.currentToken();
             grpdb.appendQuery( "lindex groups.%s.%s %d", group,
                     field.c_str(), index);
             break;}
         case MoguSyntax::hash:{
             // Ensure that the next token is in fact a key:
-            if (__tm.currentToken<MoguSyntax>() != MoguSyntax::TOKEN_DELIM) return;
+            if (__tm.currentToken() != MoguSyntax::TOKEN_DELIM) return;
             std::string key = __tm.fetchStringToken();
             grpdb.appendQuery( "hget groups.%s.%s %s",
                     group, field.c_str(), key.c_str());
