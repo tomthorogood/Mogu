@@ -18,6 +18,7 @@ clean:
 	@rm -rf operators
 	@rm -rf max
 	@rm -rf *.out
+	@rm -rf test
 	@echo "Removed syntax files."
 
 max: max.cpp

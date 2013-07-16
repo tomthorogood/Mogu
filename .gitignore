@@ -26,6 +26,7 @@ syntax/syntax.h
 syntax/syntax.py
 syntax/operators
 syntax/max
+syntax/test
 Testing/*
 .idea*
 tests/*
