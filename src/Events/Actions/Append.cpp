@@ -30,8 +30,7 @@ const uint8_t getConstruct(CommandValue& v)
     // but the main object may be "self" OR another widget.
     if (v.test(CommandFlags::R_IDENTIFIER) &&
             (v.test(CommandFlags::IDENTIFIER) 
-            || MoguSyntax::own == 
-            (MoguSyntax) v.get(CommandFlags::OBJECT))
+            || MoguSyntax::own == v.get(CommandFlags::OBJECT))
        )
         return OBJECT_TO_OBJECT;
 

@@ -8,11 +8,7 @@
 #ifndef NODEVALUE_H_
 #define NODEVALUE_H_
 
-#include <declarations.h>
 #include <string>
-
-#include <float.h>
-#include <limits.h>
 
 enum class ReadType
 {
@@ -39,14 +35,14 @@ class NodeValue
     ReadType __type = ReadType::NO_VALUE;
 
     /*!\brief If the value is a string, it is stored here. */
-    std::string as_string = EMPTY ;
+    std::string as_string = "" ;
 
     /*!\brief If the value is numeric, it is stord here. */
     NumericUnion* __numerics = nullptr;
 
     inline void resetStr()
     {
-        as_string = EMPTY;
+        as_string = "";
     }
 
 public:
@@ -106,38 +102,12 @@ public:
     /*!\brief deletes the pointer to the NumericUnion*/
     virtual ~NodeValue();
 
-    inline MoguSyntax getSyntax() const
-    {
-        switch(getType()) {
-            case ReadType::string_value:
-                return (MoguSyntax) atoi(as_string.c_str());
-            case ReadType::int_value:
-                return (MoguSyntax) __numerics->as_int;
-            default: return MoguSyntax::__NONE__;
-        }
-    }
-
-    operator MoguSyntax() const {
-        return getSyntax();
+    operator float() const {
+        return __numerics->as_float;
     }
 
     operator std::string() const {
-        if (__type == ReadType::string_value)
-            return as_string;
-        else if (__type == ReadType::int_value)
-            return std::to_string (getInt());
-        else if (__type == ReadType::float_value)
-            return std::to_string (getFloat());
-        else
-            return EMPTY;
-    }
-
-    operator int() const {
-        return __numerics->as_int;
-    }
-
-    operator float() const {
-        return __numerics->as_float;
+        return as_string;
     }
 
     /* Appends values to strings, sums numeric values. */

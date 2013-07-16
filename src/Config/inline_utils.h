@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <sstream>
-#include <Types/syntax.h>
 #include <string>
 #include <map>
 
@@ -41,25 +40,6 @@ inline std::string sreplace(std::string str, const std::string& needle,
         start_index = str.find(needle);    
     }
     return str;
-}
-
-const std::map <std::string, MoguSyntax> string_to_node_type = {
-    {   "string"    ,   MoguSyntax::string  },
-    {   "hash"      ,   MoguSyntax::hash    },
-    {   "list"      ,   MoguSyntax::list    }
-};
-
-/* From StackOverFlow user Evan Teran, http://stackoverflow.com/users/13430,
- * because I was * feeling super lazy.
- */
-inline std::vector<std::string> &split(const std::string &s, char delim,
-        std::vector<std::string> &elems) {
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-    return elems;
 }
 
 #endif /* INLINE_UTILS_H_ */

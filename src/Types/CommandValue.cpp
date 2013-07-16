@@ -20,7 +20,7 @@ uint8_t CommandValue::set(const CommandFlags& flag, NodeValue v)
     switch(flag)
     {
         case CommandFlags::ACTION:
-            action = (MoguSyntax) v;
+            action = v;
             break;
         case CommandFlags::OBJECT:
             object = (MoguSyntax) v;

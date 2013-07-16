@@ -45,8 +45,9 @@ CPP_HEADER="""
 #include <map>
 #include <string>
 #include <Types/SyntaxDef.h>
+#include <Types/LockedMap.h>
 
-namespace MoguSyntax {\n\n
+namespace MoguSyntax {
 
 %(syntax_definitions)s
 
@@ -56,7 +57,24 @@ namespace MoguSyntax {\n\n
 
 %(syntax_hmap)s
 
-} //end MoguSyntax 
+enum strtype {
+    HUMAN,
+    INT
+};
+
+inline const SyntaxDef& get(int i)
+{
+    return imap[i];
+}
+
+inline const SyntaxDef& get(const std::string& s, strtype t=INT)
+{
+    return (t==INT) ? smap[s] : hmap[s];
+}
+
+} // MoguSyntax
+
+#endif //SYNTAX_H_
 """
 
 PY_ADDITIONS = """

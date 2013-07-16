@@ -1,0 +1,124 @@
+src/Events/Actions/Append.cpp:            (MoguSyntax) v.get(CommandFlags::OBJECT))
+src/Events/Actions/Append.cpp:    MoguSyntax attribute = (MoguSyntax) v.get(CommandFlags::ARG);
+src/Events/Actions/Append.cpp:    MoguSyntax obj = v.get(CommandFlags::OBJECT);
+src/Events/Actions/Reload.cpp:    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+src/Events/Actions/Decrement.cpp:    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+src/Events/Actions/Decrement.cpp:    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+src/Events/Actions/Decrement.cpp:            broadcaster.getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+src/Events/Actions/Decrement.cpp:            broadcaster.setAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+src/Events/Actions/Decrement.cpp:            widget->getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+src/Events/Actions/Decrement.cpp:            widget->setAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current );
+src/Events/Actions/Increment.cpp:    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+src/Events/Actions/Increment.cpp:    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+src/Events/Actions/Increment.cpp:            broadcaster.getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+src/Events/Actions/Increment.cpp:                    (MoguSyntax) v.get(CommandFlags::ARG), current);
+src/Events/Actions/Increment.cpp:            widget->getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current);
+src/Events/Actions/Increment.cpp:            widget->setAttribute( (MoguSyntax) v.get(CommandFlags::ARG), current );
+src/Events/Actions/Remove.cpp:    MoguSyntax obj = (MoguSyntax) v.get(CommandFlags::OBJECT);
+src/Events/Actions/Remove.cpp:    MoguSyntax attribute = (MoguSyntax) v.get(CommandFlags::ARG);
+src/Events/Actions/Remove.cpp:    widget->setAttribute((MoguSyntax) v.get(CommandFlags::ARG), emptyValue);
+src/Events/Actions/Remove.cpp:    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+src/Events/Actions/Remove.cpp:    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+src/Events/Actions/Remove.cpp:        MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+src/Events/Actions/Email.cpp:    MoguSyntax object = (MoguSyntax) v.get(CommandFlags::OBJECT);
+src/Events/Actions/Email.cpp:    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+src/Events/Actions/Email.cpp:            broadcaster.getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), message);
+src/Events/Actions/Email.cpp:            widget->getAttribute( (MoguSyntax) v.get(CommandFlags::ARG), message);
+src/Events/Actions/Set.cpp:    switch((MoguSyntax) v.get(CommandFlags::OBJECT))
+src/Events/Actions/Set.cpp:            MoguSyntax attr = (MoguSyntax) v.get(CommandFlags::ARG);
+src/Events/Actions/Set.cpp:            widget->setAttribute((MoguSyntax) v.get(CommandFlags::ARG), v.get(CommandFlags::VALUE));
+src/Events/EventHandler.h:    template <MoguSyntax T> void handleTrigger();
+src/Events/EventHandler.h:template <MoguSyntax T> void EventHandler::handleTrigger()
+src/Events/Actions.h:MoguSyntax getPolicyNodeType(const std::string& identifier);
+src/Events/EventHandler.cpp:    for (MoguSyntax trigger : triggerMap.getTriggers())
+src/Events/TriggerMap.cpp:        triggers.insert((MoguSyntax) trigger);
+src/Events/TriggerMap.cpp:            __map[(MoguSyntax) trigger].push(command);
+src/Events/CommandProcessor.cpp:    switch((MoguSyntax) v.get(CommandFlags::ACTION))
+src/Events/TriggerMap.h:    inline void addEvent(const MoguSyntax trigger, const std::string& command)
+src/Events/TriggerMap.h:    inline std::queue <std::string> getEvents(MoguSyntax trigger) const
+src/Events/TriggerMap.h:    inline const std::set <MoguSyntax>& getTriggers()
+src/Events/TriggerMap.h:    std::set <MoguSyntax> triggers;
+src/Events/TriggerMap.h:    std::unordered_map <MoguSyntax,std::queue <std::string>, IntHash<MoguSyntax>> __map;
+src/Factories/MoldableFactory.cpp:    MoguSyntax widget_type;
+src/Factories/MoldableFactory.cpp:    widget_type = db.yieldResponse <MoguSyntax>();
+src/Factories/MoldableFactory.cpp:        widget_type = (MoguSyntax) tmpldb.yieldResponse <int>();
+src/Moldable/Moldable.h:    std::string getParameter(Redis::NodeEditor&,MoguSyntax);
+src/Moldable/Moldable.h:    Moldable(const std::string& node, const MoguSyntax widget_type);
+src/Moldable/Moldable.h:    virtual void getAttribute(MoguSyntax state, NodeValue& val);
+src/Moldable/Moldable.h:    virtual bool setAttribute(const MoguSyntax state, NodeValue& val);
+src/Moldable/Moldable.h:    inline virtual bool setAttribute(const MoguSyntax state, NodeValue&& val)
+src/Moldable/MoldableAbstractParent.cpp:    (const std::string& node, const MoguSyntax widget_type)
+src/Moldable/Moldable.cpp:Moldable::Moldable (const std::string& node, const MoguSyntax widget_type)
+src/Moldable/Moldable.cpp:std::string Moldable::getParameter(Redis::NodeEditor& node, MoguSyntax param)
+src/Moldable/Moldable.cpp:void Moldable::getAttribute(MoguSyntax state, NodeValue& val)
+src/Moldable/Moldable.cpp:bool Moldable::setAttribute(const MoguSyntax state, NodeValue& val)
+src/Moldable/MoldableAbstractParent.h:    MoldableAbstractParent (const std::string& node, const MoguSyntax);
+src/Parsers/NodeValueParser.cpp:	MoguSyntax currToken = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:		//lastToken = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:		currToken = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:    MoguSyntax currTok;
+src/Parsers/NodeValueParser.cpp:        currTok = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:    currTok = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:    currTok = __tm.currentToken <MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:    MoguSyntax token;
+src/Parsers/NodeValueParser.cpp:    token = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:        token = __tm.currentToken <MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:    cv.set(CommandFlags::ACTION, __tm.currentToken<MoguSyntax>());
+src/Parsers/NodeValueParser.cpp:    MoguSyntax tok = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser.cpp:        MoguSyntax token = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser/StateParser.cpp:    MoguSyntax currentToken = __tm.currentToken <MoguSyntax>();
+src/Parsers/NodeValueParser/StateParser.cpp:    MoguSyntax widget_attribute = __tm.currentToken <MoguSyntax>();
+src/Parsers/NodeValueParser/StateParser.cpp:        MoguSyntax hashkey = __tm.currentToken <MoguSyntax> (); 
+src/Parsers/NodeValueParser/StateParser.cpp:    widget->getAttribute(__tm.currentToken <MoguSyntax>(), result);
+src/Parsers/NodeValueParser/StateParser.cpp:    MoguSyntax token;
+src/Parsers/NodeValueParser/StateParser.cpp:        token = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser/StateParser.cpp:    MoguSyntax type = node.getType();
+src/Parsers/NodeValueParser/StateParser.cpp:        token = __tm.currentToken<MoguSyntax>();
+src/Parsers/NodeValueParser/StateParser.cpp:    MoguSyntax type = plcdb.yieldResponse <MoguSyntax>();
+src/Parsers/NodeValueParser/TokenManager.h:	inline bool isStateToken(MoguSyntax token)
+src/Parsers/NodeValueParser/TokenManager.h:	inline bool isWidgetToken(MoguSyntax token)
+src/Parsers/NodeValueParser/TokenManager.h:	inline bool isDBToken(MoguSyntax token)
+src/Parsers/NodeValueParser/TokenManager.h:	inline bool isObjectToken(MoguSyntax token)
+src/Parsers/NodeValueParser/TokenManager.h:	inline bool isPrepositionToken(MoguSyntax token)
+src/Parsers/NodeValueParser/TokenManager.cpp:template <> MoguSyntax TokenManager::currentToken()
+src/Parsers/NodeValueParser/TokenManager.cpp:    return static_cast<MoguSyntax>(currentToken <int>());
+src/Parsers/NodeValueParser/MathParser.cpp:			switch((MoguSyntax) currToken) {
+src/Parsers/NodeValueParser/MathParser.cpp:			switch((MoguSyntax) currToken) {
+src/Redis/NodeEditor.cpp:    , MoguSyntax node_type
+src/Redis/NodeEditor.cpp:        MoguSyntax m_prefix
+src/Redis/QuerySet.cpp:template <> MoguSyntax
+src/Redis/QuerySet.cpp:    QuerySet::yieldResponse <MoguSyntax>()
+src/Redis/QuerySet.cpp:        return (MoguSyntax) atoi(reply_str.c_str());
+src/Redis/QuerySet.cpp:        return (MoguSyntax) reply_int;
+src/Redis/QueryAssistant.cpp:        MoguSyntax cmd_type
+src/Redis/QueryAssistant.cpp:        , MoguSyntax node_type)
+src/Redis/NodeEditor.h:        MoguSyntax m_prefix
+src/Redis/NodeEditor.h:        , MoguSyntax nodetype);
+src/Redis/NodeEditor.h:    inline MoguSyntax getNodeType()
+src/Redis/NodeEditor.h:    inline MoguSyntax getSubType(const char* sub)
+src/Redis/NodeEditor.h:    inline MoguSyntax getType() const { return __type;}
+src/Redis/NodeEditor.h:    MoguSyntax      __type;
+src/Redis/NodeEditor.h:        MoguSyntax type = __sub ? __subType : __type;
+src/Redis/QuerySet.h:template <> MoguSyntax QuerySet::yieldResponse <MoguSyntax>();
+src/Redis/DatabaseConfigReader.h:const std::unordered_map <MoguSyntax, Prefix, IntHash<MoguSyntax>> syntax_to_prefix = {
+src/Redis/QueryAssistant.h:        MoguSyntax cmd_type
+src/Redis/QueryAssistant.h:        , MoguSyntax node_type);
+src/Redis/QueryAssistant.h:        , MoguSyntax cmd_type
+src/Redis/QueryAssistant.h:        , MoguSyntax node_type
+src/Types/CommandValue.cpp:            action = (MoguSyntax) v;
+src/Types/CommandValue.cpp:            object = (MoguSyntax) v;
+src/Types/CommandValue.cpp:            r_object = (MoguSyntax) v;
+src/Types/CommandValue.cpp:uint8_t CommandValue::set(const CommandFlags& flag, const MoguSyntax v)
+src/Types/CommandValue.cpp:    switch((MoguSyntax) local_obj)
+src/Types/CommandValue.cpp:    Redis::NodeEditor node((MoguSyntax) local_obj, (std::string) local_id);
+src/Types/CommandValue.cpp:    MoguSyntax node_type = node.getType();
+src/Types/NodeValue.h:    inline MoguSyntax getSyntax() const
+src/Types/NodeValue.h:                return (MoguSyntax) atoi(as_string.c_str());
+src/Types/NodeValue.h:                return (MoguSyntax) __numerics->as_int;
+src/Types/NodeValue.h:    operator MoguSyntax() const {
+src/Types/CommandValue.h:    uint8_t set(const CommandFlags& flag, const MoguSyntax v);
+src/Validators/Validators.cpp:    switch ((MoguSyntax) vval.getInt())
+src/WidgetServer.cpp:bool getAttribute(MoguSyntax attribute)
+src/WidgetServer.cpp:        MoguSyntax m_key = (MoguSyntax) i_key;
+src/WidgetServer.h:typedef std::map <MoguSyntax, NodeValue> WidgetMap;
+src/WidgetServer.h:    NodeValue getAttribute(MoguSyntax);

@@ -7,7 +7,7 @@ NodeValue::NodeValue()
 {
     __numerics = new NumericUnion();
     __type = ReadType::NO_VALUE;
-    as_string = EMPTY;
+    as_string = "";
 }
 
 NodeValue::NodeValue( const NodeValue& proto)

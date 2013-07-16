@@ -95,7 +95,6 @@
 (   location                ,   location        ,   hashkey attribute  )
 (   template                ,   template_       ,   hashkey         )
 (   member                  ,   member          ,   object attribute  )
-(   get                     ,   get             ,   action          )
 (   moderator               ,   moderator       ,   descriptor  )
 (   write                   ,   write           ,   access_level )
 (   read                    ,   read            ,   access_level )
