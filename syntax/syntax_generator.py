@@ -67,7 +67,7 @@ OPERATORS=OrderedDict([
         ("OUT_OF_RANGE_END"      , (args.m-7,"")),
         ("TOKEN_DELIM"           , (args.m-6,"")),
         ("OPER_OPPAREN"          , (args.m-5,"(")),
-        ("OPER_CLPARN"           , (args.m-4,")")),
+        ("OPER_CLPAREN"           , (args.m-4,")")),
         ("OPER_PLUS"             , (args.m-3,"+")),
         ("OPER_MINUS"            , (args.m-2,"-")),
         ("OPER_MULT"             , (args.m-1,"*")),
@@ -165,7 +165,7 @@ class SyntaxDefDecl(object):
         self.integer = str(integer)
 
     def __str__(self):
-        return '\tconstexpr const static SyntaxDef %(identifier)s (%(integer)s, "%(integer)s","%(identifier)s");' % self.__dict__
+        return '\tconstexpr const SyntaxDef %(identifier)s (%(integer)s, "%(integer)s","%(identifier)s");' % self.__dict__
 
 class InitializerLine(object):
     def __init__(self, key, value):
@@ -238,6 +238,7 @@ def generate_py(dict_name, entries):
     returns a complete string of Python syntax.
     """
     global OPER_DICT_OUT
+    global PY_ADDITIONS
 
     start = PythonDictOpen(dict_name)
     end = PythonDictClose(dict_name)
@@ -247,6 +248,7 @@ def generate_py(dict_name, entries):
     
     output += str(end)
     output += "\n\n%s" % OPER_DICT_OUT
+    output += "\n\n%s" % PY_ADDITIONS
     return output
 
 def generate_cpp(enum_name, entries):

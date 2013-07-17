@@ -57,7 +57,7 @@ public:
     {
         Redis::ContextQuery __policies(Prefix::policies);
         __policies.appendQuery("hget policies.%s %d", __node,
-                MoguSyntax::encrypted);
+                (int) MoguSyntax::encrypted);
         return __policies.yieldResponse <bool>();
     }
 
@@ -81,11 +81,11 @@ public:
             __db.appendQuery("type %s.%d.%s.%s", c_prefix, __id, __node, sub);
         else
             __db.appendQuery("type %s.%s.%s", c_prefix, __node, sub);
-        return MoguSyntax::get(at(__db.yieldResponse <std::string>()));
+        return MoguSyntax::get(__db.yieldResponse <std::string>());
     }
     inline int getObjectId();
     inline ContextQuery& getContext() { return __db;}
-    inline const SyntaxDef& getType() const { return __type;}
+    inline const SyntaxDef& getType() const { return MoguSyntax::get(__type);}
     inline Prefix getPrefix() { return __prefix;}
     void readAll (std::map <std::string,std::string>&);
     std::string readSub (const std::string&);
@@ -108,9 +108,10 @@ private:
     
     const char*     __node;
     NodeValue*      __arg;
-    int             __id    =-1; // for groups or users;
-    SyntaxDef       __type;
-    SyntaxDef       __subType = MoguSyntax::__NONE__;
+    int             __id        = -1; // for groups or users;
+    int             __list_index= -1;
+    int             __type;
+    int             __subType   = 0;
 
     bool encrypted;
     bool list_value =   false;
@@ -118,7 +119,6 @@ private:
     const char* c_prefix;
 
     const char* __hashkey       = EMPTY;
-    int         __list_index    = -1;
     bool        key_cached      = false;
     bool        id_required     = false;
     bool        __sub           = false;
@@ -128,13 +128,13 @@ private:
     inline void setKey()
     {
         if (__arg == nullptr || key_cached) return;
-        SyntaxDef type = __sub ? __subType : __type;
-        switch(type)
+        int type = __sub ? __subType : __type;
+        switch((int)type)
         {
-            case MoguSyntax::list:
+            case (int) MoguSyntax::list:
                 __list_index = __arg->getInt();
                 break;
-            case MoguSyntax::hash:
+            case (int) MoguSyntax::hash:
                 {
                     std::string str;
                     if (__arg->isString())

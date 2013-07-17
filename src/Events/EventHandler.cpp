@@ -13,7 +13,7 @@
 EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node)
 : CommandProcessor(broadcaster), triggerMap(broadcaster.getNumTriggers(), prefix, node)
 {
-    for (const SyntaxDef& trigger : triggerMap.getTriggers())
+    for (int trigger : triggerMap.getTriggers())
     {
         switch (trigger)
         {

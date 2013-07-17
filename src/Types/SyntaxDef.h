@@ -44,6 +44,9 @@ struct SyntaxDef
         else return false;
     }
 
+    inline bool operator==(const int& other) const
+    { return other == integer; }
+
     inline SyntaxDef& operator= (const SyntaxDef& other)
     {
         integer = other.integer;

@@ -21,7 +21,7 @@ void email(Moldable& broadcaster, CommandValue& v)
     {
         case MoguSyntax::own:{
             const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
-            broadcaster.getAttribute( (MoguSyntax) v.get(attr, message);
+            broadcaster.getAttribute(attr, message);
             email.setMessage(message.getString());
             break;}
 

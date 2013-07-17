@@ -31,7 +31,7 @@ void decrement (Moldable& broadcaster, CommandValue& v)
                 current.setInt(atoi(current.getString().c_str()));
             current.setInt(current.getInt()-value);
             broadcaster.setAttribute(MoguSyntax::get(
-                        v.get(CommandFlags::ARG), current);
+                        v.get(CommandFlags::ARG)), current);
             break;}
 
         case MoguSyntax::user:{
@@ -69,12 +69,12 @@ void decrement (Moldable& broadcaster, CommandValue& v)
             Moldable* widget = app->registeredWidget(v.getIdentifier());
             NodeValue current;
             widget->getAttribute(MoguSyntax::get(
-                        v.get(CommandFlags::ARG), current));
+                        v.get(CommandFlags::ARG)), current);
             if (current.getType() == ReadType::string_value)
                 current.setInt(atoi(current.getString().c_str()));
             current.setInt(current.getInt()-value);
             widget->setAttribute(MoguSyntax::get(
-                        v.get(CommandFlags::ARG), current );
+                        v.get(CommandFlags::ARG)), current );
             break;}
 
         default: return;

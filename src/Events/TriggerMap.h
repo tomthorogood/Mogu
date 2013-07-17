@@ -22,12 +22,12 @@ public:
         __map[trigger].push(command);
     }
 
-    inline std::queue <std::string> getEvents(const SyntaxDef& trigger) const
+    inline std::queue <std::string> getEvents(const int trigger) const
     {
         return __map.at(trigger);
     }
 
-    inline const std::set <const SyntaxMap&>& getTriggers()
+    inline const std::set <int>& getTriggers()
     {
         if (triggers.size() < __map.size()) populateTriggers();
         return triggers;
@@ -35,8 +35,8 @@ public:
 
 private:
     void populateTriggers();
-    std::set <const SyntaxDef&> triggers;
-    std::unordered_map <const SyntaxDef& ,std::queue <std::string>, IntHash<const SyntaxDef&>> __map;
+    std::set <int> triggers;
+    std::unordered_map <int,std::queue <std::string>> __map;
 };
 
 

@@ -42,7 +42,7 @@ TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string
         // Store the commands in the trigger queue
         for (std::string command : db.yieldResponse <std::vector <std::string>>())
         {
-            __map[(MoguSyntax::get(trigger)].push(command);
+            __map[(int)MoguSyntax::get(trigger)].push(command);
         }
     }
 }

@@ -165,7 +165,7 @@ void NodeValueParser::giveInput(const std::string& input, NodeValue& nv, Moldabl
 
 void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
 {
-    SyntaxDef currTok;
+    int currTok;
     NodeValue tmp;
 
     CommandFlags obj_flag    = r_tokens ? CommandFlags::R_OBJECT :
@@ -214,7 +214,7 @@ void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
 
 void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
 {
-    SyntaxDef token;
+    int token;
     NodeValue tmpValue;
     std::string str;
     uint8_t flags = cv.getFlags();
@@ -224,13 +224,13 @@ void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
     // supposed to be represented as an integer used as a list index.
     bool check_if_list;
 
-    if (__tm.currentToken != MoguSyntax::append) return;
+    if (__tm.currentToken() != MoguSyntax::append) return;
     __tm.next();
     token = __tm.currentToken();
 
     // Cycle through the input, testing flag combinations and setting 
     // things where appropriate, until we're out of tokens.
-    while ((int)token != (int)MoguSyntax::OUT_OF_RANGE_END)
+    while (token != MoguSyntax::OUT_OF_RANGE_END)
     {
         // A string will either be a value or an identifier.
         if (MoguSyntax::TOKEN_DELIM == token)
@@ -355,12 +355,12 @@ void NodeValueParser::giveInput(const std::string& input, CommandValue& cv,
 
     // The second token is awlays the start of the object set.
     __tm.next();
-    MoguSyntax tok = __tm.currentToken();
+    int tok = __tm.currentToken();
     cv.set(CommandFlags::OBJECT, tok);
 
-    while (__tm.currentToken() != MoguSyntax::OUT_OF_RANGE_END)
+    while (tok != MoguSyntax::OUT_OF_RANGE_END)
     {
-        MoguSyntax token = __tm.currentToken();
+        int token = __tm.currentToken();
         if (token == MoguSyntax::TOKEN_DELIM)
         {
             std::string string_token = __tm.fetchStringToken();

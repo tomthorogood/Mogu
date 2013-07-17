@@ -54,17 +54,6 @@ template <> std::string
     return reply_str;
 }
 
-template <> const SyntaxDef&
-    QuerySet::yieldResponse <MoguSyntax>()
-{
-    execute_nongreedy();
-    if (reply_type == REDIS_REPLY_STRING) 
-        return MoguSyntax::get(reply_str);
-    else if (reply_type == REDIS_REPLY_INTEGER)
-        return MoguSyntax::get(reply_int);
-    return MoguSyntax::__NONE__;
-}
-
 /*!\brief Forces the return of a boolean response,
  * and continues to execute redis commands until the response
  * is not ignored. If the REQUIRE_INT flag is set, and the responxse

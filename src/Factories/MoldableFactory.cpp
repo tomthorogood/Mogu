@@ -23,8 +23,8 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     std::cout << "Moldable Factory: " << c_node << std::endl;
 #endif
     Redis::ContextQuery db(Prefix::widgets);
-    db.appendQuery("hget widgets.%s %d", c_node, MoguSyntax::type);
-    SyntaxDef widget_type = MoguSyntax::get(db.yieldResponse <MoguSyntax>());
+    db.appendQuery("hget widgets.%s %d", c_node, (int)MoguSyntax::type);
+    SyntaxDef widget_type = MoguSyntax::get(db.yieldResponse <std::string>());
 
     // If there was an error here, the syntax type will be 'none'
     if (widget_type == MoguSyntax::__NONE__)

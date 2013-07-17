@@ -42,7 +42,7 @@ namespace {
 
 void set (Moldable& broadcaster, CommandValue& v)
 {
-    const SyntaxDef& object = MoguSyntax::get(v.get(Commandflags::OBJECT))
+    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
     switch(object)
     {
         case MoguSyntax::own:{  // set attribute of calling widget
@@ -77,7 +77,8 @@ void set (Moldable& broadcaster, CommandValue& v)
                  NodeValue arg;
                  if (is_list_value) arg = v.get(CommandFlags::ARG);
                  Redis::NodeEditor editor(
-                     v.get(CommandFlags::OBJECT),(std::string)v.get(CommandFlags::IDENTIFIER), &arg);
+                     MoguSyntax::get(v.get(CommandFlags::OBJECT))
+                     ,(std::string)v.get(CommandFlags::IDENTIFIER), &arg);
                  editor.setIsListValue(is_list_value);
                  editor.write(v.get(CommandFlags::VALUE));
              }
@@ -91,7 +92,7 @@ void set (Moldable& broadcaster, CommandValue& v)
             Moldable* widget = app->registeredWidget(v.getIdentifier());
             if (widget == nullptr) break;
             const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
-            widget->setAttribute(attr, v.get(v.get(CommandFlags::VALUE));
+            widget->setAttribute(attr, v.get(CommandFlags::VALUE));
             break;}
         default: return; // If bad input, stop immediately
     }

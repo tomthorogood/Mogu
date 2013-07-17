@@ -144,7 +144,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
         // hget data.bar 17
         else
             db.appendQuery( "hget data.%s %d", c_node,
-                    __tm.currentToken());
+                    (int) __tm.currentToken());
 
         // NOTE that there is the possibility of a collision in the highly
         // unlikely case that the hash key integer value is the same as the 
@@ -155,7 +155,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
     {
         // In this case, there must necessarily be a list index in order
         // to find the value.
-        db.appendQuery( "lindex data.%s %d", c_node, __tm.currentToken());
+        db.appendQuery( "lindex data.%s %d", c_node, (int) __tm.currentToken());
 
     }
 
@@ -170,11 +170,9 @@ void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 
 void StateParser::handleUserField(const std::string& field, NodeValue& result)
 {
-    mApp;
     Redis::ContextQuery policies(Prefix::policies);
     Redis::ContextQuery user(Prefix::user);
-    const char* c_field = field.c_str();
-    SyntaxDef token;
+    int token;
     NodeValue arg;
 
 
@@ -226,9 +224,9 @@ void StateParser::handleGroupField(const std::string& field, NodeValue& result)
     Redis::ContextQuery& grpdb = group_mgr.getContext(Prefix::group); 
     Redis::ContextQuery& plcdb = group_mgr.getContext(Prefix::policies);
 
-    plcdb.appendQuery( "hget policies.%s %d", field.c_str(), MoguSyntax::type);
+    plcdb.appendQuery( "hget policies.%s %d", field.c_str(), (int)MoguSyntax::type);
     plcdb.appendQuery( "hget policies.%s %d",
-            field.c_str(), MoguSyntax::encrypted);
+            field.c_str(), (int) MoguSyntax::encrypted);
     const SyntaxDef& type = MoguSyntax::get(plcdb.yieldResponse<std::string>());
     bool encrypted = plcdb.yieldResponse <bool>();
 

@@ -22,10 +22,10 @@ public:
 private:
     TriggerMap triggerMap;
 
-    template <const SyntaxDef&> void handleTrigger();
+    template <const int> void handleTrigger();
 };
 
-template <const SyntaxDef& T> void EventHandler::handleTrigger()
+template <const int T> void EventHandler::handleTrigger()
 {
     mApp;
     Parsers::NodeValueParser& nvp = app->interpreter();

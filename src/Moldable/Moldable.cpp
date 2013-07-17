@@ -160,10 +160,10 @@ void Moldable::setFlags(Redis::NodeEditor& node)
     setFlag(MoldableFlags::is_cached);
 }
 
-std::string Moldable::getParameter(Redis::NodeEditor& node, MoguSyntax param)
+std::string Moldable::getParameter(Redis::NodeEditor& node, const SyntaxDef& param)
 {
     node.getContext().clear();
-    NodeValue nv(std::to_string((int) param));
+    NodeValue nv((std::string) param);
     node.setArg(&nv);
     return node.read();
 }

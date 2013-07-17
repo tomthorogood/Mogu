@@ -72,14 +72,14 @@ private:
      * to be a valid action by the MoguScript import stack. All commands
      * require an action.
      */
-    SyntaxDef action    = MoguSyntax::__NONE__;
+    int action    = MoguSyntax::__NONE__;
 
     /*!\brief The enumerated object type which will be changed by the command.
      * This is required for any mogu command (commands must DO something TO
      * something).
      */
-    SyntaxDef object    = MoguSyntax::__NONE__;
-    SyntaxDef r_object  = MoguSyntax::__NONE__;
+    int object    = MoguSyntax::__NONE__;
+    int r_object  = MoguSyntax::__NONE__;
 
     /*!\brief Most objects will require some sort of identifier, but not all.
      *  The 'self' (or 'own') object is its own identifier, and refers to the

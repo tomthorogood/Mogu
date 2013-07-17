@@ -39,7 +39,7 @@ uint8_t CommandValue::set(const CommandFlags& flag, NodeValue v)
             break;
 
         case CommandFlags::R_OBJECT:
-            r_object = MoguSyntax::get(v);
+            r_object = v;
             break;
 
         case CommandFlags::R_IDENTIFIER:

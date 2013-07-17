@@ -25,7 +25,7 @@ Wt::WValidator* createValidator(
     mApp;
     const char* c_node = validatorName.c_str();
     Redis::ContextQuery db(Prefix::validators);
-    db.appendQuery( "hget validators.%s %d", c_node, MoguSyntax::type);
+    db.appendQuery( "hget validators.%s %d", c_node, (int)MoguSyntax::type);
     
     NodeValue vval;
     app->interpreter().giveInput(db.yieldResponse<std::string>(), vval);

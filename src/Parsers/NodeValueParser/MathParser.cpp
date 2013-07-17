@@ -34,7 +34,7 @@ int MathParser::processInput()
 		__tm.next();	//move
 
 		if(isOperator(MoguSyntax::get(currToken))) {
-            const SyntaxDef& oper;
+            const SyntaxDef& oper = MoguSyntax::get(currToken);
 			switch(oper) {
 				case MoguSyntax::OPER_OPPAREN:
                     opStack.push(currToken);

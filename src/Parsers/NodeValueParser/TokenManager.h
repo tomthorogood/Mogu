@@ -19,59 +19,59 @@ namespace Parsers {
 
 	//centralized token groups for decision logic in the various
 	//parsers
-    const static std::unordered_set<const SyntaxDef&> __widgetTokens = {
-		 MoguSyntax::own,
-		 MoguSyntax::widget
+    const static std::unordered_set<int> __widgetTokens = {
+		 (int) MoguSyntax::own,
+		 (int) MoguSyntax::widget
 	};
 
-    const static std::unordered_set<const SyntaxDef&> __stateTokens = {
-	     MoguSyntax::style,
-	     MoguSyntax::text,
-	     MoguSyntax::hidden,
-	     MoguSyntax::source,
-	     MoguSyntax::location,
-	     MoguSyntax::index
+    const static std::unordered_set<int> __stateTokens = {
+	     (int) MoguSyntax::style,
+	     (int) MoguSyntax::text,
+	     (int) MoguSyntax::hidden,
+	     (int) MoguSyntax::source,
+	     (int) MoguSyntax::location,
+	     (int) MoguSyntax::index
 	};
 
-    const static std::unordered_set<const SyntaxDef&> __dbTokens = {
-		 MoguSyntax::user,
-		 MoguSyntax::session,
-		 MoguSyntax::group,
-		 MoguSyntax::data
+    const static std::unordered_set<int> __dbTokens = {
+		 (int) MoguSyntax::user,
+		 (int) MoguSyntax::session,
+		 (int) MoguSyntax::group,
+		 (int) MoguSyntax::data
 	};
 	
-    const static std::unordered_set<const SyntaxDef&> __objectTokens = {
-		 MoguSyntax::own,
-		 MoguSyntax::user,
-		 MoguSyntax::session,
-		 MoguSyntax::group,
-		 MoguSyntax::data,
-		 MoguSyntax::slot,
-		 MoguSyntax::widget,
-         MoguSyntax::key
+    const static std::unordered_set<int> __objectTokens = {
+		 (int) MoguSyntax::own,
+		 (int) MoguSyntax::user,
+		 (int) MoguSyntax::session,
+		 (int) MoguSyntax::group,
+		 (int) MoguSyntax::data,
+		 (int) MoguSyntax::slot,
+		 (int) MoguSyntax::widget,
+         (int) MoguSyntax::key
 	};
 
-	inline bool isStateToken(const SyntaxDef& token) const
+	inline bool isStateToken(int token) 
 	{
 	    return __stateTokens.count( token) == 1;
 	}
 
-	inline bool isWidgetToken(const SyntaxDef& token) const
+	inline bool isWidgetToken(int token) 
 	{
 		return __widgetTokens.count( token) == 1;
 	}
 
-	inline bool isDBToken(const SyntaxDef& token) const
+	inline bool isDBToken(int token) 
 	{
 		return __dbTokens.count( token) == 1;
 	}
 
-	inline bool isObjectToken(const SyntaxDef& token) const
+	inline bool isObjectToken(int token) 
 	{
 		return __objectTokens.count( token) == 1;
 	}
 
-	inline bool isPrepositionToken(const SyntaxDef& token) const
+	inline bool isPrepositionToken(int token) 
 	{
         return token == MoguSyntax::preposition;
 	}
@@ -94,18 +94,18 @@ class TokenManager
 
 		//initialization methods
 		TokenManager();
-        inline void TokenManager::reset()
+        inline void reset()
         {
             __numTokens.clear();
             __strTokens.clear();
             __index = 0;
         }
-        inline void TokenManager::addToken(int numToken)
+        inline void addToken(int numToken)
         {
             __numTokens.push_back(numToken);
             __begin = __numTokens.begin();
         }
-        inline void TokenManager::addToken(std::string strToken)
+        inline void addToken(std::string strToken)
         {
             __numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
             __strTokens.set(__numTokens.size()-1, strToken);
@@ -113,7 +113,7 @@ class TokenManager
         }
         //must call this function directly after all tokens are added
         //or else we will have undefined behavior!
-        inline void TokenManager::end()
+        inline void end()
         {
             //place iterator at end of numerical token vector
             __it = __numTokens.end() - 1;
@@ -122,39 +122,39 @@ class TokenManager
         /* Like 'setiterator', but returns to the beginning, for when
          * we will not be stepping backward through the input.
          */
-        inline void TokenManager::begin() {
+        inline void begin() {
             __it = __numTokens.begin();
             __index = 0;
         }
 
 		//methods for navigating the token list.
-        inline void TokenManager::next()
+        inline void next()
         {
             ++__it;
             ++__index;
         }
 
-        inline void TokenManager::prev()
+        inline void prev()
         {
             --__it;
             --__index;
         }
 
-        inline void TokenManager::saveLocation()
+        inline void saveLocation()
         {
             __savedit = __it;
         }
 
 		//token access methods
-        inline const SyntaxDef& TokenManager::currentToken()
+        inline const SyntaxDef& currentToken() const
         {
             return
                 (__it < __numTokens.begin())? MoguSyntax::OUT_OF_RANGE_BEGIN :
                 (__it > __numTokens.end())  ? MoguSyntax::OUT_OF_RANGE_END   :
-                *__it;
+                MoguSyntax::get(*__it);
         }
 
-        inline std::string TokenManager::fetchStringToken()
+        inline std::string fetchStringToken()
         {
             if(isTokenDelim())
                 return __strTokens.get(__index);
@@ -176,13 +176,13 @@ class TokenManager
 		void deleteFromSaved();
 		void truncateHead();
         //call this directly after deleteToSaved()!
-        inline void TokenManager::injectToken(int numToken)
+        inline void injectToken(int numToken)
         {
             __it = __numTokens.insert(__it, numToken);
             updateIndex();
         }
         //call this directly after deleteToSaved()!
-        inline void TokenManager::injectToken(std::string strToken)
+        inline void injectToken(std::string strToken)
         {
             __it = __numTokens.insert(__it, (int) MoguSyntax::TOKEN_DELIM);
             __strTokens.set(__index, strToken);
@@ -192,7 +192,7 @@ class TokenManager
         //in the case that our object-chain turns out to be
 		//non-resolvable, return to our saved location without
 		//deleting any tokens
-        inline void TokenManager::returnToSaved()
+        inline void returnToSaved()
         {
             __it = __savedit;
             updateIndex();
@@ -216,7 +216,7 @@ class TokenManager
 		void updateStringIndexes();
 
 		//token vectors
-		std::vector<const SyntaxDef&> __numTokens;
+		std::vector<int> __numTokens;
 		StringMap __strTokens;
 
 
