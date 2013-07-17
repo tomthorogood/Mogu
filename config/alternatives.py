@@ -22,6 +22,15 @@ make && sudo make install
 popd
 rm -rf TurnLeftLib
 """)
+
+ac.if_fail("cityhash", ac.ALL, """
+pushd ../utils
+./configure
+make
+sudo make install
+popd
+""")
+
 ac.if_fail("boost_system", "debian",
     "sudo apt-get install libboost-system%s-dev --yes" % BOOST_VERSION)
 ac.if_fail("boost_signals", "debian", 
