@@ -165,7 +165,7 @@ class SyntaxDefDecl(object):
         self.integer = str(integer)
 
     def __str__(self):
-        return '\tconst static SyntaxDef %(identifier)s (%(integer)s, "%(identifier)s");' % self.__dict__
+        return '\tconstexpr const static SyntaxDef %(identifier)s (%(integer)s, "%(integer)s","%(identifier)s");' % self.__dict__
 
 class InitializerLine(object):
     def __init__(self, key, value):

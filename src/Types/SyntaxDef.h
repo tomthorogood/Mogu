@@ -7,14 +7,14 @@
 struct SyntaxDef
 {
     int             integer =0;
-    std::string     str     =EMPTY;
-    std::string     human   =EMPTY;
+    const char*     str     =EMPTY;
+    const char*     human   =EMPTY;
     
-    SyntaxDef (int i_, std::string s_)
-        : integer(i_), str(std::to_string(i_)), human(s_)
+    constexpr SyntaxDef (int i_, const char* s_, const char* h_)
+        : integer(i_), str(s_), human(h_)
     {}
 
-    SyntaxDef(const SyntaxDef& other)
+    constexpr SyntaxDef(const SyntaxDef& other)
         : 
             integer(other.integer)
             , str(other.str)
@@ -25,8 +25,11 @@ struct SyntaxDef
     inline operator std::string() const
     { return str; }
 
-    inline operator int () const
+    constexpr inline operator int const&() const
     { return integer; }
+
+//    inline operator int() const
+//    { return integer;}
 
     inline bool operator== (const SyntaxDef& other) const
     { return other.integer == integer; }
@@ -46,6 +49,7 @@ struct SyntaxDef
         integer = other.integer;
         str = other.str;
         human = other.human;
+        return *this;
     }
 
 };

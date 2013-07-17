@@ -5,7 +5,7 @@
 #include <string>
 #include <Types/SyntaxDef.h>
 #include <Types/LockedMap.h>
-#include <Types/Nodevalue.h>
+#include <Types/NodeValue.h>
 #include <stdexcept>
 
 namespace MoguSyntax {
@@ -35,13 +35,13 @@ inline const SyntaxDef& get(const std::string& s)
 #ifdef DEBUG    
     try {
         return isdigit(s) ? smap[s] : hmap[s];
-    } except (std::out_of_range& e) {
+    } catch (std::out_of_range& e) {
         return __NONE__;
     }
 #else
     try {
-        return smap[s]
-    } except (std::out_of_range& e) {
+        return smap[s];
+    } catch (std::out_of_range& e) {
         return __NONE__;
     }
 #endif
