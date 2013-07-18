@@ -1,157 +1,156 @@
-#ifndef NODEEDITOR_H_
-#define NODEEDITOR_H_
+#ifndef NODEDITOR_H_
+#define NODEDITOR_H_
 
+#include <declarations.h>
 #include "ContextQuery.h"
-#include <Types/NodeValue.h>
-namespace Redis {
 
-//!\brief Performs reads and writes from the Redis database.
-class NodeEditor {
+namespace Redis
+{
+
+class NodeEditor
+{
 public:
-    inline bool exists()
-    {
-        if (id_required)
-            __db.appendQuery("exists %s.%d.%s", c_prefix, __id, __node);
-        else
-            __db.appendQuery("exists %s.%s", c_prefix, __node);
-        return __db.yieldResponse <bool>();
-    }
+    NodeEditor();
+    NodeEditor(const Prefix& prefix,
+            const std::string& node,
+            NodeValue* arg=nullptr);
 
-    inline bool subExists(const std::string& sub)
-    {
-        if (id_required)
-            __db.appendQuery("exists %s.%d.%s.%s", c_prefix, __id, __node, sub.c_str());
-        else
-            __db.appendQuery("exists %s.%s.%s", c_prefix, __node, sub.c_str());
-        return __db.yieldResponse<bool>();
-    }
-    inline void toggleSub(const std::string& sub)
-    {
-        if (__sub)
-        {
-            __sub = false;
-            getType();
-            setPrefix(__prefix);
-        }
-        else
-        {
-            __sub = true;
-            __subType = getSubType(sub.c_str());
-        }
-    }
-
-    NodeEditor(const SyntaxDef& m_prefix , const std::string& node_name
-        , NodeValue* arg = nullptr);
-
-    NodeEditor(
-        Prefix p_prefix
-        , const std::string& node_name
-        , NodeValue* arg = nullptr);
-    
-    NodeEditor(
-        Prefix p_prefix
-        , const std::string& node_name
-        , const SyntaxDef& nodetype);
-
-    inline bool fieldHasEncryption()
-    {
-        Redis::ContextQuery __policies(Prefix::policies);
-        __policies.appendQuery("hget policies.%s %d", __node,
-                (int) MoguSyntax::encrypted);
-        return __policies.yieldResponse <bool>();
-    }
-
-    inline void setIsListValue(bool tf) { list_value = tf;}
-    inline void setIsHashValue(bool tf) { hash_value = tf;}
-    inline bool isListValue() { return list_value;}
-    inline bool isHashValue() { return hash_value;}
-    inline const SyntaxDef& getNodeType()
-    {
-        if (!exists()) return MoguSyntax::__NONE__;
-        if (id_required)
-            __db.appendQuery("type %s.%d.%s", c_prefix, __id, __node);
-        else 
-            __db.appendQuery("type %s.%s", c_prefix, __node);
-        return MoguSyntax::get(__db.yieldResponse<std::string>());
-    }
-
-    inline const SyntaxDef& getSubType(const char* sub)
-    {
-        if (id_required)
-            __db.appendQuery("type %s.%d.%s.%s", c_prefix, __id, __node, sub);
-        else
-            __db.appendQuery("type %s.%s.%s", c_prefix, __node, sub);
-        return MoguSyntax::get(__db.yieldResponse <std::string>());
-    }
-    inline int getObjectId();
-    inline ContextQuery& getContext() { return __db;}
-    inline const SyntaxDef& getType() const { return MoguSyntax::get(__type);}
-    inline Prefix getPrefix() { return __prefix;}
-    void readAll (std::map <std::string,std::string>&);
-    std::string readSub (const std::string&);
-    inline std::string readSub(const std::string&& str) { return readSub(str);}
-    void writeAll (std::map <std::string, std::string>&);
-    void setArg(NodeValue*);
-    void setNodeName(const std::string&);
     void setPrefix(Prefix);
+    ~NodeEditor()
+    {
+        if (policy != nullptr) delete policy;
+    }
 
+    void setSub(const std::string& sub)
+    {
+        c_sub = sub.c_str();
+    }
+
+    void clearSub()
+    {
+        c_sub = EMPTY;
+    }
+
+    /* Read a single value */
     std::string read();
-    void write (NodeValue);
-    void remove(std::string value = EMPTY);
 
+    /* Read a list of values */
+    void read(std::vector<std::string>&);
+
+    /* Read a hash node */
+    void read(std::map<std::string,std::string>&);
+
+    /* Write a single value at the node. */
+    bool write(std::string);
+
+    /* Write an entire hash key */
+    bool write(std::map <std::string,std::string>&);
+
+    /* Write an entire list */
+    bool write(std::vector<std::string>&);
+
+    /* Deletes a node. */
+    bool remove();
+
+    /* Deletes either a list value or hash key */
+    bool remove(const std::string& val);
+
+    bool setEncrypted()
+    {
+        setPolicy(); 
+        policy->appendQuery(
+            "hget policies.%s %d", c_node, MoguSyntax::encrypted.integer);
+        encrypted = policy->yieldResponse<std::string>() == "yes"; 
+        return encrypted;
+    }
 
 private:
 
-    Prefix          __prefix;
+    Prefix  prefix      = Prefix::__NONE__;
+   
+    ContextQuery db;
     
-    ContextQuery __db;
+    /* For user and group nodes, we'll need to read the node policy as well.*/
+    ContextQuery* policy    =nullptr;
+    NodeValue* arg          =nullptr;
+
+    bool exists             = false;
+    bool hash_exists        = false;
+    int  type               = MoguSyntax::__NONE__.integer;
     
-    const char*     __node;
-    NodeValue*      __arg;
-    int             __id        = -1; // for groups or users;
-    int             __list_index= -1;
-    int             __type;
-    int             __subType   = 0;
+    /*  The string representation of the Prefix given. */
+    const char* c_prefix    = EMPTY;
 
-    bool encrypted;
-    bool list_value =   false;
-    bool hash_value =   true;
-    const char* c_prefix;
+    /* The [name] in the [prefix].[id?].[name]... format. */
+    const char* c_node      = EMPTY;
 
-    const char* __hashkey       = EMPTY;
-    bool        key_cached      = false;
-    bool        id_required     = false;
-    bool        __sub           = false;
-    
-    std::string hashkey_s;
+    /* If applicable, the subnode for the prefix:
+     * [prefix].[id?].[name].[sub]
+     */
+    const char* c_sub       = EMPTY;
 
-    inline void setKey()
+    /* If applicable, the hashkey used when trying to access
+     * a single value in a hash node. If this is attempted but the
+     * hashkey is empty, the read function will return false.
+     */
+    const char* c_hashkey   = EMPTY;
+
+    /* The id used to read user or group nodes */
+    int id      = -1;
+
+    /* The index used to read from a list node. If this is still -1
+     * and the read method is called on a list value, will return false. */
+    int list_index  = -1;
+
+    /* Whether or not the content of this node is encrypted, and therefore 
+     * must be decrypted. Only applies to user/group data.
+     */
+    bool encrypted  = false;
+
+    /* When writing a lot of things at once, we'll set this to true in order
+     * to speed things up and write them all in a batch, instead of
+     * individual queries. 
+     */
+    bool delay_execution = false;
+
+
+    /* In the case of user and group nodes that have no value, we need
+     * to check and see if the node policy lists a default value to use instead.
+     * If so, we'll retrieve that value.
+     */
+    std::string getDefault();
+
+    /* Same as above but for default hashes. */
+    void getDefault(std::map<std::string,std::string>&);
+
+    /* Same as above but for default lists. */
+    void getDefault(std::vector<std::string>&);
+
+    void appendCommand(const char* cmd);
+
+    /* Readability function */
+    inline bool hasId() 
+    { return id != -1; }
+
+    inline void setPolicy()
     {
-        if (__arg == nullptr || key_cached) return;
-        int type = __sub ? __subType : __type;
-        switch((int)type)
-        {
-            case (int) MoguSyntax::list:
-                __list_index = __arg->getInt();
-                break;
-            case (int) MoguSyntax::hash:
-                {
-                    std::string str;
-                    if (__arg->isString())
-                        hashkey_s = __arg->getString();
-                    else if (__arg->isInt())
-                        hashkey_s = std::to_string(__arg->getInt());
-                    else
-                        hashkey_s = std::to_string(__arg->getFloat());
-                    __hashkey   = hashkey_s.c_str();
-                }
-                break;
-            default:return;
-        };
-        key_cached = true;
+        if (policy == nullptr)
+            policy = new ContextQuery(Prefix::policies);
     }
-};
+
+    void setArgInfo();
+    void setId();
+
+    inline void unset_arg()
+    {
+        arg = nullptr;
+        c_hashkey = EMPTY;
+        list_index = -1;
+    }
+
+};//class NodeEditor
+
 
 }//namespace Redis
 
-#endif //NODEEDITOR_H_
+#endif
