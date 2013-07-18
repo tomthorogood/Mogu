@@ -36,17 +36,10 @@ void TokenManager::truncateHead()
 {
     // NOTE: save point is deleted also
     size_t saved_index = getIndex(__savedit);
-#ifdef DEBUG
-    printTokens();
-#endif
     if (wasReallocated())
         realignIterators();
-    assert(__savedit == __it);
     __it = __numTokens.erase(__begin, __savedit+1);
     __strTokens.erase_through(0, saved_index);
-#ifdef DEBUG
-    printTokens();
-#endif
     updateIndex();
 }
 /* Deletes from the save point THROUGH the current index.

@@ -147,7 +147,7 @@ void NodeValueParser::giveInput(const std::string& input, NodeValue& nv, Moldabl
 	tokenizeInput(input);
 	reduceExpressions(bc);
 
-	while (__tm.currentToken()==MoguSyntax::TOKEN_DELIM
+	while (MoguSyntax::TOKEN_DELIM == __tm.currentToken()
 	    && __tm.fetchStringToken().at(0)!='"')
 	{
 	    std::string new_input = __tm.fetchStringToken();

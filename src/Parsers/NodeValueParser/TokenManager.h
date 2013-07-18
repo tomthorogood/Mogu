@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include <cassert>
 
 namespace Parsers {
 
@@ -99,6 +100,7 @@ class TokenManager
             __numTokens.clear();
             __strTokens.clear();
             __index = 0;
+            __begin = __numTokens.begin();
         }
         inline void addToken(int numToken)
         {
@@ -142,16 +144,21 @@ class TokenManager
 
         inline void saveLocation()
         {
+            if (__it >= __numTokens.end())
+            {
+                realignIterators();
+            }
             __savedit = __it;
         }
 
 		//token access methods
-        inline const SyntaxDef& currentToken() const
+        inline int currentToken() const
         {
+            if (__it > __numTokens.end()) std::cout << "HOW IS THIS POSSIBLE?!";
             return
                 (__it < __numTokens.begin())? MoguSyntax::OUT_OF_RANGE_BEGIN :
-                (__it > __numTokens.end())  ? MoguSyntax::OUT_OF_RANGE_END   :
-                MoguSyntax::get(*__it);
+                (__it >= __numTokens.end())  ? MoguSyntax::OUT_OF_RANGE_END   :
+                *__it;
         }
 
         inline std::string fetchStringToken()

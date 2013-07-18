@@ -42,7 +42,7 @@ std::string StateParser::getIdentifier()
 void StateParser::processInput(Moldable* broadcaster)
 {
     __tm.saveLocation();
-    SyntaxDef currentToken = __tm.currentToken ();
+    int currentToken = __tm.currentToken ();
     NodeValue result;
     std::string identifier;
 
@@ -111,8 +111,8 @@ void StateParser::handleWidget(const std::string& identifier, NodeValue& result)
     if (widget == nullptr) return; 
     
     // getIdentifier will have already advaned the token pointer 
-    const SyntaxDef& widget_attribute = __tm.currentToken ();
-    widget->getAttribute(widget_attribute, result);
+    int widget_attribute = __tm.currentToken ();
+    widget->getAttribute(MoguSyntax::get(widget_attribute), result);
 }
 
 void StateParser::handleData(const std::string& identifier, NodeValue& result)
@@ -130,7 +130,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
     {
         // If this is the case, the very next argument must inherently be
         // the hash key to resolve the field. There are two possibilities:
-        const SyntaxDef& hashkey = __tm.currentToken  (); 
+        int hashkey = __tm.currentToken  ();
 
         // The key is a string, such as "foo", with syntax like: 
         //  hget data.bar foo 
@@ -165,7 +165,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
 void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 {
     if (widget == nullptr) return;
-    widget->getAttribute(__tm.currentToken (), result);
+    widget->getAttribute(MoguSyntax::get(__tm.currentToken ()), result);
 }
 
 void StateParser::handleUserField(const std::string& field, NodeValue& result)
