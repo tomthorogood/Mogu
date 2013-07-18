@@ -34,7 +34,7 @@ inline const SyntaxDef& get(const std::string& s)
 // readable value. 
 #ifdef DEBUG    
     try {
-        return isdigit(s) ? smap[s] : hmap[s];
+        return isdigit(s[0]) ? smap[s] : hmap[s];
     } catch (std::out_of_range& e) {
         return __NONE__;
     }

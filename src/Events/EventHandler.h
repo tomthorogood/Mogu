@@ -14,6 +14,10 @@
 #include "TriggerMap.h"
 #include "CommandProcessor.h"
 
+#ifdef DEBUG
+    static int cmd_count =0;
+#endif
+
 class EventHandler : public CommandProcessor
 {
 public:
@@ -37,7 +41,9 @@ template <const int T> void EventHandler::handleTrigger()
         CommandValue v(broadcaster);
         std::string cmd = commands.front();
 #ifdef DEBUG
-        std::cout << "Processing command: " << cmd << std::endl;
+        ++cmd_count;
+        std::cout << "Processing command "
+            << cmd_count << ": " << cmd << std::endl;
 #endif
         commands.pop();
         nvp.giveInput(cmd,v);

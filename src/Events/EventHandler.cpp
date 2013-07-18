@@ -19,35 +19,35 @@ EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::stri
         {
         case MoguSyntax::style_changed:
             broadcaster.styleChanged().connect(
-                this,&EventHandler::handleTrigger <MoguSyntax::style_changed>);
+                this,&EventHandler::handleTrigger <MoguSyntax::style_changed.integer>);
             break;
         case MoguSyntax::fail:
             broadcaster.fail().connect(
-                this,&EventHandler::handleTrigger <MoguSyntax::fail>);
+                this,&EventHandler::handleTrigger <MoguSyntax::fail.integer>);
             break;
         case MoguSyntax::succeed:
             broadcaster.succeed().connect(
-                this,&EventHandler::handleTrigger <MoguSyntax::succeed>);
+                this,&EventHandler::handleTrigger <MoguSyntax::succeed.integer>);
             break;
         case MoguSyntax::onload:
             broadcaster.onLoad().connect(
-                this,&EventHandler::handleTrigger <MoguSyntax::onload>);
+                this,&EventHandler::handleTrigger <MoguSyntax::onload.integer>);
             break;
         case MoguSyntax::hidden_changed:
             broadcaster.hiddenChanged().connect(
-                this,&EventHandler::handleTrigger <MoguSyntax::hidden_changed>);
+                this,&EventHandler::handleTrigger <MoguSyntax::hidden_changed.integer>);
             break;
         case MoguSyntax::index_changed:
             broadcaster.indexChanged().connect(
-                this,&EventHandler::handleTrigger <MoguSyntax::index_changed>);
+                this,&EventHandler::handleTrigger <MoguSyntax::index_changed.integer>);
             break;
         case MoguSyntax::click:
             broadcaster.clicked().connect(
-                this, &EventHandler::handleTrigger <MoguSyntax::click>);
+                this, &EventHandler::handleTrigger <MoguSyntax::click.integer>);
             break;
         case MoguSyntax::mouseover:
             broadcaster.clicked().connect(
-                this, &EventHandler::handleTrigger <MoguSyntax::mouseover>);
+                this, &EventHandler::handleTrigger <MoguSyntax::mouseover.integer>);
             break;
         default: continue; // just ignore bad input
         }

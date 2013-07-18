@@ -97,14 +97,18 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 {
     // If there is only one token, it cannot be reduced any further.
     // Leave it alone.
-	if (__tm.size() == 1) return false;
-	SyntaxDef currToken = __tm.currentToken();
+	if (__tm.size() == 1)
+	{
+	    __tm.begin();
+	    return false;
+	}
+	int currToken = __tm.currentToken();
 	bool hasPreposition = false;
 
 	/* Iterate backwards through the vector of tokens until the
 	 * 'Begin' token is reached.
 	 */
-	while((int) currToken != (int) MoguSyntax::OUT_OF_RANGE_BEGIN)
+	while(currToken != MoguSyntax::OUT_OF_RANGE_BEGIN)
 	{
 	    /* The '(' syntax will always signify a mathematical expression.
 	     * Hand this job over to the MathParser.
@@ -134,12 +138,12 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 
 void NodeValueParser::giveInput(const std::string& input, NodeValue& nv, Moldable* bc)
 {
-#ifdef DEBUG
-    static size_t num_iters = 0;
-    const char* current_input = input.c_str();
-    ++num_iters;
-#endif
     __input = input;
+    if (input.empty())
+    {
+        nv.setString("");
+        return;
+    }
 	tokenizeInput(input);
 	reduceExpressions(bc);
 
@@ -346,7 +350,7 @@ void NodeValueParser::giveInput(const std::string& input, CommandValue& cv,
     // The first token is always an action
     cv.set(CommandFlags::ACTION, __tm.currentToken());
 
-    if ( cv.get(CommandFlags::ACTION) == MoguSyntax::append) 
+    if (MoguSyntax::append == cv.get(CommandFlags::ACTION))
     {
         handleAppendCommand(cv,bc);
         __tm.reset();
@@ -357,16 +361,14 @@ void NodeValueParser::giveInput(const std::string& input, CommandValue& cv,
     __tm.next();
     int tok = __tm.currentToken();
     cv.set(CommandFlags::OBJECT, tok);
+    __tm.next();
 
     while (tok != MoguSyntax::OUT_OF_RANGE_END)
     {
-        int token = __tm.currentToken();
-        if (token == MoguSyntax::TOKEN_DELIM)
+        tok = __tm.currentToken();
+        if (tok == MoguSyntax::TOKEN_DELIM)
         {
             std::string string_token = __tm.fetchStringToken();
-            // There should never be a quoted literal before the preposition
-            // ^^ THAT IS A LIE. FIX! ^^
-            // ie: append "hello I am Tom" to widget foo text
             if (__tm.isQuotedString(string_token)) {
                 __tm.reset();
                 return;
@@ -387,12 +389,11 @@ void NodeValueParser::giveInput(const std::string& input, CommandValue& cv,
                 cv.set(CommandFlags::ARG, tmp);
             }
         }
-        else if (isStateToken(token)) {
-            tmp.setInt((int) token);
+        else if (isStateToken(tok)) {
+            tmp.setInt(tok);
             cv.set(CommandFlags::ARG, tmp);
         }
-        else if (isPrepositionToken(token)) {
-
+        else if (isPrepositionToken(tok)) {
             __tm.saveLocation(); // We've done what we need with the preceeding
             __tm.truncateHead(); // tokens, so get rid of them.
 #ifdef DEBUG

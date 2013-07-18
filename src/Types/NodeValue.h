@@ -106,6 +106,10 @@ public:
         return __numerics->as_float;
     }
 
+    operator int() const {
+        return __numerics->as_int;
+    }
+
     operator std::string() const {
         return as_string;
     }
