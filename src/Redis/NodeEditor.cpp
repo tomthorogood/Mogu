@@ -70,6 +70,13 @@ void NodeEditor::setPrefix(Prefix prefix)
         (__prefix == Prefix::user || __prefix == Prefix::group);
 }
 
+void NodeEditor::readAll(std::vector<std::string>& iovec)
+{
+    if (id_required)
+        __db.appendQuery("llen %s.%d.%s", c_prefix, __id, __node);
+
+}
+
 void NodeEditor::readAll(std::map <std::string,std::string>& iomap)
 {
     if (id_required)

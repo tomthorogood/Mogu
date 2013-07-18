@@ -154,6 +154,16 @@ private:
         assignReply();
     }
 
+    inline void clear_queries()
+    {
+        while (!queries.empty())
+        {
+            Query* q = queries.front();
+            queries.pop();
+            if (q != nullptr) delete q;
+        }
+    }
+
 public:
     static const uint8_t IGNORE_RESPONSE        = 1;
     static const uint8_t REQUIRE_INT            = 2;
@@ -168,12 +178,7 @@ public:
     ~QuerySet() {
         redisFree(rdb);
         if (reply != nullptr) freeReplyObject(reply);
-        while (!queries.empty())
-        {
-            Query* q = queries.front();
-            queries.pop();
-            if (q != nullptr) delete q;
-        }
+        clear_queries();
     }
 
     void setPrefix(Prefix prefix);
@@ -192,7 +197,7 @@ public:
         reply_int = 0;
         reply_array_str.clear();
         reply_array_int.clear();
-
+        clear_queries();
     }
 
     inline void appendQuery(const char* query, ...)
