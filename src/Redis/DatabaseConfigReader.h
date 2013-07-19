@@ -48,6 +48,7 @@ const std::unordered_map <Prefix, std::string, IntHash<Prefix>> prefixMap = {
 };
 
 const std::unordered_map <int, Prefix> syntax_to_prefix = {
+    { (int)MoguSyntax::own,      Prefix::widgets },
     { (int)MoguSyntax::widget,   Prefix::widgets },
     { (int)MoguSyntax::data,     Prefix::data    },
     { (int)MoguSyntax::user,     Prefix::user    },

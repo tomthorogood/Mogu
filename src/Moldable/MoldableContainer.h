@@ -13,8 +13,8 @@
 class MoldableContainer : public MoldableAbstractParent
 {
 public:
-    MoldableContainer(const std::string& node)
-    : MoldableAbstractParent(node, MoguSyntax::container){}
+    MoldableContainer(WidgetAssembly* assembly)
+    : MoldableAbstractParent(assembly, MoguSyntax::container){}
 
     //Containers have no textual value:
     inline virtual std::string moldableValue(){return EMPTY;}

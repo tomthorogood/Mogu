@@ -9,28 +9,33 @@
 #include <Redis/ContextQuery.h>
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
+#include <Types/WidgetAssembly.h>
 
-MoldableText::MoldableText(const std::string& node)
-: Moldable(node, MoguSyntax::text)
+MoldableText::MoldableText(WidgetAssembly* assembly) :
+    Moldable(assembly, MoguSyntax::text)
 {
-    __init__();
+    __init__(assembly);
 }
 
-void MoldableText::__init__()
+void MoldableText::__init__(WidgetAssembly* assembly)
 {
-    mApp;
     NodeValue v;
-    Redis::NodeEditor node(Prefix::widgets, __node);
-    initializeNodeEditor(node);
+    __assembly_text = (std::string)
+        assembly->attrdict[MoguSyntax::text.integer];
     __text = new Wt::WText;
-
-    app->interpreter().giveInput(getParameter(node,MoguSyntax::text), v);
-    const std::string& content = v.getString();
-    if (content != EMPTY)
-    {
-        std::string txt = stripquotes(v.getString());
-        __text->setText(Wt::WString(stripquotes(v.getString()), Wt::UTF8));
-    }
+    initializeText();
     addWidget(__text);
 }
 
+void MoldableText::initializeText()
+{
+    mApp;
+    NodeValue v;
+    app->interpreter().giveInput(__assembly_text,v);
+    const std::string& content = v.getString();
+    if (!content.empty())
+    {
+        std::string txt = stripquotes(content);
+        __text->setText(Wt::WString(txt,Wt::UTF8));
+    }
+}

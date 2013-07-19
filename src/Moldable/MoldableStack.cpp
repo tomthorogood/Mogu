@@ -11,9 +11,10 @@
 #include "MoldableStack.h"
 #include <Redis/ContextQuery.h>
 #include <Wt/WAnimation>
+#include <Types/WidgetAssembly.h>
 
-MoldableStack::MoldableStack(const std::string& node)
-: MoldableAbstractParent(node, MoguSyntax::stack)
+MoldableStack::MoldableStack(WidgetAssembly* assembly)
+: MoldableAbstractParent(assembly, MoguSyntax::stack)
 {
     __init__();
 }

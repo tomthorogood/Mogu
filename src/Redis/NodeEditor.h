@@ -24,11 +24,15 @@ public:
     void setSub(const std::string& sub)
     {
         c_sub = sub.c_str();
+        setExists();
+        setType();
     }
 
     void clearSub()
     {
         c_sub = EMPTY;
+        setExists();
+        setType();
     }
 
     /* Read a single value */
@@ -62,6 +66,25 @@ public:
             "hget policies.%s %d", c_node, MoguSyntax::encrypted.integer);
         encrypted = policy->yieldResponse<std::string>() == "yes"; 
         return encrypted;
+    }
+    
+    inline void unset_arg()
+    {
+        arg = nullptr;
+        c_hashkey = EMPTY;
+        list_index = -1;
+    }
+
+    inline void setArg(NodeValue* arg_)
+    {
+        unset_arg();
+        arg = arg_;
+        setArgInfo();
+    }
+
+    inline const SyntaxDef& getType() const
+    {
+        return MoguSyntax::get(type);
     }
 
 private:
@@ -141,11 +164,23 @@ private:
     void setArgInfo();
     void setId();
 
-    inline void unset_arg()
+
+    inline void setExists()
     {
-        arg = nullptr;
-        c_hashkey = EMPTY;
-        list_index = -1;
+        NodeValue* arg_ = arg;
+        unset_arg();
+        appendCommand("exists");
+        exists = db.yieldResponse<bool>();
+        arg = arg_;
+    }
+
+    inline void setType()
+    {
+        NodeValue* arg_ = arg;
+        unset_arg();
+        appendCommand("type");
+        type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
+        arg = arg_;
     }
 
 };//class NodeEditor

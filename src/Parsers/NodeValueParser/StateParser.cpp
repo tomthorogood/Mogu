@@ -174,27 +174,8 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
     Redis::ContextQuery user(Prefix::user);
     int token;
     NodeValue arg;
-
-
     Redis::NodeEditor node(Prefix::user, field);
-    if (!node.exists())
-    {
-        token = __tm.currentToken();
-        if (__tm.currentToken() == MoguSyntax::TOKEN_DELIM)
-        {
-            arg.setString(__tm.fetchStringToken());
-        }
-        else (arg.setInt(__tm.currentToken()));
 
-        node.setPrefix(Prefix::policies);
-        std::string sub = (std::string) MoguSyntax::default_;
-        node.toggleSub(sub);
-
-        node.setArg(&arg);
-        if (node.subExists(sub))
-            result.setString(node.readSub(sub));
-        return;
-    }
     const SyntaxDef& type = node.getType();
     if (type == MoguSyntax::hash)
     {
@@ -202,15 +183,14 @@ void StateParser::handleUserField(const std::string& field, NodeValue& result)
         if (token == MoguSyntax::TOKEN_DELIM)
             arg.setString(__tm.fetchStringToken());
         else
-            arg.setInt(__tm.currentToken());
+            arg.setString(std::to_string(__tm.currentToken()));
     }
     else if (type == MoguSyntax::list)
     {
-        arg.setInt(__tm.currentToken());
+        arg.setString(std::to_string(__tm.currentToken()));
     }
     node.setArg(&arg);
     result.setString(node.read());
-
 }
 
 void StateParser::handleGroupField(const std::string& field, NodeValue& result)

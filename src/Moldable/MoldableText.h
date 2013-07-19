@@ -14,11 +14,12 @@
 class MoldableText : public Moldable
 {
     Wt::WText* __text;
+    void initializeText();
+    std::string __assembly_text;
 protected:
-    virtual void __init__() override;
-
+    virtual void __init__(WidgetAssembly*) override;
 public:
-    MoldableText(const std::string& node);
+    MoldableText(WidgetAssembly*);
 
     inline virtual std::string moldableValue() {
         return __text->text().toUTF8();
@@ -31,13 +32,11 @@ public:
     inline virtual void reload()
     {
         clear();
-        testFlag(MoldableFlags::allow_reload);;
-        Moldable::__init__();
-        __init__();
-        load();
-        testFlag(MoldableFlags::allow_reload);;
-    }
+        testFlag(MoldableFlags::allow_reload);
 
+        load();
+        testFlag(MoldableFlags::allow_reload);
+    }
 };
 
 

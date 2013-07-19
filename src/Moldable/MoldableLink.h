@@ -13,13 +13,15 @@
 
 class MoldableLink : public Moldable
 {
+private:
+    std::string __assembly_location;
+    std::string __assembly_text;
 protected:
     Wt::WAnchor* __link;
-    virtual void __init__() override;
-
-
+    virtual void __init__(WidgetAssembly*) override;
+    void initializeLink();
 public:
-    MoldableLink (const std::string& node);
+    MoldableLink (WidgetAssembly* assembly);
 
     inline virtual std::string moldableValue()
     {
@@ -32,8 +34,7 @@ public:
     inline virtual void reload()
     {
         testFlag(MoldableFlags::allow_reload);;
-        Moldable::__init__();
-        __init__();
+        initializeLink();
         load();
         testFlag(MoldableFlags::allow_reload);;
     }

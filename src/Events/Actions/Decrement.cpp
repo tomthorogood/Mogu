@@ -8,6 +8,7 @@ void decrement (Moldable& broadcaster, CommandValue& v)
 {
     mApp;
     const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
+    Prefix prefix = syntax_to_prefix.at(object);
     std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
     NodeValue arg;
     std::string str;
@@ -15,7 +16,7 @@ void decrement (Moldable& broadcaster, CommandValue& v)
     if (v.test(CommandFlags::ARG))
         arg = v.get(CommandFlags::ARG);
     
-    Redis::NodeEditor node(object,identifier,&arg);
+    Redis::NodeEditor node(prefix,identifier,&arg);
 
     NodeValue final;
     int value = 

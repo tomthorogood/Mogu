@@ -14,12 +14,16 @@
 
 class MoldableInput : public Moldable
 {
+    std::string __assembly_validator;
+    std::string __assembly_txt;
+    Wt::WValidator* __validator = nullptr;
 protected:
-    Wt::WLineEdit* __input;
-    virtual void __init__() override;
+    Wt::WLineEdit* __input = nullptr;
+    virtual void __init__(WidgetAssembly* assembly) override;
+    void initializeInput();
 
 public:
-    MoldableInput (const std::string& node);
+    MoldableInput (WidgetAssembly*);
 
     inline virtual std::string moldableValue() {
         return __input->valueText().toUTF8();
@@ -41,10 +45,11 @@ public:
 
     inline virtual void reload()
     {
-        Moldable::__init__();
-        __init__();
+        setFlag(MoldableFlags::allow_reload);
+        initializeGlobalAttributes();
+        initializeInput();
         load();
-        testFlag(MoldableFlags::allow_reload);;
+        unsetFlag(MoldableFlags::allow_reload);;
     }
 };
 

@@ -13,6 +13,17 @@
 EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node)
 : CommandProcessor(broadcaster), triggerMap(broadcaster.getNumTriggers(), prefix, node)
 {
+    processTriggerMap();
+}
+
+EventHandler::EventHandler(Moldable& broadcaster, TriggerMap& triggers)
+    : CommandProcessor(broadcaster), triggerMap(triggers)
+{
+    processTriggerMap();
+}
+
+void EventHandler::processTriggerMap()
+{
     for (int trigger : triggerMap.getTriggers())
     {
         switch (trigger)
@@ -53,4 +64,3 @@ EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::stri
         }
     }
 }
-

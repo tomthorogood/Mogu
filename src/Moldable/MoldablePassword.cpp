@@ -6,9 +6,10 @@
  */
 
 #include "MoldablePassword.h"
+#include <Types/WidgetAssembly.h>
 
-MoldablePassword::MoldablePassword(const std::string& node)
-: MoldableInput(node)
+MoldablePassword::MoldablePassword(WidgetAssembly* assembly)
+: MoldableInput(assembly)
 {
     __input->setEchoMode(Wt::WLineEdit::Password);
 }

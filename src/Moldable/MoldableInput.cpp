@@ -9,36 +9,42 @@
 #include <Validators/Validators.h>
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
+#include <Types/WidgetAssembly.h>
 
-MoldableInput::MoldableInput (const std::string& node)
-: Moldable(node, MoguSyntax::input)
+MoldableInput::MoldableInput (WidgetAssembly* assembly)
+: Moldable(assembly, MoguSyntax::input)
 {
-    __init__();
+    __init__(assembly);
 }
 
-void MoldableInput::__init__()
+void MoldableInput::__init__(WidgetAssembly* assembly)
 {
-    mApp;
-    NodeValue v;
+    __assembly_txt = (std::string)
+        assembly->attrdict[MoguSyntax::text.integer];
+    __assembly_validator = (std::string)
+        assembly->attrdict[MoguSyntax::validator.integer];
+    initializeInput();
+}
 
-    Redis::NodeEditor node(Prefix::widgets, __node);
-    initializeNodeEditor(node);
-
-    __input = new Wt::WLineEdit();
-    std::string strval = getParameter(node, MoguSyntax::text);
-    if (strval != EMPTY)
+void MoldableInput::initializeInput()
+{
+    if (__input)
     {
-        app->interpreter().giveInput(getParameter(node, MoguSyntax::text),v);
-        __input->setEmptyText(stripquotes(v.getString()));
+        removeWidget(__input);
+        delete __input;
     }
-    addWidget(__input);
-
-    std::string param = getParameter(node,MoguSyntax::validator);;
-    if (param != EMPTY)
+    mApp;
+    NodeValue nv;
+    app->interpreter().giveInput(__assembly_txt,nv);
+    std::string txt = stripquotes(nv.getString());
+    app->interpreter().giveInput(__assembly_validator,nv);
+    std::string validator = stripquotes(nv.getString());
+    __input = new Wt::WLineEdit();
+    __input->setEmptyText(txt);
+    if (!validator.empty() && !__validator)
     {
-        app->interpreter().giveInput(param,v);
-        Wt::WValidator* validator = Validators::createValidator(v.getString());
-        __input->setValidator(validator);
+        __validator = Validators::createValidator(validator);
+        __input->setValidator(__validator);
         __input->keyWentUp().connect(this, &MoldableInput::validate);
     }
 }

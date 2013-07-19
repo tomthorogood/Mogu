@@ -15,12 +15,14 @@
 class MoldableImage : public Moldable
 {
     Wt::WImage* __image;
-
+    std::string __assembly_src;
+    std::string __assembly_txt;
 protected:
-    virtual void __init__() override;
+    virtual void __init__(WidgetAssembly*) override;
+    void initializeImage();
 
 public:
-    MoldableImage(const std::string& node);
+    MoldableImage(WidgetAssembly*);
 
     inline virtual std::string moldableValue()
     {
@@ -32,12 +34,12 @@ public:
 
     inline virtual void reload()
     {
-        testFlag(MoldableFlags::allow_reload);;
+        setFlag(MoldableFlags::allow_reload);;
         clear();
-        Moldable::__init__();
-        __init__();
+        initializeGlobalAttributes();
+        initializeImage();
         load();
-        testFlag(MoldableFlags::allow_reload);;
+        unsetFlag(MoldableFlags::allow_reload);;
     }
 };
 

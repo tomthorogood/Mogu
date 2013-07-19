@@ -13,19 +13,21 @@
 class MoldableImageLink : public MoldableLink
 {
     Wt::WImage* __image;
+    std::string __assembly_src;
 protected:
-    virtual void __init__();
+    virtual void __init__(WidgetAssembly* assembly);
+    void initializeImage();
 
 public:
-    MoldableImageLink(const std::string& node);
+    MoldableImageLink(WidgetAssembly*);
     inline virtual void reload()
     {
-        Moldable::__init__();
-        MoldableLink::__init__();
-        __init__();
-        testFlag(MoldableFlags::allow_reload);;
+        setFlag(MoldableFlags::allow_reload);
+        initializeGlobalAttributes();
+        initializeLink();
+        initializeImage();
         load();
-        testFlag(MoldableFlags::allow_reload);;
+        unsetFlag(MoldableFlags::allow_reload);;
     }
 };
 

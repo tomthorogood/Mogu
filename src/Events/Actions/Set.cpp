@@ -76,10 +76,10 @@ void set (Moldable& broadcaster, CommandValue& v)
                  bool is_list_value = v.test(CommandFlags::ARG);
                  NodeValue arg;
                  if (is_list_value) arg = v.get(CommandFlags::ARG);
-                 Redis::NodeEditor editor(
-                     MoguSyntax::get(v.get(CommandFlags::OBJECT))
-                     ,(std::string)v.get(CommandFlags::IDENTIFIER), &arg);
-                 editor.setIsListValue(is_list_value);
+                 Prefix prefix = syntax_to_prefix.at(
+                     MoguSyntax::get(v.get(CommandFlags::OBJECT)));
+                 Redis::NodeEditor editor(prefix, 
+                         (std::string)v.get(CommandFlags::IDENTIFIER), &arg);
                  editor.write(v.get(CommandFlags::VALUE));
              }
              break;

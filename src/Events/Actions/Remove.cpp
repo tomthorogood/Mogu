@@ -81,6 +81,7 @@ void handle_attribute_from_object(Moldable& broadcaster, CommandValue& v)
 void handle_value_from_field(Moldable& broadcaster, CommandValue& v)
 {
     const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
+    Prefix prefix = syntax_to_prefix.at(object);
     NodeValue arg = v.get(CommandFlags::ARG);
     std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
     std::string value = EMPTY;
@@ -94,16 +95,8 @@ void handle_value_from_field(Moldable& broadcaster, CommandValue& v)
         if (!groupManager.hasWriteAccess(identifier)) return;
     }
 
-    Redis::NodeEditor editor(object, identifier, &arg);
-    if (editor.getNodeType() == MoguSyntax::list) {
-        editor.setIsListValue(true);
-        if (v.test(CommandFlags::VALUE))
-            value = (std::string) v.get(CommandFlags::VALUE);
-    }
-
-    else if (editor.getNodeType() == MoguSyntax::hash)
-        editor.setIsHashValue(true);
-
+    Redis::NodeEditor editor(prefix, identifier, &arg);
+    value = (std::string) v.get(CommandFlags::VALUE);
     editor.remove(value);
 }
 
@@ -117,6 +110,7 @@ void handle_object_from_application(Moldable& broadcaster, CommandValue& v)
     bool has_identifier = v.test(CommandFlags::IDENTIFIER);
     
     const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
+    Prefix prefix = syntax_to_prefix.at(object);
     if (object == MoguSyntax::widget)
     {
         Moldable* dying_widget = app->registeredWidget(
@@ -143,7 +137,7 @@ void handle_object_from_application(Moldable& broadcaster, CommandValue& v)
             GroupManager groupManager(group);
             if (!groupManager.hasWriteAccess(identifier)) return;
         }
-        Redis::NodeEditor editor(object,identifier);
+        Redis::NodeEditor editor(prefix,identifier);
         editor.remove();
     }
 }

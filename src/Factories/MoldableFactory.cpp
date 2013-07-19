@@ -10,67 +10,47 @@
 #include <Types/syntax.h>
 #include <Redis/ContextQuery.h>
 #include <Mogu.h>
+#include <WidgetServer.h>
 
-MoldableFactory::MoldableFactory ()
+MoldableFactory::MoldableFactory (Mogu* application) : 
+    server(new WidgetServer(application))
 {
+}
 
+MoldableFactory::~MoldableFactory()
+{
+    delete server;
 }
 
 Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 {
-    const char* c_node = node.c_str();
-#ifdef DEBUG
-    std::cout << "Moldable Factory: " << c_node << std::endl;
-#endif
-    Redis::ContextQuery db(Prefix::widgets);
-    db.appendQuery("hget widgets.%s %d", c_node, (int)MoguSyntax::type);
-    SyntaxDef widget_type = MoguSyntax::get(db.yieldResponse <std::string>());
-
-    // If there was an error here, the syntax type will be 'none'
-    if (widget_type == MoguSyntax::__NONE__)
-    {
-        // If there is no type, we have to check to see if there is
-        // a template assigned to the widget which may contain this
-        // information.
-        db.appendQuery(
-            "hget widgets.%s %d"
-            , c_node, (int) MoguSyntax::template_);
-        std::string template_id = db.yieldResponse <std::string>();
-
-        const char* tmpl_id = template_id.c_str();
-        Redis::ContextQuery tmpldb(Prefix::templates);
-        tmpldb.appendQuery(
-            "hget templates.%s %d"
-            , tmpl_id, (int) MoguSyntax::type);
-        widget_type = MoguSyntax::get(tmpldb.yieldResponse <int>());
-
-        if (widget_type == MoguSyntax::__NONE__)
-        {
-            // If we're still in error, just treat it as a container. It 
-            // will not render properly, but Mogu can keep running.
-            widget_type = MoguSyntax::container;
-        }
-    }
-
+    WidgetAssembly* assembly = server->request(node);
+    std::string s_type = (std::string)
+        assembly->attrdict[MoguSyntax::type.integer];
+    const SyntaxDef& widget_type = MoguSyntax::get(s_type);
+    Moldable* product = nullptr;
     switch(widget_type)
     {
     case MoguSyntax::container:
-        return new MoldableContainer(node);
+        product =  new MoldableContainer(assembly);
     case MoguSyntax::stack:
-        return new MoldableStack(node);
+        product =  new MoldableStack(assembly);
     case MoguSyntax::text:
-        return new MoldableText(node);
+        product =  new MoldableText(assembly);
     case MoguSyntax::anchor:
-        return new MoldableLink(node);
+        product =  new MoldableLink(assembly);
     case MoguSyntax::image:
-        return new MoldableImage(node);
+        product =  new MoldableImage(assembly);
     case MoguSyntax::image_link:
-        return new MoldableImageLink(node);
+        product =  new MoldableImageLink(assembly);
     case MoguSyntax::input:
-        return new MoldableInput(node);
+        product =  new MoldableInput(assembly);
     case MoguSyntax::password:
-        return new MoldablePassword(node);
+        product =  new MoldablePassword(assembly);
     default:
-        return new MoldableContainer("");
+        product =  new MoldableContainer(assembly);
     }
+
+    delete assembly;
+    return product;
 }

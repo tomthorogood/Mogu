@@ -53,4 +53,10 @@ inline std::vector<std::string> &split(const std::string &s, char delim,
     }
     return elems;
 } 
+
+inline bool isEmpty(const char* str)
+{
+    return (str && str[0] == '\0');
+}
+
 #endif /* INLINE_UTILS_H_ */

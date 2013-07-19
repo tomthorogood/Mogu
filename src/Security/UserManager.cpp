@@ -126,7 +126,7 @@ std::string UserManager::getUserSalt(const int& userid, Redis::ContextQuery* db)
 {
     Redis::NodeEditor node(Prefix::user, "meta.id");
     std::map <std::string,std::string> rlookup;
-    node.readAll(rlookup);
+    node.read(rlookup);
 
     auto iter = rlookup.begin();
     while (iter != rlookup.end())

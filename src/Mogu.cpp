@@ -25,7 +25,7 @@
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)
-    : Wt::WApplication(env), widgetRegister()
+    : Wt::WApplication(env), widgetRegister(), moldableFactory(this)
 {
     contextMap_ = Application::loadDatabaseContexts();
     userManager = new UserManager();

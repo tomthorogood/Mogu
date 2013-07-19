@@ -145,7 +145,9 @@ bool CommandValue::objectIsReduceable(bool is_r_object)
     }
     // If we've reached this point, we have to determine whether
     // or not the node in question is a string, list, or hash.
-    Redis::NodeEditor node(MoguSyntax::get(local_obj), (std::string) local_id);
+    Redis::NodeEditor node(
+            syntax_to_prefix.at(MoguSyntax::get(local_obj)), 
+            (std::string) local_id);
     const SyntaxDef& node_type = node.getType();
     if (!hasArg)
         return node_type == MoguSyntax::string;

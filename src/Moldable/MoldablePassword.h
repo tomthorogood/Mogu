@@ -15,7 +15,7 @@ class MoldablePassword : public MoldableInput
 protected:
 
 public:
-    MoldablePassword (const std::string& node);
+    MoldablePassword (WidgetAssembly*);
 };
 
 #endif /* MOLDABLEPASSWORD_H_ */

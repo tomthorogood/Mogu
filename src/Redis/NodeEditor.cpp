@@ -347,6 +347,56 @@ bool NodeEditor::write(std::vector<std::string>& iovec)
     return true;
 }
 
+bool NodeEditor::remove()
+{
+    if (!arg)
+    {
+        appendCommand("del");
+    }
+    else if (type == MoguSyntax::hash.integer)
+    {
+        appendCommand("hdel");
+    }
+    else return false;
+    return true;
+}
+
+bool NodeEditor::remove(const std::string& value)
+{
+    if (type == MoguSyntax::list.integer)
+    {
+        if (hasId())
+        {
+            if (!isEmpty(c_sub))
+            {
+                db.appendQuery("lrem %s.%d.%s.%s 1 %s",
+                    c_prefix, id, c_node, c_sub, value.c_str());
+            }
+            else
+            {
+                db.appendQuery("lrem %s.%d.%s 1 %s",
+                    c_prefix, id, c_node, value.c_str());
+            }
+        }
+        else
+        {
+            if (!isEmpty(c_sub))
+            {
+                db.appendQuery("lrem %s.%s.%s 1 %s",
+                    c_prefix, c_node, c_sub, value.c_str());
+            }
+            else
+            {
+                db.appendQuery("lrem %s.%s 1 %s",
+                    c_prefix, c_node, value.c_str());
+            }
+        }
+        return true;
+    }
+    else return false;
+
+}
+
 void NodeEditor::appendCommand(const char* cmd)
 {
     if (hasId())

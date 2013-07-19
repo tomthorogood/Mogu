@@ -7,11 +7,12 @@ void email(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
     const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
+    Prefix prefix = syntax_to_prefix.at(object);
     std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
     NodeValue arg;
     if (v.test(CommandFlags::ARG))
         arg = v.get(CommandFlags::ARG);
-    Redis::NodeEditor node(object, identifier, &arg);
+    Redis::NodeEditor node(prefix, identifier, &arg);
     NodeValue message;
     EmailManager email;
     email.setRecipient(v.get(CommandFlags::VALUE).getString());

@@ -86,5 +86,7 @@ class CommandValue;
 class TriggerMap;
 class EventHandler;
 class StringMap;
+class WidgetServer;
+struct WidgetAssembly;
 
 #endif /* FORWARD_DECLARATIONS_H_ */

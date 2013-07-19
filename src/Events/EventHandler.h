@@ -22,9 +22,11 @@ class EventHandler : public CommandProcessor
 {
 public:
     EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node);
+    EventHandler(Moldable& broadcaster, TriggerMap& triggers);
 
 private:
     TriggerMap triggerMap;
+    void processTriggerMap();
 
     template <const int> void handleTrigger();
 };

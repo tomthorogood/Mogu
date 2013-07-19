@@ -34,7 +34,7 @@ private:
     Wt::Signal <> __stack_index_changed;
 
 public:
-    MoldableStack (const std::string& node);
+    MoldableStack (WidgetAssembly*);
 
     //Stacked containers do not have textual values.
     inline virtual std::string moldableValue() { return __node; }
@@ -50,17 +50,6 @@ public:
     }
 
     inline Wt::Signal <>& stackIndexChanged() { return __stack_index_changed;}
-
-    inline virtual void reload()
-    {
-        testFlag(MoldableFlags::allow_reload);;
-        clear();
-        Moldable::__init__();
-        MoldableAbstractParent::__init__();
-        __init__();
-        load();
-        testFlag(MoldableFlags::allow_reload);;
-    }
 
     inline virtual void __init__()
     {

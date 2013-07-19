@@ -13,8 +13,13 @@
 class MoldableFactory
 {
 public:
-    MoldableFactory();
+    MoldableFactory(Mogu* app);
+    ~MoldableFactory();
+
     Moldable* createMoldableWidget(const std::string& node) const;
+
+private:
+    WidgetServer* server    =nullptr;
 };
 
 

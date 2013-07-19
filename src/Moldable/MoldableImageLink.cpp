@@ -10,23 +10,34 @@
 #include <Wt/WAnchor>
 #include <Wt/WImage>
 #include <Redis/NodeEditor.h>
+#include <Types/WidgetAssembly.h>
 
-MoldableImageLink::MoldableImageLink(const std::string& node)
-: MoldableLink(node)
+MoldableImageLink::MoldableImageLink(WidgetAssembly* assembly)
+: MoldableLink(assembly)
 {
-    __init__();
+    __init__(assembly);
 }
 
-void MoldableImageLink::__init__()
+void MoldableImageLink::__init__(WidgetAssembly* assembly)
 {
-    Redis::NodeEditor node(Prefix::widgets, __node);
-    initializeNodeEditor(node);
+    __assembly_src = (std::string)
+        assembly->attrdict[MoguSyntax::source.integer];
+    initializeImage();
+}
+
+void MoldableImageLink::initializeImage()
+{
+    if (__image)
+    {
+        removeWidget(__image);
+        delete __image;
+    }
     mApp;
-    NodeValue v;
-    app->interpreter().giveInput(
-        getParameter(node,MoguSyntax::source),v);
-    std::string src = stripquotes(v.getString());
+    NodeValue nv_src;
+    app->interpreter().giveInput(__assembly_src,nv_src);
+    std::string src = stripquotes(nv_src.getString());
     __image = new Wt::WImage(src, moldableValue());
     __link->setImage(__image);
     __link->setTarget(Wt::TargetNewWindow);
 }
+

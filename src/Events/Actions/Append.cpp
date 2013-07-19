@@ -93,24 +93,19 @@ void handleValueToField(Moldable& broadcaster, CommandValue& v)
         arg = v.get(CommandFlags::ARG);
 
     bool writeable = true;
-    int id;
-    const SyntaxDef& obj = MoguSyntax::get(v.get(CommandFlags::OBJECT));
+    Prefix obj = 
+        syntax_to_prefix.at((MoguSyntax::get(v.get(CommandFlags::OBJECT))));
     std::string node = (std::string) v.get(CommandFlags::IDENTIFIER);
 
-    if (MoguSyntax::group == obj)
+    if (Prefix::group == obj)
     {
         GroupManager gm(app->getGroup());
-        id = app->getGroup();
         writeable = gm.hasWriteAccess(node);
     }
-    // A user will always have write access to their own data
-    else if (MoguSyntax::user ==  obj)
-        id = app->getUser();
 
     if (!writeable) return;
 
     Redis::NodeEditor editor(obj, node, &arg);
-    editor.setIsListValue(v.test(CommandFlags::ARG));
     NodeValue current_value(editor.read());
     current_value += v.get(CommandFlags::VALUE);
     editor.write(current_value);

@@ -6,37 +6,20 @@
  */
 
 #include "MoldableAbstractParent.h"
+#include <Types/WidgetAssembly.h>
 #include <Redis/ContextQuery.h>
 #include <Mogu.h>
 
 MoldableAbstractParent::MoldableAbstractParent
-    (const std::string& node, const SyntaxDef&  widget_type)
-: Moldable(node, widget_type)
+    (WidgetAssembly* assembly, const SyntaxDef&  widget_type)
+: Moldable(assembly, widget_type)
 {
-    __init__();
+    __init__(assembly);
 }
 
-void MoldableAbstractParent::__init__()
+void MoldableAbstractParent::__init__(WidgetAssembly* assembly)
 {
-    Prefix children_prefix = 
-        testFlag(MoldableFlags::template_children) ?
-        Prefix::templates : Prefix::widgets;
-    std::string children_node = 
-        testFlag(MoldableFlags::template_children) ?
-        __template_name : __node;
-    Redis::ContextQuery db(children_prefix);
-    std::string s_prefix = prefixMap.at(children_prefix);
-    const char* c_prefix = s_prefix.c_str();
-
-    // Only containers can have children, though they may not 
-    // (if they are only being instantiated to hold children 
-    // at a later time). 
-    //
-    // widgets.[id].children will hold a list of the children's identifiers.
-    // llen will thus show how many default children this widget will have.
-    
-    db.appendQuery("llen %s.%s.children", c_prefix, children_node.c_str());
-    num_children = db.yieldResponse <int>();
+    child_nodes = assembly->children;
 }
 
 // This is called when the widget is to be rendered on screen.
@@ -66,31 +49,14 @@ void MoldableAbstractParent::load(){
 #endif
         mApp;
         const MoldableFactory& factory = app->getFactory();
-        
-        Prefix children_prefix = 
-            testFlag(MoldableFlags::template_children) ?
-            Prefix::templates : Prefix::widgets;
-        std::string children_node = 
-            testFlag(MoldableFlags::template_children) ?
-            __node : __template_name;
-        Redis::ContextQuery db(children_prefix);
-
-        // We will first populate a vector with the list of children's 
-        // identifiers.
-        db.appendQuery("lrange widgets.%s.children 0 %d", getNode().c_str(),
-                num_children);
-        
-        auto children_v = db.yieldResponse <std::vector <std::string>>();
-        int s_children_v = (int) children_v.size();
-        assert(s_children_v == num_children);
-        for (int i = 0; i < num_children; ++i)
+        int num_children = child_nodes.size(); 
+        for (auto child : child_nodes)
         {
-           std::string s_child = children_v[i];
 #ifdef DEBUG
            std::cout << "MoldableAbstractParent::load:"<< __LINE__
-               << " " << __node << ", child found: " << s_child << std::endl;
+               << " " << __node << ", child found: " << child << std::endl;
 #endif
-           Moldable* m_child = factory.createMoldableWidget(s_child);
+           Moldable* m_child = factory.createMoldableWidget(child);
 #ifdef DEBUG
            std::cout << "MoldableAbstractParent::load:"<<__LINE__
                << " " << __node << ", child created: " << m_child->getNode()

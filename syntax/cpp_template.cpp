@@ -29,22 +29,11 @@ inline const SyntaxDef& get(int i)
 
 inline const SyntaxDef& get(const std::string& s)
 {
-// In production, there should never be a time
-// when we look anything up by the raw human
-// readable value. 
-#ifdef DEBUG    
     try {
         return isdigit(s[0]) ? smap[s] : hmap[s];
     } catch (std::out_of_range& e) {
         return __NONE__;
     }
-#else
-    try {
-        return smap[s];
-    } catch (std::out_of_range& e) {
-        return __NONE__;
-    }
-#endif
 }
 
 inline const SyntaxDef& get(const NodeValue& v)

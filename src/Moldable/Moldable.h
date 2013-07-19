@@ -71,34 +71,20 @@ class Moldable :
     bool updateStackIndex(size_t  index);
     void setFlags(Redis::NodeEditor&);
 
+    std::string __assembly_style;
+    std::string __assembly_tooltip;
+
 protected:
     uint8_t __flags     = 0;
     std::string __node;
     std::string __template_name;
 
-    virtual void __init__();
-    std::string getParameter(Redis::NodeEditor&,const SyntaxDef&);
-
-    inline void initializeNodeEditor(Redis::NodeEditor& node)
-    {
-        if (testFlag(MoldableFlags::is_templated))
-            node.setPrefix(Prefix::temp);
-    }
+    virtual void __init__(WidgetAssembly*);
+    void initializeGlobalAttributes();
 
 public:
 
-    Moldable(const std::string& node, const SyntaxDef& widget_type);
-
-    operator std::string()
-    {
-        std::string s_type = std::to_string((int)__widget_type);
-        std::string s_num_children = std::to_string(children().size());
-        return "Widget "
-            + getNode()
-            + ": Type "
-            + s_type + ": # Children: "
-            + s_num_children;
-    }
+    Moldable(WidgetAssembly*, const SyntaxDef& widget_type);
 
     virtual ~Moldable();
 
@@ -174,12 +160,13 @@ public:
     {
         __flags |= (uint8_t)MoldableFlags::allow_reload;
         clear();
-        __init__();
+        initializeGlobalAttributes();
         load();
         __flags -= (uint8_t)MoldableFlags::allow_reload;
     }
 
-    inline virtual void reset()     {__init__();}
+    /*!\deprecated*/
+    inline virtual void reset()     {reload();}
     inline void setFlag(MoldableFlags flag) { __flags |= (uint8_t) flag; }
 
     inline void unsetFlag(MoldableFlags flag) { 
