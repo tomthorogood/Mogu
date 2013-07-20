@@ -193,6 +193,26 @@ private:
         setArgInfo();
     }
 
+    inline std::string buildNode()
+    {
+        std::stringstream buf;
+        buf << c_prefix;
+
+        if (hasId())
+        {
+            buf << "." << id;
+        }
+
+        buf << "." << c_node;
+
+        if (!isEmpty(c_sub))
+        {
+            buf << "." << c_sub;
+        }
+
+        return buf.str();
+    }
+
 };//class NodeEditor
 
 

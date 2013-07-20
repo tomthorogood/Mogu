@@ -242,8 +242,7 @@ void NodeEditor::getDefault(std::map<std::string,std::string>& iomap)
 
 bool NodeEditor::write(std::string value)
 {
-    if (encrypted)
-        value = Security::encrypt(value);
+    if (encrypted) value = Security::encrypt(value);
     NodeValue tmp(value);
     if (type==MoguSyntax::string.integer)
     {
@@ -270,36 +269,9 @@ bool NodeEditor::write(std::string value)
      */
     else if (type==MoguSyntax::hash.integer && !isEmpty(c_hashkey))
     {
-        if (hasId())
-        {
-            if (!isEmpty(c_sub))
-            {
-                db.appendQuery("hset %s.%d.%s.%s %s %s",
-                    c_prefix, id, c_node, c_sub, c_hashkey, value.c_str());
-            }
-            else
-            {
-                db.appendQuery("hset %s.%d.%s %s %s",
-                    c_prefix, id, c_node, c_hashkey, value.c_str());
-            }
-        }
-        else
-        {
-            if (!isEmpty(c_sub))
-            {
-                db.appendQuery("hset %s.%s.%s %s %s",
-                    c_prefix, c_node, c_sub, c_hashkey, value.c_str());
-            }
-            else
-            {
-                db.appendQuery("hset %s.%s %s %s",
-                    c_prefix, c_node, c_hashkey, value.c_str());
-            }
-        }
-    }
-    else
-    {
-        return false;
+        std::string s_node = buildNode();
+        db.appendQuery("hset %s %s %s",
+            s_node.c_str(), c_hashkey, value.c_str());
     }
     if (!delay_execution)
         db.execute();
@@ -350,6 +322,8 @@ bool NodeEditor::write(std::vector<std::string>& iovec)
         }
     }
     if (type != MoguSyntax::list.integer) return false;
+
+    /* Write everything as a batch */
     delay_execution = true;
     for (auto str : iovec)
     {
@@ -376,35 +350,10 @@ bool NodeEditor::remove()
 
 bool NodeEditor::remove(const std::string& value)
 {
+    std::string s_node = buildNode();
     if (type == MoguSyntax::list.integer)
     {
-        if (hasId())
-        {
-            if (!isEmpty(c_sub))
-            {
-                db.appendQuery("lrem %s.%d.%s.%s 1 %s",
-                    c_prefix, id, c_node, c_sub, value.c_str());
-            }
-            else
-            {
-                db.appendQuery("lrem %s.%d.%s 1 %s",
-                    c_prefix, id, c_node, value.c_str());
-            }
-        }
-        else
-        {
-            if (!isEmpty(c_sub))
-            {
-                db.appendQuery("lrem %s.%s.%s 1 %s",
-                    c_prefix, c_node, c_sub, value.c_str());
-            }
-            else
-            {
-                db.appendQuery("lrem %s.%s 1 %s",
-                    c_prefix, c_node, value.c_str());
-            }
-        }
-        return true;
+        db.appendQuery("lrem %s 1 %s", s_node.c_str(), value.c_str());
     }
     else return false;
 
@@ -412,90 +361,43 @@ bool NodeEditor::remove(const std::string& value)
 
 void NodeEditor::appendCommand(const char* cmd)
 {
-    if (hasId())
+    std::string s_node = buildNode();
+    const char* full_node = s_node.c_str();
+
+    if (list_index != -1)
     {
-        if (!isEmpty(c_sub))
-        {
-            if (list_index != -1)
-            {
-                db.appendQuery("%s %s.%d.%s.%s %d",
-                    cmd, c_prefix, id, c_node, c_sub, list_index);
-            }
-            else if (!isEmpty(c_hashkey))
-            {
-                db.appendQuery("%s %s.%d.%s.%s %s",
-                    cmd, c_prefix, id, c_node, c_sub, c_hashkey);
-            }
-            else
-            {
-                db.appendQuery("%s %s.%d.%s.%s",
-                    cmd, c_prefix, id, c_node, c_sub);
-            }
-        }
-        else
-        {
-            if (list_index != -1)
-            {
-                db.appendQuery("%s %s.%d.%s %d",
-                    cmd, c_prefix, id, c_node, list_index);
-            }
-            else if (!isEmpty(c_hashkey))
-            {
-                db.appendQuery("%s %s.%d.%s %s",
-                    cmd, c_prefix, id, c_node, c_hashkey);
-            }
-            else
-            {
-                db.appendQuery("%s %s.%d.%s",
-                    cmd, c_prefix, id, c_node);
-            }
-        }
+        db.appendQuery("%s %s %d", cmd, full_node, list_index);
+    }
+    else if (!isEmpty(c_hashkey))
+    {
+        db.appendQuery("%s %s %s", cmd, full_node, c_hashkey);
     }
     else
     {
-        if (!isEmpty(c_sub))
-        {
-            if (list_index != -1)
-            {
-                db.appendQuery("%s %s.%s.%s %d",
-                    cmd, c_prefix, c_node, c_sub, list_index);
-            }
-            else if (!isEmpty(c_hashkey))
-            {
-                db.appendQuery("%s %s.%s.%s %s",
-                    cmd, c_prefix, c_node, c_sub, c_hashkey);
-            }
-            else
-            {
-                db.appendQuery("%s %s.%s.%s",
-                    cmd, c_prefix, c_node, c_sub);
-            }
-        }
-        else
-        {
-            if (list_index != -1)
-            {
-                db.appendQuery("%s %s.%s %d",
-                    cmd, c_prefix, c_node, list_index);
-            }
-            else if (!isEmpty(c_hashkey))
-            {
-                db.appendQuery("%s %s.%s %s",
-                    cmd, c_prefix, c_node, c_hashkey);
-            }
-            else
-            {
-                db.appendQuery("%s %s.%s",
-                    cmd, c_prefix, c_node);
-            }
-        }
+        db.appendQuery("%s %s", cmd, full_node);
     }
 }
 
 void NodeEditor::setArgInfo()
 {
     if (arg == nullptr) return;
-    if (type == MoguSyntax::hash.integer)
+    if (type == MoguSyntax::list.integer)
+    {
+        c_hashkey = EMPTY;
+        if (arg->isInt())
+        {
+            list_index = arg->getInt();
+        }
+        else if (arg->isString())
+        {
+            list_index = std::atoi(arg->getString().c_str());
+        }
+    }
+
+    /* A string arg may also be used to write to the database, so we will
+     * not assume that we're dealing with a hash node.
+     */
+    else 
     {
         list_index = -1;
         if (arg->isString())
@@ -506,18 +408,6 @@ void NodeEditor::setArgInfo()
         {
             std::string s = std::to_string(arg->getInt());
             c_hashkey = s.c_str();
-        }
-    }
-    else if (type == MoguSyntax::list.integer)
-    {
-        c_hashkey = EMPTY;
-        if (arg->isInt())
-        {
-            list_index = arg->getInt();
-        }
-        else if (arg->isString())
-        {
-            list_index = std::atoi(arg->getString().c_str());
         }
     }
 }
