@@ -14,10 +14,10 @@ MoldableAbstractParent::MoldableAbstractParent
     (WidgetAssembly* assembly, const SyntaxDef&  widget_type)
 : Moldable(assembly, widget_type)
 {
-    __init__(assembly);
+    init(assembly);
 }
 
-void MoldableAbstractParent::__init__(WidgetAssembly* assembly)
+void MoldableAbstractParent::init(WidgetAssembly* assembly)
 {
     child_nodes = assembly->children;
 }
@@ -27,7 +27,7 @@ void MoldableAbstractParent::load(){
 
 #ifdef DEBUG
     std::cout << "MoldableAbstractParent::load:"
-        << __LINE__ <<" " <<  __node << std::endl;
+        << __LINE__ <<" " <<  node << std::endl;
 #endif
 
     // Do not reload unless the reload action is explicitly called.
@@ -41,31 +41,30 @@ void MoldableAbstractParent::load(){
     // save loading times up front by delaying recursive loading. Alternatively,
     // rendering all widgets can yield faster response time at the cost of 
     // longer loading times up front.
-    if (num_children > 0) 
+    if (child_nodes.size() > 0)
     {
 #ifdef DEBUG
         std::cout << "MoldableAbstractParent::load:"<<__LINE__
-            <<" " << __node << std::endl;
+            <<" " << node << std::endl;
 #endif
         mApp;
         const MoldableFactory& factory = app->getFactory();
-        int num_children = child_nodes.size(); 
         for (auto child : child_nodes)
         {
 #ifdef DEBUG
            std::cout << "MoldableAbstractParent::load:"<< __LINE__
-               << " " << __node << ", child found: " << child << std::endl;
+               << " " << node << ", child found: " << child << std::endl;
 #endif
            Moldable* m_child = factory.createMoldableWidget(child);
 #ifdef DEBUG
            std::cout << "MoldableAbstractParent::load:"<<__LINE__
-               << " " << __node << ", child created: " << m_child->getNode()
+               << " " << node << ", child created: " << m_child->getNode()
                <<std::endl;
 #endif
            addWidget(m_child);
 #ifdef DEBUG
            std::cout << "MoldableAbstractParent::load:"<<__LINE__
-               << " " << __node << ", child added: " << m_child->getNode()
+               << " " << node << ", child added: " << m_child->getNode()
                << std::endl;
 #endif
         }

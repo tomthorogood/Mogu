@@ -7,10 +7,10 @@
 
 #include "TriggerMap.h"
 #include <Redis/ContextQuery.h>
-TriggerMap::TriggerMap() : __map() {}
+TriggerMap::TriggerMap() : map() {}
 
 TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string& node)
-:__map()
+:map()
 {
     Redis::ContextQuery db(prefix);
     std::string s_prefix = prefixMap.at(prefix);
@@ -42,15 +42,15 @@ TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string
         // Store the commands in the trigger queue
         for (std::string command : db.yieldResponse <std::vector <std::string>>())
         {
-            __map[(int)MoguSyntax::get(trigger)].push(command);
+            map[(int)MoguSyntax::get(trigger)].push(command);
         }
     }
 }
 
 void TriggerMap::populateTriggers()
 {
-    auto iter = __map.begin();
-    for (size_t i = 0; i < __map.size(); ++i)
+    auto iter = map.begin();
+    for (size_t i = 0; i < map.size(); ++i)
     {
         triggers.insert(iter->first);
     }

@@ -14,28 +14,28 @@
 MoldableText::MoldableText(WidgetAssembly* assembly) :
     Moldable(assembly, MoguSyntax::text)
 {
-    __init__(assembly);
+    init(assembly);
 }
 
-void MoldableText::__init__(WidgetAssembly* assembly)
+void MoldableText::init(WidgetAssembly* assembly)
 {
     NodeValue v;
-    __assembly_text = (std::string)
+    assembly_text = (std::string)
         assembly->attrdict[MoguSyntax::text.integer];
-    __text = new Wt::WText;
+    text = new Wt::WText;
     initializeText();
-    addWidget(__text);
+    addWidget(text);
 }
 
 void MoldableText::initializeText()
 {
     mApp;
     NodeValue v;
-    app->interpreter().giveInput(__assembly_text,v);
+    app->interpreter().giveInput(assembly_text,v);
     const std::string& content = v.getString();
     if (!content.empty())
     {
         std::string txt = stripquotes(content);
-        __text->setText(Wt::WString(txt,Wt::UTF8));
+        text->setText(Wt::WString(txt,Wt::UTF8));
     }
 }

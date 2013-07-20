@@ -14,37 +14,37 @@
 MoldableInput::MoldableInput (WidgetAssembly* assembly)
 : Moldable(assembly, MoguSyntax::input)
 {
-    __init__(assembly);
+    init(assembly);
 }
 
-void MoldableInput::__init__(WidgetAssembly* assembly)
+void MoldableInput::init(WidgetAssembly* assembly)
 {
-    __assembly_txt = (std::string)
+    assembly_txt = (std::string)
         assembly->attrdict[MoguSyntax::text.integer];
-    __assembly_validator = (std::string)
+    assembly_validator = (std::string)
         assembly->attrdict[MoguSyntax::validator.integer];
     initializeInput();
 }
 
 void MoldableInput::initializeInput()
 {
-    if (__input)
+    if (input)
     {
-        removeWidget(__input);
-        delete __input;
+        removeWidget(input);
+        delete input;
     }
     mApp;
     NodeValue nv;
-    app->interpreter().giveInput(__assembly_txt,nv);
+    app->interpreter().giveInput(assembly_txt,nv);
     std::string txt = stripquotes(nv.getString());
-    app->interpreter().giveInput(__assembly_validator,nv);
+    app->interpreter().giveInput(assembly_validator,nv);
     std::string validator = stripquotes(nv.getString());
-    __input = new Wt::WLineEdit();
-    __input->setEmptyText(txt);
-    if (!validator.empty() && !__validator)
+    input = new Wt::WLineEdit();
+    input->setEmptyText(txt);
+    if (!validator.empty() && !validator_ptr)
     {
-        __validator = Validators::createValidator(validator);
-        __input->setValidator(__validator);
-        __input->keyWentUp().connect(this, &MoldableInput::validate);
+        validator_ptr = Validators::createValidator(validator);
+        input->setValidator(validator_ptr);
+        input->keyWentUp().connect(this, &MoldableInput::validate);
     }
 }

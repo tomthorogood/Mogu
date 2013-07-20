@@ -15,29 +15,29 @@
 MoldableImageLink::MoldableImageLink(WidgetAssembly* assembly)
 : MoldableLink(assembly)
 {
-    __init__(assembly);
+    init(assembly);
 }
 
-void MoldableImageLink::__init__(WidgetAssembly* assembly)
+void MoldableImageLink::init(WidgetAssembly* assembly)
 {
-    __assembly_src = (std::string)
+    assembly_src = (std::string)
         assembly->attrdict[MoguSyntax::source.integer];
     initializeImage();
 }
 
 void MoldableImageLink::initializeImage()
 {
-    if (__image)
+    if (image)
     {
-        removeWidget(__image);
-        delete __image;
+        removeWidget(image);
+        delete image;
     }
     mApp;
     NodeValue nv_src;
-    app->interpreter().giveInput(__assembly_src,nv_src);
+    app->interpreter().giveInput(assembly_src,nv_src);
     std::string src = stripquotes(nv_src.getString());
-    __image = new Wt::WImage(src, moldableValue());
-    __link->setImage(__image);
-    __link->setTarget(Wt::TargetNewWindow);
+    image = new Wt::WImage(src, moldableValue());
+    link->setImage(image);
+    link->setTarget(Wt::TargetNewWindow);
 }
 

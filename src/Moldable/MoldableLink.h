@@ -14,18 +14,18 @@
 class MoldableLink : public Moldable
 {
 private:
-    std::string __assembly_location;
-    std::string __assembly_text;
+    std::string assembly_location;
+    std::string assembly_text;
 protected:
-    Wt::WAnchor* __link;
-    virtual void __init__(WidgetAssembly*) override;
+    Wt::WAnchor* link;
+    virtual void init(WidgetAssembly*) override;
     void initializeLink();
 public:
     MoldableLink (WidgetAssembly* assembly);
 
     inline virtual std::string moldableValue()
     {
-        return __link->text().toUTF8();
+        return link->text().toUTF8();
     }
 
     // Not currently supported in Wt

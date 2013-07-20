@@ -14,13 +14,14 @@ namespace Redis {
 class QuerySet 
 {
 private:
-    Prefix __prefix     =Prefix::__NONE__;
-    Context* context;
+    Prefix prefix         = Prefix::__NONE__;
+    Context* context        = nullptr;
+    bool stateful           = false;
 
     //!\brief The flags for each query given to the set
     std::queue <uint8_t>    queryflags;
     std::queue <Query*>     queries;
-    int         selected_db =   0;
+    int selected_db         = 0;
 
     uint8_t last_flags;
     Query* last_query;
@@ -32,14 +33,14 @@ private:
     uint8_t     array_type  = 0;
 
     //!\brief The context (populated by the Context reference passed in
-    redisContext* rdb   =nullptr;
+    redisContext* rdb       = nullptr;
 
     //!\brief The reply from the last query sent to the Redis context
     redisReply* reply       = nullptr;
 
     //!\brief Holds the last integer returned, where Redis stated the
     // response was an integer
-    int         reply_int   =  -1;
+    int         reply_int   =-1;
 
     //!\brief Holds the last string returned, where Redis states the
     //response was a string.
@@ -67,6 +68,13 @@ private:
      * increases the flag iterator. 
      */
     inline redisReply* getNextReply() {
+        if (!stateful)
+        {
+            reply_array_int.clear();
+            reply_array_str.clear();
+            reply_str = EMPTY;
+            reply_int = 0;
+        }
         last_flags = queryflags.front(); // make it easy to see.
         last_query = queries.front();
         queryflags.pop(); //reveal the next flag.
@@ -169,8 +177,8 @@ public:
     static const uint8_t REQUIRE_INT            = 2;
     static const uint8_t REQUIRE_STRING         = 4;
 
-    static const uint8_t ARRAY_TYPE_INT     = 0;
-    static const uint8_t ARRAY_TYPE_STR     = 1;
+    static const uint8_t ARRAY_TYPE_INT         = 0;
+    static const uint8_t ARRAY_TYPE_STR         = 1;
    
     QuerySet(){} 
     QuerySet(Context* context);
@@ -182,15 +190,6 @@ public:
     }
 
     void setPrefix(Prefix prefix);
-    
-    /*!\brief Add a query to the command queue. */
-    inline void appendQuery(Query* query, const uint8_t flags=0)
-    {
-        queries.push(query);
-        Query* scoped_query = queries.back();
-        redisvAppendCommand(rdb, scoped_query->c_str(), scoped_query->args);
-        queryflags.push(flags);
-    }
 
     inline void clear() {
         reply_str = EMPTY;
@@ -200,7 +199,7 @@ public:
         clear_queries();
     }
 
-    inline void appendQuery(const char* query, ...)
+    inline void appendQuery(std::string query, ...)
     {
         va_list args;
         va_start(args, query);
@@ -210,17 +209,7 @@ public:
         queryflags.push(0);
     }
 
-    inline void appendQuery(std::string&& querystring, ...)
-    {
-        va_list args;
-        va_start(args, querystring);
-        queries.push(new Query(querystring,args));
-        Query* scoped_query = queries.back();
-        redisvAppendCommand(rdb, scoped_query->c_str(), scoped_query->args);
-        queryflags.push(0);
-
-    }
-
+    inline redisContext*  getContext() { return rdb; }
     inline bool hasQueue() { return queryflags.size() > 0; }
 
     /*!\brief If no type is expected, the default is to store

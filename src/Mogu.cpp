@@ -25,15 +25,15 @@
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)
-    : Wt::WApplication(env), widgetRegister(), moldableFactory(this)
+    : Wt::WApplication(env), moldableFactory(this), widgetRegister()
 {
     contextMap_ = Application::loadDatabaseContexts();
     userManager = new UserManager();
     TurnLeft::Utils::RandomCharSet rchar;
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
 
-    __group = 0;
-    __instanceid = rchar.generate(4);
+    group = 0;
+    instanceid = rchar.generate(4);
 
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
@@ -43,9 +43,9 @@ Mogu::Mogu(
 
     std::string root_widget = db.yieldResponse <std::string>();
 
-    __wrapper = moldableFactory.createMoldableWidget(root_widget);
+    wrapper = moldableFactory.createMoldableWidget(root_widget);
 
-    root()->addWidget(__wrapper);
+    root()->addWidget(wrapper);
 
     internalPathChanged().connect(this, &Mogu::handlePathChange);
 
@@ -65,7 +65,7 @@ void Mogu::handlePathChange(const std::string& path)
     split(path, '/', perspectives);
     for (auto perspective : perspectives)
     {
-        PerspectiveHandler proc(*__wrapper, perspective);
+        PerspectiveHandler proc(*wrapper, perspective);
         proc.moldPerspective();
     }
 }

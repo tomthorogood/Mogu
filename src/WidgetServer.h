@@ -31,7 +31,7 @@ private:
 
     WidgetAssembly* assembly;
 
-    Mogu* __application;
+    Mogu* application;
 
     void populateMap(Redis::NodeEditor*);
     void setupStates();

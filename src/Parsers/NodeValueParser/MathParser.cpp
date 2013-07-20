@@ -14,7 +14,7 @@
 
 namespace Parsers {
 
-MathParser::MathParser(TokenManager& tm) : __tm(tm)
+MathParser::MathParser(TokenManager& tm) : tm(tm)
 {
 }
 
@@ -25,13 +25,13 @@ int MathParser::processInput()
 	// temporary operator stack for doing conversion
 	std::stack<int> opStack;
 
-	__tm.saveLocation();
+	tm.saveLocation();
 
 	bool done = false;
 	while(!done)
 	{
-        int currToken = (int) __tm.currentToken();
-		__tm.next();	//move
+        int currToken = (int) tm.currentToken();
+		tm.next();	//move
 
 		if(isOperator(MoguSyntax::get(currToken))) {
             const SyntaxDef& oper = MoguSyntax::get(currToken);
@@ -41,7 +41,7 @@ int MathParser::processInput()
                     break;
 				case MoguSyntax::OPER_CLPAREN:
                     while(opStack.top() != MoguSyntax::OPER_OPPAREN) {
-                        __postfixExpression.push_back(opStack.top());
+                        postfixExpression.push_back(opStack.top());
                         opStack.pop();
                     }
                     done = true;
@@ -57,7 +57,7 @@ int MathParser::processInput()
                     }
 						
                     while(!hasHigherPrecedence(currToken, opStack.top())) {
-                        __postfixExpression.push_back(opStack.top());
+                        postfixExpression.push_back(opStack.top());
                         opStack.pop();
 
                         if(opStack.empty())
@@ -68,33 +68,33 @@ int MathParser::processInput()
                 }
 		}
 		else {
-			__postfixExpression.push_back(currToken);
+			postfixExpression.push_back(currToken);
 		}
 	}
 
 	while(!opStack.empty()) {
-		__postfixExpression.push_back(opStack.top());
+		postfixExpression.push_back(opStack.top());
 		opStack.pop();
 	}
 
 	//std::cout << "converted to PostFix: ";
-	//for(int i=0; i<__postfixExpression.size(); i++)
-		//std::cout << __postfixExpression[i] << " ";
+	//for(int i=0; i<postfixExpression.size(); i++)
+		//std::cout << postfixExpression[i] << " ";
 	//std::cout << std::endl;
 
 	// *** EVALUATE POSTFIX EXPRESSION ***
-	for(unsigned int i=0; i<__postfixExpression.size(); i++) {
-        int currToken = __postfixExpression[i];
+	for(unsigned int i=0; i<postfixExpression.size(); i++) {
+        int currToken = postfixExpression[i];
         const SyntaxDef& syn_token = MoguSyntax::get(currToken);
 
 		if(!isOperator(syn_token)) {	//operand 
-			__operandStack.push(currToken);
+			operandStack.push(currToken);
 		}
 		else {							//operator
-			int op2 = __operandStack.top();
-			__operandStack.pop();
-			int op1 = __operandStack.top();
-			__operandStack.pop();
+			int op2 = operandStack.top();
+			operandStack.pop();
+			int op1 = operandStack.top();
+			operandStack.pop();
 
 			int opResult;
 			switch(syn_token) {
@@ -113,16 +113,16 @@ int MathParser::processInput()
 				default:
                     break;
 			}
-		__operandStack.push(opResult);
+		operandStack.push(opResult);
 		}
 	}
 
-	assert(__operandStack.size() == 1);
+	assert(operandStack.size() == 1);
 
-	__tm.prev();
-	__tm.deleteFromSaved();
-	__tm.injectToken(__operandStack.top());
-	return __operandStack.top();
+	tm.prev();
+	tm.deleteFromSaved();
+	tm.injectToken(operandStack.top());
+	return operandStack.top();
 }
 
 // read: has STRICTLY higher precedence
@@ -139,9 +139,9 @@ bool MathParser::hasHigherPrecedence(const SyntaxDef& op1, const SyntaxDef& op2)
 
 void MathParser::reset()
 {
-	__postfixExpression.clear();
-	while(!__operandStack.empty())
-		__operandStack.pop();
+	postfixExpression.clear();
+	while(!operandStack.empty())
+		operandStack.pop();
 }
 
 

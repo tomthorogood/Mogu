@@ -14,11 +14,11 @@
 
 class MoldableImage : public Moldable
 {
-    Wt::WImage* __image;
-    std::string __assembly_src;
-    std::string __assembly_txt;
+    Wt::WImage* image;
+    std::string assembly_src;
+    std::string assembly_txt;
 protected:
-    virtual void __init__(WidgetAssembly*) override;
+    virtual void init(WidgetAssembly*) override;
     void initializeImage();
 
 public:
@@ -26,7 +26,7 @@ public:
 
     inline virtual std::string moldableValue()
     {
-        return __image->imageLink().url();
+        return image->imageLink().url();
     }
 
     //Currently, this operation is unsupported by Wt.

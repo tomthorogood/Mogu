@@ -23,7 +23,7 @@ class StateParser
 		void processInput(Moldable* broadcaster);
 
 	private:
-		TokenManager& __tm;
+		TokenManager& tm;
 
         // When a TOKEN_DELIM is expected as a placeholder for an
         // object's identifier, this method will advance the TM pointer,

@@ -15,12 +15,12 @@
 template <class T, class U>
 class LockedMap
 {
-    std::map <T,U> __map;
+    std::map <T,U> map;
 public:
     LockedMap(std::initializer_list <typename std::map<T,U>::value_type> lst)
-        : __map(lst){}
+        : map(lst){}
     const U& operator[] (const T& key) const
     {
-        return __map.at(key);
+        return map.at(key);
     }
 } ;

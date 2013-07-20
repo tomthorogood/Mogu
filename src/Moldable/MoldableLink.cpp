@@ -14,15 +14,15 @@
 MoldableLink::MoldableLink (WidgetAssembly* assembly)
 : Moldable(assembly, MoguSyntax::anchor)
 {
-    __init__(assembly);
+    init(assembly);
 }
 
-void MoldableLink::__init__(WidgetAssembly* assembly)
+void MoldableLink::init(WidgetAssembly* assembly)
 {
     NodeValue v;
-    __assembly_location = (std::string)
+    assembly_location = (std::string)
         assembly->attrdict[MoguSyntax::location.integer];
-    __assembly_text = (std::string)
+    assembly_text = (std::string)
         assembly->attrdict[MoguSyntax::text.integer];
     initializeLink();
 }
@@ -31,16 +31,16 @@ void MoldableLink::initializeLink()
 {
     mApp;
     NodeValue v;
-    app->interpreter().giveInput(__assembly_location,v);
+    app->interpreter().giveInput(assembly_location,v);
     std::string href = stripquotes(v.getString());
-    app->interpreter().giveInput(__assembly_text,v);
+    app->interpreter().giveInput(assembly_text,v);
     std::string text = stripquotes(v.getString());
-    if (__link)
+    if (link)
     {
-        removeWidget(__link);
-        delete __link;
+        removeWidget(link);
+        delete link;
     }
-    __link = new Wt::WAnchor(href,text);
-    __link->setTarget(Wt::TargetNewWindow);
-    addWidget(__link);
+    link = new Wt::WAnchor(href,text);
+    link->setTarget(Wt::TargetNewWindow);
+    addWidget(link);
 }

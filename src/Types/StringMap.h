@@ -19,7 +19,7 @@ public:
 
     inline bool key_exists(size_t key) const {
         try {
-            __map.at(key);
+            map.at(key);
         }
         catch (const std::out_of_range&) {
             return false;
@@ -28,19 +28,19 @@ public:
     }
 
     inline std::string get (size_t key) const {
-        if (key_exists(key)) return __map.at(key);
+        if (key_exists(key)) return map.at(key);
         else return EMPTY;
     }
 
     inline void set(size_t key, const std::string& val) {
-        __map[key] = val;
+        map[key] = val;
     }
 
-    inline void clear() { __map.clear();}
-    inline size_t size() const { return __map.size(); }
+    inline void clear() { map.clear();}
+    inline size_t size() const { return map.size(); }
 
 private:
-    std::map <size_t, std::string> __map;
+    std::map <size_t, std::string> map;
 
 };
 

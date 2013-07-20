@@ -15,63 +15,61 @@
 #include <Wt/WAnchor>
 #include <Types/WidgetAssembly.h>
 
-Moldable::Moldable (WidgetAssembly* assembly, const SyntaxDef& widget_type) :
-    __style_changed(this)
-    ,__failed_test(this)
-    ,__succeeded_test(this)
-    ,__loaded(this)
-    ,__hidden_changed(this)
-    ,__index_changed(this)
-    ,__widget_type(widget_type)
-    ,__node(assembly->node)
+Moldable::Moldable (WidgetAssembly* assembly, const SyntaxDef& widget_type_) :
+    sig_style_changed(this)
+    ,sig_failed_test(this)
+    ,sig_succeeded_test(this)
+    ,sig_loaded(this)
+    ,sig_hidden_changed(this)
+    ,sig_index_changed(this)
+    ,widget_type(widget_type_)
+    ,node(assembly->node)
 {
 #ifdef DEBUG
     static size_t num_constructed = 0;
     std::cout << "Moldable Constructor("<< ++num_constructed <<
-        "): " << __node << std::endl;
+        "): " << node << std::endl;
 #endif
-    __init__(assembly);
+    init(assembly);
 }
 
 Moldable::~Moldable()
 {
     mApp; 
     if (!testFlag(MoldableFlags::shun))
-        app->deregisterWidget(__node);
-    if (__bindery != nullptr) delete __bindery;
+        app->deregisterWidget(node);
+    if (bindery != nullptr) delete bindery;
 }
 
-void Moldable::__init__ (WidgetAssembly* assembly)
+void Moldable::init (WidgetAssembly* assembly)
 {
     mApp;
-    app->registerWidget(__node, *this);
-    __assembly_style = (std::string)
+    app->registerWidget(node, *this);
+    assembly_style = (std::string)
         assembly->attrdict[MoguSyntax::style.integer];
-    __assembly_tooltip = (std::string)
+    assembly_tooltip = (std::string)
         assembly->attrdict[MoguSyntax::tooltip.integer];
     initializeGlobalAttributes();
     if (assembly->triggers.size() > 0)
-        __bindery = new EventHandler(*this, *(assembly->triggerMap));
+        bindery = new EventHandler(*this, *(assembly->triggerMap));
 }
 
 void Moldable::initializeGlobalAttributes()
 {
     mApp;
     Parsers::NodeValueParser& nvp = app->interpreter();
-    if (!__assembly_style.empty())
+    if (!assembly_style.empty())
     {
         NodeValue nv_style;
-        nvp.giveInput(__assembly_style,nv_style);
-        std::string style = stripquotes(nv_style.getString());
-        setAttribute(MoguSyntax::style,style);
+        nvp.giveInput(assembly_style,nv_style);
+        setAttribute(MoguSyntax::style,nv_style);
     }
 
-    if (!__assembly_style.empty())
+    if (!assembly_tooltip.empty())
     {
         NodeValue nv_tooltip;
-        nvp.giveInput(__assembly_tooltip,nv_tooltip);
-        std::string tooltip = stripquotes(nv_tooltip.getString());
-        setAttribute(MoguSyntax::tooltip,tooltip);
+        nvp.giveInput(assembly_tooltip,nv_tooltip);
+        setAttribute(MoguSyntax::tooltip,nv_tooltip);
     }
 }
 
@@ -119,7 +117,7 @@ void Moldable::getAttribute(const SyntaxDef& state, NodeValue& val)
 bool Moldable::updateStackIndex (size_t index)
 {
     // If this is attempted on a widget without a stack, do nothing.
-    if (__widget_type != MoguSyntax::stack) return false;
+    if (widget_type != MoguSyntax::stack) return false;
     Wt::WStackedWidget* stack = static_cast<Wt::WStackedWidget*>( widget(0) );
     size_t max_index = stack->children().size() -1;
 
@@ -142,7 +140,7 @@ bool Moldable::setAttribute(const SyntaxDef& state, NodeValue& val)
         }
         case MoguSyntax::hidden: {
             setHidden((bool) val.getInt());
-            __hidden_changed.emit();
+            sig_hidden_changed.emit();
             break;
         }
         case MoguSyntax::text: {

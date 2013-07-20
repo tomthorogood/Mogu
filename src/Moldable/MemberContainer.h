@@ -9,7 +9,7 @@ public:
     MemberContainer(const std::string& node);
 
 private:
-    virtual void __init__();
+    virtual void init();
 
 };
 

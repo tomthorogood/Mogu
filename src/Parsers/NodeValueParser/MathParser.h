@@ -34,13 +34,13 @@ class MathParser
 
 	private:
 		// vector to build/store an equivalent postfix expression
-		std::vector<int> __postfixExpression;
+		std::vector<int> postfixExpression;
 
 		// stack used for postfix evaluation
-		std::stack<int> __operandStack;
+		std::stack<int> operandStack;
 
 		// token manager from NVP 
-		TokenManager& __tm;
+		TokenManager& tm;
 
 		// compare precedence to do proper order-of-operations
 		// returns true if op1 has higher precedence than op2

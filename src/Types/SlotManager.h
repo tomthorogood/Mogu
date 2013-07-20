@@ -17,23 +17,23 @@ public:
 
     inline void setSlot(const std::string& name, const NodeValue& value)
     {
-        __map[name] = value;
+        map[name] = value;
     }
 
     inline NodeValue retrieveSlot(const std::string& name)
     {
-        NodeValue ret_val = __map.at(name);
-        __map.erase(name);
+        NodeValue ret_val = map.at(name);
+        map.erase(name);
         return ret_val;
     }
 
     inline NodeValue peekSlot(const std::string& name)
     {
-        return __map.at(name);
+        return map.at(name);
     }
 
 private:
-    std::unordered_map <std::string,NodeValue> __map;
+    std::unordered_map <std::string,NodeValue> map;
 
 };
 

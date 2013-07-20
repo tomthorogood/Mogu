@@ -105,19 +105,21 @@ template <> std::vector <std::string>
 
 void QuerySet::setPrefix(Prefix prefix)
 {
+    if (prefix == prefix) return;
     if (rdb != nullptr)
     {
         redisFree(rdb);
         rdb = nullptr;
     }
     mApp;
-    if (__prefix == prefix) return; 
-    __prefix = prefix;
+    prefix = prefix;
     context = app->contextMap()->get(prefix);
     rdb = redisConnect(context->host(), context->port);
     selected_db = context->db_num;
-    appendQuery("select %d", selected_db);
-    execute();
+    clear();
+    redisCommand(rdb, "select %d", selected_db);
+    //appendQuery("select %d", selected_db);
+    //execute();
 }
 
 

@@ -12,8 +12,9 @@ NodeEditor::NodeEditor(
     const Prefix& prefix_
     , const std::string& node_
     , NodeValue* arg_)
-    : prefix(prefix_), c_node(node_.c_str()), arg(arg_), db(prefix_),
-        c_prefix(prefixMap.at(prefix_).c_str())
+    : prefix(prefix_), db(prefix_), arg(arg_), 
+        c_prefix(prefixMap.at(prefix_).c_str()), c_node(node_.c_str())
+        
 {
     setId(); // This has to be the first thing we do!
     /* Determine whether the node exists */
@@ -22,9 +23,17 @@ NodeEditor::NodeEditor(
     /* Get the raw type of the node.*/
     appendCommand("type");
     exists = db.yieldResponse <bool>();
-    if (exists) type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
+    if (exists)
+        type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
     /* Don't try and guess the type of a node that doesn't exist. */
-    else db.clear();
+    else if (prefix == Prefix::user || prefix == Prefix::group)
+    {
+
+    }
+    else
+    {
+        db.clear();
+    }
 
     if (arg) setArgInfo();
 
@@ -65,7 +74,7 @@ std::string NodeEditor::read()
 {
     if (!exists) 
     {
-        if (prefix != Prefix::user || prefix != Prefix::group)
+        if (prefix != Prefix::user && prefix != Prefix::group)
         {
             return EMPTY;
         }
@@ -204,10 +213,14 @@ void NodeEditor::read(std::vector <std::string>& iovec)
 
 std::string NodeEditor::getDefault()
 {
-    std::string node(c_node);
-    NodeEditor editor(Prefix::policies, node, arg);
-    editor.setSub("default");
-    return editor.read();
+    db.clear();
+    Prefix prefix_ = prefix;
+    setPrefix(Prefix::policies);
+    setSub(MoguSyntax::default_.str);
+    std::string def = read();
+    clearSub();
+    setPrefix(prefix_);
+    return def;
 }
 
 void NodeEditor::getDefault(std::vector<std::string>& iovec)

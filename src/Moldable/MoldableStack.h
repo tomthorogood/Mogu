@@ -30,45 +30,45 @@ public:
 class MoldableStack : public MoldableAbstractParent
 {
 private:
-    WFriendlyStack* __stack = nullptr;
-    Wt::Signal <> __stack_index_changed;
+    WFriendlyStack* stack = nullptr;
+    Wt::Signal <> stack_index_changed;
 
 public:
     MoldableStack (WidgetAssembly*);
 
     //Stacked containers do not have textual values.
-    inline virtual std::string moldableValue() { return __node; }
+    inline virtual std::string moldableValue() { return node; }
     inline virtual void setMoldableValue(const std::string& str) {}
 
     virtual void appendChild(Moldable* child) {
-        __stack->addChild(child);
+        stack->addChild(child);
     }
 
     inline virtual void addWidget(Wt::WWidget* moldable)
     {
-        __stack->addWidget(moldable);
+        stack->addWidget(moldable);
     }
 
-    inline Wt::Signal <>& stackIndexChanged() { return __stack_index_changed;}
+    inline Wt::Signal <>& stackIndexChanged() { return stack_index_changed;}
 
-    inline virtual void __init__()
+    inline virtual void init()
     {
         // Don't cause memory leaks when we reload the widget.
-        if (__stack != nullptr) {
-            removeWidget(__stack);
-            delete __stack;
+        if (stack != nullptr) {
+            removeWidget(stack);
+            delete stack;
         }
 
-        __stack = new WFriendlyStack();
-        MoldableAbstractParent::addWidget(__stack);
+        stack = new WFriendlyStack();
+        MoldableAbstractParent::addWidget(stack);
     }
 
     inline virtual void addChild(Moldable* child)  {
-        __stack->addChild(child);
+        stack->addChild(child);
     }
 
     inline virtual void removeChild(Moldable* child)  {
-        __stack->removeChild(child);
+        stack->removeChild(child);
     }
 };
 

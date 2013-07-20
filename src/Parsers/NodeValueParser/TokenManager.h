@@ -20,12 +20,12 @@ namespace Parsers {
 
 	//centralized token groups for decision logic in the various
 	//parsers
-    const static std::unordered_set<int> __widgetTokens = {
+    const static std::unordered_set<int> widgetTokens = {
 		 (int) MoguSyntax::own,
 		 (int) MoguSyntax::widget
 	};
 
-    const static std::unordered_set<int> __stateTokens = {
+    const static std::unordered_set<int> stateTokens = {
 	     (int) MoguSyntax::style,
 	     (int) MoguSyntax::text,
 	     (int) MoguSyntax::hidden,
@@ -34,14 +34,14 @@ namespace Parsers {
 	     (int) MoguSyntax::index
 	};
 
-    const static std::unordered_set<int> __dbTokens = {
+    const static std::unordered_set<int> dbTokens = {
 		 (int) MoguSyntax::user,
 		 (int) MoguSyntax::session,
 		 (int) MoguSyntax::group,
 		 (int) MoguSyntax::data
 	};
 	
-    const static std::unordered_set<int> __objectTokens = {
+    const static std::unordered_set<int> objectTokens = {
 		 (int) MoguSyntax::own,
 		 (int) MoguSyntax::user,
 		 (int) MoguSyntax::session,
@@ -54,22 +54,22 @@ namespace Parsers {
 
 	inline bool isStateToken(int token) 
 	{
-	    return __stateTokens.count( token) == 1;
+	    return stateTokens.count( token) == 1;
 	}
 
 	inline bool isWidgetToken(int token) 
 	{
-		return __widgetTokens.count( token) == 1;
+		return widgetTokens.count( token) == 1;
 	}
 
 	inline bool isDBToken(int token) 
 	{
-		return __dbTokens.count( token) == 1;
+		return dbTokens.count( token) == 1;
 	}
 
 	inline bool isObjectToken(int token) 
 	{
-		return __objectTokens.count( token) == 1;
+		return objectTokens.count( token) == 1;
 	}
 
 	inline bool isPrepositionToken(int token) 
@@ -97,74 +97,74 @@ class TokenManager
 		TokenManager();
         inline void reset()
         {
-            __numTokens.clear();
-            __strTokens.clear();
-            __index = 0;
-            __begin = __numTokens.begin();
+            numTokens.clear();
+            strTokens.clear();
+            index = 0;
+            begin_ptr = numTokens.begin();
         }
         inline void addToken(int numToken)
         {
-            __numTokens.push_back(numToken);
-            __begin = __numTokens.begin();
+            numTokens.push_back(numToken);
+            begin_ptr = numTokens.begin();
         }
         inline void addToken(std::string strToken)
         {
-            __numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
-            __strTokens.set(__numTokens.size()-1, strToken);
-            __begin = __numTokens.begin();
+            numTokens.push_back((int) MoguSyntax::TOKEN_DELIM);
+            strTokens.set(numTokens.size()-1, strToken);
+            begin_ptr = numTokens.begin();
         }
         //must call this function directly after all tokens are added
         //or else we will have undefined behavior!
         inline void end()
         {
             //place iterator at end of numerical token vector
-            __it = __numTokens.end() - 1;
+            it = numTokens.end() - 1;
             updateIndex();
         }
         /* Like 'setiterator', but returns to the beginning, for when
          * we will not be stepping backward through the input.
          */
         inline void begin() {
-            __it = __numTokens.begin();
-            __index = 0;
+            it = numTokens.begin();
+            index = 0;
         }
 
 		//methods for navigating the token list.
         inline void next()
         {
-            ++__it;
-            ++__index;
+            ++it;
+            ++index;
         }
 
         inline void prev()
         {
-            --__it;
-            --__index;
+            --it;
+            --index;
         }
 
         inline void saveLocation()
         {
-            if (__it >= __numTokens.end())
+            if (it >= numTokens.end())
             {
                 realignIterators();
             }
-            __savedit = __it;
+            savedit = it;
         }
 
 		//token access methods
         inline int currentToken() const
         {
-            if (__it > __numTokens.end()) std::cout << "HOW IS THIS POSSIBLE?!";
+            if (it > numTokens.end()) std::cout << "HOW IS THIS POSSIBLE?!";
             return
-                (__it < __numTokens.begin())? MoguSyntax::OUT_OF_RANGE_BEGIN :
-                (__it >= __numTokens.end())  ? MoguSyntax::OUT_OF_RANGE_END   :
-                *__it;
+                (it < numTokens.begin())? MoguSyntax::OUT_OF_RANGE_BEGIN :
+                (it >= numTokens.end())  ? MoguSyntax::OUT_OF_RANGE_END   :
+                *it;
         }
 
         inline std::string fetchStringToken()
         {
             if(isTokenDelim())
-                return __strTokens.get(__index);
+                return strTokens.get(index);
             else
                 return R"(ERR: DEREFERENCING NON-TOKENDELIM)";
         }
@@ -185,14 +185,14 @@ class TokenManager
         //call this directly after deleteToSaved()!
         inline void injectToken(int numToken)
         {
-            __it = __numTokens.insert(__it, numToken);
+            it = numTokens.insert(it, numToken);
             updateIndex();
         }
         //call this directly after deleteToSaved()!
         inline void injectToken(std::string strToken)
         {
-            __it = __numTokens.insert(__it, (int) MoguSyntax::TOKEN_DELIM);
-            __strTokens.set(__index, strToken);
+            it = numTokens.insert(it, (int) MoguSyntax::TOKEN_DELIM);
+            strTokens.set(index, strToken);
             updateIndex();
         }
 		
@@ -201,12 +201,12 @@ class TokenManager
 		//deleting any tokens
         inline void returnToSaved()
         {
-            __it = __savedit;
+            it = savedit;
             updateIndex();
         }
 
 
-		size_t size() { return __numTokens.size();}
+		size_t size() { return numTokens.size();}
 
 		//debug methods
 		void printTokens();
@@ -223,15 +223,15 @@ class TokenManager
 		void updateStringIndexes();
 
 		//token vectors
-		std::vector<int> __numTokens;
-		StringMap __strTokens;
+		std::vector<int> numTokens;
+		StringMap strTokens;
 
 
 		//indexes our current token/stringToken
-		fwd_iterator __it;
-		fwd_iterator __savedit;
-		fwd_iterator __begin;
-		size_t __index;
+		fwd_iterator it;
+		fwd_iterator savedit;
+		fwd_iterator begin_ptr;
+		size_t index;
 
 		/* After a more complicated operation, this makes sure the index
 		 * is correctly updated. As this is an expensive method, it's always
@@ -241,30 +241,30 @@ class TokenManager
 		size_t sz =0;
 
 		inline void updateIndex() {
-		    sz = __numTokens.size();
-		    __index = __numTokens.size() - (__numTokens.end()-__it);
+		    sz = numTokens.size();
+		    index = numTokens.size() - (numTokens.end()-it);
 		}
 
 		inline size_t getIndex(fwd_iterator& iter) {
-		    return __numTokens.size() - (__numTokens.end()-iter);
+		    return numTokens.size() - (numTokens.end()-iter);
 		}
 
 		/* If the vector was completely reallocated, its start pointer will
 		 * have changed.
 		 */
-		inline bool wasReallocated() { return __begin != __numTokens.begin();}
+		inline bool wasReallocated() { return begin_ptr != numTokens.begin();}
 
 		/* In the case of a reallocation, we must update the __it
 		 * , __savedit, and __begin variables.
 		 */
 		inline void realignIterators() {
-		    int saved_offset = __savedit - __begin;
-		    __begin = __numTokens.begin();
-		    __it = __begin + __index;
+		    int saved_offset = savedit - begin_ptr;
+		    begin_ptr = numTokens.begin();
+		    it = begin_ptr + index;
 		    if (saved_offset > 0)
-		        __savedit = __begin + saved_offset;
+		        savedit = begin_ptr + saved_offset;
 		    else
-		        __savedit = __begin;
+		        savedit = begin_ptr;
 		}
 };
 

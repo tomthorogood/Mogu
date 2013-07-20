@@ -31,10 +31,10 @@ class NodeValueParser
 		    Moldable *bc = nullptr);
 
 	private:
-        std::string __input;
-		StateParser __stateParser;
-		MathParser __mathParser;
-		TokenManager __tm;
+        std::string input;
+		StateParser stateParser;
+		MathParser mathParser;
+		TokenManager tm;
 
 		void tokenizeInput(std::string input, bool setAtBeginning=false);
 		bool reduceExpressions(Moldable* bc);

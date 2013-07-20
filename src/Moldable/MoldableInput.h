@@ -14,28 +14,28 @@
 
 class MoldableInput : public Moldable
 {
-    std::string __assembly_validator;
-    std::string __assembly_txt;
-    Wt::WValidator* __validator = nullptr;
+    std::string assembly_validator;
+    std::string assembly_txt;
+    Wt::WValidator* validator_ptr = nullptr;
 protected:
-    Wt::WLineEdit* __input = nullptr;
-    virtual void __init__(WidgetAssembly* assembly) override;
+    Wt::WLineEdit* input = nullptr;
+    virtual void init(WidgetAssembly* assembly) override;
     void initializeInput();
 
 public:
     MoldableInput (WidgetAssembly*);
 
     inline virtual std::string moldableValue() {
-        return __input->valueText().toUTF8();
+        return input->valueText().toUTF8();
     }
 
     inline virtual void setMoldableValue(const std::string& txt) {
-        __input->setEmptyText(txt);
+        input->setEmptyText(txt);
     }
 
     inline virtual void validate()
     {
-        Wt::WValidator::State result = __input->validate();
+        Wt::WValidator::State result = input->validate();
         if (result == Wt::WValidator::Valid) {
             succeed().emit();
             return;

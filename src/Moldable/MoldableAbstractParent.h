@@ -14,8 +14,8 @@ class MoldableAbstractParent : public Moldable
 {
 protected:
     int num_children;
-    std::vector <Moldable*> __moldable_children;
-    virtual void __init__(WidgetAssembly*) override;
+    std::vector <Moldable*> moldable_children;
+    virtual void init(WidgetAssembly*) override;
     std::vector <std::string> child_nodes;
 public:
     MoldableAbstractParent (WidgetAssembly*, const SyntaxDef&);
@@ -23,7 +23,7 @@ public:
 
     virtual void appendChild(Moldable*) =0;
     inline const std::vector<Moldable*>& moldableChildren() {
-        return __moldable_children;
+        return moldable_children;
     }
 
     inline virtual void reload()

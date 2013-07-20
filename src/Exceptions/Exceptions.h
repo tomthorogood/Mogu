@@ -13,23 +13,23 @@
 namespace Exceptions {
 class MoguException: public std::exception
 {
-    std::string __node_name;
-    std::string __error_msg;
+    std::string node_name;
+    std::string error_msg;
 public:
     MoguException(
         const std::string& node_name, const std::string& error_msg)
         : std::exception()
-          , __node_name(node_name)
-          , __error_msg(error_msg)
+          , node_name(node_name)
+          , error_msg(error_msg)
     {
     }
     virtual const char* what() const throw ()
     {
-        std::string output(__node_name);
+        std::string output(node_name);
         output.append(": ");
-        output.append(__error_msg);
-        const char* __out = output.c_str();
-        return __out;
+        output.append(error_msg);
+        const char* out = output.c_str();
+        return out;
     }
     virtual ~MoguException() throw ()
     {

@@ -5,16 +5,16 @@
 
 NodeValue::NodeValue()
 {
-    __numerics = new NumericUnion();
-    __type = ReadType::NO_VALUE;
+    numerics = new NumericUnion();
+    type = ReadType::NO_VALUE;
     as_string = "";
 }
 
 NodeValue::NodeValue( const NodeValue& proto)
 {
     if (&proto == this) return;
-    __numerics = new NumericUnion();
-    __type = ReadType::NO_VALUE;
+    numerics = new NumericUnion();
+    type = ReadType::NO_VALUE;
     switch(proto.getType())
     {
         case (ReadType::int_value):
@@ -32,5 +32,5 @@ NodeValue::NodeValue( const NodeValue& proto)
 
 NodeValue::~NodeValue()
 { 
-    delete __numerics;
+    delete numerics;
 }

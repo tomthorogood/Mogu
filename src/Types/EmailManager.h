@@ -16,7 +16,7 @@ class EmailManager
     std::string subject     = EMPTY;
     std::string message     = EMPTY;
 
-    uint8_t __status        = 0;
+    uint8_t status        = 0;
 public:
     EmailManager()
     {
@@ -29,28 +29,28 @@ public:
         const std::string& msg)
     {
         message = msg;
-        __status |= 0x1;
+        status |= 0x1;
     }
 
     inline void setSubject(
         const std::string& subj)
     {
         subject = subj;
-        __status |= 0x2;
+        status |= 0x2;
     }
 
     inline void setRecipient(
         const std::string& addr)
     {
         to_address = addr;
-        __status |= 0x4;
+        status |= 0x4;
     }
 
     inline bool send()
     {
         const uint8_t cpl = 0x1 | 0x2 | 0x4;
-        if (__status != cpl) return false;
-        __status = 0x0;    //Reset for future use
+        if (status != cpl) return false;
+        status = 0x0;    //Reset for future use
 
         std::stringstream buffer;
         buffer << "echo " << "\"" << message << "\"";

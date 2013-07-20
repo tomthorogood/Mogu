@@ -2,7 +2,7 @@
 #include <Types/WidgetAssembly.h>
 
 WidgetServer::WidgetServer (Mogu* application)
-    : __application(application)
+    : application(application)
 {
 
 }

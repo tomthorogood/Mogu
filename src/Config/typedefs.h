@@ -20,9 +20,6 @@ typedef std::vector<std::pair<char, char> > CharCouplets;
 
 typedef std::pair<std::string, int> TokenCycles;
 
-typedef int (*__m_enm_parse)(
-    const std::string&);
-
 enum class Prefix {
     __NONE__    =0,
     widgets     =1,

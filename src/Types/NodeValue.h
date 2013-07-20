@@ -32,13 +32,13 @@ union NumericUnion
 class NodeValue
 {
     /*!\brief one of the possible types of values */
-    ReadType __type = ReadType::NO_VALUE;
+    ReadType type = ReadType::NO_VALUE;
 
     /*!\brief If the value is a string, it is stored here. */
     std::string as_string = "" ;
 
     /*!\brief If the value is numeric, it is stord here. */
-    NumericUnion* __numerics = nullptr;
+    NumericUnion* numerics = nullptr;
 
     inline void resetStr()
     {
@@ -47,14 +47,14 @@ class NodeValue
 
 public:
     NodeValue();
-    NodeValue(const int i) : __numerics(new NumericUnion()){
+    NodeValue(const int i) : numerics(new NumericUnion()){
 
         setInt(i);
     }
-    NodeValue(const std::string& s) : __numerics(new NumericUnion()){
+    NodeValue(const std::string& s) : numerics(new NumericUnion()){
         setString(s);
     }
-    NodeValue(const float f) : __numerics(new NumericUnion()){
+    NodeValue(const float f) : numerics(new NumericUnion()){
         setFloat(f);
     }
     /*!\brief Copies the value of another node value into this one. */
@@ -63,12 +63,12 @@ public:
     inline NodeValue& operator=(const NodeValue& v)
     {
         if (&v == this) return *this;
-        __type = v.getType();
+        type = v.getType();
         as_string = v.getString();
-        if (__numerics != nullptr) delete __numerics;
-        __numerics = new NumericUnion();
+        if (numerics != nullptr) delete numerics;
+        numerics = new NumericUnion();
         
-        switch (__type) {
+        switch (type) {
         case ReadType::int_value:
             setInt(v.getInt());
             break;
@@ -86,15 +86,15 @@ public:
 
     inline bool operator==(const NodeValue& v)
     {
-        if (__type != v.getType()) return false;
+        if (type != v.getType()) return false;
         switch(getType())
         {
             case ReadType::int_value:
-                return __numerics->as_int == v.getInt();
+                return numerics->as_int == v.getInt();
             case ReadType::string_value:
                 return as_string == v.getString();
             case ReadType::float_value:
-                return __numerics->as_float == v.getFloat();
+                return numerics->as_float == v.getFloat();
             default:return false;
         }
     }
@@ -103,11 +103,11 @@ public:
     virtual ~NodeValue();
 
     operator float() const {
-        return __numerics->as_float;
+        return numerics->as_float;
     }
 
     operator int() const {
-        return __numerics->as_int;
+        return numerics->as_int;
     }
 
     operator std::string() const {
@@ -129,41 +129,41 @@ public:
         else if (other.isInt())
         {
             if (isInt())
-                __numerics->as_int += (int) other;
+                numerics->as_int += (int) other;
             else if (isFloat())
-                __numerics->as_float += (int) other;
+                numerics->as_float += (int) other;
         }
         else if (other.isFloat())
         {
             if (isInt())
-                __numerics->as_int += (float) other;
+                numerics->as_int += (float) other;
             else if (other.isFloat())
-                __numerics->as_float += (float) other;
+                numerics->as_float += (float) other;
         }
     }
 
-    /*!\brief Sets the string as well as __type */
+    /*!\brief Sets the string as well as type */
     inline void setString(std::string val)
     {
         as_string = val;
-        __type = ReadType::string_value;
+        type = ReadType::string_value;
     }
 
-    /*!\brief Sets an int as well as __type */
+    /*!\brief Sets an int as well as type */
     inline void setInt(int val)
     {
         resetStr();
-        __numerics->as_int = val;
-        __type = ReadType::int_value;
+        numerics->as_int = val;
+        type = ReadType::int_value;
     }
 
-    /*!\brief Sets a float as well as __type */
+    /*!\brief Sets a float as well as type */
     inline void setFloat(
         float val)
     {
         resetStr();
-        __numerics->as_float = val;
-        __type = ReadType::float_value;
+        numerics->as_float = val;
+        type = ReadType::float_value;
     }
 
     /*!\brief If the type is `string_value`, returns a string. */
@@ -175,24 +175,24 @@ public:
     /*!\brief If the type is `int_value`, returns the int.*/
     inline int& getInt() const
     {
-        return __numerics->as_int;
+        return numerics->as_int;
     }
 
     /*!\brief If the type is `float_value`, returns the float. */
     inline float getFloat() const
     {
-        return __numerics->as_float;
+        return numerics->as_float;
     }
 
     /*!\brief Returns the type so the correct data can be extracted. */
     inline ReadType getType() const
     {
-        return __type;
+        return type;
     }
 
-    inline bool isString() const { return __type == ReadType::string_value;}
-    inline bool isInt() const { return __type == ReadType::int_value;}
-    inline bool isFloat() const { return __type == ReadType::float_value;}
+    inline bool isString() const { return type == ReadType::string_value;}
+    inline bool isInt() const { return type == ReadType::int_value;}
+    inline bool isFloat() const { return type == ReadType::float_value;}
 
 };
 // end NodeValue

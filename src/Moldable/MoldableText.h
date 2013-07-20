@@ -13,20 +13,20 @@
 
 class MoldableText : public Moldable
 {
-    Wt::WText* __text;
+    Wt::WText* text;
     void initializeText();
-    std::string __assembly_text;
+    std::string assembly_text;
 protected:
-    virtual void __init__(WidgetAssembly*) override;
+    virtual void init(WidgetAssembly*) override;
 public:
     MoldableText(WidgetAssembly*);
 
     inline virtual std::string moldableValue() {
-        return __text->text().toUTF8();
+        return text->text().toUTF8();
     }
 
     inline virtual void setMoldableValue(const std::string& value) {
-        __text->setText(value);
+        text->setText(value);
     }
 
     inline virtual void reload()

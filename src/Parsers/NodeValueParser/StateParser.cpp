@@ -16,7 +16,7 @@
 namespace Parsers {
 
 
-StateParser::StateParser(TokenManager& tm) : __tm(tm)
+StateParser::StateParser(TokenManager& tm) : tm(tm)
 {
 }
 
@@ -28,21 +28,21 @@ StateParser::StateParser(TokenManager& tm) : __tm(tm)
  */
 std::string StateParser::getIdentifier()
 {
-    __tm.next();
-    if (__tm.currentToken  () != MoguSyntax::TOKEN_DELIM)
+    tm.next();
+    if (tm.currentToken  () != MoguSyntax::TOKEN_DELIM)
     {
         //TODO throw a pretty big error, as this should only happen in the 
         //case of bad syntax checking on import, or database corruption.
     }
-    std::string identifier = __tm.fetchStringToken();
-    __tm.next();
+    std::string identifier = tm.fetchStringToken();
+    tm.next();
     return identifier;
 }
 
 void StateParser::processInput(Moldable* broadcaster)
 {
-    __tm.saveLocation();
-    int currentToken = __tm.currentToken ();
+    tm.saveLocation();
+    int currentToken = tm.currentToken ();
     NodeValue result;
     std::string identifier;
 
@@ -53,7 +53,7 @@ void StateParser::processInput(Moldable* broadcaster)
             handleWidget(identifier,result);
             break;
         case MoguSyntax::own:
-            __tm.next();
+            tm.next();
             handleWidget(broadcaster, result);
             break;
 		case MoguSyntax::data:
@@ -80,19 +80,19 @@ void StateParser::processInput(Moldable* broadcaster)
         }
 	}
 
-    __tm.deleteFromSaved();
+    tm.deleteFromSaved();
 
     switch(result.getType())
     {
         case ReadType::string_value:
-            __tm.injectToken(result.getString());
+            tm.injectToken(result.getString());
             break;
         case ReadType::int_value:
-            __tm.injectToken(result.getInt());
+            tm.injectToken(result.getInt());
             break;
         default:
             // We'll figure out floats or bad values later (TODO)
-            __tm.injectToken(0); 
+            tm.injectToken(0); 
             break;
     }
 
@@ -111,7 +111,7 @@ void StateParser::handleWidget(const std::string& identifier, NodeValue& result)
     if (widget == nullptr) return; 
     
     // getIdentifier will have already advaned the token pointer 
-    int widget_attribute = __tm.currentToken ();
+    int widget_attribute = tm.currentToken ();
     widget->getAttribute(MoguSyntax::get(widget_attribute), result);
 }
 
@@ -130,13 +130,13 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
     {
         // If this is the case, the very next argument must inherently be
         // the hash key to resolve the field. There are two possibilities:
-        int hashkey = __tm.currentToken  ();
+        int hashkey = tm.currentToken  ();
 
         // The key is a string, such as "foo", with syntax like: 
         //  hget data.bar foo 
         if (hashkey == MoguSyntax::TOKEN_DELIM)
             db.appendQuery( "hget data.%s %s", c_node,
-                    __tm.fetchStringToken().c_str());
+                    tm.fetchStringToken().c_str());
 
         // Or the key is a string that is really an integer, with 
         // syntax like:
@@ -144,7 +144,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
         // hget data.bar 17
         else
             db.appendQuery( "hget data.%s %d", c_node,
-                    (int) __tm.currentToken());
+                    (int) tm.currentToken());
 
         // NOTE that there is the possibility of a collision in the highly
         // unlikely case that the hash key integer value is the same as the 
@@ -155,7 +155,7 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
     {
         // In this case, there must necessarily be a list index in order
         // to find the value.
-        db.appendQuery( "lindex data.%s %d", c_node, (int) __tm.currentToken());
+        db.appendQuery( "lindex data.%s %d", c_node, (int) tm.currentToken());
 
     }
 
@@ -165,32 +165,36 @@ void StateParser::handleData(const std::string& identifier, NodeValue& result)
 void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 {
     if (widget == nullptr) return;
-    widget->getAttribute(MoguSyntax::get(__tm.currentToken ()), result);
+    widget->getAttribute(MoguSyntax::get(tm.currentToken ()), result);
 }
 
 void StateParser::handleUserField(const std::string& field, NodeValue& result)
 {
-    Redis::ContextQuery policies(Prefix::policies);
-    Redis::ContextQuery user(Prefix::user);
     int token;
     NodeValue arg;
     Redis::NodeEditor node(Prefix::user, field);
 
-    const SyntaxDef& type = node.getType();
+    int type = node.getType().integer;
+    if (type == MoguSyntax::__NONE__)
+    {
+        type = node.policyType().integer;
+    }
     if (type == MoguSyntax::hash)
     {
-        token = __tm.currentToken();
+        token = tm.currentToken();
         if (token == MoguSyntax::TOKEN_DELIM)
-            arg.setString(__tm.fetchStringToken());
+            arg.setString(tm.fetchStringToken());
         else
-            arg.setString(std::to_string(__tm.currentToken()));
+            arg.setString(std::to_string(tm.currentToken()));
     }
     else if (type == MoguSyntax::list)
     {
-        arg.setString(std::to_string(__tm.currentToken()));
+        arg.setString(std::to_string(tm.currentToken()));
     }
     node.setArg(&arg);
-    result.setString(node.read());
+    std::string val = node.read();
+
+    result.setString(val);
 }
 
 void StateParser::handleGroupField(const std::string& field, NodeValue& result)
@@ -218,14 +222,14 @@ void StateParser::handleGroupField(const std::string& field, NodeValue& result)
             break;
         case MoguSyntax::list:{
             // Get the index of list item
-            int index = __tm.currentToken();
+            int index = tm.currentToken();
             grpdb.appendQuery( "lindex groups.%s.%s %d", group,
                     field.c_str(), index);
             break;}
         case MoguSyntax::hash:{
             // Ensure that the next token is in fact a key:
-            if (__tm.currentToken() != MoguSyntax::TOKEN_DELIM) return;
-            std::string key = __tm.fetchStringToken();
+            if (tm.currentToken() != MoguSyntax::TOKEN_DELIM) return;
+            std::string key = tm.fetchStringToken();
             grpdb.appendQuery( "hget groups.%s.%s %s",
                     group, field.c_str(), key.c_str());
             break;}

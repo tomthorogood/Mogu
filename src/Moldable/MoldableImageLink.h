@@ -12,10 +12,10 @@
 
 class MoldableImageLink : public MoldableLink
 {
-    Wt::WImage* __image;
-    std::string __assembly_src;
+    Wt::WImage* image;
+    std::string assembly_src;
 protected:
-    virtual void __init__(WidgetAssembly* assembly);
+    virtual void init(WidgetAssembly* assembly);
     void initializeImage();
 
 public:

@@ -33,22 +33,31 @@ Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
     {
     case MoguSyntax::container:
         product =  new MoldableContainer(assembly);
+        break;
     case MoguSyntax::stack:
         product =  new MoldableStack(assembly);
+        break;
     case MoguSyntax::text:
         product =  new MoldableText(assembly);
+        break;
     case MoguSyntax::anchor:
         product =  new MoldableLink(assembly);
+        break;
     case MoguSyntax::image:
         product =  new MoldableImage(assembly);
+        break;
     case MoguSyntax::image_link:
         product =  new MoldableImageLink(assembly);
+        break;
     case MoguSyntax::input:
         product =  new MoldableInput(assembly);
+        break;
     case MoguSyntax::password:
         product =  new MoldablePassword(assembly);
+        break;
     default:
         product =  new MoldableContainer(assembly);
+        break;
     }
 
     delete assembly;

@@ -11,7 +11,7 @@
 MoldablePassword::MoldablePassword(WidgetAssembly* assembly)
 : MoldableInput(assembly)
 {
-    __input->setEchoMode(Wt::WLineEdit::Password);
+    input->setEchoMode(Wt::WLineEdit::Password);
 }
 
 

@@ -68,6 +68,14 @@ public:
         return encrypted;
     }
     
+    inline const SyntaxDef& policyType()
+    {
+        setPolicy();
+        policy->appendQuery(
+            "hget policies.%s %d", c_node, MoguSyntax::type.integer);
+        return MoguSyntax::get(policy->yieldResponse<std::string>());
+    }
+
     inline void unset_arg()
     {
         arg = nullptr;
@@ -172,6 +180,7 @@ private:
         appendCommand("exists");
         exists = db.yieldResponse<bool>();
         arg = arg_;
+        setArgInfo();
     }
 
     inline void setType()
@@ -181,6 +190,7 @@ private:
         appendCommand("type");
         type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
         arg = arg_;
+        setArgInfo();
     }
 
 };//class NodeEditor

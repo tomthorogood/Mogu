@@ -23,20 +23,20 @@ class Mogu: public Wt::WApplication
     /*!\brief Changes the state of the application based on the URL */
     MoldableFactory moldableFactory;
     ContextMap* contextMap_         =nullptr;
-    Moldable* __wrapper             =nullptr;
+    Moldable* wrapper             =nullptr;
     UserManager* userManager        =nullptr;
 
     /*!\brief A map of named widgets. */
     std::unordered_map <std::string, Moldable*> widgetRegister;
-    Parsers::NodeValueParser __interpreter;
-    int __user;
-    int __group                     =0;    //!< Currently active user group
-    std::string __instanceid;
-    SlotManager __slotMgr;
+    Parsers::NodeValueParser interpreter_;
+    int user;
+    int group                     =0;    //!< Currently active user group
+    std::string instanceid;
+    SlotManager slotMgr;
 
     void loadMoguStyles();
     void handlePathChange(const std::string& path);
-    std::string __name__ = EMPTY;
+    std::string app_name;
 
     /*!\brief The widget that started it all... */
 
@@ -58,12 +58,11 @@ public:
 
     inline Parsers::NodeValueParser& interpreter()
     {
-        return __interpreter;
+        return interpreter_;
     }
 
     /*!\brief Returns a widget from the registry based on its name. */
-    inline Moldable* registeredWidget(
-        std::string name)
+    inline Moldable* registeredWidget( std::string name)
     {      
         try {
             return widgetRegister.at(name); 
@@ -78,8 +77,7 @@ public:
     }
 
     /*!\brief Removes a widget from the registry. */
-    inline void deregisterWidget(
-        std::string name)
+    inline void deregisterWidget( std::string name)
     {
         if (registeredWidget(name) != nullptr)
             widgetRegister[name] = nullptr;
@@ -87,7 +85,7 @@ public:
 
     inline std::string& instanceID()
     {
-        return __instanceid;
+        return instanceid;
     }
     
     inline const int& getUser() const
@@ -96,9 +94,9 @@ public:
     }
 
     inline UserManager& getUserManager() {return *userManager;}
-    inline const int& getGroup() const {return __group;}
+    inline const int& getGroup() const {return group;}
     inline const MoldableFactory& getFactory() { return moldableFactory; }
-    inline SlotManager& slotManager() { return __slotMgr;}
+    inline SlotManager& slotManager() { return slotMgr;}
     inline void alert (const std::string& message) {
         std::string jsalert = "alert(\""+message+"\");";
 	    doJavaScript(jsalert);
@@ -106,7 +104,8 @@ public:
 
     inline ContextMap* contextMap() { return contextMap_;}
     void removeWidget(const std::string& identifier);
-    inline const std::string& getName() { return __name__;}
+
+    inline const std::string& getName() const { return app_name; } 
 };
 
 #endif /* MOGU_H_ */

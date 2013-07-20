@@ -55,31 +55,31 @@ public:
 class Moldable : 
     public AllowsExternalManipulation
 {
-    EventHandler* __bindery = nullptr;
+    EventHandler* bindery = nullptr;
 
-    Wt::Signal <> __style_changed;
-    Wt::Signal <> __failed_test;
-    Wt::Signal <> __succeeded_test;
-    Wt::Signal <> __loaded;
-    Wt::Signal <> __hidden_changed;
-    Wt::Signal <> __index_changed;
+    Wt::Signal <> sig_style_changed;
+    Wt::Signal <> sig_failed_test;
+    Wt::Signal <> sig_succeeded_test;
+    Wt::Signal <> sig_loaded;
+    Wt::Signal <> sig_hidden_changed;
+    Wt::Signal <> sig_index_changed;
 
-    const SyntaxDef&  __widget_type;
+    const SyntaxDef&  widget_type;
 
     size_t num_triggers;
 
     bool updateStackIndex(size_t  index);
     void setFlags(Redis::NodeEditor&);
 
-    std::string __assembly_style;
-    std::string __assembly_tooltip;
+    std::string assembly_style;
+    std::string assembly_tooltip;
 
 protected:
-    uint8_t __flags     = 0;
-    std::string __node;
-    std::string __template_name;
+    uint8_t flags     = 0;
+    std::string node;
+    std::string template_name;
 
-    virtual void __init__(WidgetAssembly*);
+    virtual void init(WidgetAssembly*);
     void initializeGlobalAttributes();
 
 public:
@@ -103,26 +103,30 @@ public:
     inline virtual void setStyleClass (const Wt::WString& style)
     {
         Wt::WContainerWidget::setStyleClass(style);
-        __style_changed.emit();
+        sig_style_changed.emit();
     }
 
     inline std::string getNode()
     {
-        return __node;
+        return node;
     }
 
     inline virtual void load() override
     {
-        if (loaded() && !testFlag(MoldableFlags::allow_reload)) return;
+        if (loaded())
+        {
+            if (!testFlag(MoldableFlags::allow_reload))
+                return;
+        }
         Wt::WContainerWidget::load();
     }
 
-    inline Wt::Signal <>& styleChanged()    { return __style_changed; }
-    inline Wt::Signal <>& fail()            { return __failed_test; }
-    inline Wt::Signal <>& succeed()         { return __succeeded_test;}
-    inline Wt::Signal <>& onLoad()          { return __loaded; }
-    inline Wt::Signal <>& hiddenChanged()   { return __hidden_changed; }
-    inline Wt::Signal <>& indexChanged()    { return __index_changed;}
+    inline Wt::Signal <>& styleChanged()    { return sig_style_changed; }
+    inline Wt::Signal <>& fail()            { return sig_failed_test; }
+    inline Wt::Signal <>& succeed()         { return sig_succeeded_test;}
+    inline Wt::Signal <>& onLoad()          { return sig_loaded; }
+    inline Wt::Signal <>& hiddenChanged()   { return sig_hidden_changed; }
+    inline Wt::Signal <>& indexChanged()    { return sig_index_changed;}
 
     inline void increment(int byAmount=1) {
         NodeValue v(0);
@@ -158,22 +162,22 @@ public:
 
     virtual void inline reload()
     {
-        __flags |= (uint8_t)MoldableFlags::allow_reload;
+        flags |= (uint8_t)MoldableFlags::allow_reload;
         clear();
         initializeGlobalAttributes();
         load();
-        __flags -= (uint8_t)MoldableFlags::allow_reload;
+        flags -= (uint8_t)MoldableFlags::allow_reload;
     }
 
     /*!\deprecated*/
     inline virtual void reset()     {reload();}
-    inline void setFlag(MoldableFlags flag) { __flags |= (uint8_t) flag; }
+    inline void setFlag(MoldableFlags flag) { flags |= (uint8_t) flag; }
 
     inline void unsetFlag(MoldableFlags flag) { 
         if (testFlag(flag))
-            __flags -= (uint8_t) flag; 
+            flags -= (uint8_t) flag; 
     }
-    inline bool testFlag(MoldableFlags flag) {return __flags & (uint8_t) flag; }
+    inline bool testFlag(MoldableFlags flag) {return flags & (uint8_t) flag; }
     inline void shun() { setFlag(MoldableFlags::shun); }
     inline void unshun() { unsetFlag(MoldableFlags::shun); }
 
