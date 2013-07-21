@@ -49,7 +49,7 @@ void MoldableAbstractParent::load(){
 #endif
         mApp;
         const MoldableFactory& factory = app->getFactory();
-        for (auto child : child_nodes)
+        for (std::string child : child_nodes)
         {
 #ifdef DEBUG
            std::cout << "MoldableAbstractParent::load:"<< __LINE__

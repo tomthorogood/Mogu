@@ -24,6 +24,13 @@ MoldableFactory::~MoldableFactory()
 
 Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 {
+#ifdef DEBUG
+    static int iters = 0;
+    ++iters;
+    std::cout << "MoldableFactory::createMoldableWidget:" << __LINE__
+        << " Creating widget " << node << "(" << iters << ")" << std::endl;
+#endif
+
     WidgetAssembly* assembly = server->request(node);
     std::string s_type = (std::string)
         assembly->attrdict[MoguSyntax::type.integer];

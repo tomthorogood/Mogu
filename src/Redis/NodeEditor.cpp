@@ -28,7 +28,7 @@ NodeEditor::NodeEditor(
     /* Don't try and guess the type of a node that doesn't exist. */
     else if (prefix == Prefix::user || prefix == Prefix::group)
     {
-
+        type = getPolicyType();
     }
     else
     {
@@ -37,6 +37,26 @@ NodeEditor::NodeEditor(
 
     if (arg) setArgInfo();
 
+}
+
+inline int NodeEditor::getPolicyType()
+{
+    NodeValue* arg_ = arg;
+    unset_arg();
+    NodeValue tmp(MoguSyntax::type.integer);
+    arg = &tmp;
+    setArgInfo();
+
+    Prefix prefix_ = prefix;
+    setPrefix(Prefix::policies);
+    appendCommand("hget");
+    int type_ = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
+
+    setPrefix(prefix_);
+    unset_arg();
+    arg = arg_;
+    setArgInfo();
+    return MoguSyntax::get(db.yieldResponse<std::string>()).integer;
 }
 
 /* Resets anything that could potentially change
@@ -88,8 +108,11 @@ std::string NodeEditor::read()
     }
     if (type == MoguSyntax::string.integer)
     {
-        if (isEmpty(c_hashkey) && list_index == -1)
-            appendCommand("get");
+        NodeValue* arg_ = arg;
+        unset_arg();
+        appendCommand("get");
+        arg = arg_;
+        setArgInfo();
     }
     else if (type == MoguSyntax::list.integer)
     {
@@ -213,6 +236,12 @@ void NodeEditor::read(std::vector <std::string>& iovec)
 
 std::string NodeEditor::getDefault()
 {
+    NodeValue nv(MoguSyntax::default_.str);
+    NodeEditor def(Prefix::policies, c_node);
+    def.setSub(MoguSyntax::default_.str);
+    return def.read();
+
+    /*
     db.clear();
     Prefix prefix_ = prefix;
     setPrefix(Prefix::policies);
@@ -221,13 +250,14 @@ std::string NodeEditor::getDefault()
     clearSub();
     setPrefix(prefix_);
     return def;
+    */
 }
 
 void NodeEditor::getDefault(std::vector<std::string>& iovec)
 {
     std::string node(c_node);
     NodeEditor editor(Prefix::policies, node, arg);
-    editor.setSub("default");
+    editor.setSub(MoguSyntax::default_.str);
     editor.read(iovec);
 }
 
@@ -235,7 +265,7 @@ void NodeEditor::getDefault(std::map<std::string,std::string>& iomap)
 {
     std::string node(c_node);
     NodeEditor editor(Prefix::policies, node, arg);
-    editor.setSub("default");
+    editor.setSub(MoguSyntax::default_.str);
     editor.read(iomap);
 }
 
@@ -325,7 +355,7 @@ bool NodeEditor::write(std::vector<std::string>& iovec)
 
     /* Write everything as a batch */
     delay_execution = true;
-    for (auto str : iovec)
+    for (std::string str : iovec)
     {
         write(str);
     }
@@ -354,6 +384,7 @@ bool NodeEditor::remove(const std::string& value)
     if (type == MoguSyntax::list.integer)
     {
         db.appendQuery("lrem %s 1 %s", s_node.c_str(), value.c_str());
+        return true;
     }
     else return false;
 

@@ -22,14 +22,15 @@ void WidgetServer::populateMap(Redis::NodeEditor* node)
 
 void WidgetServer::setupStates()
 {
-    if (tnode)
-        delete tnode;
-    if (wnode)
-        delete wnode;
     const static std::string children = "children";
     const static std::string events = "events";
     NodeValue arg((int)MoguSyntax::type);
-    wnode = new Redis::NodeEditor(Prefix::widgets, assembly->node);
+
+    if (wnode == NULL)
+        wnode = new Redis::NodeEditor(Prefix::widgets, assembly->node);
+    else
+        wnode->setNode(assembly->node);
+
     assembly->tmpl = getAttribute(wnode, MoguSyntax::template_);
 
     /* This will create a map of properties first from the template, if
@@ -41,7 +42,11 @@ void WidgetServer::setupStates()
     std::vector <std::string> tmpl_children;
     if (!assembly->tmpl.empty())
     {
-        tnode = new Redis::NodeEditor(Prefix::templates, assembly->tmpl);
+        if (tnode == NULL)
+            tnode = new Redis::NodeEditor(Prefix::templates, assembly->tmpl);
+        else
+            tnode->setNode(assembly->tmpl);
+
         populateMap(tnode);
         tnode->setSub(children);
         tnode->read(tmpl_children);

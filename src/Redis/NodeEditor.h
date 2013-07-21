@@ -16,24 +16,26 @@ public:
             NodeValue* arg=nullptr);
 
     void setPrefix(Prefix);
+
     ~NodeEditor()
     {
-        if (policy != nullptr) delete policy;
     }
 
-    void setSub(const std::string& sub)
+    inline void setSub(const std::string& sub)
     {
         c_sub = sub.c_str();
         setExists();
         setType();
     }
 
-    void clearSub()
+    inline void clearSub()
     {
         c_sub = EMPTY;
         setExists();
         setType();
     }
+
+    inline int getPolicyType();
 
     /* Read a single value */
     std::string read();
@@ -59,21 +61,24 @@ public:
     /* Deletes either a list value or hash key */
     bool remove(const std::string& val);
 
-    bool setEncrypted()
+    inline bool setEncrypted()
     {
         setPolicy(); 
-        policy->appendQuery(
+        policy.appendQuery(
             "hget policies.%s %d", c_node, MoguSyntax::encrypted.integer);
-        encrypted = policy->yieldResponse<std::string>() == "yes"; 
+        encrypted = policy.yieldResponse<std::string>() == "yes";
         return encrypted;
     }
+
+    inline void setNode(const std::string& node_)
+    { c_node = node_.c_str();}
     
     inline const SyntaxDef& policyType()
     {
         setPolicy();
-        policy->appendQuery(
+        policy.appendQuery(
             "hget policies.%s %d", c_node, MoguSyntax::type.integer);
-        return MoguSyntax::get(policy->yieldResponse<std::string>());
+        return MoguSyntax::get(policy.yieldResponse<std::string>());
     }
 
     inline void unset_arg()
@@ -102,7 +107,7 @@ private:
     ContextQuery db;
     
     /* For user and group nodes, we'll need to read the node policy as well.*/
-    ContextQuery* policy    =nullptr;
+    ContextQuery policy;
     NodeValue* arg          =nullptr;
 
     bool exists             = false;
@@ -150,6 +155,8 @@ private:
      * If so, we'll retrieve that value.
      */
     std::string getDefault();
+    void setArgInfo();
+    void setId();
 
     /* Same as above but for default hashes. */
     void getDefault(std::map<std::string,std::string>&);
@@ -165,13 +172,8 @@ private:
 
     inline void setPolicy()
     {
-        if (policy == nullptr)
-            policy = new ContextQuery(Prefix::policies);
+        policy.setPrefix(Prefix::policies);
     }
-
-    void setArgInfo();
-    void setId();
-
 
     inline void setExists()
     {
