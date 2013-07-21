@@ -40,9 +40,9 @@ private:
         const SyntaxDef& attribute)
     {
         NodeValue arg(attribute.str);
-        node->setArg(&arg);
+        node->swapArg(&arg);
         std::string attrValue = node->read();
-        node->unset_arg();
+        node->swapArg();
         return attrValue;
     }
 };

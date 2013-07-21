@@ -36,7 +36,7 @@ void MoldableImage::init(WidgetAssembly* assembly)
 
 void MoldableImage::initializeImage()
 {
-    if (image)
+    if (image != NULL)
     {
         removeWidget(image);
         delete image;

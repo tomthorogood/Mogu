@@ -14,7 +14,7 @@
 
 class MoldableImage : public Moldable
 {
-    Wt::WImage* image;
+    Wt::WImage* image   =nullptr;
     std::string assembly_src;
     std::string assembly_txt;
 protected:

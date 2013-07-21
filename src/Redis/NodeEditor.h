@@ -3,7 +3,7 @@
 
 #include <declarations.h>
 #include "ContextQuery.h"
-
+#include <cassert>
 namespace Redis
 {
 
@@ -21,21 +21,21 @@ public:
     {
     }
 
-    inline void setSub(const std::string& sub)
+    inline void setSub(const std::string& sub_)
     {
-        c_sub = sub.c_str();
+        sub = sub_;
         setExists();
         setType();
     }
 
     inline void clearSub()
     {
-        c_sub = EMPTY;
+        sub = EMPTY;
         setExists();
         setType();
     }
 
-    inline int getPolicyType();
+    int getPolicyType();
 
     /* Read a single value */
     std::string read();
@@ -65,35 +65,58 @@ public:
     {
         setPolicy(); 
         policy.appendQuery(
-            "hget policies.%s %d", c_node, MoguSyntax::encrypted.integer);
+            "hget policies.%s %d", node.c_str(), MoguSyntax::encrypted.integer);
         encrypted = policy.yieldResponse<std::string>() == "yes";
         return encrypted;
     }
 
     inline void setNode(const std::string& node_)
-    { c_node = node_.c_str();}
+    { node = node_;}
     
     inline const SyntaxDef& policyType()
     {
         setPolicy();
         policy.appendQuery(
-            "hget policies.%s %d", c_node, MoguSyntax::type.integer);
+            "hget policies.%s %d", node.c_str(), MoguSyntax::type.integer);
         return MoguSyntax::get(policy.yieldResponse<std::string>());
     }
 
-    inline void unset_arg()
+    inline void unsetArgInfo()
     {
-        arg = nullptr;
-        c_hashkey = EMPTY;
+        hashkey = "";
         list_index = -1;
     }
 
+    /* Set the arg to a new arg. The old arg is lost. */
     inline void setArg(NodeValue* arg_)
     {
-        unset_arg();
+        unsetArgInfo();
         arg = arg_;
         setArgInfo();
     }
+
+    /* When given a new argument to swap in, the old
+     * argument is put into 'arg_storage', where it can be retrieved
+     * at a later time.
+     */
+    inline void swapArg (NodeValue* arg_)
+    {
+        unsetArgInfo();
+        arg_storage = arg;
+        arg = arg_;
+        setArgInfo();
+    }
+
+    /* When given no new argument, the argument in storage will be
+     * swapped in instead. */
+    inline void swapArg()
+    {
+        unsetArgInfo();
+        arg = arg_storage;
+        arg_storage = NULL;
+        setArgInfo();
+    }
+
 
     inline const SyntaxDef& getType() const
     {
@@ -108,28 +131,29 @@ private:
     
     /* For user and group nodes, we'll need to read the node policy as well.*/
     ContextQuery policy;
-    NodeValue* arg          =nullptr;
+    NodeValue* arg          =NULL;
+    NodeValue* arg_storage  =NULL;
 
     bool exists             = false;
     bool hash_exists        = false;
     int  type               = MoguSyntax::__NONE__.integer;
     
     /*  The string representation of the Prefix given. */
-    const char* c_prefix    = EMPTY;
+    std::string prefix_str    = EMPTY;
 
     /* The [name] in the [prefix].[id?].[name]... format. */
-    const char* c_node      = EMPTY;
+    std::string node      = EMPTY;
 
     /* If applicable, the subnode for the prefix:
      * [prefix].[id?].[name].[sub]
      */
-    const char* c_sub       = EMPTY;
+    std::string sub       = EMPTY;
 
     /* If applicable, the hashkey used when trying to access
      * a single value in a hash node. If this is attempted but the
      * hashkey is empty, the read function will return false.
      */
-    const char* c_hashkey   = EMPTY;
+    std::string hashkey   = EMPTY;
 
     /* The id used to read user or group nodes */
     int id      = -1;
@@ -177,39 +201,36 @@ private:
 
     inline void setExists()
     {
-        NodeValue* arg_ = arg;
-        unset_arg();
+        unsetArgInfo();
         appendCommand("exists");
         exists = db.yieldResponse<bool>();
-        arg = arg_;
         setArgInfo();
     }
 
     inline void setType()
     {
-        NodeValue* arg_ = arg;
-        unset_arg();
+        unsetArgInfo();
         appendCommand("type");
         type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
-        arg = arg_;
         setArgInfo();
     }
 
     inline std::string buildNode()
     {
+        assert(!isdigit(node[0]));
         std::stringstream buf;
-        buf << c_prefix;
+        buf << prefix_str;
 
         if (hasId())
         {
             buf << "." << id;
         }
 
-        buf << "." << c_node;
+        buf << "." << node.c_str();
 
-        if (!isEmpty(c_sub))
+        if (!sub.empty())
         {
-            buf << "." << c_sub;
+            buf << "." << sub;
         }
 
         return buf.str();
