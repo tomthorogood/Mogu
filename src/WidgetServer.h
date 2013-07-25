@@ -19,12 +19,18 @@ public:
     WidgetServer (Mogu*);
     ~WidgetServer();
 
+    /* This will always be the root widget of that which has been
+     * requested.
+     */
     WidgetAssembly* request(const std::string& node);
-    
+
 private:
+    int memberContext   =0;
 
     Redis::NodeEditor* wnode    =nullptr;
     Redis::NodeEditor* tnode    =nullptr;
+    NodeValue arg;
+    bool list_iter_complete     =false;
 
     std::string stateful_node;
     std::string stateful_tmpl;
@@ -45,6 +51,18 @@ private:
         node->swapArg();
         return attrValue;
     }
+
+    int getMaxIters(const std::string& node);
+
+    inline std::string extract_node_name(const std::string& input)
+    {
+
+        int nodename_start = input.find("member")+7;
+        int nodename_end = input.find_first_of(" \0",nodename_start);
+        return input.substr(nodename_start,
+                (nodename_end-nodename_start));
+    }
+
 };
 
 #endif
