@@ -136,6 +136,48 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 	return hasPreposition;
 }
 
+/*!\brief Allows for contextual interpretation of iterative data such as
+ * user field in a list of users,
+ * specific item in a list of items
+ *
+ *!\param input_ The input string
+ *!\param output_ The container in which the result will be placed
+ *!\param memberContext_ The context [user|list|data]
+ *!\param arg An optional NodeValue containing an argument to be used with the
+ *      context. Default: nullptr
+ */
+void NodeValueParser::giveInput(
+    std::string input_
+    , NodeValue& output
+    , const SyntaxDef& memberContext_
+    , NodeValue* arg)
+{
+
+    switch(memberContext_)
+    {
+        case MoguSyntax::user:
+        case MoguSyntax::list:
+            sreplace(input_, "member", "user");
+            break;
+        case MoguSyntax::data:
+            sreplace(input_, "member", "data");
+    }
+
+    if (arg)
+    {
+        input += " ";
+
+        if (arg.isString())
+            input_ += arg.getString();
+        else if (arg.isInt())
+            input_ += std::to_string(arg.getInt());
+        else
+            input_ += std::to_string(arg.getFloat());
+    }
+
+    giveInput(input_,output);
+}
+
 void NodeValueParser::giveInput(const std::string& input_, NodeValue& nv, Moldable* bc)
 {
     input = input_;

@@ -25,6 +25,8 @@ class NodeValueParser
 {
 	public:
 		NodeValueParser();
+        void giveInput(std::string input, NodeValue& output,
+                const SyntaxDef& context, NodeValue* arg=nullptr);
 		void giveInput(const std::string& input, NodeValue& nv,
 		    Moldable* bc = nullptr);
 		void giveInput(const std::string& input, CommandValue& cv,
