@@ -190,6 +190,13 @@ public:
         return type;
     }
 
+    inline void clear() {
+        resetStr();
+        numerics->as_float = 0;
+        numerics->as_int = 0;
+        type = ReadType::NO_VALUE;
+    }
+
     inline bool isString() const { return type == ReadType::string_value;}
     inline bool isInt() const { return type == ReadType::int_value;}
     inline bool isFloat() const { return type == ReadType::float_value;}
