@@ -1,6 +1,7 @@
+#include <Mogu.h>
 #include "WidgetServer.h"
 #include <Types/WidgetAssembly.h>
-
+#include <sstream>
 WidgetServer::WidgetServer (Mogu* application)
     : application(application)
 {
@@ -19,13 +20,16 @@ void WidgetServer::populateMap(Redis::NodeEditor* node)
     }
 }
 
-void resolveValues(std::map <int, std::string>& map_)
+void WidgetServer::resolveValues(std::map <int, NodeValue>& map_)
 {
+    mApp;
+    Parsers::NodeValueParser& nvp = app->interpreter();
+    NodeValue resolved;
     for (auto iter : map_)
     {
+        int attr = iter.first;
         std::string value = iter.second;
-        if (isMemberCall(value))
-        nvp.giveInput(value,resolved,memberContext, arg);
+        nvp.giveInput(value,resolved,MoguSyntax::get(memberContext), &arg);
         if (resolved.isString())
         {
             map_[attr] = resolved.getString();
@@ -125,7 +129,7 @@ WidgetAssembly* WidgetServer::request(const std::string& node)
     assembly = new WidgetAssembly();
     assembly->node= node;
     setupStates();
-    if (assembly->attrdict[MoguSyntax::type.integer] == MoguSyntax::member)
+    if (MoguSyntax::member == assembly->attrdict[MoguSyntax::type.integer])
     {
         createAnonymousWidgets();
     }
@@ -156,7 +160,7 @@ void WidgetServer::getValuesFromUserIds()
     mApp;
     TurnLeft::Utils::RandomCharSet rchar;
     const static std::string group_key = "__meta__.members";
-    const static std::string anon_base = "__anon__user__"
+    const static std::string anon_base = "__anon__user__";
     Redis::NodeEditor group(Prefix::group, group_key);
     std::vector <std::string> membership;
     group.read(membership);
@@ -177,7 +181,7 @@ int WidgetServer::getMaxIters(const std::string& node)
     std::stringstream buf;
     Prefix prefix = (memberContext == MoguSyntax::list.integer) ? Prefix::user : Prefix::data;
     std::string s_prefix = (prefix == Prefix::user) ? "user" : "data";
-    buf << "llen " << s_prefix < "." << node;
+    buf << "llen " << s_prefix << "." << node;
     std::string cmd = buf.str();
     Redis::QuerySet db(prefix);
     db.appendQuery(cmd);
@@ -203,12 +207,13 @@ void WidgetServer::getValuesFromListNode()
     }
 }
 
-std::string WidgetServer::findMemberCall(std::map <int, std::string>& map_)
+std::string WidgetServer::findMemberCall(std::map <int,NodeValue>& map_)
 {
     for (auto iter : map_)
     {
         /* Don't count it if the string is quoted, and therefore not a command! */
-        if (iter.second.find("member") != std::string::npos && iter.second[0] != '"')
+        if (iter.second.getString().find("member") != std::string::npos
+                && iter.second.getString()[0] != '"')
             return iter.second;
     }
     return "";

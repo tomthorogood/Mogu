@@ -40,6 +40,7 @@ struct WidgetAssembly
         node = other.node;
         tmpl = other.tmpl;
         triggerMap = other.triggerMap;
+        return *this;
     }
 
 };

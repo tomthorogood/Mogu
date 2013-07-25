@@ -41,6 +41,13 @@ private:
 
     void populateMap(Redis::NodeEditor*);
     void setupStates();
+    void resolveIterValues();
+    void resolveValues(std::map <int, NodeValue>&);
+    void createAnonymousWidgets();
+    void getValuesFromUserIds();
+    void getValuesFromListNode();
+    std::string findMemberCall(std::map <int, NodeValue>&);
+    std::string extractNodeName(const std::string& memberCall);
 
     inline std::string getAttribute(Redis::NodeEditor* node,
         const SyntaxDef& attribute)

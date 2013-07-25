@@ -90,7 +90,7 @@ public:
     
     inline const int& getUser() const
     {
-        return userManager->getUser();
+        return user;
     }
 
     inline UserManager& getUserManager() {return *userManager;}
@@ -104,6 +104,7 @@ public:
 
     inline ContextMap* contextMap() { return contextMap_;}
     void removeWidget(const std::string& identifier);
+    inline void setUser(int tmpUser) { user = tmpUser;}
 
     inline const std::string& getName() const { return app_name; } 
 };
