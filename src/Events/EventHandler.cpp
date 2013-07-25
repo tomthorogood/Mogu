@@ -17,7 +17,8 @@ EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::stri
 }
 
 EventHandler::EventHandler(Moldable& broadcaster, TriggerMap& triggers)
-    : CommandProcessor(broadcaster), triggerMap(triggers)
+    : CommandProcessor(broadcaster), triggerMap(triggers),
+    native_triggermap(false);
 {
     processTriggerMap();
 }
