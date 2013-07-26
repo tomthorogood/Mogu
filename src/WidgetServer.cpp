@@ -129,10 +129,6 @@ WidgetAssembly* WidgetServer::request(const std::string& node)
     assembly = new WidgetAssembly();
     assembly->node= node;
     setupStates();
-    if (MoguSyntax::member == assembly->attrdict[MoguSyntax::type.integer])
-    {
-        createAnonymousWidgets();
-    }
     return assembly;
 }
 

@@ -167,12 +167,12 @@ void NodeValueParser::giveInput(
     {
         input += " ";
 
-        if (arg.isString())
-            input_ += arg.getString();
-        else if (arg.isInt())
-            input_ += std::to_string(arg.getInt());
+        if (arg->isString())
+            input_ += arg->getString();
+        else if (arg->isInt())
+            input_ += std::to_string(arg->getInt());
         else
-            input_ += std::to_string(arg.getFloat());
+            input_ += std::to_string(arg->getFloat());
     }
 
     giveInput(input_,output);

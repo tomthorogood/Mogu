@@ -1,12 +1,11 @@
 #include <hash.h>
 #include <openssl/sha.h>
+#include <iomanip>
 #include <sstream>
 
 namespace Hash {
 
-std::string toHash( const std::string& str)
-{
-std::string toHash(std::string str)
+std::string toHash(const std::string& str)
 {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;

@@ -47,7 +47,13 @@ private:
     void getValuesFromUserIds();
     void getValuesFromListNode();
     std::string findMemberCall(std::map <int, NodeValue>&);
-    std::string extractNodeName(const std::string& memberCall);
+    std::string extractNodeName(const std::string& input)
+    {
+        int nodename_start = input.find("member")+7;
+        int nodename_end = input.find_first_of(" \0",nodename_start);
+        return input.substr(nodename_start,
+                (nodename_end-nodename_start));
+    }
 
     inline std::string getAttribute(Redis::NodeEditor* node,
         const SyntaxDef& attribute)
@@ -61,14 +67,7 @@ private:
 
     int getMaxIters(const std::string& node);
 
-    inline std::string extract_node_name(const std::string& input)
-    {
 
-        int nodename_start = input.find("member")+7;
-        int nodename_end = input.find_first_of(" \0",nodename_start);
-        return input.substr(nodename_start,
-                (nodename_end-nodename_start));
-    }
 
 };
 
