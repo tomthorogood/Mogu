@@ -1,2 +1,0 @@
-rm *.dot
-python visualvalgrind/src/visualvalgrind.py build grindout.xml
