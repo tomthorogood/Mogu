@@ -30,7 +30,7 @@ void MoldableLink::initializeLink()
 {
     std::string href = stripquotes(assembly_location);
     std::string text = stripquotes(assembly_text);
-    if (link)
+    if (link != nullptr)
     {
         removeWidget(link);
         delete link;

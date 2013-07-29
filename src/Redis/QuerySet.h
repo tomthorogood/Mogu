@@ -99,10 +99,10 @@ public:
     QuerySet(Prefix prefix);
 
     ~QuerySet() {
-        if (rdb != NULL)
-            redisFree(rdb);
+        if (context_initialized) redisFree(rdb);
     }
 
+    bool context_initialized = false;
     void setPrefix(Prefix prefix);
 
     inline void clear() {

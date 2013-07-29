@@ -17,6 +17,7 @@ class TriggerMap {
 public:
     TriggerMap();
     TriggerMap(const int& num_triggers,Prefix prefix, const std::string& node_name);
+    TriggerMap(TriggerMap&);
     inline void addEvent(const SyntaxDef& trigger, const std::string& command)
     {
         map[trigger].push(command);
@@ -27,11 +28,14 @@ public:
         return map.at(trigger);
     }
 
-    inline const std::set <int>& getTriggers()
+    const inline std::set <int>& getTriggers()
     {
         if (triggers.size() < map.size()) populateTriggers();
         return triggers;
     }
+
+    const std::unordered_map <int, std::queue <std::string>>& getMap() const 
+    { return map; }
 
 private:
     void populateTriggers();

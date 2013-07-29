@@ -17,7 +17,7 @@ private:
     std::string assembly_location;
     std::string assembly_text;
 protected:
-    Wt::WAnchor* link;
+    Wt::WAnchor* link = nullptr;
     virtual void init(WidgetAssembly*) override;
     void initializeLink();
 public:

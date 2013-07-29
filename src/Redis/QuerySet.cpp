@@ -159,7 +159,7 @@ template <> std::vector <std::string>
 void QuerySet::setPrefix(Prefix prefix_)
 {
     if (prefix == prefix_) return;
-    if (rdb != nullptr)
+    if (context_initialized)
     {
         redisFree(rdb);
         rdb = nullptr;
@@ -168,9 +168,13 @@ void QuerySet::setPrefix(Prefix prefix_)
     prefix = prefix_;
     context = app->contextMap()->get(prefix);
     rdb = redisConnect(context->host(), context->port);
+    
+    context_initialized=true;
     selected_db = context->db_num;
     clear();
-    redisCommand(rdb, "select %d", selected_db);
+
+    /* Throw away the results of this command */
+    freeReplyObject((redisReply*)redisCommand(rdb, "select %d", selected_db));
 }
 
 

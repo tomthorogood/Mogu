@@ -11,14 +11,15 @@
 #include <Types/CommandValue.h>
 
 EventHandler::EventHandler(Moldable& broadcaster, Prefix prefix, const std::string& node)
-: CommandProcessor(broadcaster), triggerMap(broadcaster.getNumTriggers(), prefix, node)
+: 
+    CommandProcessor(broadcaster)
+    , triggerMap(broadcaster.getNumTriggers(), prefix, node)
 {
     processTriggerMap();
 }
 
 EventHandler::EventHandler(Moldable& broadcaster, TriggerMap& triggers)
-    : CommandProcessor(broadcaster), triggerMap(triggers),
-    native_triggermap(false)
+    : CommandProcessor(broadcaster), triggerMap(triggers)
 {
     processTriggerMap();
 }

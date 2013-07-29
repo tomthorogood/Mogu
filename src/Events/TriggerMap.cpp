@@ -47,6 +47,12 @@ TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string
     }
 }
 
+TriggerMap::TriggerMap(TriggerMap& other)
+    : triggers(other.getTriggers()), map(other.getMap())
+{
+    
+}
+
 void TriggerMap::populateTriggers()
 {
     auto iter = map.begin();

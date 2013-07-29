@@ -43,6 +43,11 @@ struct WidgetAssembly
         return *this;
     }
 
+    ~WidgetAssembly()
+    {
+        delete triggerMap;
+    }
+
 };
 
 #endif

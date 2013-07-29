@@ -25,8 +25,6 @@ public:
     EventHandler(Moldable& broadcaster, TriggerMap& triggers);
     ~EventHandler()
     {
-        /* Handle trigger maps that were generated on the heap */
-        if (!native_triggermap) delete &triggerMap;
     }
 
 private:
@@ -34,7 +32,6 @@ private:
     /* Whether or not the TriggerMap was instantiated by this class, or
      * was passed in by an external entity.
      */
-    bool native_triggermap = true; 
     void processTriggerMap();
 
     template <const int> void handleTrigger();

@@ -217,7 +217,6 @@ private:
 
     inline std::string buildNode()
     {
-        assert(!isdigit(node[0]));
         std::stringstream buf;
         buf << prefix_str;
 

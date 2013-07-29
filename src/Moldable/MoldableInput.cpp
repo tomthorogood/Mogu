@@ -33,7 +33,6 @@ void MoldableInput::initializeInput()
         removeWidget(input);
         delete input;
     }
-    mApp;
     std::string txt = stripquotes(assembly_txt);
     std::string validator = stripquotes(assembly_validator);
     input = new Wt::WLineEdit();
