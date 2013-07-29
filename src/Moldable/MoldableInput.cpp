@@ -28,7 +28,7 @@ void MoldableInput::init(WidgetAssembly* assembly)
 
 void MoldableInput::initializeInput()
 {
-    if (input)
+    if (input != nullptr)
     {
         removeWidget(input);
         delete input;
@@ -43,4 +43,5 @@ void MoldableInput::initializeInput()
         input->setValidator(validator_ptr);
         input->keyWentUp().connect(this, &MoldableInput::validate);
     }
+    addWidget(input);
 }
