@@ -105,9 +105,18 @@ void handleValueToField(Moldable& broadcaster, CommandValue& v)
 
     if (!writeable) return;
 
+    NodeValue current_value;
     Redis::NodeEditor editor(obj, node, &arg);
-    NodeValue current_value(editor.read());
-    current_value += v.get(CommandFlags::VALUE);
+    if (editor.getType() == MoguSyntax::string)
+    {
+        std::string cv = editor.read();
+        cv += (std::string) v.get(CommandFlags::VALUE);
+        current_value.setString(cv);
+    }
+    else
+    {
+        current_value.setString(v.get(CommandFlags::VALUE).getString());
+    }
     editor.write(current_value);
 }
 

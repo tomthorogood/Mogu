@@ -69,6 +69,7 @@ regexlib["object_set"]  = "%(object)s(\s+%(identifier)s)?(\s+(%(attribute)s|%(id
 regexlib["object_set"]  = "(%(object_set)s\s*)+" % regexlib
 regexlib["signed_obj"] = "-?\s*(%(object_set)s|[0-9\.]+)" % regexlib
 regexlib["math_expr"] = "%(op_paren)s%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(math_oper)s\s*)*\s*%(signed_obj)s%(cl_paren)s" % regexlib
+regexlib["hash"] = syntax.as_integer("hash")
 
 # VALUE
 #   A value in Mogu can consist of any object set, string literal, or integer literal.
@@ -81,7 +82,7 @@ regexlib["math_expr"] = "%(op_paren)s%(signed_obj)s\s*%(math_oper)s(%(signed_obj
 #   data stringdata somestring
 #   user name first
 #
-regexlib["value"]       = "(%(object_set)s|%(string_literal)s|%(math_gen_expr)s|-?[0-9]+)" % regexlib 
+regexlib["value"]       = "((%(hash)s )?%(object_set)s|%(string_literal)s|%(math_gen_expr)s|-?[0-9]+)" % regexlib 
 
 HASH_DEFINITION = pyboro.Lexer.ParseMap((
         ("key",             everything_until(":")   ,   trim),

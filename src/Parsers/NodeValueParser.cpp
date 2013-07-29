@@ -8,6 +8,7 @@
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Types/CommandValue.h>
+#include <hash.h>
 #include <cctype>
 
 //debug
@@ -93,17 +94,18 @@ void NodeValueParser::tokenizeInput(std::string input, bool setAtBeginning)
 /* Iterates through a vector of tokens and applies the core NvP logic
  * to reduce them down to one expression.
  */
-bool NodeValueParser::reduceExpressions(Moldable* bc)
+void NodeValueParser::reduceExpressions(Moldable* bc)
 {
     // If there is only one token, it cannot be reduced any further.
     // Leave it alone.
 	if (tm.size() == 1)
 	{
 	    tm.begin();
-	    return false;
+	    return;
 	}
-	int currToken = tm.currentToken();
-	bool hasPreposition = false;
+	
+    int currToken = tm.currentToken();
+    
 
 	/* Iterate backwards through the vector of tokens until the
 	 * 'Begin' token is reached.
@@ -124,16 +126,16 @@ bool NodeValueParser::reduceExpressions(Moldable* bc)
 				stateParser.processInput(bc);
 		}
 
-		else if(isPrepositionToken(currToken))
-			hasPreposition = true;
-
 		tm.prev();
 
 		currToken = tm.currentToken();
 	}
     tm.begin();
-
-	return hasPreposition;
+    if (tm.currentToken()==MoguSyntax::hash)
+    {
+        hashNextToken();
+        tm.begin();
+    }
 }
 
 /*!\brief Allows for contextual interpretation of iterative data such as
@@ -181,6 +183,20 @@ void NodeValueParser::giveInput(
     giveInput(input_,output);
 }
 
+void NodeValueParser::hashNextToken()
+{
+    assert(MoguSyntax::hash.integer == tm.currentToken());
+    std::string hashed_value;
+    tm.saveLocation();
+    tm.next();
+    if (tm.currentToken() == MoguSyntax::TOKEN_DELIM)
+        hashed_value = Hash::toHash(tm.fetchStringToken());
+    else
+        hashed_value = Hash::toHash(std::to_string(tm.currentToken()));
+    tm.deleteFromSaved();
+    tm.injectToken(hashed_value);
+}
+
 void NodeValueParser::giveInput(const std::string& input_, NodeValue& nv, Moldable* bc)
 {
     input = input_;
@@ -192,6 +208,7 @@ void NodeValueParser::giveInput(const std::string& input_, NodeValue& nv, Moldab
 	tokenizeInput(input);
 	reduceExpressions(bc);
 
+    /* As long as we have input that is reducable, keep reducing it.*/
 	while (MoguSyntax::TOKEN_DELIM == tm.currentToken()
 	    && (tm.fetchStringToken().at(0)!='"')
 	    && (tm.fetchStringToken().find_first_of(" ") != std::string::npos))

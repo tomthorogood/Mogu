@@ -108,12 +108,12 @@ std::string NodeEditor::read()
     }
     else if (type == MoguSyntax::list.integer)
     {
-        if (list_index != -1)
+        if (isdigit(arg_str[0]))
             appendCommand("lindex");
     }
     else
     {
-        if (!hashkey.empty())
+        if (!isEmpty(arg_str))
             appendCommand("hget");
     }
 
@@ -247,11 +247,11 @@ bool NodeEditor::write(std::string value)
     /* This is a special circumstance, so we'll build the logic right here. 
      * The 'arg' should be the key in the Redis hash.
      */
-    else if (type==MoguSyntax::hash.integer && !hashkey.empty())
+    else if (type==MoguSyntax::hash.integer && !arg_str.empty())
     {
         std::string s_node = buildNode();
         db.appendQuery("hset %s %s %s",
-            s_node.c_str(), hashkey.c_str(), value.c_str());
+            s_node.c_str(), arg_str.c_str(), value.c_str());
     }
     if (!delay_execution)
         db.execute();
@@ -346,16 +346,11 @@ void NodeEditor::appendCommand(const char* cmd)
     static int iter = 0;
     ++iter;
     std::cout << "Performing Redis request #" << iter << " with command " <<
-        cmd << " " << full_node << "(list index: " << list_index
-        << "|hashkey: " << hashkey << std::endl;
+        cmd << " " << full_node << "(arg: " << arg_str << ")" << std::endl;
 #endif
-    if (list_index != -1)
+    if (!arg_str.empty())
     {
-        db.appendQuery("%s %s %d", cmd, full_node, list_index);
-    }
-    else if (!hashkey.empty())
-    {
-        db.appendQuery("%s %s %s", cmd, full_node, hashkey.c_str());
+        db.appendQuery("%s %s %s", cmd, full_node, arg_str.c_str());
     }
     else
     {
@@ -370,34 +365,15 @@ void NodeEditor::setArgInfo()
     /* Lists args cannot be strings, and therefore we can safely 
      * assume that's what we'll be dealing with for a dash of type safety.
      */
-    if (type == MoguSyntax::list.integer)
-    {
-        hashkey = "";
-        if (arg->isInt())
-        {
-            list_index = arg->getInt();
-        }
-        else if (arg->isString())
-        {
-            list_index = std::atoi(arg->getString().c_str());
-        }
-    }
 
-    /* A string arg may also be used to write to the database, so we will
-     * not assume that we're dealing with a hash node.
-     */
-    else 
+    if (arg->isString())
     {
-        list_index = -1;
-        if (arg->isString())
-        {
-            hashkey = arg->getString();
-        }
-        else if (arg->isInt())
-        {
-            std::string s = std::to_string(arg->getInt());
-            hashkey = s;
-        }
+        arg_str = arg->getString();
+    }
+    else if (arg->isInt())
+    {
+        std::string s = std::to_string(arg->getInt());
+        arg_str = s;
     }
 }
 

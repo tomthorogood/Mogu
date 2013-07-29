@@ -83,8 +83,7 @@ public:
 
     inline void unsetArgInfo()
     {
-        hashkey = "";
-        list_index = -1;
+        arg_str = EMPTY;
     }
 
     /* Set the arg to a new arg. The old arg is lost. */
@@ -153,14 +152,10 @@ private:
      * a single value in a hash node. If this is attempted but the
      * hashkey is empty, the read function will return false.
      */
-    std::string hashkey   = EMPTY;
+    std::string arg_str   = EMPTY;
 
     /* The id used to read user or group nodes */
     int id      = -1;
-
-    /* The index used to read from a list node. If this is still -1
-     * and the read method is called on a list value, will return false. */
-    int list_index  = -1;
 
     /* Whether or not the content of this node is encrypted, and therefore 
      * must be decrypted. Only applies to user/group data.

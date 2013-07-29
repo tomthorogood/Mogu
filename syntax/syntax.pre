@@ -58,7 +58,7 @@
 (   regex                   ,   regex           ,   attribute validator type )
 (   list                    ,   list            ,   attribute datatype )
 (   string                  ,   string          ,   attribute datatype )
-(   hash                    ,   hash            ,   action datatype )
+(   hash|hashed             ,   hash            ,   action datatype descriptor)
 (   data                    ,   data            ,   object          )
 (   index                   ,   index           ,   attribute       )
 (   slot                    ,   slot            ,   object          )
@@ -100,6 +100,10 @@
 (   read                    ,   read            ,   access_level )
 (   default                 ,   default_        ,   hashkey )
 (   meta                    ,   meta            ,   prefix )
+
+# Either retrieves random data from a set, or generates a string of 
+# random letters (with parameter delimiting the length of the string)
+(   random                  ,   random          ,   descriptor object  )
 
 # Keys are attached to groups. A given key value will correlate to 
 # at most one group ID, and can be used for reverse lookups of groups,
