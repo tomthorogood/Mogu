@@ -19,7 +19,6 @@ MoldableLink::MoldableLink (WidgetAssembly* assembly)
 
 void MoldableLink::init(WidgetAssembly* assembly)
 {
-    NodeValue v;
     assembly_location = (std::string)
         assembly->attrdict[MoguSyntax::location.integer];
     assembly_text = (std::string)
@@ -29,12 +28,8 @@ void MoldableLink::init(WidgetAssembly* assembly)
 
 void MoldableLink::initializeLink()
 {
-    mApp;
-    NodeValue v;
-    app->interpreter().giveInput(assembly_location,v);
-    std::string href = stripquotes(v.getString());
-    app->interpreter().giveInput(assembly_text,v);
-    std::string text = stripquotes(v.getString());
+    std::string href = stripquotes(assembly_location);
+    std::string text = stripquotes(assembly_text);
     if (link)
     {
         removeWidget(link);

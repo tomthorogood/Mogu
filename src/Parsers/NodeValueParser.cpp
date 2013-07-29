@@ -161,11 +161,14 @@ void NodeValueParser::giveInput(
             break;
         case MoguSyntax::data:
             sreplace(input_, "member", "data");
+            break;
+        default:
+            break;
     }
 
-    if (arg)
+    if ((memberContext_ != MoguSyntax::__NONE__) && arg)
     {
-        input += " ";
+        input_ += " ";
 
         if (arg->isString())
             input_ += arg->getString();
@@ -190,7 +193,8 @@ void NodeValueParser::giveInput(const std::string& input_, NodeValue& nv, Moldab
 	reduceExpressions(bc);
 
 	while (MoguSyntax::TOKEN_DELIM == tm.currentToken()
-	    && tm.fetchStringToken().at(0)!='"')
+	    && (tm.fetchStringToken().at(0)!='"')
+	    && (tm.fetchStringToken().find_first_of(" ") != std::string::npos))
 	{
 	    std::string new_input = tm.fetchStringToken();
 	    tm.reset();

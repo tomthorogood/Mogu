@@ -29,13 +29,9 @@ void MoldableText::init(WidgetAssembly* assembly)
 
 void MoldableText::initializeText()
 {
-    mApp;
-    NodeValue v;
-    app->interpreter().giveInput(assembly_text,v);
-    const std::string& content = v.getString();
-    if (!content.empty())
+    if (!assembly_text.empty())
     {
-        std::string txt = stripquotes(content);
+        std::string txt = stripquotes(assembly_text);
         text->setText(Wt::WString(txt,Wt::UTF8));
     }
 }

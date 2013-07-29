@@ -56,19 +56,15 @@ void Moldable::init (WidgetAssembly* assembly)
 
 void Moldable::initializeGlobalAttributes()
 {
-    mApp;
-    Parsers::NodeValueParser& nvp = app->interpreter();
     if (!assembly_style.empty())
     {
-        NodeValue nv_style;
-        nvp.giveInput(assembly_style,nv_style);
+        NodeValue nv_style(assembly_style);
         setAttribute(MoguSyntax::style,nv_style);
     }
 
     if (!assembly_tooltip.empty())
     {
-        NodeValue nv_tooltip;
-        nvp.giveInput(assembly_tooltip,nv_tooltip);
+        NodeValue nv_tooltip(assembly_tooltip);
         setAttribute(MoguSyntax::tooltip,nv_tooltip);
     }
 }

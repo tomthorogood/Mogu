@@ -2,6 +2,7 @@
 #include "WidgetServer.h"
 #include <Types/WidgetAssembly.h>
 #include <sstream>
+
 WidgetServer::WidgetServer (Mogu* application)
     : application(application)
 {
@@ -91,7 +92,7 @@ void WidgetServer::setupStates()
     /* Use the triggers from the template if one for the widget does
      * not exist.
      */
-    if (assembly->triggers.size() == 0 && tmpl_triggers.size() > 0)
+    if (tmpl_triggers.size() > 0 && assembly->triggers.size() == 0)
     {
         assembly->triggers = tmpl_triggers;
         assembly->setTriggerPrefix(Prefix::templates);
@@ -104,7 +105,7 @@ void WidgetServer::setupStates()
     }
 
     /* Do the same thing with the children. */
-    if (assembly->children.size() == 0 && tmpl_children.size() > 0)
+    if (tmpl_children.size() > 0 && assembly->children.size() == 0)
     {
         assembly->children = tmpl_children;
     }

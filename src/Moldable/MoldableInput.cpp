@@ -34,11 +34,8 @@ void MoldableInput::initializeInput()
         delete input;
     }
     mApp;
-    NodeValue nv;
-    app->interpreter().giveInput(assembly_txt,nv);
-    std::string txt = stripquotes(nv.getString());
-    app->interpreter().giveInput(assembly_validator,nv);
-    std::string validator = stripquotes(nv.getString());
+    std::string txt = stripquotes(assembly_txt);
+    std::string validator = stripquotes(assembly_validator);
     input = new Wt::WLineEdit();
     input->setEmptyText(txt);
     if (!validator.empty() && !validator_ptr)

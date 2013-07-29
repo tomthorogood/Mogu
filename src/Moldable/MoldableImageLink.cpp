@@ -32,10 +32,7 @@ void MoldableImageLink::initializeImage()
         removeWidget(image);
         delete image;
     }
-    mApp;
-    NodeValue nv_src;
-    app->interpreter().giveInput(assembly_src,nv_src);
-    std::string src = stripquotes(nv_src.getString());
+    std::string src = stripquotes(assembly_src);
     image = new Wt::WImage(src, moldableValue());
     link->setImage(image);
     link->setTarget(Wt::TargetNewWindow);

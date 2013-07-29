@@ -20,7 +20,6 @@ MoldableImage::MoldableImage (WidgetAssembly* assembly)
 
 void MoldableImage::init(WidgetAssembly* assembly)
 {
-    NodeValue v;
     assembly_src = (std::string)
         assembly->attrdict[MoguSyntax::source.integer];
 
@@ -41,13 +40,9 @@ void MoldableImage::initializeImage()
         removeWidget(image);
         delete image;
     }
-    NodeValue nv_src;
-    NodeValue nv_txt;
-    mApp;
-    app->interpreter().giveInput(assembly_src,nv_src);
-    app->interpreter().giveInput(assembly_txt,nv_txt);
-    std::string src = stripquotes((std::string)nv_src);
-    std::string txt = stripquotes((std::string)nv_txt);
+
+    std::string src = stripquotes(assembly_src);
+    std::string txt = stripquotes(assembly_txt);
     image = new Wt::WImage(src,txt);
     addWidget(image);
 }
