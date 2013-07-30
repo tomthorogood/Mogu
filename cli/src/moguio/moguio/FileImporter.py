@@ -4,13 +4,10 @@ from Lex import RootConsumer
 import SharedData
 import sys
 import re
+import os
+import Preprocessor
 current_file_input = None
 
-def filter_comment(string):
-    stripped = string.strip()
-    if len(stripped)>0:
-        return stripped[0] != "#"
-    return True
 
 def nonempty(string):
     return len(string.strip()) > 0 
@@ -24,7 +21,6 @@ def preprocess(text,verbal=False):
     assert(isinstance(text,list))
     text = [ line.strip() for line in text ]# Remove all leading/trailing whitespace from each line
     text = filter(nonempty,text)            # Only preserve nonempty lines
-    text = filter(filter_comment,text)      # Only preserve non-comments
     iterindex = 0
     step = "Text to MoguString:Script"
     try:
@@ -70,20 +66,17 @@ Step:
 def stage(filename=None, verbal=False):
     global current_file_input
     with open(filename,"r") as f:
-        text = f.readlines()
+        text = f.read()
+        preproc = Preprocessor.Preprocessor(verbose=verbal)
+        path=os.path.dirname(filename)
+        text = preproc.processInput(text,path)
         text = preprocess(text)
         current_file_input = text # Preserver in global namespace for debugging purposes
     return text
 
-def parse_root(filename):
-        text = stage(filename)
-        try:
-            return RootConsumer.parse(text)
-        except Exception as e:
-            sys.stderr.write(
-                "\nCannot parse file: %s\n\nImport halted. No changes made.\n\n" % filename
-            )
-            raise e
+def parse_root(filename,verbal=False):
+        text = stage(filename,verbal)
+        return RootConsumer.parse(text)
 
 def import_raw(text, verbal=False):
     SharedData.ActiveFile = "Raw Input"
@@ -93,17 +86,17 @@ def import_raw(text, verbal=False):
     try:
         return RootConsumer.parse(text)
     except Exception as e:
-        syst.stderr.write(
+        sys.stderr.write(
                 "\nCannot parse text. Import halted. No changes made.\n\n" % filename
         )
-        raise e
-
+        sys.stderr.flush()
+        sys.exit(1)
 
 def import_file(filename, verbal=False):
     SharedData.ActiveFile = filename
     if verbal:
         sys.stdout.write("Importing %s ... " % filename)
-    root_results = parse_root(filename)
+    root_results = parse_root(filename,verbal)
     if verbal:
         sys.stdout.write(" DONE!\n")
     return root_results

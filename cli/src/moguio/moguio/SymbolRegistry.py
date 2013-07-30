@@ -157,7 +157,7 @@ class SymbolRegistry(object):
         Alternatively, you may also directly assign a SymbolReferenceTracker:
             registryObject["foo"] = SymbolReferenceTracker("bar","baz")
         """
-        if isinstance(key,str) and isinstance(val,str):
+        if isinstance(key,(str,unicode)) and isinstance(val,(str,unicode)):
             if key in self:
                 self.symbols[key].define(val)
             else:
@@ -245,6 +245,6 @@ if __name__ == "__main__":
     try:
         testRegistry[bad] = randomfilename()
     except Exception as e:
-        print(e)
+        raise e
     print(testRegistry)
     print(repr(testRegistry))
