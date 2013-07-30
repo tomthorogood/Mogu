@@ -38,6 +38,7 @@ def import_path(pathname, verbal=False):
         # Append lexed results to results
         if single_file:
             sys.stdout.write("Importing single file: %s" % mogufile)
+            sys.stdout.flush()
             path_results.extend(FileImporter.import_file(mogufile))
         else:
             path_results.extend(
@@ -97,6 +98,6 @@ if __name__ == "__main__":
 #    pyboro.Lexer.VERBAL=args.v
     path = args.path[0]
     results = import_path(path,args.v)
-    conversions = convert_results(results)
-    writer = RedisWriter.RedisWriter(args)
-    writer.write(conversions)
+#    conversions = convert_results(results)
+#    writer = RedisWriter.RedisWriter(args)
+#    writer.write(conversions)

@@ -25,5 +25,5 @@ setup(
         url="http://www.github.com/tomthorogood/mogu",
         packages = find_packages(exclude=['setup.py','tests']),
         zip_safe = True,
-        install_requires= ["MultiString", "pyboro"]
+        install_requires= ["MultiString", "pyboro", "markdown"]
 )

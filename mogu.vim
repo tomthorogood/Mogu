@@ -44,7 +44,7 @@ syn keyword humanSyntax to as at with from for is
 syn keyword moguObject data user group validator widget template
 syn keyword moguObject perspective meta
 
-syn keyword moguOperators ( ) + - { } : 
+syn keyword moguOperators ( ) + - * / { } : <<< >>>
 
 " Operators
 syn keyword scriptOperator when end
@@ -54,15 +54,22 @@ syn keyword subBlock events children
 " Variable constructs
 syn match identifier "[a-zA-Z_:][a-zA-Z0-9:_]\+"
 syn match number "\d+(\.\d+)?"
+syn match preproc_ref "@[a-zA-Z_:][a-zA-Z0-9:_]\+"
 syn match comment "^#.*"
 syn region stringliteral start=+"+  end=+"+  skip=+\\"+
-syn region commandblock start="{" end="}" fold transparent contains=moguReserved,identifier,number,stringliteral
+syn region commandblock start="{" end="}" fold transparent contains=moguReserved,identifier,number,stringliteral,moguObject,comment,preproc_ref
+syn match md_internal ".+" contained
+syn region markdown start="<<<" end=">>>" contains=NONE
+
 
 hi def link moguReserved    Type
 hi def link identifier      Identifier
 hi def link number          Constant
 hi def link stringliteral   Constant
 hi def link comment         Comment
+hi def link preproc_ref     Comment
+hi def link md_internal     Comment
+hi def link markdown        Comment
 hi def link moguObject      Type       
 hi def link scriptOperator  Operator
 hi def link moguOperators   Operator
