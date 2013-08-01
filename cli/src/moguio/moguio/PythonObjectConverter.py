@@ -228,6 +228,8 @@ class PythonObjectConverter(object):
             elif parsemap is Lex.EVENT_BLOCK:
                 event_o_dict = self.convert_events(master_key, o_dict["block"])
                 master_dict.update(event_o_dict)
+            elif parsemap is Lex.WIDGET_VALIDATOR:
+                master_dict[master_key][syntax.as_integer("validator")] = o_dict["validator"]
             elif parsemap is lex_base.CHILDREN_BLOCK:
                 master_dict["%s.children" % master_key] = [val for val in o_dict['block'] if val]
         for entry in master_dict:

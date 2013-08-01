@@ -124,12 +124,12 @@ VALUE_DEFINITION = Lexer.ParseMap((
     ("end",         r"\S*"              , IGNORE)
 ))
 
-t = "validator"
+t = syntax.as_integer("validator") 
 VALIDATOR_BLOCK = Lexer.ParseMap((
-        ("begin",           "\s*%s "%t,                            IGNORE),
+        ("begin",           "\s*%d\s+"%t,                            IGNORE),
         ("identifier",      regexlib["identifier"],                register_validator),
         ("validator_def",   everything_until("end %s"%t),          ValidatorConsumer.parse),
-        ("end",             "end %s"%t,                            IGNORE)
+        ("end",             "end %d"%t,                            IGNORE)
 ))
 
 WHEN_BLOCK = Lexer.ParseMap ((
