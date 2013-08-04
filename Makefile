@@ -137,6 +137,9 @@ clean:
 	@if [ ! ''==`pip freeze 2> /dev/null | grep moguio` ]; then sudo pip uninstall moguio; else echo "$(C_INFO)moguio not installed, so not removed.$(C_END)"; fi;
 	@echo "$(C_INFO)Removing temporary files...$(C_END)"
 	@rm -rf $(TEMP_DIRS)
+	@for d in `ls $(CURDIR)/tests` ; do \
+		cd $(CURDIR)/tests/$$d && $(MAKE) clean ; \
+	done
 
 purge: clean
 	rm -rf bin/
