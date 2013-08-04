@@ -20,6 +20,7 @@ void append(Moldable& broadcaster, CommandValue& command);
 void reset(Moldable& broadcaster, CommandValue& command);
 void remove(Moldable& broadcaster, CommandValue& command);
 void javascript(Moldable& broadcaster, CommandValue& command);
+void clear(Moldable& broadcaster, CommandValue& command);
 
 }//namespace Actions
 

@@ -79,14 +79,16 @@ public:
     /* Deletes either a list value or hash key */
     bool remove(const std::string& val);
 
-    inline bool setEncrypted()
-    {
-        setPolicy(); 
-        policy->appendQuery(
-            "hget policies.%s %d", node.c_str(), MoguSyntax::encrypted.integer);
-        encrypted = policy->yieldResponse<std::string>() == "yes";
-        return encrypted;
+    /* Readability function */
+    inline bool id_required()
+    { return (prefix==Prefix::user)||(prefix==Prefix::group);}
+
+    inline void setId(int id_) {
+        if (hasId()) return;
+        id = id_; setup();
     }
+
+    bool setEncrypted();
 
     inline void setNode(const std::string& node_)
     { node = node_;}
@@ -197,10 +199,7 @@ private:
     std::string getDefault();
     void setArgInfo();
    
-    inline void setId(int id_) { 
-        if (hasId()) return;
-        id = id_; setup();
-    }
+
 
     /* Same as above but for default hashes. */
     void getDefault(std::map<std::string,std::string>&);
@@ -209,16 +208,15 @@ private:
     void getDefault(std::vector<std::string>&);
     std::string buildCommand(const std::string& cmd, std::string extra="");
 
-    /* Readability function */
-    inline bool id_required() 
-    { return (prefix==Prefix::user)||(prefix==Prefix::group);}
+
 
     inline bool hasId() 
     { return id != -1; }
 
     inline void setPolicy()
     {
-        policy->newContext(Application::contextMap->get(Prefix::policies));
+        if (!policy) policy = new Redis::MoguQueryHandler(
+            Application::contextMap, Prefix::policies);
     }
 
     inline void setExists()

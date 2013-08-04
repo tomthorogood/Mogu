@@ -3,9 +3,9 @@
 
 #include <map>
 #include <string>
-#include <Types/SyntaxDef.h>
-#include <Types/LockedMap.h>
-#include <Types/NodeValue.h>
+#include "SyntaxDef.h"
+#include "LockedMap.h"
+#include "NodeValue.h"
 #include <stdexcept>
 
 namespace MoguSyntax {

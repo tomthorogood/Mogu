@@ -14,7 +14,7 @@ void reload(Moldable& broadcaster, CommandValue& v)
         case (int) MoguSyntax::widget:{
             mApp;
             Moldable* widget = app->registeredWidget(v.getIdentifier());
-            widget->reload();
+            if (widget) widget->reload();
             break;}
         default: return;
     }

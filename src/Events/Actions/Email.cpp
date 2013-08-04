@@ -16,7 +16,7 @@ void email(Moldable& broadcaster, CommandValue& v)
     NodeValue message;
     EmailManager email;
     email.setRecipient(v.get(CommandFlags::VALUE).getString());
-    email.setSubject(app->slotManager().peekSlot("EMAIL_SUBJECT"));
+    email.setSubject(app->slotManager().retrieveSlot("EMAIL_SUBJECT"));
 
     switch(object)
     {

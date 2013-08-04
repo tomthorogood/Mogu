@@ -1,14 +1,14 @@
 #ifndef SYNTAXDEF_H_
 #define SYNTAXDEF_H_
 
-#include <declarations.h>
 #include "NodeValue.h"
+#include <string>
 
 struct SyntaxDef
 {
     int             integer =0;
-    const char*     str     =EMPTY;
-    const char*     human   =EMPTY;
+    const char*     str     ="";
+    const char*     human   ="";
     
     constexpr SyntaxDef (int i_, const char* s_, const char* h_)
         : integer(i_), str(s_), human(h_)

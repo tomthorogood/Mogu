@@ -122,7 +122,7 @@ struct SafeReplyObject
         log("SRO elements of reply at address " + as_string(r));
         return r->elements; 
     }
-    inline redisReply* element(int i) { 
+    inline redisReply* element(size_t i) { 
         sync();
         log("SRO element " + std::to_string(i) + " of reply at address " 
                 + as_string(r));

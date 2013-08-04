@@ -26,7 +26,9 @@ public:
     MoldableInput (WidgetAssembly*);
 
     inline virtual std::string moldableValue() {
-        return input->valueText().toUTF8();
+        std::string val = input->text().toUTF8();
+        return val;
+        //return input->valueText().toUTF8();
     }
 
     inline virtual void setMoldableValue(const std::string& txt) {

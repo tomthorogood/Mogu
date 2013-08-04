@@ -7,7 +7,7 @@
 
 #include "MoldableAbstractParent.h"
 #include <Types/WidgetAssembly.h>
-#include <Redis/ContextQuery.h>
+#include <Types/MoguLogger.h>
 #include <Mogu.h>
 
 MoldableAbstractParent::MoldableAbstractParent
@@ -24,12 +24,8 @@ void MoldableAbstractParent::init(WidgetAssembly* assembly)
 
 // This is called when the widget is to be rendered on screen.
 void MoldableAbstractParent::load(){
-
-#ifdef DEBUG
-    std::cout << "MoldableAbstractParent::load:"
-        << __LINE__ <<" " <<  node << std::endl;
-#endif
-
+    Application::log.log(LogLevel::NOTICE, __FILE__, ":", __LINE__,
+            ": ", node);
     // Do not reload unless the reload action is explicitly called.
     if (loaded() && !testFlag(MoldableFlags::allow_reload)) return;
 
@@ -43,30 +39,20 @@ void MoldableAbstractParent::load(){
     // longer loading times up front.
     if (child_nodes.size() > 0)
     {
-#ifdef DEBUG
-        std::cout << "MoldableAbstractParent::load:"<<__LINE__
-            <<" " << node << std::endl;
-#endif
+        Application::log.log(LogLevel::NOTICE
+                ,__FILE__,"::load:",__LINE__," ", node);
         mApp;
         const MoldableFactory& factory = app->getFactory();
         for (std::string child : child_nodes)
         {
-#ifdef DEBUG
-           std::cout << "MoldableAbstractParent::load:"<< __LINE__
-               << " " << node << ", child found: " << child << std::endl;
-#endif
-           Moldable* m_child = factory.createMoldableWidget(child);
-#ifdef DEBUG
-           std::cout << "MoldableAbstractParent::load:"<<__LINE__
-               << " " << node << ", child created: " << m_child->getNode()
-               <<std::endl;
-#endif
-           addWidget(m_child);
-#ifdef DEBUG
-           std::cout << "MoldableAbstractParent::load:"<<__LINE__
-               << " " << node << ", child added: " << m_child->getNode()
-               << std::endl;
-#endif
+            Application::log.log(LogLevel::NOTICE,__FILE__,"::load:",__LINE__,
+                ", child found: ", child);
+            Moldable* m_child = factory.createMoldableWidget(child);
+            Application::log.log(LogLevel::NOTICE,__FILE__,"::load:", __LINE__,
+                " ", node, "child created: ", m_child->getNode());               
+            addWidget(m_child);
+            Application::log.log(LogLevel::NOTICE,__FILE__,"::load:",__LINE__,
+                " ", node, "child added: ", m_child->getNode());
         }
-   }
+    }
 }

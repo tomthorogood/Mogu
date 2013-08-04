@@ -12,7 +12,7 @@
 namespace Validators {
 
 Wt::WValidator* createValidator(const std::string& validator);
-Wt::WRegExpValidator* createRegexValidator(Redis::ContextQuery&,const char*);
+Wt::WRegExpValidator* createRegexValidator(Redis::MoguQueryHandler&,const char*);
 
 }    //namespace Validators
 

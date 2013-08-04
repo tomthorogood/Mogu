@@ -1,0 +1,24 @@
+widget wrapper
+    type    : container
+    children
+        :input
+        :echo
+    end children
+end widget
+
+widget wrapper:input
+    type    :   input
+    text    :   "Input Something"
+
+    events
+        when keyup {
+            set widget wrapper:echo text to widget wrapper:input text
+        }
+    end events
+end widget
+
+
+widget wrapper:echo
+    type    :   text
+    text    :   " "
+end widget

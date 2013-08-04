@@ -6,7 +6,6 @@
  */
 
 #include "MoldableImage.h"
-#include <Redis/ContextQuery.h>
 #include <Parsers/NodeValueParser.h>
 #include <Redis/NodeEditor.h>
 #include <Mogu.h>

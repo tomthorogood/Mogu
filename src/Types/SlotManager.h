@@ -10,6 +10,8 @@
 #include "NodeValue.h"
 #include <unordered_map>
 #include <string>
+#include <Types/MoguLogger.h>
+
 class SlotManager
 {
 public:
@@ -17,20 +19,31 @@ public:
 
     inline void setSlot(const std::string& name, const NodeValue& value)
     {
+        if (name.empty())
+        {
+            Application::log.log(LogLevel::CRITICAL,
+                "Attempting to set an anonymous slot. Something has "
+                , "to have gone wrong for this to be the case.");
+            return ;
+        }
+        if (value.getString().empty())
+        {
+            Application::log.log(LogLevel::WARN, "Setting an empty string "
+                , "(", value.getString(), ") "
+                , "in slot ", name, ". Refusing to comply.");
+            return;
+        }
         map[name] = value;
     }
 
-    inline NodeValue retrieveSlot(const std::string& name)
+    inline NodeValue retrieveSlot(const std::string& name) const
     {
-        NodeValue ret_val = map.at(name);
-        map.erase(name);
-        return ret_val;
+        if (!map.count(name)) return NodeValue("");
+        return NodeValue(map.at(name));
     }
 
-    inline NodeValue peekSlot(const std::string& name)
-    {
-        return map.at(name);
-    }
+    inline void clearSlot(const std::string& name)
+    { map.erase(name);}
 
 private:
     std::unordered_map <std::string,NodeValue> map;

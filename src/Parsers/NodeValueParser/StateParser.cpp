@@ -7,9 +7,8 @@
 
 #include <Mogu.h>
 #include <Parsers/NodeValueParser/StateParser.h>
-#include <Redis/ContextQuery.h>
 #include <Types/syntax.h>
-#include <Redis/ContextQuery.h>
+#include <Redis/MoguQueryHandler.h>
 #include <Security/Encryption.h>
 #include <Groups/GroupManager.h>
 
@@ -118,7 +117,7 @@ void StateParser::handleWidget(const std::string& identifier, NodeValue& result)
 void StateParser::handleData(const std::string& identifier, NodeValue& result)
 {
     const char* c_node = identifier.c_str();
-    Redis::ContextQuery db(Prefix::data);
+    Redis::MoguQueryHandler db(Application::contextMap, Prefix::data);
     db.appendQuery( "type data.%s", c_node); 
     std::string node_type = db.yieldResponse <std::string>();
     if (node_type == "string")
@@ -170,10 +169,11 @@ void StateParser::handleWidget(Moldable* widget, NodeValue& result)
 
 void StateParser::handleUserField(const std::string& field, NodeValue& result)
 {
+    mApp;
     int token;
     NodeValue arg;
     Redis::NodeEditor node(Prefix::user, field);
-
+    node.setId(app->getUser());
     int type = node.getType().integer;
     if (type == MoguSyntax::__NONE__)
     {
@@ -205,8 +205,8 @@ void StateParser::handleGroupField(const std::string& field, NodeValue& result)
     bool read_enabled = group_mgr.hasReadAccess(field);
     if (!read_enabled) return;
     
-    Redis::ContextQuery& grpdb = group_mgr.getContext(Prefix::group); 
-    Redis::ContextQuery& plcdb = group_mgr.getContext(Prefix::policies);
+    Redis::MoguQueryHandler& grpdb = group_mgr.getContext(Prefix::group); 
+    Redis::MoguQueryHandler& plcdb = group_mgr.getContext(Prefix::policies);
 
     plcdb.appendQuery( "hget policies.%s %d", field.c_str(), (int)MoguSyntax::type);
     plcdb.appendQuery( "hget policies.%s %d",

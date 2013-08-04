@@ -8,7 +8,8 @@
 #ifndef TYPEDEFS_H_
 #define TYPEDEFS_H_
 #include <unordered_map>
-
+#include <TurnLeftLib/Utils/HungryVector.h>
+#include <vector>
 
 namespace Redis {
 typedef std::vector<std::string> strvector;

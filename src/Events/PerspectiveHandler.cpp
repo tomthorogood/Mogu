@@ -1,10 +1,13 @@
 #include "PerspectiveHandler.h"
 #include <Parsers/NodeValueParser.h>
 #include <Types/CommandValue.h>
+#include <Types/MoguLogger.h>
 #include <Mogu.h>
 
 PerspectiveHandler::PerspectiveHandler(Moldable& broadcaster, const std::string& perspective_)
-    : CommandProcessor(broadcaster), db(Prefix::perspectives), perspective(perspective_)
+    : CommandProcessor(broadcaster)
+    , db(Application::contextMap, Prefix::perspectives)
+    , perspective(perspective_)
 {
     const char* c_node = perspective.c_str();
     db.appendQuery("exists perspectives.%s", c_node);
@@ -23,9 +26,8 @@ void PerspectiveHandler::moldPerspective()
     for (auto cmd : commands)
     {
         CommandValue v(broadcaster);
-#ifdef DEBUG
-        std::cout << "Processing command: " << cmd << std::endl;
-#endif
+        Application::log.log(LogLevel::NOTICE,
+                "Processing Perspective ", perspective, " command: " ,cmd);
         nvp.giveInput(cmd,v);
         processCommand(v);
     }

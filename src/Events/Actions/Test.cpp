@@ -1,5 +1,6 @@
 #include "../Actions.h"
 #include "Includes.h"
+#include <Types/MoguLogger.h>
 
 namespace Actions {
 
@@ -25,12 +26,12 @@ void test(Moldable& broadcaster, CommandValue& v)
         v.set(CommandFlags::VALUE, tmp);
     }
     result = (value == v.get(CommandFlags::VALUE));
-#ifdef DEBUG
-    std::string s_res = result ? "SUCCEEDED" : "FAILED";
-    std::cout << (std::string) value << " == "
-        << (std::string) v.get(CommandFlags::VALUE)
-        << "? " << s_res << std::endl;
-#endif
+
+    Application::log.log(LogLevel::NOTICE
+            , (std::string) value, " == "
+            , (std::string) v.get(CommandFlags::VALUE)
+            , "? "
+            , result ? "SUCCEEDED" : "FAILED");
     if (!result) broadcaster.fail().emit();
     else broadcaster.succeed().emit();
 

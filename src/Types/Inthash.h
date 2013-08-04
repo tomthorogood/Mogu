@@ -1,7 +1,6 @@
 #ifndef INTHASH_H_
 #define INTHASH_H_
 
-#include <declarations.h>
 
 template <typename T>
 struct IntHash 

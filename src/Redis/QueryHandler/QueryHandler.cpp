@@ -15,6 +15,7 @@ QueryHandler::~QueryHandler()
 
 redisContext* QueryHandler::spawnContext()
 {
+    if (!context) return nullptr;
     redisContext* rdb = redisConnect(context->host.c_str(), context->port);
     freeReplyObject((redisReply*)
         redisCommand(rdb, "select %d", context->db_num));

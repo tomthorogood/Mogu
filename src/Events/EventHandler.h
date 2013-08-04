@@ -13,10 +13,7 @@
 #include <Parsers/NodeValueParser.h>
 #include "TriggerMap.h"
 #include "CommandProcessor.h"
-
-#ifdef DEBUG
-    static int cmd_count =0;
-#endif
+#include <Types/MoguLogger.h>
 
 class EventHandler : public CommandProcessor
 {
@@ -39,6 +36,7 @@ private:
 
 template <const int T> void EventHandler::handleTrigger()
 {
+    static int cmd_count =0;
     mApp;
     Parsers::NodeValueParser& nvp = app->interpreter();
     //COPY the queue, do not use the reference, or commands will only be fired
@@ -48,13 +46,11 @@ template <const int T> void EventHandler::handleTrigger()
     {
         CommandValue v(broadcaster);
         std::string cmd = commands.front();
-#ifdef DEBUG
-        ++cmd_count;
-        std::cout << "Processing command "
-            << cmd_count << ": " << cmd << std::endl;
-#endif
+        Application::log.log(
+                LogLevel::NOTICE, "Processing command ",
+                cmd_count++, ": ", cmd);
         commands.pop();
-        nvp.giveInput(cmd,v);
+        nvp.giveInput(cmd,v,&broadcaster);
         processCommand(v);
     }
 }

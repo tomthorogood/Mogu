@@ -33,6 +33,7 @@
 (   hidden changed          ,   hidden_changed  ,   event trigger   )
 (   index changed           ,   index_changed   ,   event trigger   ) 
 (   loaded                  ,   onload          ,   event trigger   )
+(   error reported          ,   error_reported  ,   event trigger   ) 
 
 
 (   clear                   ,   clear           ,   action          )
@@ -80,7 +81,6 @@
 (   container               ,   container       ,   widget type     )
 (   password                ,   password        ,   widget type attribute object )
 (   stack                   ,   stack           ,   widget type     )
-(   name                    ,   name            ,   attribute hashkey )
 (   hidden                  ,   hidden          ,   widget type attribute  )
 (   image link              ,   image_link      ,   widget type     )
 

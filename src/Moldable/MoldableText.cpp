@@ -6,7 +6,6 @@
  */
 
 #include "MoldableText.h"
-#include <Redis/ContextQuery.h>
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
 #include <Types/WidgetAssembly.h>

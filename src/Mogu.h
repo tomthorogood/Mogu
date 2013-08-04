@@ -17,19 +17,19 @@
 #include <Factories/MoldableFactory.h>
 #include <Types/SlotManager.h>
 #include <Parsers/NodeValueParser.h>
+#include <Types/MoguLogger.h>
 
 class Mogu: public Wt::WApplication
 {
     /*!\brief Changes the state of the application based on the URL */
     MoldableFactory moldableFactory;
-    ContextMap* contextMap_         =nullptr;
     Moldable* wrapper             =nullptr;
     UserManager* userManager        =nullptr;
 
     /*!\brief A map of named widgets. */
     std::unordered_map <std::string, Moldable*> widgetRegister;
     Parsers::NodeValueParser interpreter_;
-    int user;
+    int user =-1;
     int group                     =0;    //!< Currently active user group
     std::string instanceid;
     SlotManager slotMgr;
@@ -37,8 +37,6 @@ class Mogu: public Wt::WApplication
     void loadMoguStyles();
     void handlePathChange(const std::string& path);
     std::string app_name;
-
-    /*!\brief The widget that started it all... */
 
 public:
     Mogu(const Wt::WEnvironment& env);
@@ -64,12 +62,7 @@ public:
     /*!\brief Returns a widget from the registry based on its name. */
     inline Moldable* registeredWidget( std::string name)
     {      
-        try {
-            return widgetRegister.at(name); 
-        } catch (const std::out_of_range& e) {
-            return nullptr;
-        }
-        return nullptr;
+        return widgetRegister.count(name) ? widgetRegister.at(name) : nullptr;
     }
 
     inline void setPath(const std::string& path){
@@ -90,7 +83,7 @@ public:
     
     inline const int& getUser() const
     {
-        return user;
+        return (user==-1)? userManager->getUser() : user;
     }
 
     inline UserManager& getUserManager() {return *userManager;}
@@ -102,7 +95,6 @@ public:
 	    doJavaScript(jsalert);
     }
 
-    inline ContextMap* contextMap() { return contextMap_;}
     void removeWidget(const std::string& identifier);
     inline void setUser(int tmpUser) { user = tmpUser;}
 

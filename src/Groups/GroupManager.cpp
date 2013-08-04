@@ -1,29 +1,28 @@
 #include "GroupManager.h"
 #include <Mogu.h>
 GroupManager::GroupManager()
-:   grpdb(Prefix::group)
-    , usrdb (Prefix::user)
-    , plcdb (Prefix::policies)
+    : grpdb(Application::contextMap, Prefix::group)
+    , usrdb (Application::contextMap, Prefix::user)
+    , plcdb (Application::contextMap, Prefix::policies)
 {}
 
 GroupManager::GroupManager (const int& grpid)
-:   group_id(grpid)
-    , grpdb(Prefix::group)
-    , usrdb(Prefix::user)
-    , plcdb(Prefix::policies)
+    : group_id(grpid)
+    , grpdb(Application::contextMap, Prefix::group)
+    , usrdb(Application::contextMap,Prefix::user)
+    , plcdb(Application::contextMap,Prefix::policies)
     , USER_STR((std::string) MoguSyntax::user)
     , GROUP_STR((std::string) MoguSyntax::group)
     , ADMIN_STR((std::string) MoguSyntax::moderator)
 {
     setAccessLevel();
-    grpdb.execute();
+    grpdb.flush();
 }
 
 GroupManager::GroupManager(const std::string& group_key)
-: 
-    grpdb(Prefix::group)
-    , usrdb(Prefix::user)
-    , plcdb(Prefix::policies)
+    : grpdb(Application::contextMap,Prefix::group)
+    , usrdb(Application::contextMap,Prefix::user)
+    , plcdb(Application::contextMap,Prefix::policies)
     , USER_STR((std::string) MoguSyntax::user)
     , GROUP_STR((std::string) MoguSyntax::group)
     , ADMIN_STR((std::string) MoguSyntax::moderator)
@@ -34,7 +33,7 @@ GroupManager::GroupManager(const std::string& group_key)
     grpdb.appendQuery("hget groups.meta.keys %s", group_key.c_str());
     group_id = grpdb.yieldResponse <int>();
     if (group_id != 0) setAccessLevel();
-    grpdb.execute();
+    grpdb.flush();
 }
 
 /* This may only be executed by administrators. 
@@ -53,7 +52,7 @@ void GroupManager::promote (const std::string& userid)
     else
         grpdb.appendQuery( "sadd groups.%d.members %s",
                 group_id, userid.c_str());
-    grpdb.execute();
+    grpdb.flush();
 }
 
 /* This may only be executed by administrators.
@@ -73,7 +72,7 @@ void GroupManager::demote (const std::string& userid)
     else if (grpdb.yieldResponse <bool>())
         grpdb.appendQuery( "srem groups.%d.members %s",
                 group_id, userid.c_str());
-    grpdb.execute();
+    grpdb.flush();
 }
 
 bool GroupManager::hasReadAccess (const std::string& field)

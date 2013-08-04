@@ -407,9 +407,6 @@ void NodeValueParser::giveInput(const std::string& input_, CommandValue& cv,
     input = input_;
     tokenizeInput(input, true); // Make sure to return the iterator to
                                 // the BEGINNING
-#ifdef DEBUG
-    tm.printTokens();
-#endif
     // The first token is always an action
     cv.set(CommandFlags::ACTION, tm.currentToken());
 
@@ -459,9 +456,6 @@ void NodeValueParser::giveInput(const std::string& input_, CommandValue& cv,
         else if (isPrepositionToken(tok)) {
             tm.saveLocation(); // We've done what we need with the preceeding
             tm.truncateHead(); // tokens, so get rid of them.
-#ifdef DEBUG
-            tm.printTokens();
-#endif
             tm.end(); // Allow tm to treat it as standard input.
             reduceExpressions(bc);
             if (tm.currentToken() == MoguSyntax::TOKEN_DELIM)

@@ -6,13 +6,15 @@
  */
 
 #include "TriggerMap.h"
-#include <Redis/ContextQuery.h>
+#include <Redis/MoguQueryHandler.h>
+#include <Redis/DatabaseConfigReader.h>
+
 TriggerMap::TriggerMap() : map() {}
 
 TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string& node)
 :map()
 {
-    Redis::ContextQuery db(prefix);
+    Redis::MoguQueryHandler db(Application::contextMap, prefix);
     std::string s_prefix = prefixMap.at(prefix);
     const char* c_prefix = s_prefix.c_str();
 

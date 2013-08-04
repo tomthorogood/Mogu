@@ -37,7 +37,7 @@ void MoldableInput::initializeInput()
     std::string validator = stripquotes(assembly_validator);
     input = new Wt::WLineEdit();
     input->setEmptyText(txt);
-    if (!validator.empty() && !validator_ptr)
+    if (!validator.empty() && (validator_ptr==nullptr))
     {
         validator_ptr = Validators::createValidator(validator);
         input->setValidator(validator_ptr);

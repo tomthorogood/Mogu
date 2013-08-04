@@ -123,9 +123,25 @@ void handleValueToField(Moldable& broadcaster, CommandValue& v)
 void handleUserToApplication(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
-    app->getUserManager().registerUser(
-        app->slotManager().retrieveSlot("USERNAME"),
-        app->slotManager().retrieveSlot("PASSWORD"));
+    if (&broadcaster==nullptr)
+    {
+        Application::log.log(LogLevel::WARN,__FILE__, " ", __LINE__,
+            ": Broadcaster is null.");
+    }
+
+    std::string p_username = app->slotManager().retrieveSlot("USERNAME");
+    std::string p_userauth = app->slotManager().retrieveSlot("USERAUTH");
+    if (p_username.empty())
+        Application::log.log(LogLevel::ERROR,__FILE__," ", __LINE__,
+            "Username is Empty \"", p_username, "\"");
+    if (p_userauth.empty())
+        Application::log.log(LogLevel::ERROR, __FILE__," ", __LINE__,
+            "Userauth is Empty \"", p_userauth, "\"");
+    SecurityStatus status = app->getUserManager().registerUser(
+        p_username,p_userauth);
+
+    if (status != SecurityStatus::OK_REGISTER)
+        broadcaster.errorReported().emit();
 }
 
 }//anonymous local namespace
@@ -146,6 +162,7 @@ void append(Moldable& broadcaster, CommandValue& v)
             break;
        case USER_TO_APPLICATION:
             handleUserToApplication(broadcaster,v);
+            break;
        default: 
             return;
    }

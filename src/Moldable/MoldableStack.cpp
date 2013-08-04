@@ -5,7 +5,6 @@
 
 
 #include "MoldableStack.h"
-#include <Redis/ContextQuery.h>
 #include <Wt/WAnimation>
 #include <Types/WidgetAssembly.h>
 

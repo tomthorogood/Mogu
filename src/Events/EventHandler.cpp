@@ -62,6 +62,14 @@ void EventHandler::processTriggerMap()
             broadcaster.clicked().connect(
                 this, &EventHandler::handleTrigger <MoguSyntax::mouseover.integer>);
             break;
+        case MoguSyntax::error_reported:
+            broadcaster.errorReported().connect(
+                this, &EventHandler::handleTrigger <MoguSyntax::error_reported.integer>);
+            break;
+        case MoguSyntax::keyup:
+            broadcaster.keyWentUp().connect(
+                this, &EventHandler::handleTrigger <MoguSyntax::keyup.integer>);
+            break;
         default: continue; // just ignore bad input
         }
     }

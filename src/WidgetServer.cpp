@@ -2,6 +2,7 @@
 #include "WidgetServer.h"
 #include <Types/WidgetAssembly.h>
 #include <sstream>
+#include <Redis/MoguQueryHandler.h>
 
 WidgetServer::WidgetServer (Mogu* application)
     : application(application)
@@ -180,7 +181,7 @@ int WidgetServer::getMaxIters(const std::string& node)
     std::string s_prefix = (prefix == Prefix::user) ? "user" : "data";
     buf << "llen " << s_prefix << "." << node;
     std::string cmd = buf.str();
-    Redis::QuerySet db(prefix);
+    Redis::MoguQueryHandler db(Application::contextMap, prefix);
     db.appendQuery(cmd);
     return db.yieldResponse <int>();
 }

@@ -3,7 +3,7 @@
 
 
 #include <declarations.h>
-#include <Redis/ContextQuery.h>
+#include <Redis/MoguQueryHandler.h>
 
 /* 
  * The GroupManager class determines a user's access level within a group,
@@ -31,7 +31,7 @@ public:
         return access_level;
     }
 
-    inline Redis::ContextQuery& getContext(Prefix prefix) {
+    inline Redis::MoguQueryHandler& getContext(Prefix prefix) {
         switch(prefix) {
             case Prefix::group: return grpdb;
             case Prefix::user: return usrdb;
@@ -42,9 +42,9 @@ public:
 private:
     int             group_id;       // The database location of the group
     AccessLevel     access_level;   // 0 = no access, 1 = user, 2 = admin
-    Redis::ContextQuery grpdb;      // Context for Group database
-    Redis::ContextQuery usrdb;      // Context for user database
-    Redis::ContextQuery plcdb;      // Context for policy database
+    Redis::MoguQueryHandler grpdb;      // Context for Group database
+    Redis::MoguQueryHandler usrdb;      // Context for user database
+    Redis::MoguQueryHandler plcdb;      // Context for policy database
     std::string USER_STR;
     std::string GROUP_STR;
     std::string ADMIN_STR;

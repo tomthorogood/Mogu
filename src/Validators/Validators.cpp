@@ -9,7 +9,7 @@
 
 #include <Exceptions/Exceptions.h>
 #include <Mogu.h>
-#include <Redis/ContextQuery.h>
+#include <Redis/MoguQueryHandler.h>
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Wt/WApplication>
@@ -24,7 +24,7 @@ Wt::WValidator* createValidator(
 {
     mApp;
     const char* c_node = validatorName.c_str();
-    Redis::ContextQuery db(Prefix::validators);
+    Redis::MoguQueryHandler db(Application::contextMap, Prefix::validators);
     db.appendQuery( "hget validators.%s %d", c_node, (int)MoguSyntax::type);
     
     NodeValue vval;
@@ -39,12 +39,12 @@ Wt::WValidator* createValidator(
 }
 
 Wt::WRegExpValidator* createRegexValidator(
-    Redis::ContextQuery& db, const char* c_node)
+    Redis::MoguQueryHandler& db, const char* c_node)
 {
     db.appendQuery( "hget validators.%s %d", c_node, (int) MoguSyntax::test);
 
     std::string pattern = db.yieldResponse <std::string>();
-    Wt::WString wpattern(pattern);
+    Wt::WString wpattern(stripquotes(pattern));
     return new Wt::WRegExpValidator(wpattern);
 }
 

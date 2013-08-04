@@ -14,7 +14,6 @@
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Redis/NodeEditor.h>
-#include <Redis/ContextQuery.h>
 
 class Moldable;
 
@@ -63,6 +62,7 @@ class Moldable :
     Wt::Signal <> sig_loaded;
     Wt::Signal <> sig_hidden_changed;
     Wt::Signal <> sig_index_changed;
+    Wt::Signal <> sig_error_reported;
 
     const SyntaxDef&  widget_type;
 
@@ -127,6 +127,7 @@ public:
     inline Wt::Signal <>& onLoad()          { return sig_loaded; }
     inline Wt::Signal <>& hiddenChanged()   { return sig_hidden_changed; }
     inline Wt::Signal <>& indexChanged()    { return sig_index_changed;}
+    inline Wt::Signal <>& errorReported()   { return sig_error_reported;}
 
     inline void increment(int byAmount=1) {
         NodeValue v(0);

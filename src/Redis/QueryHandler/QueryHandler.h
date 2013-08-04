@@ -43,9 +43,9 @@ private:
     void insertVectorElement(redisReply*,std::vector<std::string>&);
     int consumeReply(redisContext*,SafeReplyObject&);
     
-    Context* context;
+    Context* context        = nullptr;
     
-    redisContext* c = nullptr;
+    redisContext* c         = nullptr;
 
     int reply_type          = -1;
     std::string reply_str   = "";

@@ -13,13 +13,13 @@ syn keyword moguReserved own self
 syn keyword moguReserved click clicked mouseover mouseout 
 
 " Boolean related
-syn keyword moguReserved failed succeeded test
+syn keyword moguReserved failed succeeded test error reported
 
 " Keyboard related
 syn keyword moguReserved enter pressed keyup
 
 " States of Change
-syn keyword moguReserved hidden index style css changed loaded
+syn keyword moguReserved hidden index style css changed loaded 
 
 " Actions
 syn keyword moguReserved increment decrement email reload emit append

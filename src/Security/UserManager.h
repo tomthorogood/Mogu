@@ -50,11 +50,11 @@ private:
         return rchar.generate(1);
     }
 
-    std::string getUserSalt(std::string userid, Redis::ContextQuery* db =nullptr);
-    std::string getUserSalt(const int& userid, Redis::ContextQuery* db=nullptr);
+    std::string getUserSalt(std::string userid, Redis::MoguQueryHandler* db =nullptr);
+    std::string getUserSalt(const int& userid, Redis::MoguQueryHandler* db=nullptr);
 
     /* Either returns an abandoned userid, or creates a new one. */
-    int consumeUserId(Redis::ContextQuery&);
+    int consumeUserId(Redis::MoguQueryHandler&);
     int userid = -1;
 };
 

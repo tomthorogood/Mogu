@@ -8,8 +8,9 @@
 #ifndef ENCRYPTION_H_
 #define ENCRYPTION_H_
 
-#include <declarations.h>
-#include <crypt/PacketCenter.h>
+
+#include "../crypt/PacketCenter.h"
+#include <string>
 
 namespace Security {
 std::string encrypt(

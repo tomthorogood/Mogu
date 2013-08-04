@@ -8,9 +8,9 @@
 #include "MoldableFactory.h"
 #include <Moldable/Implementations.h>
 #include <Types/syntax.h>
-#include <Redis/ContextQuery.h>
 #include <Mogu.h>
 #include <WidgetServer.h>
+#include <Types/MoguLogger.h>
 
 MoldableFactory::MoldableFactory (Mogu* application) : 
     server(new WidgetServer(application))
@@ -24,13 +24,11 @@ MoldableFactory::~MoldableFactory()
 
 Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
 {
-#ifdef DEBUG
     static int iters = 0;
     ++iters;
-    std::cout << "MoldableFactory::createMoldableWidget:" << __LINE__
-        << " Creating widget " << node << "(" << iters << ")" << std::endl;
-#endif
-
+    Application::log.log(LogLevel::NOTICE,
+            "MoldableFactory::createMoldableWidget:", __LINE__,
+            " : Creating Widget ", node, " ", iters++, ")");
     WidgetAssembly* assembly = server->request(node);
     std::string s_type = (std::string)
         assembly->attrdict[MoguSyntax::type.integer];

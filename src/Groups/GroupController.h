@@ -3,6 +3,7 @@
 
 #include <declarations.h>
 #include <Groups/GroupManager.h>
+#include <Redis/MoguQueryHandler.h>
 
 /* The GroupController is how the application itself interacts
  * with groups, such as creating, destroying them, adding members
@@ -20,7 +21,7 @@ private:
 
     // Consume a group id from either the current group count or
     // from the list of abandoned ids.
-    int consumeGroupId(Redis::ContextQuery&);
+    int consumeGroupId(Redis::MoguQueryHandler&);
     GroupManager manager;
 
 public:
@@ -32,7 +33,7 @@ public:
     inline int getGroupId(const std::string& group_name)
     {
         const char* c_name = group_name.c_str();
-        Redis::ContextQuery db(Prefix::meta);
+        Redis::MoguQueryHandler db(Application::contextMap, Prefix::meta);
         db.appendQuery("hget meta.groups %s", c_name);
         std::string g_id = db.yieldResponse <std::string>();
         return std::atoi(g_id.c_str());

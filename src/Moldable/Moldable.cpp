@@ -9,27 +9,25 @@
 #include "Moldable.h"
 #include <Mogu.h>
 #include <Types/NodeValue.h>
-#include <Redis/ContextQuery.h>
 #include <Wt/WStackedWidget>
 #include <Events/EventHandler.h>
 #include <Wt/WAnchor>
 #include <Types/WidgetAssembly.h>
 
-Moldable::Moldable (WidgetAssembly* assembly, const SyntaxDef& widget_type_) :
-    sig_style_changed(this)
+Moldable::Moldable (WidgetAssembly* assembly, const SyntaxDef& widget_type_)
+    :sig_style_changed(this)
     ,sig_failed_test(this)
     ,sig_succeeded_test(this)
     ,sig_loaded(this)
     ,sig_hidden_changed(this)
     ,sig_index_changed(this)
+    ,sig_error_reported(this)
     ,widget_type(widget_type_)
     ,node(assembly->node)
 {
-#ifdef DEBUG
     static size_t num_constructed = 0;
-    std::cout << "Moldable Constructor("<< ++num_constructed <<
-        "): " << node << std::endl;
-#endif
+    Application::log.log(LogLevel::NOTICE, __FILE__, "::constructor:",__LINE__,
+        "(", num_constructed++, "): ",node);
     init(assembly);
 }
 
@@ -45,6 +43,7 @@ void Moldable::init (WidgetAssembly* assembly)
 {
     mApp;
     app->registerWidget(node, *this);
+    setObjectName(node);
     assembly_style = (std::string)
         assembly->attrdict[MoguSyntax::style.integer];
     assembly_tooltip = (std::string)

@@ -41,6 +41,9 @@ void CommandProcessor::processCommand(CommandValue& v)
         case MoguSyntax::script:
             Actions::javascript(broadcaster,v);
             break;
+        case MoguSyntax::clear:
+            Actions::clear(broadcaster,v);
+            break;
         default:return;
     }
 }

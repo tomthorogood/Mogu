@@ -35,13 +35,15 @@ void NodeEditor::setup()
     if (exists)
         type = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
     /* Don't try and guess the type of a node that doesn't exist. */
-    else if (prefix == Prefix::user || prefix == Prefix::group)
-    {
-        type = getPolicyType();
-    }
     else
     {
         db->flush();
+    }
+
+    if (prefix == Prefix::user || prefix == Prefix::group)
+    {
+        type = getPolicyType();
+        setEncrypted();
     }
 
     if (arg) setArgInfo();
@@ -52,16 +54,12 @@ void NodeEditor::setup()
 int NodeEditor::getPolicyType()
 {
     NodeValue tmp(MoguSyntax::type.integer);
-    swapArg(&tmp);
-
-    Prefix prefix_ = prefix;
-    setPrefix(Prefix::policies);
-    db->appendQuery(buildCommand("hget"));
-    int type_ = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
-
-    setPrefix(prefix_);
-    swapArg();
+    setPolicy();
+    policy->appendQuery(
+        "hget policies.%s %d", node.c_str(), MoguSyntax::type.integer);
+    int type_ = MoguSyntax::get(policy->yieldResponse<std::string>());
     return type_;
+
 }
 
 /* Resets anything that could potentially change
@@ -117,7 +115,7 @@ std::string NodeEditor::read()
     }
     else
     {
-        if (arg_str.empty())
+        if (!arg_str.empty())
             db->appendQuery(buildCommand("hget"));
     }
 
@@ -125,6 +123,17 @@ std::string NodeEditor::read()
         return Security::decrypt(db->yieldResponse<std::string>());
     return db->yieldResponse <std::string>();
 }
+
+bool NodeEditor::setEncrypted()
+{
+    setPolicy();
+    policy->appendQuery(
+        "hget policies.%s %d", node.c_str(), MoguSyntax::encrypted.integer);
+    std::string encryption_result = policy->yieldResponse <std::string>();
+    encrypted = encryption_result=="yes";
+    return encrypted;
+}
+
 
 void NodeEditor::read(std::map<std::string,std::string>& iomap)
 {

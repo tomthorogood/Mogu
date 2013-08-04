@@ -23,7 +23,7 @@ class UserManager;
 
 namespace Redis {
 struct Field;
-class ContextQuery;
+class MoguQueryHandler;
 class StorageRequeset;
 class StoragePolicyLookup;
 class SessionValueRequest;

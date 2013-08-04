@@ -1,5 +1,5 @@
 /*
- * preview.cpp
+ed * preview.cpp
  *
  *  Created on: Jul 17, 2012
  *      Author: tom
@@ -20,14 +20,13 @@
 #include "hash.h"
 #include "Redis/DatabaseConfigReader.h"
 #include "Redis/ContextMap.h"
-#include "Redis/ContextQuery.h"
 #include "Events/PerspectiveHandler.h"
+#include "Redis/NodeEditor.h"
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)
     : Wt::WApplication(env), moldableFactory(this), widgetRegister()
 {
-    contextMap_ = Application::loadDatabaseContexts();
     userManager = new UserManager();
     TurnLeft::Utils::RandomCharSet rchar;
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
@@ -38,10 +37,8 @@ Mogu::Mogu(
     std::string styleSheet("/resources/mogu/style.css");
     useStyleSheet(styleSheet);
 
-    Redis::ContextQuery db(Prefix::meta);
-    db.appendQuery("get meta.root");
-
-    std::string root_widget = db.yieldResponse <std::string>();
+    Redis::NodeEditor node(Prefix::meta, "root");
+    std::string root_widget = node.read();
 
     wrapper = moldableFactory.createMoldableWidget(root_widget);
 
@@ -82,5 +79,5 @@ Mogu::~Mogu()
             iterator->second->shun();
         ++iterator;
     }
-    delete contextMap_;
+    delete userManager;
 }
