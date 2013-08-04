@@ -1,9 +1,16 @@
 #ifndef NODEDITOR_H_
 #define NODEDITOR_H_
 
-#include <declarations.h>
-#include "ContextQuery.h"
+#include "MoguQueryHandler.h"
+#include "DatabaseConfigReader.h"
+#include "../Types/NodeValue.h"
+#include "../Types/SyntaxDef.h"
+#include "../Types/syntax.h"
 #include <cassert>
+#include <string>
+#include <vector>
+#include <map>
+
 namespace Redis
 {
 
@@ -11,14 +18,25 @@ class NodeEditor
 {
 public:
     NodeEditor();
-    NodeEditor(const Prefix& prefix,
-            const std::string& node,
-            NodeValue* arg=nullptr);
+    NodeEditor(
+            const Prefix& prefix
+            , const std::string& node
+            , NodeValue* arg=nullptr);
 
     void setPrefix(Prefix);
 
     ~NodeEditor()
     {
+        if (db)
+        { 
+            db->flush();
+            delete db;
+        }
+        if (policy)
+        {
+            policy->flush();
+            delete policy;
+        }
     }
 
     inline void setSub(const std::string& sub_)
@@ -30,7 +48,7 @@ public:
 
     inline void clearSub()
     {
-        sub = EMPTY;
+        sub = "";
         setExists();
         setType();
     }
@@ -47,7 +65,7 @@ public:
     void read(std::map<std::string,std::string>&);
 
     /* Write a single value at the node. */
-    bool write(std::string);
+    bool write(std::string, bool hold_for_multiple_writes=false);
 
     /* Write an entire hash key */
     bool write(std::map <std::string,std::string>&);
@@ -64,9 +82,9 @@ public:
     inline bool setEncrypted()
     {
         setPolicy(); 
-        policy.appendQuery(
+        policy->appendQuery(
             "hget policies.%s %d", node.c_str(), MoguSyntax::encrypted.integer);
-        encrypted = policy.yieldResponse<std::string>() == "yes";
+        encrypted = policy->yieldResponse<std::string>() == "yes";
         return encrypted;
     }
 
@@ -76,14 +94,14 @@ public:
     inline const SyntaxDef& policyType()
     {
         setPolicy();
-        policy.appendQuery(
+        policy->appendQuery(
             "hget policies.%s %d", node.c_str(), MoguSyntax::type.integer);
-        return MoguSyntax::get(policy.yieldResponse<std::string>());
+        return MoguSyntax::get(policy->yieldResponse<std::string>());
     }
 
     inline void unsetArgInfo()
     {
-        arg_str = EMPTY;
+        arg_str = "";
     }
 
     /* Set the arg to a new arg. The old arg is lost. */
@@ -122,37 +140,40 @@ public:
         return MoguSyntax::get(type);
     }
 
+    inline bool nodeExists() const { return exists; }
+
 private:
 
     Prefix  prefix      = Prefix::__NONE__;
    
-    ContextQuery db;
+    MoguQueryHandler* db = nullptr;
     
     /* For user and group nodes, we'll need to read the node policy as well.*/
-    ContextQuery policy;
+    MoguQueryHandler* policy = nullptr;
     NodeValue* arg          =NULL;
     NodeValue* arg_storage  =NULL;
 
     bool exists             = false;
     bool hash_exists        = false;
+    bool is_setup           = false;
     int  type               = MoguSyntax::__NONE__.integer;
     
     /*  The string representation of the Prefix given. */
-    std::string prefix_str    = EMPTY;
+    std::string prefix_str    = "";
 
     /* The [name] in the [prefix].[id?].[name]... format. */
-    std::string node      = EMPTY;
+    std::string node      = "";
 
     /* If applicable, the subnode for the prefix:
      * [prefix].[id?].[name].[sub]
      */
-    std::string sub       = EMPTY;
+    std::string sub       = "";
 
     /* If applicable, the hashkey used when trying to access
      * a single value in a hash node. If this is attempted but the
      * hashkey is empty, the read function will return false.
      */
-    std::string arg_str   = EMPTY;
+    std::string arg_str   = "";
 
     /* The id used to read user or group nodes */
     int id      = -1;
@@ -175,38 +196,44 @@ private:
      */
     std::string getDefault();
     void setArgInfo();
-    void setId();
+   
+    inline void setId(int id_) { 
+        if (hasId()) return;
+        id = id_; setup();
+    }
 
     /* Same as above but for default hashes. */
     void getDefault(std::map<std::string,std::string>&);
 
     /* Same as above but for default lists. */
     void getDefault(std::vector<std::string>&);
-
-    void appendCommand(const char* cmd);
+    std::string buildCommand(const std::string& cmd, std::string extra="");
 
     /* Readability function */
+    inline bool id_required() 
+    { return (prefix==Prefix::user)||(prefix==Prefix::group);}
+
     inline bool hasId() 
     { return id != -1; }
 
     inline void setPolicy()
     {
-        policy.setPrefix(Prefix::policies);
+        policy->newContext(Application::contextMap->get(Prefix::policies));
     }
 
     inline void setExists()
     {
         unsetArgInfo();
-        appendCommand("exists");
-        exists = db.yieldResponse<bool>();
+        db->appendQuery(buildCommand("exists").c_str());
+        exists = db->yieldResponse<bool>();
         setArgInfo();
     }
 
     inline void setType()
     {
         unsetArgInfo();
-        appendCommand("type");
-        type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
+        db->appendQuery(buildCommand("type"));
+        type = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
         setArgInfo();
     }
 
@@ -229,6 +256,8 @@ private:
 
         return buf.str();
     }
+
+    void setup();
 
 };//class NodeEditor
 

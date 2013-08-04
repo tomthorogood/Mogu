@@ -8,13 +8,18 @@
 #ifndef DATABASECONFIGREADER_H_
 #define DATABASECONFIGREADER_H_
 
-#include <declarations.h>
-#include <Types/Inthash.h>
-#include <Redis/Context.h>          // Context
+
 #include <fstream>                  // ifstream
 #include <memory>                   // std::make_shared
 #include <cassert>
+#include <string>
+#include <unordered_map>
+#include "../Config/typedefs.h"
+#include "../Types/Inthash.h"
+#include "../Types/syntax.h"
 
+#include "QueryHandler/Context.h"
+#include "ContextMap.h"
 
 #ifndef DBCONFIG_FILE //Defined at compile time or:
 #define DBCONFIG_FILE "/usr/share/Mogu/dbconfig.conf"
@@ -78,7 +83,11 @@ Prefix matchPrefix(const std::string& prefix);
 
 int extractInteger(const std::string& line);
 std::string getHost(const std::string& line);
+
 ContextMap* loadDatabaseContexts();
+
+static ContextMap* contextMap = loadDatabaseContexts();
+
 } //namespace Application
 
 #endif /* DATABASECONFIGREADER_H_ */

@@ -1,34 +1,39 @@
 #include "NodeEditor.h"
-#include <Mogu.h>
-#include <Security/Encryption.h>
+#include "../Security/Encryption.h"
+#include "../Types/MoguLogger.h"
 namespace Redis {
 
 NodeEditor::NodeEditor()
-    : db(Prefix::widgets)
+    : db(new MoguQueryHandler(Application::contextMap, Prefix::widgets))
 {
 }
 
 NodeEditor::NodeEditor(
+
     const Prefix& prefix_
     , const std::string& node_
     , NodeValue* arg_)
     :
         prefix(prefix_)
-        , db(prefix_)
+        , db(new MoguQueryHandler(Application::contextMap, prefix_))
         , arg(arg_)
         , prefix_str(prefixMap.at(prefix_))
         , node(node_)
         
 {
-    setId(); // This has to be the first thing we do!
-    /* Determine whether the node exists */
-    appendCommand("exists");
+    setup();
+}
+
+void NodeEditor::setup()
+{
+    if (id_required() && !hasId()) return;
+    db->appendQuery(buildCommand("exists"));
 
     /* Get the raw type of the node.*/
-    appendCommand("type");
-    exists = db.yieldResponse <bool>();
+    db->appendQuery(buildCommand("type"));
+    exists = db->yieldResponse <bool>();
     if (exists)
-        type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
+        type = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
     /* Don't try and guess the type of a node that doesn't exist. */
     else if (prefix == Prefix::user || prefix == Prefix::group)
     {
@@ -36,22 +41,23 @@ NodeEditor::NodeEditor(
     }
     else
     {
-        db.clear();
+        db->flush();
     }
 
     if (arg) setArgInfo();
-
+    is_setup = true;
 }
 
-inline int NodeEditor::getPolicyType()
+
+int NodeEditor::getPolicyType()
 {
     NodeValue tmp(MoguSyntax::type.integer);
     swapArg(&tmp);
 
     Prefix prefix_ = prefix;
     setPrefix(Prefix::policies);
-    appendCommand("hget");
-    int type_ = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
+    db->appendQuery(buildCommand("hget"));
+    int type_ = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
 
     setPrefix(prefix_);
     swapArg();
@@ -66,17 +72,15 @@ void NodeEditor::setPrefix(Prefix prefix_)
     if (prefix_ == prefix) return; // Ignore this request
     prefix = prefix_;
     id = -1;
-    setId();
     prefix_str = prefixMap.at(prefix);
-    db.setPrefix(prefix);
+    db->newContext(Application::contextMap->get(prefix_));
     unsetArgInfo();
 
-    appendCommand("exists");
-    appendCommand("type");
-    exists = db.yieldResponse<bool>();
-    if (exists) type = MoguSyntax::get(db.yieldResponse<std::string>()).integer;
-    else db.clear();
-
+    db->appendQuery(buildCommand("exists"));
+    db->appendQuery(buildCommand("type"));
+    exists = db->yieldResponse<bool>();
+    if (exists) type = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
+    else db->flush();
     setArgInfo();
 }
 
@@ -90,7 +94,7 @@ std::string NodeEditor::read()
     {
         if (prefix != Prefix::user && prefix != Prefix::group)
         {
-            return EMPTY;
+            return "";
         }
         else
         {
@@ -103,23 +107,23 @@ std::string NodeEditor::read()
     if (type == MoguSyntax::string.integer)
     {
         unsetArgInfo();
-        appendCommand("get");
+        db->appendQuery(buildCommand("get"));
         setArgInfo();
     }
     else if (type == MoguSyntax::list.integer)
     {
         if (isdigit(arg_str[0]))
-            appendCommand("lindex");
+            db->appendQuery(buildCommand("lindex"));
     }
     else
     {
-        if (!isEmpty(arg_str))
-            appendCommand("hget");
+        if (arg_str.empty())
+            db->appendQuery(buildCommand("hget"));
     }
 
     if (encrypted)
-        return Security::decrypt(db.yieldResponse<std::string>());
-    return db.yieldResponse <std::string>();
+        return Security::decrypt(db->yieldResponse<std::string>());
+    return db->yieldResponse <std::string>();
 }
 
 void NodeEditor::read(std::map<std::string,std::string>& iomap)
@@ -144,9 +148,9 @@ void NodeEditor::read(std::map<std::string,std::string>& iomap)
 
     /* We have to clear arg info in order for an 'hgetall' command to work. */
     unsetArgInfo();
-    appendCommand("hgetall");
+    db->appendQuery(buildCommand("hgetall"));
     std::vector <std::string> response =
-        db.yieldResponse <std::vector <std::string>>();
+        db->yieldResponse <std::vector <std::string>>();
     
     for (size_t index = 0; index < response.size(); ++index)
     {
@@ -163,7 +167,6 @@ void NodeEditor::read(std::map<std::string,std::string>& iomap)
 void NodeEditor::read(std::vector <std::string>& iovec)
 {
     std::string full_node = buildNode();
-    const char* local_node = full_node.c_str();
     if (exists && type != MoguSyntax::list.integer) return;
     if (!exists) 
     {
@@ -180,16 +183,16 @@ void NodeEditor::read(std::vector <std::string>& iovec)
             return;
         }
     }
-    appendCommand("llen");
-    int range = db.yieldResponse <int>();
+    db->appendQuery(buildCommand("llen"));
+    int range = db->yieldResponse <int>();
     
     // Since this is a very specific command format, we will 
     // not worry about building this logic into the 'appendCommand'
     // tree.
 
-    db.appendQuery("lrange %s 0 %d", local_node, range);
+    db->appendQuery("lrange %s 0 %d", full_node.c_str(), range);
 
-    iovec = db.yieldResponse<std::vector<std::string>>();
+    iovec = db->yieldResponse<std::vector<std::string>>();
     if (encrypted)
     {
         for (size_t i = 0; i < iovec.size(); ++i)
@@ -224,24 +227,22 @@ void NodeEditor::getDefault(std::map<std::string,std::string>& iomap)
 }
 
 
-bool NodeEditor::write(std::string value)
+bool NodeEditor::write(std::string value, bool hold_queue)
 {
     if (encrypted) value = Security::encrypt(value);
     NodeValue tmp(value);
     if (type==MoguSyntax::string.integer)
     {
-
         // We shouldn't already have an arg, and if we do, it's 
         // probably not there on purpose, so we'll allow the overwrite.
         swapArg(&tmp);
-        appendCommand("set");
+        db->appendQuery(buildCommand("set"));
         swapArg();
-
     }
     else if (type==MoguSyntax::list.integer)
     {
         swapArg(&tmp);
-        appendCommand("rpush");
+        db->appendQuery(buildCommand("rpush"));
         swapArg();
     }
     /* This is a special circumstance, so we'll build the logic right here. 
@@ -249,12 +250,9 @@ bool NodeEditor::write(std::string value)
      */
     else if (type==MoguSyntax::hash.integer && !arg_str.empty())
     {
-        std::string s_node = buildNode();
-        db.appendQuery("hset %s %s %s",
-            s_node.c_str(), arg_str.c_str(), value.c_str());
+        db->appendQuery(buildCommand("hset",value));
     }
-    if (!delay_execution)
-        db.execute();
+    if (!hold_queue) db->flush();
     return true;
 }
 
@@ -278,12 +276,11 @@ bool NodeEditor::write(std::map<std::string,std::string>& iomap)
     {
         tmp.setString(iter.first); // Set the key as the arg.
         swapArg(&tmp);
-        write(iter.second);
+        write(iter.second, true);
         swapArg();
     }
+    db->flush();
 
-    db.execute();
-    delay_execution = false;
     return true;
 }
 
@@ -304,10 +301,9 @@ bool NodeEditor::write(std::vector<std::string>& iovec)
     delay_execution = true;
     for (std::string str : iovec)
     {
-        write(str);
+        write(str,true);
     }
-    db.execute();
-    delay_execution = false;
+    db->flush();
     return true;
 }
 
@@ -315,11 +311,11 @@ bool NodeEditor::remove()
 {
     if (arg == NULL)
     {
-        appendCommand("del");
+        db->appendQuery(buildCommand("del"));
     }
     else if (type == MoguSyntax::hash.integer)
     {
-        appendCommand("hdel");
+        db->appendQuery(buildCommand("hdel"));
     }
     else return false;
     return true;
@@ -330,33 +326,25 @@ bool NodeEditor::remove(const std::string& value)
     std::string s_node = buildNode();
     if (type == MoguSyntax::list.integer)
     {
-        db.appendQuery("lrem %s 1 %s", s_node.c_str(), value.c_str());
+        db->appendQuery("lrem %s 1 %s", s_node.c_str(), value.c_str());
         return true;
     }
     else return false;
 
 }
 
-void NodeEditor::appendCommand(const char* cmd)
+std::string NodeEditor::buildCommand(const std::string& cmd, std::string extra)
 {
-
     std::string s_node = buildNode();
-    const char* full_node = s_node.c_str();
-#ifdef DEBUG
-    static int iter = 0;
-    ++iter;
-    std::cout << "Performing Redis request #" << iter << " with command " <<
-        cmd << " " << full_node << "(arg: " << arg_str << ")" << std::endl;
-#endif
-    if (!arg_str.empty())
-    {
-        db.appendQuery("%s %s %s", cmd, full_node, arg_str.c_str());
-    }
-    else
-    {
-        db.appendQuery("%s %s", cmd, full_node);
-    }
+    std::stringstream cmdbuf;
+    cmdbuf << cmd << " " << s_node;
+    if (!arg_str.empty()) cmdbuf << " " << arg_str;
+    if (!extra.empty()) cmdbuf << " " << extra;
+    std::string scmd = cmdbuf.str();
+    Application::log.log(LogLevel::NOTICE, "Built Redis command: ", scmd);
+    return scmd;
 }
+
 
 void NodeEditor::setArgInfo()
 {
@@ -377,18 +365,5 @@ void NodeEditor::setArgInfo()
     }
 }
 
-
-void NodeEditor::setId()
-{
-    mApp;
-    if (prefix == Prefix::group)
-    {
-        id = app->getGroup();
-    }
-    else if (prefix == Prefix::user)
-    {
-        id = app->getUser();
-    }
-}
 
 }//namespace Redis

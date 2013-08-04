@@ -89,8 +89,6 @@ ContextMap* loadDatabaseContexts() {
     std::ifstream infile;
     infile.open(DBCONFIG_FILE);
     if(!infile.is_open()) {
-        std::cout << "Warning: No database config file found! Expect a "
-            << "segfault soon..." << std::endl;
         delete contextMap;
         return nullptr;
     }
@@ -149,13 +147,12 @@ ContextMap* loadDatabaseContexts() {
                 delete contextMap;
                 return nullptr;
             }
-            contextMap->set(prefix, new Redis::Context(port, host, dbnum));
+            Redis::Context* c_ = new Redis::Context();
+            c_->port=port;
+            c_->host=host;
+            c_->db_num=dbnum;
+            contextMap->set(prefix, c_);
             assert(contextMap->get(prefix) != nullptr);
-#ifdef DEBUG
-            std::cout << "Loaded Database Context "
-                << prefixMap.at(prefix) << "with mask " << (int) prefix
-                << std::endl;
-#endif
         }
     }
     infile.close();

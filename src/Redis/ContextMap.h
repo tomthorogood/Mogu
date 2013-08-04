@@ -1,6 +1,8 @@
 #ifndef CONTEXTMAP_H_
 #define CONTEXTMAP_H_
 
+#include "../Config/typedefs.h"
+
 struct ContextMap {
     Redis::Context*  widgets      = nullptr;
     Redis::Context*  user         = nullptr;
