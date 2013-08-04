@@ -29,4 +29,3 @@ syntax/max
 syntax/test
 Testing/*
 .idea*
-tests/*
