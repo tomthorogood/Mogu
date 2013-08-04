@@ -1,32 +1,21 @@
-/*
- * Encryption.h
- *
- *  Created on: Oct 24, 2012
- *      Author: tom
- */
+#ifndef SECURITY_H_
+#define SECURITY_H_
 
-#ifndef ENCRYPTION_H_
-#define ENCRYPTION_H_
+#ifndef BF_SIZE_
+#define BF_SIZE_ 8
+#endif
 
-
-#include "../crypt/PacketCenter.h"
 #include <string>
 
 namespace Security {
-std::string encrypt(
-    std::string decrypted);
-std::string decrypt(
-    std::string encrypted, PacketType translation = DO_TRANSLATION);
 
-inline bool isEncrypted(const std::string& str)
-{
-    for (size_t i = 0; i < str.size(); ++i)
-    {
-        if (! (isdigit(str[i])||'_'==str[i])) return false;
-    }
-    return true;
-}
+    std::string encrypt(const std::string&);
+    std::string decrypt(const std::string&);
+
+    std::string processPacket(const std::string&, int method);
+    std::string processString(const std::string&, int method);
+    std::string trimPadding (const std::string&);
 
 }
 
-#endif /* ENCRYPTION_H_ */
+#endif

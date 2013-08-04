@@ -75,8 +75,7 @@ SecurityStatus UserManager::loginUser(
 
 SecurityStatus UserManager::resetPassword(int username, std::string email_address)
 {
-    if (Security::isEncrypted(email_address))
-        email_address = Security::decrypt(email_address);
+    email_address = Security::decrypt(email_address);
 
     Redis::MoguQueryHandler db(Application::contextMap, Prefix::user);
     TurnLeft::Utils::RandomCharSet rchar;
@@ -105,8 +104,7 @@ SecurityStatus UserManager::resetPassword(int username, std::string email_addres
 SecurityStatus UserManager::resetPassword(std::string username, const std::string& email)
 {
     Redis::MoguQueryHandler db(Application::contextMap, Prefix::user);
-    if (! Security::isEncrypted(username))
-        username = Security::encrypt(username);
+    username = Security::encrypt(username);
     
     db.appendQuery("hget user.meta.id %s", username.c_str());
     return resetPassword(db.yieldResponse <int>(), email);
@@ -114,8 +112,7 @@ SecurityStatus UserManager::resetPassword(std::string username, const std::strin
 
 std::string UserManager::getUserSalt(std::string username, Redis::MoguQueryHandler* db)
 {
-    if (!Security::isEncrypted(username))
-        username = Security::encrypt(username);
+    username = Security::encrypt(username);
 
     bool del_db_context = false;
     if (db == nullptr) 

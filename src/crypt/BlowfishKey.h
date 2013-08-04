@@ -1,3 +1,6 @@
+#ifndef BLOWFISHKEY_H_
+#define BLOWFISHKEY_H_
+
 #include <memory>
 #include <openssl/blowfish.h>
 
@@ -14,3 +17,5 @@ public:
     ~BlowfishKeyCreator();
     BF_KEY* getKey() const;
 };
+
+#endif

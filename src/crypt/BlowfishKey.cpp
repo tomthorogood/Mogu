@@ -59,6 +59,7 @@ BlowfishKeyCreator::BlowfishKeyCreator(const BlowfishKeyCreator& proto)
 
 BlowfishKeyCreator::~BlowfishKeyCreator()
 {
+    free(key);
 }
 
 

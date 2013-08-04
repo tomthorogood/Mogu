@@ -1,33 +1,78 @@
-/*
- * encryption.cpp
- *
- *  Created on: Oct 24, 2012
- *      Author: tom
- */
+#include <openssl/blowfish.h>
+#include "Encryption.h"
+#include "BFString.h"
+#include "../crypt/BlowfishKey.h"
+#include <cassert>
+#include <iostream>
 
-#include <declarations.h>
-#include <crypt/BlowfishKey.h>
-#include <crypt/Packet.h>
-#include "Encryption.h" 
-#include <TurnLeftLib/Utils/inlines.h>
 namespace Security {
 
-std::string encrypt(std::string dstr)
-{
-    BlowfishKeyCreator k;
-    PacketCenter e(dstr, DECRYPTED);
-    e.giveKey(k.getKey());
-    return e.encrypt();
+namespace {
+    void cpystr (const std::string& in, unsigned char* out)
+    {
+        int sz = in.size();
+        for (int i =0; i < sz; ++i)
+        {
+            out[i] = in[i];
+        }
+    }
+
+    void trimPadding(std::string& str)
+    {
+        size_t cl_brace = str.find_first_of('}');
+        std::string orig_size = str.substr(1,cl_brace-1);
+        int sz = atoi(orig_size.c_str());
+        str = str.substr(cl_brace+1,sz);
+    }
 }
 
-std::string decrypt(std::string estr, PacketType translation)
+std::string processPacket (const std::string& packet, int method)
 {
-    TurnLeft::Utils::sreplace(estr, '_', ' ');
-    TurnLeft::Utils::trimchar(estr);
     BlowfishKeyCreator k;
-    PacketCenter d(estr, ENCRYPTED);
-    d.giveKey(k.getKey());
-    return d.decrypt(translation);
+    BF_KEY* key = k.getKey();
+    unsigned char* input = 
+        (unsigned char*) calloc(packet.size()+1,sizeof(char));
+    unsigned char* output = 
+        (unsigned char*) calloc(packet.size()+1,sizeof(char));
+
+    cpystr(packet,input);
+
+
+    BF_ecb_encrypt(input,output,key,method);
+
+    std::string ret;
+
+    for (size_t i = 0; i < packet.size(); ++i)
+    {
+        ret += output[i];
+    }
+
+    free(input);
+    free(output);
+
+    return ret;
 }
 
-}    //namespace Security
+std::string processString (const std::string& input, int method)
+{
+    std::string ret ="";
+    BFString bf_str(input, method==BF_DECRYPT);
+    while (bf_str)
+        ret += processPacket(bf_str.yield(), method);
+    if (method==BF_DECRYPT) trimPadding(ret);
+    return ret;
+}
+
+std::string encrypt(const std::string& str)
+{
+    std::string e = processString(str, BF_ENCRYPT);
+    return e;
+}
+
+std::string decrypt(const std::string& str)
+{
+    std::string d = processString(str, BF_DECRYPT);
+    return d;
+}
+
+}//namespace Securit
