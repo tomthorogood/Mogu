@@ -2,6 +2,7 @@
 #define CONTEXTMAP_H_
 
 #include "../Config/typedefs.h"
+#include <cassert>
 
 struct ContextMap {
     Redis::Context*  widgets      = nullptr;

@@ -1,9 +1,9 @@
 #ifndef USERMANAGER_H_
 #define USERMANAGER_H_
 
-#include <declarations.h>
 #include <TurnLeftLib/Utils/randomcharset.h>
-
+#include <string>
+#include "../Redis/MoguQueryHandler.h"
 enum class SecurityStatus
 {
     ERR_UNKNOWN
@@ -20,10 +20,10 @@ public:
 
     UserManager() {}
     SecurityStatus registerUser(
-            const std::string& username, const std::string& password);
+            std::string& username, const std::string& password);
 
     SecurityStatus loginUser(
-            const std::string& username, const std::string& password);
+            std::string& username, const std::string& password);
 
     SecurityStatus deleteUser(int userid);
 
@@ -35,8 +35,10 @@ public:
     /* For a user that cannot login, resets their password to
      * something else, and emails it to them.
      */
-    SecurityStatus resetPassword(int userid, std::string email);
-    SecurityStatus resetPassword(std::string userid, const std::string& email);
+    SecurityStatus resetPassword(int userid, std::string email,
+            const std::string& appname);
+    SecurityStatus resetPassword(std::string& userid,
+            const std::string& email, const std::string& appname);
 
     inline const int& getUser() { return userid;}
 
@@ -52,6 +54,10 @@ private:
 
     std::string getUserSalt(std::string userid, Redis::MoguQueryHandler* db =nullptr);
     std::string getUserSalt(const int& userid, Redis::MoguQueryHandler* db=nullptr);
+    std::pair <std::string,std::string>
+        getSanitizedInfo(std::string& uname, const std::string& password);
+    std::string getSalt(const std::string& username);
+    int getUserId(const std::string& username);
 
     /* Either returns an abandoned userid, or creates a new one. */
     int consumeUserId(Redis::MoguQueryHandler&);

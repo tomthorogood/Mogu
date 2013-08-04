@@ -8,13 +8,14 @@
 #ifndef EMAILMANAGER_H_
 #define EMAILMANAGER_H_
 
-#include <declarations.h>
+#include <string>
+#include <sstream>
 
 class EmailManager
 {
-    std::string to_address  = EMPTY;
-    std::string subject     = EMPTY;
-    std::string message     = EMPTY;
+    std::string to_address  = "";
+    std::string subject     = "";
+    std::string message     = "";
 
     uint8_t status        = 0;
 public:

@@ -4,6 +4,7 @@
 #include <Types/MoguLogger.h>
 #include <Mogu.h>
 
+
 PerspectiveHandler::PerspectiveHandler(Moldable& broadcaster, const std::string& perspective_)
     : CommandProcessor(broadcaster)
     , db(Application::contextMap, Prefix::perspectives)

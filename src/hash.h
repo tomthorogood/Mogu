@@ -8,9 +8,7 @@
 #ifndef HASH_H_
 #define HASH_H_
 
-#include <city.h>
-#include <declarations.h>
-
+#include <string>
 namespace Hash {
 
 std::string toHash(const std::string& str);

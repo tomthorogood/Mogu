@@ -4,6 +4,7 @@
 #include <sstream>
 #include <Redis/MoguQueryHandler.h>
 
+
 WidgetServer::WidgetServer (Mogu* application)
     : application(application)
 {

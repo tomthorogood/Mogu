@@ -19,7 +19,7 @@ namespace {
         return SET_USER_FROM_SLOT;
     }
 
-    inline bool login_user(const std::string& username)
+    inline bool login_user(std::string& username)
     {
         mApp;
         std::string password = app->slotManager().retrieveSlot("USERAUTH");
@@ -34,7 +34,7 @@ namespace {
         return login_user(username);
     }
 
-    inline bool set_user_from_value(const std::string& value)
+    inline bool set_user_from_value(std::string& value)
     {
         return login_user(value);
     }
@@ -67,8 +67,8 @@ void set (Moldable& broadcaster, CommandValue& v)
             }
             if (flags == SET_USER_FROM_VALUE)
             {
-                if(!set_user_from_value( (std::string)
-                    v.get(CommandFlags::VALUE) ))
+                std::string val = (std::string) v.get(CommandFlags::VALUE);
+                if (!set_user_from_value(val))
                     broadcaster.fail().emit();
                 else
                     broadcaster.succeed().emit();

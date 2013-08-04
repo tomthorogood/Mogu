@@ -3,6 +3,7 @@
 #include "GroupController.h"
 #include <Security/Encryption.h>
 
+
 GroupController::GroupController()
 : group_id(0)
 {

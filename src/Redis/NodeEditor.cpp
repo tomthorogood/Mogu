@@ -1,6 +1,8 @@
 #include "NodeEditor.h"
 #include "../Security/Encryption.h"
 #include "../Types/MoguLogger.h"
+
+
 namespace Redis {
 
 NodeEditor::NodeEditor()
@@ -17,7 +19,7 @@ NodeEditor::NodeEditor(
         prefix(prefix_)
         , db(new MoguQueryHandler(Application::contextMap, prefix_))
         , arg(arg_)
-        , prefix_str(prefixMap.at(prefix_))
+        , prefix_str(prefixMap().at(prefix_))
         , node(node_)
         
 {
@@ -70,7 +72,7 @@ void NodeEditor::setPrefix(Prefix prefix_)
     if (prefix_ == prefix) return; // Ignore this request
     prefix = prefix_;
     id = -1;
-    prefix_str = prefixMap.at(prefix);
+    prefix_str = prefixMap().at(prefix);
     db->newContext(Application::contextMap->get(prefix_));
     unsetArgInfo();
 

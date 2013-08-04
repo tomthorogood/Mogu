@@ -1,13 +1,67 @@
-#include <Mogu.h>
 #include "UserManager.h"
 #include "Encryption.h"
-#include <Types/EmailManager.h>
-#include <Redis/MoguQueryHandler.h>
-#include <Redis/NodeEditor.h>
-#include <hash.h>
-SecurityStatus UserManager::registerUser(
-        const std::string& username, const std::string& password)
+#include "../Types/MoguLogger.h"
+#include "../Types/EmailManager.h"
+#include "../Redis/MoguQueryHandler.h"
+#include "../Redis/NodeEditor.h"
+#include "../hash.h"
+
+namespace {
+    void strtolower(std::string& str)
+    {
+        int sz = str.size();
+        for (size_t i = 0; i < sz; ++i)
+        {
+            if (isalpha(str[i]) && isupper(str[i]))
+                str[i] = tolower(str[i]);
+        }
+    }
+}
+
+std::string UserManager::getSalt(const std::string& uname)
 {
+    Redis::MoguQueryHandler db(Application::contextMap, Prefix::user);
+    db.executeQuery("hget user.meta.salt %s", uname.c_str());
+    std::string salt = db.yieldResponse<std::string>();
+    if (salt.empty())
+    {
+        salt = generateSalt();
+        db.executeQuery("hset user.meta.salt %s %s",
+                uname.c_str(), salt.c_str());
+    }
+    return salt;
+}
+
+std::pair <std::string,std::string> UserManager::getSanitizedInfo(
+    std::string& username, const std::string& userauth)
+{
+    strtolower(username);
+    std::string e_username = Security::encrypt(username);
+    std::string e_password = Security::encrypt(userauth);
+    std::string h_username = Hash::toHash(e_username);
+    std::string h_password = Hash::toHash(e_password);
+
+    std::string salt = getSalt(h_username);
+    std::string s_password = sanitizePassword(h_password,salt);
+    auto pr = std::make_pair(h_username,s_password);
+    return pr;
+}
+
+int UserManager::getUserId(const std::string& username)
+{
+    Redis::MoguQueryHandler db(Application::contextMap,Prefix::user);
+    db.executeQuery("hget user.meta.id %s", username.c_str());
+    std::string sid = db.yieldResponse<std::string>();
+    if (sid.empty()) return -1;
+    return atoi(sid.c_str());
+}
+
+
+SecurityStatus UserManager::registerUser(
+        std::string& username, const std::string& password)
+{
+    std::pair <std::string,std::string> info = 
+        getSanitizedInfo(username,password);
 
     Redis::MoguQueryHandler udb(Application::contextMap, Prefix::user);
 
@@ -19,61 +73,46 @@ SecurityStatus UserManager::registerUser(
             , "as user. Something is wrong.");
     }
 
-
-    std::string e_username = Security::encrypt(username);
-    std::string e_password = Security::encrypt(password);
-    std::string salt = generateSalt();
-
     /* First, check to see whether the user already exists */
-    udb.appendQuery("hexists user.meta.id %s", e_username.c_str());
-    if (udb.yieldResponse <bool>()) return SecurityStatus::ERR_USER_EXISTS;
+    if (getUserId(info.first) != -1)
+    {
 
-    /* Next, sanitize the user's password */
-    e_password = sanitizePassword(e_password, salt);
+        return SecurityStatus::ERR_USER_EXISTS;
+    }
 
     userid = consumeUserId(udb);
-
-    udb.appendQuery("hset user.meta.salt %s %s", 
-            e_username.c_str(), salt.c_str());
-    udb.appendQuery("hset user.%d.__meta__ u %s", userid, e_username.c_str());
-    udb.appendQuery("hset user.%d.__meta__ p %s", userid, e_password.c_str());
-    udb.appendQuery("hset user.meta.id %s %d", e_username.c_str(), userid);
+    
+    udb.appendQuery("hset user.%d.__meta__ u %s", userid, info.first.c_str());
+    udb.appendQuery("hset user.%d.__meta__ p %s", userid, info.second.c_str());
+    udb.appendQuery("hset user.meta.id %s %d", info.first.c_str(), userid);
     udb.flush();
     return SecurityStatus::OK_REGISTER;
 }
 
 SecurityStatus UserManager::loginUser(
-        const std::string& username, const std::string& password)
+        std::string& username, const std::string& password)
 {
     Redis::MoguQueryHandler udb(Application::contextMap, Prefix::user);
-    std::string e_username = Security::encrypt(username);
-    std::string e_password = Security::encrypt(password);
-    
-   /* Ensure that the user actually exists. */
-   udb.appendQuery("hexists user.meta.id %s", e_username.c_str());
-   udb.appendQuery("hget user.meta.id %s", e_username.c_str());
-   if (!udb.yieldResponse <bool>())
-   {
-       udb.flush();
-       return SecurityStatus::ERR_USER_NOT_FOUND;
-   }
-   userid = udb.yieldResponse <int>();
-   std::string salt = getUserSalt(e_username, &udb);
-   e_password = sanitizePassword(e_password, salt);
+    std::pair <std::string,std::string> info = 
+        getSanitizedInfo(username,password);
 
-   udb.appendQuery("hget user.%d.__meta__ u", userid);
-   udb.appendQuery("hget user.%d.__meta__ p", userid);
+    int userid = getUserId(info.first);
+    if (userid==-1) return SecurityStatus::ERR_USER_NOT_FOUND;
+   
+    udb.appendQuery("hget user.%d.__meta__ u", userid);
+    udb.appendQuery("hget user.%d.__meta__ p", userid);
 
-   bool success = 
-       (e_username == udb.yieldResponse <std::string>()) 
-       && (e_password == udb.yieldResponse <std::string>());
+    std::string retr_u = udb.yieldResponse<std::string>();
+    std::string retr_p = udb.yieldResponse<std::string>();
 
-   if (! success) return SecurityStatus::ERR_BAD_AUTH;
+    bool success = (info.first == retr_u) && (info.second==retr_p);
+    if (! success) return SecurityStatus::ERR_BAD_AUTH;
 
-   return SecurityStatus::OK_LOGIN;
+    return SecurityStatus::OK_LOGIN;
 }
 
-SecurityStatus UserManager::resetPassword(int username, std::string email_address)
+SecurityStatus UserManager::resetPassword(int username, std::string email_address,
+        const std::string& appname)
 {
     email_address = Security::decrypt(email_address);
 
@@ -87,27 +126,28 @@ SecurityStatus UserManager::resetPassword(int username, std::string email_addres
     if (!db.yieldResponse <bool>()) return SecurityStatus::ERR_USER_NOT_FOUND;
     db.flush();
 
-    mApp;
     EmailManager email;
     std::string message = 
         "We have received your request to reset your password for the " +
-        app->getName() + " application. Your new password is " + newpass + 
+        appname + " application. Your new password is " + newpass + 
         "\n\nYou may change this password after logging into your account.";
     email.setMessage(message);
-    email.setSubject(app->getName() + " Password Reset Notification");
+    email.setSubject(appname + " Password Reset Notification");
     email.setRecipient(email_address);
     email.send();
 
     return SecurityStatus::OK_REGISTER;
 }
 
-SecurityStatus UserManager::resetPassword(std::string username, const std::string& email)
+SecurityStatus UserManager::resetPassword(std::string& username,
+        const std::string& email, const std::string& appname)
 {
     Redis::MoguQueryHandler db(Application::contextMap, Prefix::user);
+    strtolower(username);
     username = Security::encrypt(username);
     
     db.appendQuery("hget user.meta.id %s", username.c_str());
-    return resetPassword(db.yieldResponse <int>(), email);
+    return resetPassword(db.yieldResponse <int>(), email, appname);
 }
 
 std::string UserManager::getUserSalt(std::string username, Redis::MoguQueryHandler* db)
@@ -140,7 +180,7 @@ std::string UserManager::getUserSalt(const int& userid, Redis::MoguQueryHandler*
             return getUserSalt(iter->first,db);
         ++iter;
     }
-    return EMPTY;
+    return "";
 }
 
 int UserManager::consumeUserId(Redis::MoguQueryHandler& db)
@@ -212,7 +252,7 @@ std::string UserManager::sanitizePassword(const std::string& password, const std
     int iters = atoi(c) * 1000;
     for (int i=0; i < iters; ++i)
     {
-        spass = Hash::toHash(Security::encrypt(spass));
+        spass = Hash::toHash(spass);
     }
     return spass;
 }

@@ -1,6 +1,7 @@
 #ifndef MOGUQUERYHANDLER_H_
 #define MOGUQUERYHANDLER_H_
 
+#include "DatabaseConfigReader.h"
 #include "QueryHandler/QueryHandler.h"
 #include "ContextMap.h"
 

@@ -13,7 +13,7 @@
 #include <memory>                   // std::make_shared
 #include <cassert>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include "../Config/typedefs.h"
 #include "../Types/Inthash.h"
 #include "../Types/syntax.h"
@@ -38,19 +38,24 @@
  *          number: 0
  */
 
-
-const std::unordered_map <Prefix, std::string, IntHash<Prefix>> prefixMap = {
-    { Prefix::widgets,      "widgets"},
-    { Prefix::data,         "data"},
-    { Prefix::user,         "user"},
-    { Prefix::group,        "group"},
-    { Prefix::templates,    "templates"},
-    { Prefix::validators,   "validators"},
-    { Prefix::policies,     "policies"},
-    { Prefix::meta,         "meta"},
-    { Prefix::temp,         "temp"},
-    { Prefix::perspectives, "perspectives"}
-};
+namespace {
+extern const std::map <Prefix, std::string>& prefixMap()
+{
+    static std::map <Prefix, std::string> map_ = {
+        { Prefix::widgets,      "widgets"},
+        { Prefix::data,         "data"},
+        { Prefix::user,         "user"},
+        { Prefix::group,        "group"},
+        { Prefix::templates,    "templates"},
+        { Prefix::validators,   "validators"},
+        { Prefix::policies,     "policies"},
+        { Prefix::meta,         "meta"},
+        { Prefix::temp,         "temp"},
+        { Prefix::perspectives, "perspectives"}
+    };
+    return map_;
+}
+}
 
 const std::unordered_map <int, Prefix> syntax_to_prefix = {
     { (int)MoguSyntax::own,      Prefix::widgets },
@@ -84,9 +89,9 @@ Prefix matchPrefix(const std::string& prefix);
 int extractInteger(const std::string& line);
 std::string getHost(const std::string& line);
 
-ContextMap* loadDatabaseContexts();
+void loadDatabaseContexts();
 
-static ContextMap* contextMap = loadDatabaseContexts();
+extern ContextMap* contextMap;
 
 } //namespace Application
 

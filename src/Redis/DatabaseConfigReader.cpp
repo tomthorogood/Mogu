@@ -7,9 +7,10 @@
 #include "DatabaseConfigReader.h"
 #include "ContextMap.h"
 #include <cassert>
-
+#include <iostream>
 namespace Application {
 
+ContextMap* contextMap = nullptr;
 
 Prefix matchPrefix(int& PREFIX_MASK, const std::string& prefix)
 {
@@ -82,16 +83,14 @@ std::string getHost(const std::string& line) {
     return tail.substr(0,end);
 }
 
-ContextMap* loadDatabaseContexts() {
+void loadDatabaseContexts() {
+    if (contextMap) return; 
     int PREFIX_MASK = 0;
-    ContextMap* contextMap = new ContextMap();
+    contextMap = new ContextMap();
     
     std::ifstream infile;
     infile.open(DBCONFIG_FILE);
-    if(!infile.is_open()) {
-        delete contextMap;
-        return nullptr;
-    }
+    assert(infile.is_open());
 
     /* Initialize the line string, which will be used to hold
      * each line of the config file in turn. */
@@ -141,12 +140,7 @@ ContextMap* loadDatabaseContexts() {
                     completion |= 4;
                 }
             }
-            //!\todo Throw an error if a context not fully defined.
-            if (completion < 7)
-            {
-                delete contextMap;
-                return nullptr;
-            }
+            assert(completion >=7);
             Redis::Context* c_ = new Redis::Context();
             c_->port=port;
             c_->host=host;
@@ -157,13 +151,8 @@ ContextMap* loadDatabaseContexts() {
     }
     infile.close();
     //!\todo Throw an error if not everything was loaded.
-    if (PREFIX_MASK < MAX_PREFIX_MASK)
-    {
-        delete contextMap;
-        return nullptr;
-    }
+    assert(PREFIX_MASK >= MAX_PREFIX_MASK);
     assert(contextMap != 0x0);
-    return contextMap;
 }
 
 }

@@ -6,8 +6,8 @@
  */
 
 #include "MoguLogger.h"
-#include <declarations.h>
-#include <Redis/NodeEditor.h>
+#include "../Redis/DatabaseConfigReader.h"
+#include "../Redis/NodeEditor.h"
 
 
 MoguLogger::MoguLogger()
@@ -17,6 +17,11 @@ MoguLogger::MoguLogger()
         log_level = (int)LogLevel::ALL;
         return;
     }
+ 
+    Application::loadDatabaseContexts();   
+    assert(Application::contextMap);
+
+    std::cout <<&prefixMap << std::endl;
 
     Redis::NodeEditor log_config (Prefix::meta, "log");
     if (!log_config.nodeExists())

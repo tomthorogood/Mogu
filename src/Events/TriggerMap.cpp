@@ -9,13 +9,14 @@
 #include <Redis/MoguQueryHandler.h>
 #include <Redis/DatabaseConfigReader.h>
 
+
 TriggerMap::TriggerMap() : map() {}
 
 TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string& node)
 :map()
 {
     Redis::MoguQueryHandler db(Application::contextMap, prefix);
-    std::string s_prefix = prefixMap.at(prefix);
+    std::string s_prefix = prefixMap().at(prefix);
     const char* c_prefix = s_prefix.c_str();
 
     const char* c_node = node.c_str();

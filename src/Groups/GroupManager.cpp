@@ -1,5 +1,7 @@
 #include "GroupManager.h"
 #include <Mogu.h>
+
+    
 GroupManager::GroupManager()
     : grpdb(Application::contextMap, Prefix::group)
     , usrdb (Application::contextMap, Prefix::user)
