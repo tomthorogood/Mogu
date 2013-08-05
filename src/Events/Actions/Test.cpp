@@ -25,7 +25,7 @@ void test(Moldable& broadcaster, CommandValue& v)
         tmp.setString(stripquotes(tmp.getString()));
         v.set(CommandFlags::VALUE, tmp);
     }
-    result = (value == v.get(CommandFlags::VALUE));
+    result = (stripquotes(value) == stripquotes(v.get(CommandFlags::VALUE)));
 
     Application::log.log(LogLevel::NOTICE
             , (std::string) value, " == "

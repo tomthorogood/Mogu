@@ -90,7 +90,7 @@ void NodeEditor::setPrefix(Prefix prefix_)
  */
 std::string NodeEditor::read()
 {
-    if (!exists) 
+    if (!exists)
     {
         if (prefix != Prefix::user && prefix != Prefix::group)
         {
@@ -118,7 +118,13 @@ std::string NodeEditor::read()
     else
     {
         if (!arg_str.empty())
-            db->appendQuery(buildCommand("hget"));
+        {
+            db->appendQuery(buildCommand("hexists"));
+            if (db->yieldResponse<bool>())
+                db->appendQuery(buildCommand("hget"));
+            else
+                return getDefault();
+        }
     }
 
     if (encrypted)
