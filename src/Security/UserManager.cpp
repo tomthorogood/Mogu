@@ -96,7 +96,7 @@ SecurityStatus UserManager::loginUser(
     std::pair <std::string,std::string> info = 
         getSanitizedInfo(username,password);
 
-    int userid = getUserId(info.first);
+    userid = getUserId(info.first);
     if (userid==-1) return SecurityStatus::ERR_USER_NOT_FOUND;
    
     udb.appendQuery("hget user.%d.__meta__ u", userid);

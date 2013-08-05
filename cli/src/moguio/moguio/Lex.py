@@ -47,7 +47,7 @@ MOGU_CMD = Lexer.ParseMap((
     ("action"   ,   "%(action)s" %regexlib                         , LITERAL),
     ("ws"       ,   "\s+"                                          , IGNORE),
     ("dir_obj"  ,   "%(object_set)s" %regexlib                     , LITERAL),
-    ("opt_end"  ,   "(\s*%(preposition)s\s+%(value)s)?"%regexlib   , LITERAL),
+    ("opt_end"  ,   "(\s*%(preposition)s(\s+%(location)s)?\s+%(value)s)?"%regexlib   , LITERAL),
     ("end"      ,   "$"                                            , IGNORE)
 ), strip=True, flags=re.M)
 

@@ -40,7 +40,8 @@ regexlib = {
     "comment"       :   r"#.*\n",
     "math_gen_expr" :   r"%d.*%d" % (syntax.MoguOperators["("],syntax.MoguOperators[")"]),
 #    "math_gen_expr" :   r"\(.*\)",
-    "comment"       :   "^#.*\n"
+    "comment"       :   "^#.*\n",
+    "location"      :   str(syntax.as_integer("location")),
 }
 
 regexlib["math_oper"] = "(%(*)d|%(+)d|%(-)d|%(/)d)" % syntax.MoguOperators
@@ -63,7 +64,6 @@ regexlib["cl_paren"] = str(syntax.MoguOperators[")"])
 #   group foo
 #   group foo bar
 #   own content
-#regexlib["object_set"]  = "%(object)s\s+(%(identifier)s\s+)?(%(identifier)s(?<!%(preposition)s)|%(attribute)s)?" % regexlib
 
 regexlib["object_set"]  = "%(object)s(\s+%(identifier)s)?(\s+(%(attribute)s|%(identifier)s))?" % regexlib
 regexlib["object_set"]  = "(%(object_set)s\s*)+" % regexlib

@@ -41,7 +41,7 @@ syn keyword moguReserved multi container password stack
 syn keyword humanSyntax to as at with from for is
 
 "Object Types 
-syn keyword moguObject data user group validator widget template
+syn keyword moguObject data user group validator widget template policy
 syn keyword moguObject perspective meta
 
 syn keyword moguOperators ( ) + - * / { } : <<< >>>

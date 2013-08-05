@@ -261,7 +261,7 @@ bool NodeEditor::write(std::string value, bool hold_queue)
      */
     else if (type==MoguSyntax::hash.integer && !arg_str.empty())
     {
-        db->appendQuery(buildCommand("hset",value));
+        db->appendQuery(buildCommand("hset","%s"),value.c_str());
     }
     if (!hold_queue) db->flush();
     return true;

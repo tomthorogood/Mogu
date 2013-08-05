@@ -123,7 +123,7 @@ void NodeValueParser::reduceExpressions(Moldable* bc)
 		 */
 		else if(isObjectToken(currToken))
 		{
-				stateParser.processInput(bc);
+		        stateParser.processInput(bc);
 		}
 
 		tm.prev();
@@ -454,19 +454,51 @@ void NodeValueParser::giveInput(const std::string& input_, CommandValue& cv,
             cv.set(CommandFlags::ARG, tmp);
         }
         else if (isPrepositionToken(tok)) {
+            bool do_not_reduce = false;
+            /* First, check to see if the next value is 'location' */
+            tm.next();
+            if (tm.currentToken() == MoguSyntax::location)
+            {
+                do_not_reduce = true;
+            } else {
+                tm.prev();
+            }
             tm.saveLocation(); // We've done what we need with the preceeding
             tm.truncateHead(); // tokens, so get rid of them.
-            tm.end(); // Allow tm to treat it as standard input.
-            reduceExpressions(bc);
-            if (tm.currentToken() == MoguSyntax::TOKEN_DELIM)
+
+            // Simply join the remaining tokens together again as a string.
+            // And set this as the "value" in CommadValue
+            if (do_not_reduce)
             {
-                tmp.setString(tm.fetchStringToken());
-                cv.set(CommandFlags::VALUE, tmp);
+                tm.begin();
+                std::stringstream buf;
+                do {
+                    int tok = tm.currentToken();
+                    if (tok == MoguSyntax::TOKEN_DELIM)
+                        buf << tm.fetchStringToken();
+                    else
+                        buf << MoguSyntax::get(tok).str;
+                    buf << " ";
+                    tm.next();
+                } while (tm.currentToken() != MoguSyntax::OUT_OF_RANGE_END);
+                std::string s = buf.str();
+                s = s.substr(0,s.size()-1);
+                cv.set(CommandFlags::VALUE, s);
             }
-            else {
-                // Any integral value here will be a true integer, not MoguSyn.
-                tmp.setInt((int)tm.currentToken());
-                cv.set(CommandFlags::VALUE, tmp);
+            else
+            {
+                tm.end(); // Allow tm to treat it as standard input.
+                reduceExpressions(bc);
+                if (tm.currentToken() == MoguSyntax::TOKEN_DELIM)
+                {
+                    tmp.setString(tm.fetchStringToken());
+                    cv.set(CommandFlags::VALUE, tmp);
+                }
+                else {
+                    // Any integral value here will be a true integer, not MoguSyn.
+                    tmp.setInt((int)tm.currentToken());
+                    cv.set(CommandFlags::VALUE, tmp);
+                }
             }
             break; // After parsing a prepositional, there is nothing left to do.
         }
