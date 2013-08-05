@@ -29,13 +29,8 @@ MoguLogger::MoguLogger()
         log_level = (int) LogLevel::_NONE;
         return;
     }
-    std::vector <std::string> levels;
-    log_config.read(levels);
-
-    for (std::string level : levels)
-    {
-        log_level |= (int) getLevelEnum(level);
-    }
+    std::string cfg_level = log_config.read();
+    log_level = (int) getLevelEnum(cfg_level);
 }
 
 std::string MoguLogger::getLevelName(LogLevel l) const

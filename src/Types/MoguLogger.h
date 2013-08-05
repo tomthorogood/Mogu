@@ -81,6 +81,7 @@ public:
     template <typename T, typename ... U>
     void log(LogLevel msg_level, T head, U... tail)
     {
+        if (!doLog(msg_level)) return;
         if ((int)msg_level >= (int) LogLevel::WARN)
         {
             vstderr(getLevelName(msg_level)+": ");
