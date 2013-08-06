@@ -8,13 +8,13 @@
 
 #include "Moldable.h"
 #include <Mogu.h>
-#include <Types/NodeValue.h>
+#include <Types/Node_Value.h>
 #include <Wt/WStackedWidget>
 #include <Events/EventHandler.h>
 #include <Wt/WAnchor>
-#include <Types/WidgetAssembly.h>
+#include <Types/Widget_Assembly.h>
 
-Moldable::Moldable (WidgetAssembly* assembly, const SyntaxDef& widget_type_)
+Moldable::Moldable (Widget_Assembly* assembly, const Syntax_Def& t )
     :sig_style_changed(this)
     ,sig_failed_test(this)
     ,sig_succeeded_test(this)
@@ -22,10 +22,10 @@ Moldable::Moldable (WidgetAssembly* assembly, const SyntaxDef& widget_type_)
     ,sig_hidden_changed(this)
     ,sig_index_changed(this)
     ,sig_error_reported(this)
-    ,widget_type(widget_type_)
+    ,widget_type(t)
     ,node(assembly->node)
 {
-    static size_t num_constructed = 0;
+    static size_t num_constructed {};
     Application::log.log(LogLevel::NOTICE, __FILE__, "::constructor:",__LINE__,
         "(", num_constructed++, "): ",node);
     init(assembly);
@@ -34,41 +34,40 @@ Moldable::Moldable (WidgetAssembly* assembly, const SyntaxDef& widget_type_)
 Moldable::~Moldable()
 {
     mApp; 
-    if (!testFlag(MoldableFlags::shun))
-        app->deregisterWidget(node);
-    if (bindery != nullptr) delete bindery;
+    if (!test_flag(Moldable_Flags::shun))
+        app->deregister_widget(node);
+    if (bindery) delete bindery;
 }
 
-void Moldable::init (WidgetAssembly* assembly)
+void Moldable::init (Widget_Assembly* assembly)
 {
     mApp;
-    app->registerWidget(node, *this);
-    setObjectName(node);
-    assembly_style = (std::string)
-        assembly->attrdict[MoguSyntax::style.integer];
-    assembly_tooltip = (std::string)
-        assembly->attrdict[MoguSyntax::tooltip.integer];
-    initializeGlobalAttributes();
+    app->register_widget(node, this);
+    setObjectName(node); // used mostly for selenium
+
+    assembly_style = assembly->attrdict[Mogu_Syntax::style.integer];
+    assembly_tooltip = assembly->attrdict[Mogu_Syntax::tooltip.integer];
+    initialize_global_attributes();
     if (assembly->triggers.size() > 0)
         bindery = new EventHandler(*this, *(assembly->triggerMap));
 }
 
-void Moldable::initializeGlobalAttributes()
+void Moldable::initialize_global_attributes()
 {
     if (!assembly_style.empty())
     {
-        NodeValue nv_style(assembly_style);
-        setAttribute(MoguSyntax::style,nv_style);
+        Node_Value n {assembly_style};
+        set_attribute(Mogu_Syntax::style,n);
     }
 
     if (!assembly_tooltip.empty())
     {
-        NodeValue nv_tooltip(assembly_tooltip);
-        setAttribute(MoguSyntax::tooltip,nv_tooltip);
+        Node_Value n {assembly_tooltip};
+        set_attribute(MoguSyntax::tooltip,n);
     }
 }
 
-void Moldable::getAttribute(const SyntaxDef& state, NodeValue& val)
+void Moldable::get_attribute(const Syntax_Def& state, Node_Value& val)
 {
 
     switch ((int)state) {
@@ -129,27 +128,27 @@ bool Moldable::updateStackIndex (size_t index)
     return true;
 }
 
-bool Moldable::setAttribute(const SyntaxDef& state, NodeValue& val)
+bool Moldable::set_attribute(const Syntax_Def& state, Node_Value& val)
 {
-    if (val.isString()) {
-        val.setString(stripquotes(val.getString()));
-    }
+    if (val.is_string()) 
+        val.set_string(stripquotes(val.get_string()));
+
     switch(state) {
         case MoguSyntax::index: {
-            updateStackIndex(val.getInt());
+            update_stack_index(val.get_int());
             break;
         }
         case MoguSyntax::hidden: {
-            setHidden((bool) val.getInt());
+            setHidden((bool) val.get_int());
             sig_hidden_changed.emit();
             break;
         }
         case MoguSyntax::text: {
-            setMoldableValue(val.getString());
+            set_moldable_value(val.get_string());
             break;
         }
         case MoguSyntax::style: {
-            setStyleClass(val.getString());
+            setStyleClass(val.get_string());
         }
 
         //!\TODO
@@ -164,5 +163,5 @@ bool Moldable::setAttribute(const SyntaxDef& state, NodeValue& val)
         default: return false;
     }
 
-    return true; //!<\TODO
+    return true;
 }
