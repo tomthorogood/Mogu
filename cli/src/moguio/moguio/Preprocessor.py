@@ -79,6 +79,7 @@ class Preprocessor(object):
             if self.symbol_is_markdown(definition):
                 definition = markdown(definition)
                 definition = definition.replace("\n"," ")
+                definition = definition.replace('"','\\"')
                 self.log("Processed Markdown:", definition)
             self.symbols[identifier] = '"%s"' % definition
             self.log("Added symbol",identifier)
