@@ -102,4 +102,4 @@ MoguScript has built-in support for Markdown, dynamic content, and highly
 interactive design, with plans for A/V support, and more "forum"-focused 
 ideologies coming up very soon.
 
-##[Hello World Tutorial](wiki/tutorial)
+##[Hello World Tutorial](https://github.com/tomthorogood/Mogu/wiki/tutorial)
