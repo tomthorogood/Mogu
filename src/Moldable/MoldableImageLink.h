@@ -1,5 +1,5 @@
 /*
- * MoldableImageLink.h
+ * Moldable_ImageLink.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -10,24 +10,25 @@
 
 #include "MoldableLink.h"
 
-class MoldableImageLink : public MoldableLink
+class Moldable_Image_Link : public Moldable_Link
 {
-    Wt::WImage* image;
-    std::string assembly_src;
+    Wt::WImage* image {};
+    std::string assembly_src {}
+
 protected:
-    virtual void init(WidgetAssembly* assembly);
-    void initializeImage();
+    virtual void init(Widget_Assembly* assembly);
+    void initialize_image();
 
 public:
-    MoldableImageLink(WidgetAssembly*);
+    Moldable_Image_Link(Widget_Assembly*);
     inline virtual void reload()
     {
-        setFlag(MoldableFlags::allow_reload);
-        initializeGlobalAttributes();
-        initializeLink();
-        initializeImage();
+        set_flag(Moldable_Flags::allow_reload);
+        initialize_global_attributes();
+        initialize_link();
+        initialize_image();
         load();
-        unsetFlag(MoldableFlags::allow_reload);;
+        unset_flag(Moldable_Flags::allow_reload);
     }
 };
 

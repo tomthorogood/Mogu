@@ -1,53 +1,50 @@
 #ifndef SYNTAXDEF_H_
 #define SYNTAXDEF_H_
 
-#include "NodeValue.h"
+#include "Node_Value.h"
 #include <string>
 
-struct SyntaxDef
+struct Syntax_Def
 {
-    int             integer =0;
-    const char*     str     ="";
-    const char*     human   ="";
-    
-    constexpr SyntaxDef (int i_, const char* s_, const char* h_)
-        : integer(i_), str(s_), human(h_)
+    int integer {};
+    std::string str{}
+    std::string human
+
+    constexpr Syntax_Def (int i_, const char* s_, const char* h_)
+        : integer(i_)
+        , str(s_)
+        , human(h_)
     {}
 
-    constexpr SyntaxDef(const SyntaxDef& other)
-        : 
-            integer(other.integer)
-            , str(other.str)
-            , human(other.human)
+    constexpr Syntax_Def(const Syntax_Def& other)
+        : integer(other.integer)
+        , str(other.str)
+        , human(other.human)
 
     {}
 
     inline operator std::string() const
-    { return str; }
+        { return str; }
 
     constexpr inline operator int const&() const
-    { return integer; }
+        { return integer; }
 
-//    inline operator int() const
-//    { return integer;}
+    inline bool operator== (const Syntax_Def& other) const
+        { return other.integer == integer; }
 
-    inline bool operator== (const SyntaxDef& other) const
-    { return other.integer == integer; }
-
-    inline bool operator== (const NodeValue& other) const
+    inline bool operator== (const Node_Value& other) const
     { 
-        if (other.isInt())
-            return (int) other == integer;
-        else if (other.isString())
-            return ((std::string) other == str)
-                || ((std::string) other == human);
+        if (other.is_int()) return other==integer;
+        else if (other.is_string())
+            return (other.get_string() == str)
+                || (other.get_string() == human);
         else return false;
     }
 
     inline bool operator==(const int& other) const
-    { return other == integer; }
+        { return other == integer; }
 
-    inline SyntaxDef& operator= (const SyntaxDef& other)
+    inline Syntax_Def& operator= (const Syntax_Def& other)
     {
         integer = other.integer;
         str = other.str;

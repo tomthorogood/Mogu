@@ -11,7 +11,7 @@
 #include <declarations.h>
 #include <Wt/WContainerWidget>
 #include <Wt/WSignal>
-#include <Types/NodeValue.h>
+#include <Types/Node_Value.h>
 #include <Types/syntax.h>
 #include <Redis/NodeEditor.h>
 
@@ -153,7 +153,7 @@ public:
         set_attribute(Mogu_Syntax::index,v);
     }
 
-    inline void decrement(NodeValue& val) {
+    inline void decrement(Node_Value& val) {
         decrement(val.get_int());
     }
 

@@ -4,12 +4,12 @@
  */
 
 
-#include "MoldableStack.h"
+#include "Moldable_Stack.h"
 #include <Wt/WAnimation>
 #include <Types/WidgetAssembly.h>
 
-MoldableStack::MoldableStack(WidgetAssembly* assembly)
-: MoldableAbstractParent(assembly, MoguSyntax::stack)
+Moldable_Stack::Moldable_Stack(Widget_Assembly* assembly)
+: Moldable_Abstract_Parent(assembly, Mogu_Syntax::stack)
 {
     init();
 }

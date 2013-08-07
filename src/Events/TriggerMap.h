@@ -1,5 +1,5 @@
 /*
- * TriggerMap.h
+ * Trigger_Map.h
  *
  *  Created on: Apr 19, 2013
  *      Author: tom
@@ -13,34 +13,44 @@
 #include <set>
 #include <Types/Inthash.h>
 
-class TriggerMap {
+class Trigger_Map {
 public:
-    TriggerMap();
-    TriggerMap(const int& num_triggers,Prefix prefix, const std::string& node_name);
-    TriggerMap(TriggerMap&);
-    inline void addEvent(const SyntaxDef& trigger, const std::string& command)
+    Trigger_Map() {}
+    Trigger_Map(const int& num_triggers,Prefix prefix, const std::string& node_name);
+    
+    Trigger_Map(Trigger_Map& o)
+        : triggers(o.triggers)
+        , map(o.map)
+    {}
+
+
+    Trigger_Map(Trigger_Map&& o)
+        : triggers(o.triggers)
+        , map(o.map)
     {
-        map[trigger].push(command);
+        o.triggers.clear();
+        o.map.clear();
     }
 
-    inline std::queue <std::string> getEvents(const int trigger) const
-    {
-        return map.at(trigger);
+    inline void add_event (const Syntax_Def& t, const std::string& c)
+        { map[t].push(c); }
+
+    inline std::queue <std::string> get_events(const int& trigger) const
+        { return map.at(trigger); }
+
+    const inline std::set <int>& get_triggers()
+    { 
+        if (triggers.size() < map.size()) populate_triggers();
+        return trigger;
     }
 
-    const inline std::set <int>& getTriggers()
-    {
-        if (triggers.size() < map.size()) populateTriggers();
-        return triggers;
-    }
-
-    const std::unordered_map <int, std::queue <std::string>>& getMap() const 
-    { return map; }
+    const std::unordered_map <int, std::queue <std::string>>& get_map() const
+        { return map;}
 
 private:
-    void populateTriggers();
-    std::set <int> triggers;
-    std::unordered_map <int,std::queue <std::string>> map;
+    void populate_triggers();
+    std::set <int> triggers {}
+    std::unordered_map <int, std::queue <std::string>> map {}
 };
 
 

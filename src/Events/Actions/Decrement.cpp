@@ -1,81 +1,86 @@
 #include "../Actions.h"
 #include "Includes.h"
-#include <Redis/NodeEditor.h>
-#include <Groups/GroupManager.h>
+#include <Redis/Node_Editor.h>
+#include <Groups/Group_Manager.h>
 namespace Actions {
 
-void decrement (Moldable& broadcaster, CommandValue& v)
+void decr_db_val(Redis::Node_Editor& e, int decr_amt)
+{
+    std::string s {e.read()};
+    int i {atoi(s.c_str())};
+    s = std::to_string(i-decr_amt);
+    node.write(s);
+}
+
+void decrement (Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
-    Prefix prefix = syntax_to_prefix.at(object);
-    std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
-    NodeValue arg;
-    std::string str;
+    const Syntax_Def& o = Mogu_Syntax::get(v.get(Command_Flags::object));
+    Prefix p = syntax_to_prefix.at(object);
+    std::string id = (std::string) v.get(Command_Flags::identifier);
+    Node_Value arg {};
+    Node_Value final {}
+    std::string str {};
+    int value {};
 
-    if (v.test(CommandFlags::ARG))
-        arg = v.get(CommandFlags::ARG);
+    if (v.test(Command_Flags::arg))
+        arg = v.get(Command_Flags::arg);
     
-    Redis::NodeEditor node(prefix,identifier,&arg);
+    Redis::Node_Editor node {p, id, &arg};
 
-    NodeValue final;
-    int value = 
-        (v.getFlags() & (uint8_t) CommandFlags::VALUE) ?
-            (int) v.get(CommandFlags::VALUE) : 1;
-    switch(object)
+    if (v.get_flags() & (uint8_t) Command_Flags::value)
     {
-        case MoguSyntax::own:{
-            NodeValue current;
-            broadcaster.getAttribute(MoguSyntax::get(
-                        v.get(CommandFlags::ARG)), current);
-            if (current.getType() == ReadType::string_value)
-                current.setInt(atoi(current.getString().c_str()));
-            current.setInt(current.getInt()-value);
-            broadcaster.setAttribute(MoguSyntax::get(
-                        v.get(CommandFlags::ARG)), current);
+        value = (int) v.get(Command_Flags::value)
+    }
+    else
+    {
+        value = 1;
+    }
+
+    const Syntax_Def& s = Mogu_Syntax::get(arg);
+    
+    switch(o)
+    {
+        case Mogu_Syntax::own:{
+            broadcaster.get_attribute(s,final);
+            if (final.is_string())
+                final.set_int(atoi(final.get_string().c_str()));
+            final.set_int(final.get_int()-value);
+            broadcaster.set_attribute(s, final);
+            break;}
+        
+        case Mogu_Syntax::group:{
+            int g {app->get_group();}
+            Group_Manager m {g};
+            if (!m.has_read_access(identifier)) return;}
+            node.set_id(g);
+            decr_db_val(node, value);
+            break;
+        case Mogu_Syntax::user:
+            node.set_id(app->get_id());
+            decr_db_val(node,value);
+            break;
+        case Mogu_Syntax::data:
+            decr_db_val(node,value);
+            break;
+
+        case Mogu_Syntax::slot:{
+            Slot_Manager& m {app->slot_manager()};
+            str = m.retrieve_slot(id);
+            int i {atoi(str.c_str());}
+            i -= value;
+            str = std::to_string(i);
+            final.set_string(str);
+            m.set_slot(id,final);
             break;}
 
-        case MoguSyntax::user:{
-            str = node.read();
-            final.setInt(final.getInt() - atoi(str.c_str()));
-            node.write(final);
-            break;}
-        case MoguSyntax::group:{
-            GroupManager group(app->getGroup());
-            if (!group.hasReadAccess(identifier)) return;
-            str = node.read();
-            final.setInt(
-                final.getInt() - atoi(str.c_str()));
-            node.write(final);
-            break;}
-
-        case MoguSyntax::data:{
-            str = node.read();
-            final.setInt(
-                final.getInt() - atoi(str.c_str()));
-            node.write(final);
-            break;}
-
-        case MoguSyntax::slot:{
-            mApp;
-            final.setString(app->slotManager().retrieveSlot(v.getIdentifier()));
-            final.setInt(atoi(final.getString().c_str()));
-            final.setInt(final.getInt()-value);
-            app->slotManager().setSlot(
-                    v.getIdentifier(), final);
-            break;}
-
-        case MoguSyntax::widget:{
-            mApp;
-            Moldable* widget = app->registeredWidget(v.getIdentifier());
-            NodeValue current;
-            widget->getAttribute(MoguSyntax::get(
-                        v.get(CommandFlags::ARG)), current);
-            if (current.getType() == ReadType::string_value)
-                current.setInt(atoi(current.getString().c_str()));
-            current.setInt(current.getInt()-value);
-            widget->setAttribute(MoguSyntax::get(
-                        v.get(CommandFlags::ARG)), current );
+        case Mogu_Syntax::widget:{
+            Moldable* w {app->registered_widget(id)};
+            w->get_attribute(s, final);
+            if (final.is_string())
+                final.set_int(atoi(final.get_string().c_str()));
+            final.set_int(final.get_int()-value);
+            w->set_attribute(s, final);
             break;}
 
         default: return;

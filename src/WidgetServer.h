@@ -2,73 +2,69 @@
 #define WIDGETSERVER_H_
 
 #include <declarations.h>
-#include <Redis/NodeEditor.h>
+#include <Redis/Node_Editor.h>
 #include <Types/SyntaxDef.h>
-#include <Types/WidgetAssembly.h>
+#include <Types/Widget_Assembly.h>
 
-/*\brief The WidgetServer acts as the intermediary between Redis and
+/*\brief The Widget_Server acts as the intermediary between Redis and
  * the Mogu renderer, putting together a nice package to be passed into
  * the MoldableFactory, handling all the reslutions for widget templates and
  * foreach recursion.
  */
-class WidgetServer 
+class Widget_Server 
 {
 public:
-    typedef std::map <int, NodeValue> AttributeMap;
+    typedef std::map <int,Node_Value> Attribute_Map;
 
-    WidgetServer (Mogu*);
-    ~WidgetServer();
+    Widget_Server () {};
+    ~Widget_Server();
 
     /* This will always be the root widget of that which has been
      * requested.
      */
-    WidgetAssembly* request(const std::string& node);
+    Widget_Assembly* request(const std::string& node);
 
 private:
-    int memberContext   =0;
+    int member_context {};
 
-    Redis::NodeEditor* wnode    =nullptr;
-    Redis::NodeEditor* tnode    =nullptr;
-    NodeValue arg;
-    bool list_iter_complete     =false;
+    Redis::Node_Editor* wnode {};
+    Redis::Node_Editor* tnode {};
+    Node_Value arg {};
+    
+    bool list_iter_complete {};
 
-    std::string stateful_node;
-    std::string stateful_tmpl;
+    std::string stateful_node {};
+    std::string stateful_tmpl {};
 
-    WidgetAssembly* assembly;
+    Widget_Assembly* assembly {};
 
-    Mogu* application;
+    void populate_map(Redis::Node_Editor*);
+    void setup_states();
+    void resolve_iter_values();
+    void resolve_values(std::map <int, Node_Value>&);
+    void create_anonymous_widgets();
+    void get_values_from_user_ids();
+    void get_values_from_list_nodes();
 
-    void populateMap(Redis::NodeEditor*);
-    void setupStates();
-    void resolveIterValues();
-    void resolveValues(std::map <int, NodeValue>&);
-    void createAnonymousWidgets();
-    void getValuesFromUserIds();
-    void getValuesFromListNode();
-    std::string findMemberCall(std::map <int, NodeValue>&);
-    std::string extractNodeName(const std::string& input)
+    std::string find_member_call (std::map <int,Node_Value>&);
+    inline std::string extract_node_name(const std::string& s)
     {
-        int nodename_start = input.find("member")+7;
-        int nodename_end = input.find_first_of(" \0",nodename_start);
-        return input.substr(nodename_start,
-                (nodename_end-nodename_start));
+        size_t start = input.find("member")+7;
+        size_t end = input.find_first_of(" \0", start);
+        return s.substr(start,(end-start));
     }
 
-    inline std::string getAttribute(Redis::NodeEditor* node,
-        const SyntaxDef& attribute)
+    inline std::string get_attribute(
+            Redis::Node_Editor* node, const Syntax_Def& attr)
     {
-        NodeValue arg(attribute.str);
-        node->swapArg(&arg);
-        std::string attrValue = node->read();
-        node->swapArg();
-        return attrValue;
+        Node_Value arg {attr.str};
+        node->swap_arg(&arg);
+        std::string attr_val = node->read();
+        node->swap_arg();
+        return attr_val;
     }
 
-    int getMaxIters(const std::string& node);
-
-
-
+    int get_max_iters(const std::string& node_name);
 };
 
 #endif

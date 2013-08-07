@@ -1,5 +1,5 @@
 /*
- * StringMap.h
+ * String_Map.h
  *
  *  Created on: Jun 17, 2013
  *      Author: tom
@@ -8,33 +8,26 @@
 #ifndef STRINGMAP_H_
 #define STRINGMAP_H_
 
-#include <declarations.h>
-#include <stdexcept>
+#include <map>
+#include <string>
 
-class StringMap {
+class String_Map {
 public:
-    StringMap(){}
+    String_Map(){}
 
     void erase_through(size_t first, size_t last);
 
-    inline bool key_exists(size_t key) const {
-        try {
-            map.at(key);
-        }
-        catch (const std::out_of_range&) {
-            return false;
-        }
-        return true;
+    inline bool key_exists(size_t key) const 
+        { return map.count(key); }
+
+    inline std::string get (size_t key) const
+    {
+        return key_exists(key) ? 
+            map.at(key) : ""
     }
 
-    inline std::string get (size_t key) const {
-        if (key_exists(key)) return map.at(key);
-        else return EMPTY;
-    }
-
-    inline void set(size_t key, const std::string& val) {
-        map[key] = val;
-    }
+    inline void set(size_t key, const std::string& val) 
+        { map[key] = val; }
 
     inline void clear() { map.clear();}
     inline size_t size() const { return map.size(); }

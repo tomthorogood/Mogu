@@ -1,5 +1,5 @@
 /*
- * MoldableContainer.h
+ * Moldable_Container.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -8,20 +8,20 @@
 #ifndef MOLDABLECONTAINER_H_
 #define MOLDABLECONTAINER_H_
 
-#include "MoldableAbstractParent.h"
+#include "Moldable_Abstract_Parent.h"
 
-class MoldableContainer : public MoldableAbstractParent
+class Moldable_Container : public Moldable_Abstract_Parent
 {
 public:
-    MoldableContainer(WidgetAssembly* assembly)
-    : MoldableAbstractParent(assembly, MoguSyntax::container){}
+    Moldable_Container(WidgetAssembly* assembly)
+    : Moldable_Abstract_Parent(assembly, MoguSyntax::container){}
 
     //Containers have no textual value:
-    inline virtual std::string moldableValue(){return EMPTY;}
-    inline virtual void setMoldableValue(const std::string&){}
+    inline virtual std::string moldable_value(){return "";}
+    inline virtual void set_moldable_value(const std::string&) {}
 
     // public access for adding children to the widget
-    virtual void appendChild(Moldable* child) { addChild(child);}
+    virtual void append_child(Moldable* child) { addChild(child);}
 
 };
 

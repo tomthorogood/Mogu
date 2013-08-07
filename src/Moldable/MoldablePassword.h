@@ -1,5 +1,5 @@
 /*
- * MoldablePassword.h
+ * Moldable_Password.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -10,12 +10,12 @@
 
 #include "MoldableInput.h"
 
-class MoldablePassword : public MoldableInput
+class Moldable_Password : public Moldable_Input
 {
 protected:
 
 public:
-    MoldablePassword (WidgetAssembly*);
+    Moldable_Password (Widget_Assembly*);
 };
 
 #endif /* MOLDABLEPASSWORD_H_ */

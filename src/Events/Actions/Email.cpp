@@ -1,50 +1,58 @@
 #include "../Actions.h"
 #include "Includes.h"
-#include <Redis/NodeEditor.h>
+#include <Redis/Node_Editor.h>
 namespace Actions {
 
-void email(Moldable& broadcaster, CommandValue& v)
+void email(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
-    Prefix prefix = syntax_to_prefix.at(object);
-    std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
-    NodeValue arg;
-    if (v.test(CommandFlags::ARG))
-        arg = v.get(CommandFlags::ARG);
-    Redis::NodeEditor node(prefix, identifier, &arg);
-    NodeValue message;
-    EmailManager email;
-    email.setRecipient(v.get(CommandFlags::VALUE).getString());
-    email.setSubject(app->slotManager().retrieveSlot("EMAIL_SUBJECT"));
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))}
+    Prefix p {syntax_to_prefix.at(object)};
+    std::string id {(std::string) v.get(Command_Flags::identifier)};
+    Node_Value arg {};
+    Node_Value message {};
+    Email_Manager email {};
 
-    switch(object)
+    if (v.test(Command_Flags::arg))
+        arg = v.get(Command_Flags::arg);
+    Redis::Node_Editor node {p, id, &arg};
+
+    email.set_recipient(v.get(Command_Flags::value).get_string());
+    email.set_subject(app->slot_manager().retrieve_slot("EMAIL_SUBJECT"));
+
+    const Syntax_Def& attr {Mogu_Syntax::get(arg)};
+
+    switch(o)
     {
-        case MoguSyntax::own:{
-            const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
+        case Mogu_Syntax::own:{
             broadcaster.getAttribute(attr, message);
-            email.setMessage(message.getString());
+            email.set_message(message.getString());
             break;}
 
-        case MoguSyntax::widget:{
-            Moldable* widget = app->registeredWidget(v.getIdentifier());
-            const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
-            widget->getAttribute(attr, message);
-            email.setMessage(message.getString());
+        case Mogu_Syntax::widget:{
+            Moldable* w {app->get_widget(v.get_identifier())};
+            w->get_attribute(attr,message);
+            email.set_message(message.get_string());
             break;}
 
-        case MoguSyntax::data: 
-        case MoguSyntax::group:
-        case MoguSyntax::user:
+        case Mogu_Syntax::group:
+            node.set_id(app->get_group());
+            message.set_string(node.read());
+            break;
+
+        case Mogu_Syntax::user:
+            node.set_id(app->get_user());
+            // No break on purpose
+        case Mogu_Syntax::data: 
             message.setString(node.read());
             break;
-        case MoguSyntax::slot:{
-            message.setString(app->slotManager().retrieveSlot(
-                    v.getIdentifier()));
+        case Mogu_Syntax::slot:{
+            Slot_Manager& m {app->slot_manager()};
+            message.set_string(m.retrieve_slot(id));
             break;}
         default: return;
     }
-    email.setMessage(message.getString());
+    email.set_message(message.get_string());
     email.send();
 }
-}
+}//namespace Actions

@@ -22,25 +22,25 @@
 class Mogu: public Wt::WApplication
 {
     /*!\brief Changes the state of the application based on the URL */
-    MoldableFactory moldableFactory;
-    Moldable* wrapper             =nullptr;
-    UserManager* userManager        =nullptr;
+    int user {-1};
+    int group {};
+    std::string application_name {};
+    
+    Moldable_Factory moldable_factory;
+    
+    Moldable* wrapper {};
+    User_Manager user_manager {};
 
     /*!\brief A map of named widgets. */
-    std::unordered_map <std::string, Moldable*> widgetRegister;
-    Parsers::NodeValueParser interpreter_;
-    int user =-1;
-    int group                     =0;    //!< Currently active user group
-    std::string instanceid;
-    SlotManager slotMgr;
+    std::unordered_map <std::string, Moldable*> widget_register {};
+    Parsers::Node_Value_Parser interpreter;
+    Slot_Manager slot_manager;
 
-    void loadMoguStyles();
-    void handlePathChange(const std::string& path);
-    std::string app_name;
+    void handle_path_change (const std::string& path);
 
 public:
     Mogu(const Wt::WEnvironment& env);
-    ~Mogu();
+    virtual ~Mogu();
     
     /*!\brief Adds a widget into the widget registry.
      *
@@ -48,57 +48,52 @@ public:
      * @param widget The pointer to the widget itself.
      */
 
-    inline void registerWidget(
-        std::string name, Moldable& widget)
-    {
-        widgetRegister[name] = &widget;
+    inline void register_widget( const std::string& name, Moldable* widget)
+        { widget_register[name] = widget; }
+
+    inline Moldable* get_widget( const std::string& name)
+    { return 
+            widget_register.count(name) ? widget_register.at(name) : nullptr;
     }
 
-    inline Parsers::NodeValueParser& interpreter()
-    {
-        return interpreter_;
-    }
+    inline Parsers::NodeValueParser& get_interpreter()
+        { return interpreter; }
 
-    /*!\brief Returns a widget from the registry based on its name. */
-    inline Moldable* registeredWidget( std::string name)
-    {      
-        return widgetRegister.count(name) ? widgetRegister.at(name) : nullptr;
-    }
+    /* Expose this method to the public, instead of keeping it private. */
+    inline void set_path(const std::string& path)
+        { setInternalPath(path,true); }
 
-    inline void setPath(const std::string& path){
-        setInternalPath(path, true);
-    }
+    inline void deregister_widget(const std::string& name)
+        { if (widget_register.count(name)) widget_register.erase(name); }
 
-    /*!\brief Removes a widget from the registry. */
-    inline void deregisterWidget( std::string name)
-    {
-        if (registeredWidget(name) != nullptr)
-            widgetRegister[name] = nullptr;
-    }
+    /*\brief If the user id has been set temporarily, return that. Otherwise,
+     * return the actual user id from the user_manager, which is the id of the
+     * currently connected user.
+     */
+    inline const int& get_user() const
+        { return (user==-1) ? user_manager->get_user() : user; }
 
-    inline std::string& instanceID()
-    {
-        return instanceid;
-    }
+    inline UserManager& get_user_manager() 
+        { return *user_manager; }
     
-    inline const int& getUser() const
-    {
-        return (user==-1)? userManager->getUser() : user;
-    }
+    inline const int& get_group() const
+        { return group; }
+    
+    inline const Moldable_Factory& get_factory()
+        { return moldable_factory; }
+    
+    inline Slot_Manager& get_slot_manager()
+        { return slot_manager; }
+   
+    inline void set_temporary_user (int temporary_user)
+        { user = temporary_user; }
 
-    inline UserManager& getUserManager() {return *userManager;}
-    inline const int& getGroup() const {return group;}
-    inline const MoldableFactory& getFactory() { return moldableFactory; }
-    inline SlotManager& slotManager() { return slotMgr;}
-    inline void alert (const std::string& message) {
-        std::string jsalert = "alert(\""+message+"\");";
-	    doJavaScript(jsalert);
-    }
+    inline void unset_temporary_user ()
+        { user = user_manager->get_user(); }
+     
 
-    void removeWidget(const std::string& identifier);
-    inline void setUser(int tmpUser) { user = tmpUser;}
-
-    inline const std::string& getName() const { return app_name; } 
+    inline const std::string& get_application_name() const
+        { return application_name; }
 };
 
 #endif /* MOGU_H_ */

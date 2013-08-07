@@ -11,83 +11,45 @@
 #include <iostream>
 namespace Parsers {
 
-TokenManager::TokenManager()
-: index(0)
-{
-
-}
-
 
 /* Deletes from the current point THROUGH the save point, which is
  * at a greater position.
  */
 void TokenManager::deleteToSaved()
 {
-    size_t saved_index = getIndex(savedit);
-    strTokens.erase_through(index, saved_index);
-	it = numTokens.erase(it, savedit+1);
-	if (wasReallocated())
-	    realignIterators();
-	updateIndex();
+    size_t saved_index {get_index(savedit)};
+    s_tokens.erase_through(index, saved_index);
+	it = i_tokens.erase(it, savedit+1);
+	if (was_reallocated())
+	    realign_iterators();
+	update_index();
 }
 
 // Deletes from the beginning of the vector to the save point.
-void TokenManager::truncateHead()
+void TokenManager::truncate_head()
 {
     // NOTE: save point is deleted also
-    size_t saved_index = getIndex(savedit);
-    if (wasReallocated())
-        realignIterators();
-    it = numTokens.erase(begin_ptr, savedit+1);
-    strTokens.erase_through(0, saved_index);
-    updateIndex();
+    size_t saved_index = get_index(savedit);
+    if (was_reallocated())
+        realign_iterators();
+    it = i_tokens.erase(begin_ptr, savedit+1);
+    s_tokens.erase_through(0, saved_index);
+    update_index();
 }
+
 /* Deletes from the save point THROUGH the current index.
  */
 void TokenManager::deleteFromSaved()
 {
-    size_t saved_index = getIndex(savedit);
-    strTokens.erase_through(saved_index, index);
-    if (it >= numTokens.end())
-         it = numTokens.erase(savedit, numTokens.end());
+    size_t saved_index {get_index(savedit)};
+    s_tokens.erase_through(saved_index, index);
+    if (it >= i_tokens.end())
+         it = i_tokens.erase(savedit, i_tokens.end());
     else
-        it = numTokens.erase(savedit, it+1);
-    if (wasReallocated())
-        realignIterators();
-    updateIndex();
-}
-
-//debug methods
-void TokenManager::printTokens()
-{
-	std::cout << "[TokenManager]: ";
-	size_t sz = numTokens.size();
-	for(unsigned int i=0; i<numTokens.size(); i++)
-	{
-	    std::cout << "(" << i+1 << "/" << sz << "): ";
-	    int token = numTokens[i];
-		if(token == (int) MoguSyntax::TOKEN_DELIM)
-		    std::cout << strTokens.get(i) << " ";
-		else
-			std::cout << numTokens[i] << " ";
-	}
-	std::cout << std::endl;
-}
-
-void TokenManager::printNumTokens()
-{
-	std::cout << "[TM numTokens]: ";
-	for(unsigned int i=0; i<numTokens.size(); i++)
-		std::cout << numTokens[i] << " ";
-	std::cout << std::endl;
-}
-
-void TokenManager::printStringTokens()
-{
-	std::cout << "[TM strTokens]: ";
-	for(size_t i=0; i<strTokens.size(); i++)
-		std::cout << i << ":" << strTokens.get(i);
-	std::cout << std::endl;
+        it = i_tokens.erase(savedit, it+1);
+    if (was_reallocated())
+        realign_iterators();
+    update_index();
 }
 
 }	// namespace Parsers

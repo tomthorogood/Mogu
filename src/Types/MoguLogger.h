@@ -1,5 +1,5 @@
 /*
- * MoguLogger.h
+ * Mogu_Logger.h
  *
  *  Created on: Aug 2, 2013
  *      Author: tom
@@ -13,85 +13,67 @@
 #include <string>
 #include <iostream>
 
-enum class LogLevel
-{
-    ALL         =1  //Log all the things
-    , NOTICE    =2  //Log only notices
-    , WARN      =4  //Log only warnings
-    , ERROR     =8  //Log recoverable errors
-    , CRITICAL  =16 //Log when things go real bad.
-    , _NONE      =32 //Do not log anything!
-};
-
-const std::vector <std::pair <std::string,LogLevel>> logLevelV = {
-    std::make_pair("ALL",LogLevel::ALL),
-    std::make_pair("NOTICE", LogLevel::NOTICE),
-    std::make_pair("WARN",LogLevel::WARN),
-    std::make_pair("ERROR", LogLevel::ERROR),
-    std::make_pair("CRITICAL", LogLevel::CRITICAL),
-    std::make_pair("NONE",LogLevel::_NONE)
-};
-
-
 #ifdef DEBUG
 #ifndef NOLOGOVERRIDE
-    static bool LOG_OVERRIDE = true;
+    constexpr bool LOG_OVERRIDE = true;
 #else
-    static bool LOG_OVERRIDE = false;
+    constexpr bool LOG_OVERRIDE = false;
 #endif
 #else
-    static bool LOG_OVERRIDE = false;
+    constexpr bool LOG_OVERRIDE = false;
 #endif
 
-class MoguLogger
+enum class Log_Level
+{
+    all         =1  //Log all the things
+    , notice    =2  //Log only notices
+    , warn      =4  //Log only warnings
+    , error     =8  //Log recoverable errors
+    , critical  =16 //Log when things go real bad.
+    , none      =32 //Do not log anything!
+};
+
+
+
+
+class Mogu_Logger
 {
     int log_level;
-    std::string getLevelName(LogLevel) const;
-    LogLevel getLevelEnum(const std::string&) const;
+    std::string get_level_name(Log_Level) const;
+    Log_Level get_level_enum(const std::string&) const;
+
 public:
+    Mogu_Logger();
 
-    MoguLogger();
-
-    MoguLogger(int logLevel_)
-        :log_level(logLevel_)
-    { if (override()) log_level = (int) LogLevel::ALL; }
-
-
-
-    const bool override() const { return LOG_OVERRIDE; }
-
-    inline bool doLog(LogLevel lv) const
+    Mogu_Logger(int i)
+        : log_level(i)
     {
-        // When in debug mode, log everything.
+        if (LOG_OVERRIDE) log_level = (int) log_level::ALL;
+    }
+
+    inline bool do_log(Log_Level v) const
+    {
         if (LOG_OVERRIDE) return true;
-        // Do not log anything if this bit has been set.
-        if (log_level & (int) LogLevel::_NONE) return false;
-
-        // If it's an exact match, log it.
-        if (log_level & (int) lv) return true;
-
-        // If the default log level is more verbose than the
-        // the one passed in, log it.
-        if ((int) log_level <= (int) lv) return true;
-
-        // Otherwise, do not.
+        if (log_level & (int) Log_Level::none) return false;
+        if (log_level & (int) v) return true;
+        if (log_level <= (int) v) return true;
         return false;
     }
 
     template <typename T, typename ... U>
-    void log(LogLevel msg_level, T head, U... tail)
+    void log(Log_Level msg_level, T head, U... tail)
     {
-        if (!doLog(msg_level)) return;
-        if ((int)msg_level >= (int) LogLevel::WARN)
+        if (!do_log(msg_level)) return;
+        if ((int) msg_level >= (int) Log_Level::WARN)
         {
-            vstderr(getLevelName(msg_level)+": ");
+            vstderr(get_level_name(msg_level) + ": ");
             vstderr(head);
             vstderr(tail...);
             err_end();
         }
         else
         {
-            vstdout(getLevelName(msg_level)+": ");
+            vstdout(get_level_name(msg_level+": "));
             vstdout(head);
             vstdout(tail...);
             out_end();
@@ -116,15 +98,15 @@ public:
     }
 
     inline void out_end()
-    { std::cout << std::endl;}
+        { std::cout << std::endl;}
 
     inline void err_end()
-    { std::cerr << std::endl;}
+        { std::cerr << std::endl;}
 
 };
 
 namespace Application {
-    static MoguLogger log;
+    extern Mogu_Logger log;
 }
 
 #endif /* MOGULOGGER_H_ */

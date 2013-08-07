@@ -8,33 +8,34 @@ void test(Moldable& broadcaster, CommandValue& v)
 {
     mApp;
 
-    bool result = false;
-    NodeValue value;
+    bool result {false};
+    NodeValue value {};
 
     // This is a little bit of reverse engineering, because it undoes some of
     // tokenization that's already been done, which is inefficient, but it's
     // much easier to understand than the previous implementation.
-    std::string state_str = v.stitchState();
+    std::string state = v.join_state();
 
-    app->interpreter().giveInput(state_str, value);
-    if (value.isString()) {
-        value.setString(stripquotes(value.getString()));
+    app->interpreter().give_input(state, value);
+    if (value.is_string())
+        value.set_string(stripquotes(value.get_string()));
+
+    if (v.get(Command_Flags::value).is_string())
+    {
+        Node_Value tmp {v.get(Command_Flags::value)};
+        tmp.set_string(tmp.get_string());
+        v.set(Command_Flags::value,tmp);
     }
-    if (v.get(CommandFlags::VALUE).isString()) {
-        NodeValue tmp = v.get(CommandFlags::VALUE);
-        tmp.setString(stripquotes(tmp.getString()));
-        v.set(CommandFlags::VALUE, tmp);
-    }
+
     result = (stripquotes(value) == stripquotes(v.get(CommandFlags::VALUE)));
 
-    Application::log.log(LogLevel::NOTICE
+    Application::log.log(Log_Level::notice
             , (std::string) value, " == "
             , (std::string) v.get(CommandFlags::VALUE)
             , "? "
             , result ? "SUCCEEDED" : "FAILED");
     if (!result) broadcaster.fail().emit();
     else broadcaster.succeed().emit();
-
 }
 
 }//namespace

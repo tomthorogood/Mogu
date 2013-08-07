@@ -1,10 +1,10 @@
-#include <declarations.h>
 #include <Wt/WObject>
-class CommandProcessor : public Wt::WObject
+#include <../Moldable/Moldable.h>
+class Command_Processor : public Wt::WObject
 {
 public:
-    CommandProcessor(Moldable& broadcaster);
-    void processCommand(CommandValue& v);
+    Command_Processor(Moldable& w) : broadcaster(w) {}
+    void process_command(Command_Value&);
 protected:
     Moldable& broadcaster;
 };

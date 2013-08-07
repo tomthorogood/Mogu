@@ -1,5 +1,5 @@
 /*
- * MoldableAbstractParent.h
+ * Moldable_Abstract_Parent.h
  *
  *  Created on: Dec 11, 2012
  *      Author: tom
@@ -10,29 +10,26 @@
 
 #include "Moldable.h"
 
-class MoldableAbstractParent : public Moldable
+class Moldable_Abstract_Parent : public Moldable
 {
 protected:
     int num_children;
     std::vector <Moldable*> moldable_children;
-    virtual void init(WidgetAssembly*) override;
+    virtual void init(Widget_Assembly*) override;
     std::vector <std::string> child_nodes;
 public:
-    MoldableAbstractParent (WidgetAssembly*, const SyntaxDef&);
+    Moldable_Abstract_Parent (Widget_Assembly*, const Syntax_Def&);
     virtual void load() override;
 
-    virtual void appendChild(Moldable*) =0;
-    inline const std::vector<Moldable*>& moldableChildren() {
-        return moldable_children;
-    }
+    virtual void append_child(Moldable*) =0;
 
     inline virtual void reload()
     {
         clear();
-        setFlag(MoldableFlags::allow_reload);
-        initializeGlobalAttributes();
+        set_flag(Moldable_Flags::allow_reload);
+        initialize_global_attributes();
         load();
-        unsetFlag(MoldableFlags::allow_reload);
+        unset_flag(Moldable_Flags::allow_reload);
     }
 };
 

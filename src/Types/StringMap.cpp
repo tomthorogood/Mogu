@@ -1,18 +1,17 @@
 /*
- * StringMap.cpp
+ * String_Map.cpp
  *
  *  Created on: Jun 18, 2013
  *      Author: tom
  */
 
-#include "StringMap.h"
+#include "String_Map.h"
 
-void StringMap::erase_through (size_t first, size_t last)
+void String_Map::erase_through (size_t first, size_t last)
 {
     size_t num_indexes_erased = last - first + 1;
     for (size_t i = first; i <= last; ++i) {
-        if (key_exists(i))
-            map.erase(i);
+        if (key_exists(i)) map.erase(i);
     }
 
     auto iter = map.begin();

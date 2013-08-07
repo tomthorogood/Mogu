@@ -1,36 +1,34 @@
 /*
- * MoldableText.cpp
+ * Moldable_Text.cpp
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
  */
 
-#include "MoldableText.h"
+#include "Moldable_Text.h"
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
-#include <Types/WidgetAssembly.h>
+#include <Types/Widget_Assembly.h>
 
-MoldableText::MoldableText(WidgetAssembly* assembly) :
-    Moldable(assembly, MoguSyntax::text)
+Moldable_Text::Moldable_Text(Widget_Assembly* assembly) :
+    Moldable(assembly, Mogu_Syntax::text)
 {
     init(assembly);
 }
 
-void MoldableText::init(WidgetAssembly* assembly)
+void Moldable_Text::init(Widget_Assembly* assembly)
 {
-    NodeValue v;
-    assembly_text = (std::string)
-        assembly->attrdict[MoguSyntax::text.integer];
+    assembly_text = (std::string) assembly->attrdict[Mogu_Syntax::text.integer];
     text = new Wt::WText;
-    initializeText();
+    initialize_text();
     addWidget(text);
 }
 
-void MoldableText::initializeText()
+void Moldable_Text::initialize_text()
 {
     if (!assembly_text.empty())
     {
-        std::string txt = stripquotes(assembly_text);
+        std::string txt {stripquotes(assembly_text)};
         text->setText(Wt::WString(txt,Wt::UTF8));
     }
 }

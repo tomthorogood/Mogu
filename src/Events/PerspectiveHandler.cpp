@@ -1,35 +1,35 @@
-#include "PerspectiveHandler.h"
-#include <Parsers/NodeValueParser.h>
-#include <Types/CommandValue.h>
+#include "Perspective_Handler.h"
+#include <Parsers/Node_Value_Parser.h>
+#include <Types/Command_Value.h>
 #include <Types/MoguLogger.h>
 #include <Mogu.h>
 
 
-PerspectiveHandler::PerspectiveHandler(Moldable& broadcaster, const std::string& perspective_)
-    : CommandProcessor(broadcaster)
-    , db(Application::contextMap, Prefix::perspectives)
-    , perspective(perspective_)
+Perspective_Handler::Perspective_Handler(Moldable& w, const std::string& p)
+    : Command_Processor(w)
+    , db(Prefix::perspectives)
+    , perspective(p)
 {
     const char* c_node = perspective.c_str();
-    db.appendQuery("exists perspectives.%s", c_node);
-    db.appendQuery("llen perspectives.%s", c_node);
-    if (!db.yieldResponse<bool>()) return;
-    num_commands = db.yieldResponse<int>();
+    db.append_query("exists perspectives.%s", c_node);
+    db.append_query("llen perspectives.%s", c_node);
+    if (!db.yield_response<bool>()) return;
+    num_commands = db.yield_response<int>();
 }
 
-void PerspectiveHandler::moldPerspective()
+void Perspective_Handler::mold_perspective()
 {
     mApp;
-    Parsers::NodeValueParser& nvp = app->interpreter();
-    db.appendQuery("lrange perspectives.%s 0 %d", 
+    Parsers::Node_Value_Parser& nvp = app->interpreter();
+    db.append_query("lrange perspectives.%s 0 %d", 
         perspective.c_str(),num_commands);    
-    commands = db.yieldResponse <std::vector<std::string>>();
-    for (auto cmd : commands)
+    commands = db.yield_response <std::vector<std::string>>();
+    for (std::string cmd : commands)
     {
-        CommandValue v(broadcaster);
-        Application::log.log(LogLevel::NOTICE,
+        Command_Value v(broadcaster);
+        Application::log.log(Log_Level::NOTICE,
                 "Processing Perspective ", perspective, " command: " ,cmd);
-        nvp.giveInput(cmd,v);
-        processCommand(v);
+        nvp.give_input(cmd,v);
+        process_command(v);
     }
 }

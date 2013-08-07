@@ -7,23 +7,23 @@
 
 
 #include "../Actions.h"
-#include <Types/CommandValue.h>
+#include <Types/Command_Value.h>
 #include <Mogu.h>
 
 namespace Actions
 {
 
-void clear(Moldable& broadcaster, CommandValue& v)
+void clear(Moldable& broadcaster, Command_Value& v)
 {
-    switch(MoguSyntax::get(v.get(CommandFlags::OBJECT)).integer)
+    switch(Mogu_Syntax::get(v.get(Command_Flags::OBJECT)).integer)
     {
-    case MoguSyntax::own:
+    case Mogu_Syntax::own:
         broadcaster.clear();
         break;
-    case MoguSyntax::widget:
+    case Mogu_Syntax::widget:
     {
         mApp;
-        Moldable* w = app->registeredWidget(v.getIdentifier());
+        Moldable* w = app->get_widget(v.get_identifier());
         if (w) w->clear();
         break;
     }

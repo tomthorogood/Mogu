@@ -14,32 +14,32 @@
 
 class MoldableImage : public Moldable
 {
-    Wt::WImage* image   =nullptr;
-    std::string assembly_src;
-    std::string assembly_txt;
+    Wt::WImage* image {};
+    std::string assembly_src {};
+    std::string assembly_txt {};
 protected:
-    virtual void init(WidgetAssembly*) override;
-    void initializeImage();
+    virtual void init(Widget_Assembly*) override;
+    void initialize_image();
 
 public:
-    MoldableImage(WidgetAssembly*);
+    Moldable_Image(Widget_Assembly*);
 
-    inline virtual std::string moldableValue()
+    inline virtual std::string moldable_value()
     {
         return image->imageLink().url();
     }
 
     //Currently, this operation is unsupported by Wt.
-    inline virtual void setMoldableValue(const std::string& str_src) {}
+    inline virtual void set_moldable_value(const std::string& str_src) {}
 
     inline virtual void reload()
     {
-        setFlag(MoldableFlags::allow_reload);;
+        set_flag(Moldable_Flags::allow_reload);
         clear();
-        initializeGlobalAttributes();
-        initializeImage();
+        initialize_global_attributes();
+        initialize_image();
         load();
-        unsetFlag(MoldableFlags::allow_reload);;
+        unset_flag(Moldable_Flags::allow_reload);;
     }
 };
 

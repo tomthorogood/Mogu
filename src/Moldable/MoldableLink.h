@@ -1,5 +1,5 @@
 /*
- * MoldableLink.h
+ * Moldable_Link.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -11,19 +11,21 @@
 #include "Moldable.h"
 #include <Wt/WAnchor>
 
-class MoldableLink : public Moldable
+class Moldable_Link : public Moldable
 {
 private:
-    std::string assembly_location;
-    std::string assembly_text;
-protected:
-    Wt::WAnchor* link = nullptr;
-    virtual void init(WidgetAssembly*) override;
-    void initializeLink();
-public:
-    MoldableLink (WidgetAssembly* assembly);
+    std::string assembly_location {};
+    std::string assembly_text {};
 
-    inline virtual std::string moldableValue()
+protected:
+    Wt::WAnchor* link {};
+    virtual void init(Widget_Assembly*) override;
+    void initialize_link();
+
+public:
+    Moldable_Link (Widget_Assembly* assembly);
+
+    inline virtual std::string get_moldable_value()
     {
         return link->text().toUTF8();
     }
@@ -33,10 +35,10 @@ public:
 
     inline virtual void reload()
     {
-        testFlag(MoldableFlags::allow_reload);;
-        initializeLink();
+        test_flag(Moldable_Flags::allow_reload);;
+        initialize_link();
         load();
-        testFlag(MoldableFlags::allow_reload);;
+        test_flag(Moldable_Flags::allow_reload);;
     }
 };
 

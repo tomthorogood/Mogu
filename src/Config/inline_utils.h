@@ -26,6 +26,11 @@ inline std::string stripquotes(const std::string& str) {
     return newstr;
 }
 
+inline bool is_quoted_string(const std::string& s)
+{
+    return (s[0]=='"') && (s[s.size()-1]=='"');
+}
+
 inline std::string sreplace(std::string str, const std::string& needle,
         std::string replacement = "")
 {

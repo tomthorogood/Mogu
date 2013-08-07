@@ -1,5 +1,5 @@
 /*
- * MoldableFactory.h
+ * Moldable_Factory.h
  *
  *  Created on: Sep 27, 2012
  *      Author: tom
@@ -10,16 +10,15 @@
 
 #include <declarations.h>
 
-class MoldableFactory
+class Moldable_Factory
 {
 public:
-    MoldableFactory(Mogu* app);
-    ~MoldableFactory();
+    Moldable_Factory() {}
 
-    Moldable* createMoldableWidget(const std::string& node) const;
+    Moldable* create_moldable_widget (const std::string& node) const;
 
 private:
-    WidgetServer* server    =nullptr;
+    WidgetServer server {};
 };
 
 

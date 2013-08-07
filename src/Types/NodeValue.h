@@ -10,7 +10,7 @@
 
 #include <string>
 
-enum class ReadType
+enum class Read_Type
 {
     NO_VALUE = 0x0, string_value = 0x1, int_value = 0x2, float_value = 0x3
 };
@@ -19,187 +19,196 @@ enum class ReadType
  * consolidates the int/float possibilities into one type to save a hair of
  * memory. The string is held inside the NodeValue class itself.
  */
-union NumericUnion
+union Numeric_Union
 {
-    int as_int      =-1;
-    float as_float;
+    int as_int {}
+    double as_float;
+    
+    Numeric_Union(const int& i)
+        : as_int(i) {}
+    Numeric_Union(const double& d)
+        : as_float(d) {}
 };
 
 /*!\brief The NodeValue class holds a parsed node value of any valid type,
  * currently limited to int/float/string. This allows for added polymorphic
  * capabilities of any classes that use node values in their logic.
  */
-class NodeValue
+class Node_Value
 {
     /*!\brief one of the possible types of values */
-    ReadType type = ReadType::NO_VALUE;
+    Read_Type type {Read_Type::NO_VALUE};
 
     /*!\brief If the value is a string, it is stored here. */
-    std::string as_string = "" ;
+    std::string as_string {}
 
     /*!\brief If the value is numeric, it is stord here. */
-    NumericUnion* numerics = nullptr;
+    NumericUnion* numerics {}
 
     inline void resetStr()
-    {
-        as_string = "";
-    }
+        { as_string = ""; }
 
 public:
-    NodeValue();
-    NodeValue(const int i) : numerics(new NumericUnion()){
+    Node_Value() {}
+    Node_Value(const int& i)
+        : numerics(new Numeric_Union(i))
+        , type(Read_Type::int_type)
+    {}
+    
+    Node_Value(const std::string& s)
+        : as_string(s)
+        , type (Read_Type::string_type)
+    {}
 
-        setInt(i);
-    }
-    NodeValue(const std::string& s) : numerics(new NumericUnion()){
-        setString(s);
-    }
-    NodeValue(const float f) : numerics(new NumericUnion()){
-        setFloat(f);
-    }
+    Node_Value(const double& d)
+        : numerics(new Numeric_Union(d))
+        , type (Read_Type::float_type)
+    {}
     /*!\brief Copies the value of another node value into this one. */
-    NodeValue(const NodeValue&);
 
-    inline NodeValue& operator=(const NodeValue& v)
+    Node_Value(const Node_Value& n)
+        : type(n.type)
+    {
+        switch(type)
+        {
+            case Read_Type::string_value:
+                as_string = n.as_string;
+                break;
+            case Read_Type::int_value:
+                numerics = new Numeric_Union(n.numerics->as_int);
+                break;
+            case Read_Type::float_value:
+                numerics = new Numeric_Union(n.numerics->as_float);
+                break;
+            default:
+                break;
+        }
+    }
+
+    Node_Value(Node_Value&& n)
+        : type(n.type)
+        , as_string(n.as_string)
+        , numerics(n.numerics)
+    {
+        n.as_string = "";
+        n.numerics = nullptr;
+        n.type = Read_Type::NO_VALUE;
+    }
+
+    Node_Value& operator= (const Node_Value& n)
     {
         if (&v == this) return *this;
         type = v.getType();
         as_string = v.getString();
-        if (numerics != nullptr) delete numerics;
-        numerics = new NumericUnion();
-        
-        switch (type) {
-        case ReadType::int_value:
-            setInt(v.getInt());
-            break;
-        case ReadType::string_value:
-            setString(v.getString());
-            break;
-        case ReadType::float_value:
-            setFloat(v.getFloat());
-            break;
-        default:
-            break;
+        if (!numerics) numerics = new Numeric_Union();
+        switch(type)
+        {
+            case Read_Type::int_value:
+                numerics->as_int = n.get_int();
+                break;
+            case Read_Type::string_value:
+                as_string = n.get_string();
+                break;
+            case Read_Type::float_value:
+                numerics->as_float = n.get_float();
+                break;
+            default:
+                break;
         }
+
         return *this;
     }
 
-    inline bool operator==(const NodeValue& v)
+    inline bool operator== (const NodeValue& v)
     {
-        if (type != v.getType()) return false;
-        switch(getType())
+        if (type != v.get_type()) return false;
+        switch(type)
         {
-            case ReadType::int_value:
-                return numerics->as_int == v.getInt();
-            case ReadType::string_value:
-                return as_string == v.getString();
-            case ReadType::float_value:
-                return numerics->as_float == v.getFloat();
-            default:return false;
+            case Read_Type::int_value:
+                return numerics->as_int == v.get_int();
+            case Read_Type::float_value:
+                return numerics->as_float == v.get_float();
+            case Read_Type::string_value:
+                return as_string == v.get_string();
+            default:
+                return false;
         }
     }
 
-    /*!\brief deletes the pointer to the NumericUnion*/
-    virtual ~NodeValue();
+    virtual ~NodeValue()
+    {
+        if(numerics) delete numerics;
+    }
 
     operator float() const {
-        return numerics->as_float;
+        if (numerics) return numerics->as_float;
+        return 0;
     }
 
     operator int() const {
-        return numerics->as_int;
+        if (numerics) return numerics->as_int;
+        return 0;
     }
 
     operator std::string() const {
         return as_string;
     }
 
-    /* Appends values to strings, sums numeric values. */
-    void operator+= (const NodeValue& other)
-    {
-        if (isString())
-        {
-            if (other.isString())
-                as_string += (std::string) other;
-            else if (other.isInt())
-                as_string += std::to_string( (int) other);
-            else if (other.isFloat())
-                as_string += std::to_string( (float) other);
-        }
-        else if (other.isInt())
-        {
-            if (isInt())
-                numerics->as_int += (int) other;
-            else if (isFloat())
-                numerics->as_float += (int) other;
-        }
-        else if (other.isFloat())
-        {
-            if (isInt())
-                numerics->as_int += (float) other;
-            else if (other.isFloat())
-                numerics->as_float += (float) other;
-        }
-    }
-
-    /*!\brief Sets the string as well as type */
-    inline void setString(std::string val)
+    inline void set_string(const std::string& val)
     {
         as_string = val;
         type = ReadType::string_value;
     }
 
-    /*!\brief Sets an int as well as type */
-    inline void setInt(int val)
+    inline void set_int(const int& i)
     {
-        resetStr();
-        numerics->as_int = val;
+        if (!numerics) numerics = new Numeric_Union();
+        numerics->as_int = i;
         type = ReadType::int_value;
     }
 
-    /*!\brief Sets a float as well as type */
-    inline void setFloat(
-        float val)
+    inline void setFloat(const double& d)
     {
-        resetStr();
-        numerics->as_float = val;
+        if (!numerics) numerics = new Numeric_Union();
+        numerics->as_float = d;
         type = ReadType::float_value;
     }
 
-    /*!\brief If the type is `string_value`, returns a string. */
-    inline const std::string& getString() const
+    inline const std::string& get_string() const
+        { return as_string; }
+
+    inline const int& get_int() const
     {
-        return as_string;
+        if (numerics) return numerics->as_int; 
+        return 0;
     }
 
-    /*!\brief If the type is `int_value`, returns the int.*/
-    inline int& getInt() const
-    {
-        return numerics->as_int;
+    inline const double& get_float() const
+    {   
+        if (numerics) return numerics->as_float;
+        return 0;
     }
 
-    /*!\brief If the type is `float_value`, returns the float. */
-    inline float getFloat() const
-    {
-        return numerics->as_float;
-    }
+    inline Read_Type get_type() const
+        { return type; }
 
-    /*!\brief Returns the type so the correct data can be extracted. */
-    inline ReadType getType() const
+    inline void clear() 
     {
-        return type;
-    }
-
-    inline void clear() {
-        resetStr();
-        numerics->as_float = 0;
-        numerics->as_int = 0;
+        as_string="";
         type = ReadType::NO_VALUE;
+        if (numerics) 
+        {
+            delete numerics;
+            numerics = nullptr;
+        }
     }
 
-    inline bool isString() const { return type == ReadType::string_value;}
-    inline bool isInt() const { return type == ReadType::int_value;}
-    inline bool isFloat() const { return type == ReadType::float_value;}
+    inline bool is_string() const
+        { return type == Read_Type::string_value; }
+    inline bool is_int() const 
+        { return type == Read_Type::int_value; }
+    inline bool is_float() const
+        { return type == Read_Type::float_value;}
 
 };
 // end NodeValue

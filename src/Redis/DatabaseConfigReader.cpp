@@ -8,151 +8,149 @@
 #include "ContextMap.h"
 #include <cassert>
 #include <iostream>
+
 namespace Application {
 
-ContextMap* contextMap = nullptr;
-
-Prefix matchPrefix(int& PREFIX_MASK, const std::string& prefix)
+template <typename T>
+bool str_contains(const std::string& s, T v)
 {
-    if (prefix.find("widgets") != std::string::npos) {
-        PREFIX_MASK |= (int) Prefix::widgets;
+    return s.find(v) != std::string::npos;
+}
+
+Prefix match_prefix (int& prefix_mask, const std::string& prefix)
+{
+    if (str_contains(prefix, "widgets"))
+    {
+        prefix_mask |= (int) Prefix::widgets;
         return Prefix::widgets;
     }
-    else if (prefix.find("data") != std::string::npos) {
-        PREFIX_MASK |= (int) Prefix::data;
+    else if (str_contains(prefix, "data"))
+    {
+        prefix_mask |= (int) Prefix::data;
         return Prefix::data;
     }
-    else if (prefix.find("user") != std::string::npos) {
-        PREFIX_MASK |= (int) Prefix::user;
+    else if (str_contains(prefix, "user"))
+    {
+        prefix_mask |= (int) Prefix::user;
         return Prefix::user;
     }
-    else if (prefix.find("group") != std::string::npos)
+    else if (str_contains(prefix,"group"))
     {
-        PREFIX_MASK |= (int) Prefix::group;
+        prefix_mask |= (int) Prefix::group;
         return Prefix::group;
     }
-    else if (prefix.find("templates") != std::string::npos)
+    else if (str_contains(prefix,"template"))
     {
-        PREFIX_MASK |= (int) Prefix::templates;
+        prefix_mask |= (int) Prefix::templates;
         return Prefix::templates;
     }
-    else if (prefix.find("validators") != std::string::npos)
+    else if (str_contains(prefix,"perspective"))
     {
-        PREFIX_MASK |= (int) Prefix::validators;
-        return Prefix::validators;
-    }
-    else if (prefix.find("perspectives") != std::string::npos)
-    {
-        PREFIX_MASK |= (int) Prefix::perspectives;
+        prefix_mask |= (int) Prefix::perspectives;
         return Prefix::perspectives;
     }
-    else if (prefix.find("policies") != std::string::npos) {
-        PREFIX_MASK |= (int) Prefix::policies;
+    else if (str_contains(prefix,"validators"))
+    {
+        prefix_mask |= (int) Prefix::validators;
+        return Prefix::validators;
+    }
+    else if (str_contains(prefix,"policies"))
+    {
+        prefix_mask |= (int) Prefix::policies;
         return Prefix::policies;
     }
-    else if (prefix.find("temp") != std::string::npos) {
-        PREFIX_MASK |= (int) Prefix::temp;
-        return Prefix::temp;
-    }
-    else {
+    else if (str_contains(prefix,"meta"))
+    {
         PREFIX_MASK |= (int) Prefix::meta;
         return Prefix::meta;
     }
-
+    else return Prefix::__NONE__;
 }
 
-int extractInteger(const std::string& line) {
-    auto digit_start = line.find_first_of("1234567890");
-    auto digit = line.substr(digit_start);
-    auto digit_end = digit.find_first_not_of("1234567890");
+int extract_integer(const std::string& line)
+{
+    const std::string digits = "1234567890";
+    size_t digit_start = line.find_first_of(digits);
+    std::string digit = line.substr(digit_start);
+    size_t digit_end = digit.find_first_not_of(digits);
     digit = digit.substr(0,digit_end);
-    const char* c_digit = digit.c_str();
-    int i_digit = atoi(c_digit);
-    return i_digit;
+    return atoi(digit.c_str());
 }
 
-std::string getHost(const std::string& line) {
-    auto delim = line.find(":");
-    auto tail = line.substr(delim+1);
-    /*Allow numbers, letters, and periods in the hostname. This may change.
-     * Periods may not start an IP address, so ignore those at the start search.
-     */
-    auto start = tail.find_first_of("abcdefghijklmnopqrstuvwxyz1234567890");
+std::string extract_host(const std::string& line)
+{
+    const std::string alpha_num = "abcdefghijklmnopqrstuvwxyz1234567890";
+    size_t d = line.find(":");
+    std::string tail = line.substr(d+1);
+    size_t start = tail.find_first_of(alpha_num);
     tail = tail.substr(start);
-    auto end = tail.find_first_not_of("abcdefghijklmnopqrstuvwxyz1234567890.");
+    size_t end = tail.find_first_not_of(alpha_num);
     return tail.substr(0,end);
 }
 
-void loadDatabaseContexts() {
-    if (contextMap) return; 
-    int PREFIX_MASK = 0;
-    contextMap = new ContextMap();
-    
-    std::ifstream infile;
-    infile.open(DBCONFIG_FILE);
+inline bool ignore_line(const std::string& line)
+{
+    return (str_contains(line,'#') || line.empty());
+}
+
+void load_database_contexts()
+{
+    if (context_map) return;
+    int prefix_mask {};
+    context_map = new Context_Map();
+
+    std::ifstream buf;
+    buf.open(DBCONFIG_FILE);
     assert(infile.is_open());
 
-    /* Initialize the line string, which will be used to hold
-     * each line of the config file in turn. */
-    std::string line;
-
-    while (!infile.eof())
+    std::string line {};
+    
+    while (!buf.eof())
     {
-        getline(infile,line);
-
-        // Ignore commented lines:
-        if (line.find('#') != std::string::npos) continue;
-        if (line == "") continue; //and blank lines
-
-        //Enter the context loop
-        if (line.find('@') != std::string::npos)
+        getline(buf,line);
+        if (ignore_line) continue;
+        else if (str_contains(line,'@'))
         {
-            int port;
-            std::string host;
-            int dbnum;
+            int port {};
+            std::string host {};
+            int db_num {};
+            
             // Complete at 00000111 (7)
             // One bit is set each time one of the above is found.
             // This allows for any number of newlines or comments.
-            uint8_t completion =0;
-            Prefix prefix = matchPrefix(PREFIX_MASK, line);
-            while (completion != 7 && !infile.eof())
+            uint8_t completion {};
+            while ((completion != 7) && !buf.eof())
             {
-
-                getline(infile,line);
-                // Explicitly consume commented lines, as they may
-                // have the words 'port','host', or 'number' in them.
-                if (line.find('#') != std::string::npos) continue;
-                if (line == "") continue;
-
-                else if (line.find("port") != std::string::npos)
+                getline(buf,line);
+                if (ignore_line) continue;
+                else if (str_contains(line,"port"))
                 {
-                    port = extractInteger(line);
+                    port = extract_integer(line);
                     completion |= 1;
                 }
-                else if (line.find("number") != std::string::npos)
+                else if (str_contains(line, "number"))
                 {
-                    dbnum = extractInteger(line);
+                    db_num = extract_integer(line);
                     completion |= 2;
                 }
-                else if (line.find("host") != std::string::npos)
+                else if (str_contains(line, "host"))
                 {
-                    host = getHost(line);
+                    host = extract_host(line);
                     completion |= 4;
                 }
             }
-            assert(completion >=7);
-            Redis::Context* c_ = new Redis::Context();
-            c_->port=port;
-            c_->host=host;
-            c_->db_num=dbnum;
-            contextMap->set(prefix, c_);
-            assert(contextMap->get(prefix) != nullptr);
+            assert(completion==7);
+            Redis::Context* c = new Redis::Context();
+            c->port = port;
+            c->host = host;
+            c->db_num = db_num;
+            context_map->set(prefix,c);
+            assert(context_map->get(prefix))
         }
     }
     infile.close();
-    //!\todo Throw an error if not everything was loaded.
     assert(PREFIX_MASK >= MAX_PREFIX_MASK);
-    assert(contextMap != 0x0);
+    assert(context_map);
 }
 
-}
+}//namespace Application
