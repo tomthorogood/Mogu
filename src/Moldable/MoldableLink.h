@@ -31,7 +31,7 @@ public:
     }
 
     // Not currently supported in Wt
-    inline virtual void setMoldableValue(const std::string& str) {}
+    inline virtual void set_moldable_value(const std::string& str) {}
 
     inline virtual void reload()
     {

@@ -5,7 +5,7 @@
 
 namespace Hash {
 
-std::string toHash(const std::string& str)
+std::string to_hash(const std::string& str)
 {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;

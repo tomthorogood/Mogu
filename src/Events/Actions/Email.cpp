@@ -25,8 +25,8 @@ void email(Moldable& broadcaster, Command_Value& v)
     switch(o)
     {
         case Mogu_Syntax::own:{
-            broadcaster.getAttribute(attr, message);
-            email.set_message(message.getString());
+            broadcaster.get_attribute(attr, message);
+            email.set_message(message.get_string());
             break;}
 
         case Mogu_Syntax::widget:{
@@ -44,7 +44,7 @@ void email(Moldable& broadcaster, Command_Value& v)
             node.set_id(app->get_user());
             // No break on purpose
         case Mogu_Syntax::data: 
-            message.setString(node.read());
+            message.set_string(node.read());
             break;
         case Mogu_Syntax::slot:{
             Slot_Manager& m {app->slot_manager()};

@@ -56,9 +56,9 @@ void handle_object_to_object(Moldable& broadcaster, Command_Value& v)
     mApp;
 
     std::string new_obj_id = (std::string) v.get(Command_Flags::R_IDENTIFIER);
-    Moldable* new_widget = app->getFactory().createMoldableWidget(new_obj_id); 
+    Moldable* new_widget = app->get_factory().create_moldable_widget(new_obj_id); 
 
-    Moldable* curr_widget = app->registeredWidget( 
+    Moldable* curr_widget = app->get_widget( 
             (std::string) v.get(Command_Flags::IDENTIFIER));
     if (curr_widget != nullptr) curr_widget->addWidget(new_widget);
 }
@@ -68,17 +68,17 @@ void handle_value_to_attribute(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
     Node_Value tmp;
-    Moldable* curr_widget = app->registeredWidget(
+    Moldable* curr_widget = app->get_widget(
             (std::string) v.get(Command_Flags::IDENTIFIER));
     
     if (curr_widget == nullptr) return;
 
-    const SyntaxDef& attribute = 
+    const Syntax_Def& attribute = 
         Mogu_Syntax::get(v.get(Command_Flags::ARG));
 
-    curr_widget->getAttribute(attribute, tmp);
+    curr_widget->get_attribute(attribute, tmp);
     tmp += v.get(Command_Flags::VALUE);
-    curr_widget->setAttribute(attribute, tmp);
+    curr_widget->set_attribute(attribute, tmp);
 }
 
 /* Adds data to the database by first retrieving the value, 

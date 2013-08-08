@@ -10,7 +10,7 @@
 #include <Mogu.h>
 #include <Types/Node_Value.h>
 #include <Wt/WStackedWidget>
-#include <Events/EventHandler.h>
+#include <Events/Event_Handler.h>
 #include <Wt/WAnchor>
 #include <Types/Widget_Assembly.h>
 
@@ -26,7 +26,7 @@ Moldable::Moldable (Widget_Assembly* assembly, const Syntax_Def& t )
     ,node(assembly->node)
 {
     static size_t num_constructed {};
-    Application::log.log(LogLevel::NOTICE, __FILE__, "::constructor:",__LINE__,
+    Application::log.log(Log_Level::NOTICE, __FILE__, "::constructor:",__LINE__,
         "(", num_constructed++, "): ",node);
     init(assembly);
 }
@@ -49,7 +49,7 @@ void Moldable::init (Widget_Assembly* assembly)
     assembly_tooltip = assembly->attrdict[Mogu_Syntax::tooltip.integer];
     initialize_global_attributes();
     if (assembly->triggers.size() > 0)
-        bindery = new EventHandler(*this, *(assembly->triggerMap));
+        bindery = new Event_Handler(*this, *(assembly->trigger_map));
 }
 
 void Moldable::initialize_global_attributes()
@@ -63,7 +63,7 @@ void Moldable::initialize_global_attributes()
     if (!assembly_tooltip.empty())
     {
         Node_Value n {assembly_tooltip};
-        set_attribute(MoguSyntax::tooltip,n);
+        set_attribute(Mogu_Syntax::tooltip,n);
     }
 }
 
@@ -71,58 +71,58 @@ void Moldable::get_attribute(const Syntax_Def& state, Node_Value& val)
 {
 
     switch ((int)state) {
-        case (int) MoguSyntax::index: {
-            Wt::WStackedWidget* stack = (Wt::WStackedWidget*) widget(0);
+        case (int) Mogu_Syntax::index: {
+            Wt::WStackedWidget* stack {(Wt::WStackedWidget*) widget(0)};
             int n = stack->currentIndex();
-            val.setInt(n);
+            val.set_int(n);
 
             break;
         }
-        case (int) MoguSyntax::hidden: {
+        case (int) Mogu_Syntax::hidden: {
             bool v = isHidden();
-            val.setInt((int) v);
+            val.set_int((int) v);
             break;
         }
-        case (int) MoguSyntax::text: {
-            val.setString("\""+moldableValue()+"\"");
+        case (int) Mogu_Syntax::text: {
+            val.set_string("\""+moldable_value()+"\"");
             break;
         }
-        case (int) MoguSyntax::style: {
-            val.setString("\""+styleClass().toUTF8()+"\"");
+        case (int) Mogu_Syntax::style: {
+            val.set_string("\""+styleClass().toUTF8()+"\"");
             break;
         }
         //!\TODO test/verify
-        case (int) MoguSyntax::source: {
-            Wt::WAnchor* anchor = (Wt::WAnchor*) widget(0);
+        case (int) Mogu_Syntax::source: {
+            Wt::WAnchor* anchor {(Wt::WAnchor*) widget(0)};
             std::string attrval("href");
-            val.setString(anchor->attributeValue(attrval).toUTF8());
+            val.set_string(anchor->attributeValue(attrval).toUTF8());
             break;
         }
 
         //!\TODO
-        case (int) MoguSyntax::location: {
+        case (int) Mogu_Syntax::location: {
            break;
         }
         default:
-            val.setInt(0);
+            val.set_int(0);
             break;
     }
 }
 
-bool Moldable::updateStackIndex (size_t index)
+bool Moldable::update_stack_index (size_t index)
 {
     // If this is attempted on a widget without a stack, do nothing.
-    if (widget_type != MoguSyntax::stack) return false;
-    Wt::WStackedWidget* stack = static_cast<Wt::WStackedWidget*>( widget(0) );
+    if (widget_type != Mogu_Syntax::stack) return false;
+    Wt::WStackedWidget* stack {static_cast<Wt::WStackedWidget*>(widget(0))}
     size_t max_index = stack->children().size() -1;
-    Moldable* cur = (Moldable*) stack->currentWidget();
+    Moldable* cur {(Moldable*) stack->currentWidget()};
 
     // Ensure the index exists.
     if (index > max_index) return false;
 
 
     stack->setCurrentIndex(index);
-    Moldable* new_ = (Moldable*) stack->currentWidget();
+    Moldable* new_ {(Moldable*) stack->currentWidget()};
     cur->hiddenChanged().emit();
     new_->hiddenChanged().emit();
     return true;
@@ -134,29 +134,29 @@ bool Moldable::set_attribute(const Syntax_Def& state, Node_Value& val)
         val.set_string(stripquotes(val.get_string()));
 
     switch(state) {
-        case MoguSyntax::index: {
+        case Mogu_Syntax::index: {
             update_stack_index(val.get_int());
             break;
         }
-        case MoguSyntax::hidden: {
+        case Mogu_Syntax::hidden: {
             setHidden((bool) val.get_int());
             sig_hidden_changed.emit();
             break;
         }
-        case MoguSyntax::text: {
+        case Mogu_Syntax::text: {
             set_moldable_value(val.get_string());
             break;
         }
-        case MoguSyntax::style: {
+        case Mogu_Syntax::style: {
             setStyleClass(val.get_string());
         }
 
         //!\TODO
-        case MoguSyntax::source: {
+        case Mogu_Syntax::source: {
             break;
         }
         //!\TODO
-        case MoguSyntax::location: {
+        case Mogu_Syntax::location: {
             break;
         }
 

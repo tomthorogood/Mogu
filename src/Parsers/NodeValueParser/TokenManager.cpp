@@ -1,11 +1,11 @@
 /*
- * TokenManager.cpp
+ * Token_Manager.cpp
  *
  *  Created on: May 7th, 2013
  *      Author: cameron
  */
 
-#include "TokenManager.h"
+#include "Token_Manager.h"
 #include <cassert>
 //debug
 #include <iostream>
@@ -15,7 +15,7 @@ namespace Parsers {
 /* Deletes from the current point THROUGH the save point, which is
  * at a greater position.
  */
-void TokenManager::deleteToSaved()
+void Token_Manager::delete_to_saved()
 {
     size_t saved_index {get_index(savedit)};
     s_tokens.erase_through(index, saved_index);
@@ -26,7 +26,7 @@ void TokenManager::deleteToSaved()
 }
 
 // Deletes from the beginning of the vector to the save point.
-void TokenManager::truncate_head()
+void Token_Manager::truncate_head()
 {
     // NOTE: save point is deleted also
     size_t saved_index = get_index(savedit);
@@ -39,7 +39,7 @@ void TokenManager::truncate_head()
 
 /* Deletes from the save point THROUGH the current index.
  */
-void TokenManager::deleteFromSaved()
+void Token_Manager::delete_from_saved()
 {
     size_t saved_index {get_index(savedit)};
     s_tokens.erase_through(saved_index, index);

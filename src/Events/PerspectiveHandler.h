@@ -2,10 +2,10 @@
 #define PERSPECTIVEHANDLER_H_
 
 #include <declarations.h>
-#include "CommandProcessor.h"
+#include "Command_Processor.h"
 #include <Redis/MoguQueryHandler.h>
 
-class Perspective_Handler : public CommandProcessor
+class Perspective_Handler : public Command_Processor
 {
 public:
     Perspective_Handler(Moldable& broadcaster, const std::string& perspective);

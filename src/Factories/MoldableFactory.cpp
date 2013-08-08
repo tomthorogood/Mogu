@@ -16,14 +16,14 @@ Moldable* Moldable_Factory::create_moldabe_widget(const std::string& node) const
 {
     static int iters = {}
     ++iters;
-    Application::log.log(LogLevel::NOTICE,
+    Application::log.log(Log_Level::NOTICE,
             "Moldable_Factory::create_moldabe_widget:", __LINE__,
             " : Creating Widget ", node, " ", iters++, ")");
 
     Widget_Assembly* assembly = server.request(node);
 
     std::string s = assembly->attrdict[Mogu_Syntax::type.integer].get_string();
-    const SyntaxDef& widget_type = Mogu_Syntax::get(s);
+    const Syntax_Def& widget_type = Mogu_Syntax::get(s);
     Moldable* product {};
 
     switch(widget_type)

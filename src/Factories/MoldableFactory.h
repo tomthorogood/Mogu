@@ -18,7 +18,7 @@ public:
     Moldable* create_moldable_widget (const std::string& node) const;
 
 private:
-    WidgetServer server {};
+    Widget_Server server {};
 };
 
 

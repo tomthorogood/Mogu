@@ -4,12 +4,12 @@
 
 namespace Actions {
 
-void test(Moldable& broadcaster, CommandValue& v)
+void test(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
 
     bool result {false};
-    NodeValue value {};
+    Node_Value value {};
 
     // This is a little bit of reverse engineering, because it undoes some of
     // tokenization that's already been done, which is inefficient, but it's
@@ -27,11 +27,11 @@ void test(Moldable& broadcaster, CommandValue& v)
         v.set(Command_Flags::value,tmp);
     }
 
-    result = (stripquotes(value) == stripquotes(v.get(CommandFlags::VALUE)));
+    result = (stripquotes(value) == stripquotes(v.get(Command_Flags::value)));
 
     Application::log.log(Log_Level::notice
             , (std::string) value, " == "
-            , (std::string) v.get(CommandFlags::VALUE)
+            , (std::string) v.get(Command_Flags::value)
             , "? "
             , result ? "SUCCEEDED" : "FAILED");
     if (!result) broadcaster.fail().emit();

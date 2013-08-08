@@ -9,7 +9,7 @@
 #define EVENTHANDLER_H_
 
 #include <Mogu.h>
-#include <Parsers/NodeValueParser.h>
+#include <Parsers/Node_Value_Parser.h>
 #include "TriggerMap.h"
 #include <Types/MoguLogger.h>
 
@@ -32,7 +32,7 @@ template <const int T> void Event_Handler::handle_trigger()
 {
     static int cmd_count =0;
     mApp;
-    Parsers::NodeValueParser& nvp = app->interpreter();
+    Parsers::Node_Value_Parser& nvp = app->interpreter();
     //COPY the queue, do not use the reference, or commands will only be fired
     //once per element!
     std::queue <std::string> q = trigger_map.get_events(T);

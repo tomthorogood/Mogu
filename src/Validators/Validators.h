@@ -8,11 +8,12 @@
 #ifndef VALIDATORPARSER_H_
 #define VALIDATORPARSER_H_
 
-#include <declarations.h>
+#include <Wt/WValidator>
 namespace Validators {
 
-Wt::WValidator* createValidator(const std::string& validator);
-Wt::WRegExpValidator* createRegexValidator(Redis::MoguQueryHandler&,const char*);
+Wt::WValidator* create_validator(const std::string& validator);
+Wt::WRegExpValidator* create_regex_validator(
+        Redis::MoguQueryHandler&,const char*);
 
 }    //namespace Validators
 

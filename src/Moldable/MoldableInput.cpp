@@ -9,19 +9,19 @@
 #include <Validators/Validators.h>
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
-#include <Types/WidgetAssembly.h>
+#include <Types/Widget_Assembly.h>
 
-Molable_Input::Molable_Input (WidgetAssembly* assembly)
-: Moldable(assembly, MoguSyntax::input)
+Molable_Input::Molable_Input (Widget_Assembly* assembly)
+: Moldable(assembly, Mogu_Syntax::input)
 {
     init(assembly);
 }
 
-void Molable_Input::init(WidgetAssembly* assembly)
+void Molable_Input::init(Widget_Assembly* assembly)
 {
-    assembly_txt = (std::string) assembly->attrdict[MoguSyntax::text.integer];
+    assembly_txt = (std::string) assembly->attrdict[Mogu_Syntax::text.integer];
     assembly_validator = (std::string)
-        assembly->attrdict[MoguSyntax::validator.integer];
+        assembly->attrdict[Mogu_Syntax::validator.integer];
     initialize_input();
 }
 

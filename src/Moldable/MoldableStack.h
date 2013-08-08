@@ -34,14 +34,14 @@ private:
     Wt::Signal <> stack_index_changed;
 
 public:
-    Moldable_Stack (WidgetAssembly*);
+    Moldable_Stack (Widget_Assembly*);
 
     //Stacked containers do not have textual values.
     inline virtual std::string get_moldable_value() {}
 
     inline virtual void set_moldable_value(const std::string& str) {}
 
-    virtual void appendChild(Moldable* child)
+    virtual void append_child(Moldable* child)
         { stack->addChild(child); }
 
     inline virtual void addWidget(Wt::WWidget* moldable)

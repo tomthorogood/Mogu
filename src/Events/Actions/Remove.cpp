@@ -48,7 +48,7 @@ void handle_value_from_attribute(Moldable& broadcaster, Command_Value& v)
     Moldable* w {set_moldable_pointer(broadcaster,v)};
     const Syntax_Def& attribute = Mogu_Syntax::get(v.get(Command_Flags::arg));
 
-    widget->getAttribute(attribute, n);
+    widget->get_attribute(attribute, n);
 
     if (n.is_string())
     {

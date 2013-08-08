@@ -1,5 +1,5 @@
 /*
- * TokenManager.h
+ * Token_Manager.h
  *
  *  Created on: May 7th, 2013
  *      Author: cameron
@@ -9,7 +9,7 @@
 #define TOKENMANAGER_H_
 
 #include <declarations.h>
-#include <Types/StringMap.h>
+#include <Types/String_Map.h>
 
 #include <string>
 #include <unordered_set>
@@ -80,16 +80,16 @@ namespace Parsers {
 //class for maintaining a consistent list of tokens between
 //parsers, string token tracking, and funky bidirectional
 //iteration we do while parsing mogu commands
-class TokenManager
+class Token_Manager
 {
 	typedef std::vector<int>::iterator fwd_iterator;
 
 	public:
-		TokenManager() {}
+		Token_Manager() {}
 
 		//set of functions for replacing sets of tokens with a single
 		//token (i.e. upon completion of StateParser and MathParser)
-		//WARNING: NEED TO PREVENT REALLOCATION ON injectToken, ELSE
+		//WARNING: NEED TO PREVENT REALLOCATION ON inject_token, ELSE
 		//ALL ITERATORS ARE INVALIDATED AND THIS MANAGER BREAKS!!
 		//though we shouldn't have a reallocation because we only
 		//inject a token after we delete several tokens.
@@ -104,15 +104,15 @@ class TokenManager
             index {0};
             begin_ptr = i_tokens.begin();
         }
-        inline void addToken(int numToken)
+        inline void add_token(int num_token)
         {
-            i_tokens.push_back(numToken);
+            i_tokens.push_back(num_token);
             begin_ptr = i_tokens.begin();
         }
-        inline void addToken(std::string strToken)
+        inline void add_token(std::string str_token)
         {
             i_tokens.push_back((int) Mogu_Syntax::TOKEN_DELIM);
-            s_tokens.set(i_tokens.size()-1, strToken);
+            s_tokens.set(i_tokens.size()-1, str_token);
             begin_ptr = i_tokens.begin();
         }
         //must call this function directly after all tokens are added
@@ -144,7 +144,7 @@ class TokenManager
             --index;
         }
 
-        inline void saveLocation()
+        inline void save_location()
         {
             if (it >= i_tokens.end())
             {
@@ -169,22 +169,22 @@ class TokenManager
             if(is_delim()) return s_tokens.get(index);
         }
 
-        inline bool isQuotedString(const std::string& str) const
+        inline bool is_quoted_string(const std::string& str) const
         {
             return str[0] == '"';
         }
 
         //call this directly after delete_to_saved()!
-        inline void injectToken(int numToken)
+        inline void inject_token(int num_token)
         {
-            it = i_tokens.insert(it, numToken);
+            it = i_tokens.insert(it, num_token);
             update_index();
         }
         //call this directly after delete_to_saved()!
-        inline void injectToken(std::string strToken)
+        inline void inject_token(std::string str_token)
         {
             it = i_tokens.insert(it, (int) Mogu_Syntax::TOKEN_DELIM);
-            s_tokens.set(index, strToken);
+            s_tokens.set(index, str_token);
             update_index();
         }
 		
@@ -204,7 +204,7 @@ class TokenManager
         size_t index {};
         size_t sz {};
 		std::vector<int> i_tokens {}
-		StringMap s_tokens {}
+		String_Map s_tokens {}
 		fwd_iterator it {};
 		fwd_iterator savedit {};
 		fwd_iterator begin_ptr {};

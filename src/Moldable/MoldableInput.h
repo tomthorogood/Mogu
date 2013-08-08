@@ -48,7 +48,7 @@ public:
 
     inline virtual void reload()
     {
-        setFlag(Moldable_Flags::allow_reload);
+        set_flag(Moldable_Flags::allow_reload);
         initialize_global_attributes();
         initialize_input();
         load();

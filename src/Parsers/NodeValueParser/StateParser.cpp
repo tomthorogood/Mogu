@@ -8,9 +8,9 @@
 #include <Mogu.h>
 #include <Parsers/Node_ValueParser/State_Parser.h>
 #include <Types/syntax.h>
-#include <Redis/MoguQueryHandler.h>
+#include <Redis/Mogu_Query_Handler.h>
 #include <Security/Encryption.h>
-#include <Groups/GroupManager.h>
+#include <Groups/Group_Manager.h>
 
 
 namespace Parsers {
@@ -67,7 +67,7 @@ void State_Parser::process_input(Moldable* broadcaster)
 		case Mogu_Syntax::slot:{
             mApp;
             identifier = get_identifier();
-            result = app->slotManager().retrieveSlot(identifier);
+            result = app->slot_manager().retrieve_slot(identifier);
             break;
           }
         default:{
@@ -76,19 +76,19 @@ void State_Parser::process_input(Moldable* broadcaster)
         }
 	}
 
-    tm.deleteFromSaved();
+    tm.delete_from_saved();
 
-    switch(result.getType())
+    switch(result.get_type())
     {
-        case ReadType::string_value:
-            tm.injectToken(result.get_string());
+        case Read_Type::string_value:
+            tm.inject_token(result.get_string());
             break;
-        case ReadType::int_value:
-            tm.injectToken(result.get_int());
+        case Read_Type::int_value:
+            tm.inject_token(result.get_int());
             break;
         default:
             // We'll figure out floats or bad values later (TODO)
-            tm.injectToken(0); 
+            tm.inject_token(0); 
             break;
     }
 
@@ -98,7 +98,7 @@ void State_Parser::process_input(Moldable* broadcaster)
 void State_Parser::handle_widget(const std::string& identifier, Node_Value& result) 
 {
     mApp;
-    Moldable* widget = app->registeredWidget(identifier);
+    Moldable* widget = app->get_widget(identifier);
 
     // For now, just ignore everything if the widget is not actually registered
     // due to premature deletion, or a mistyped name (which would hopefully be
@@ -114,9 +114,9 @@ void State_Parser::handle_widget(const std::string& identifier, Node_Value& resu
 void State_Parser::handle_data(const std::string& identifier, Node_Value& result)
 {
     const char* c_node = identifier.c_str();
-    Redis::MoguQueryHandler db(Application::contextMap, Prefix::data);
+    Redis::Mogu_Query_Handler db(Application::context_map, Prefix::data);
     db.append_query( "type data.%s", c_node); 
-    std::string node_type = db.yieldResponse <std::string>();
+    std::string node_type = db.yield_response <std::string>();
     if (node_type == "string")
     {
         //We need no further information!
@@ -155,7 +155,7 @@ void State_Parser::handle_data(const std::string& identifier, Node_Value& result
 
     }
 
-    result.set_string(db.yieldResponse<std::string>());
+    result.set_string(db.yield_response<std::string>());
 }
 
 void State_Parser::handle_widget(Moldable* widget, Node_Value& result)
@@ -170,11 +170,11 @@ void State_Parser::handle_user_field(const std::string& field, Node_Value& resul
     int token;
     Node_Value arg;
     Redis::Node_Editor node(Prefix::user, field);
-    node.setId(app->getUser());
-    int type = node.getType().integer;
+    node.set_id(app->get_user());
+    int type = node.get_type().integer;
     if (type == Mogu_Syntax::__NONE__)
     {
-        type = node.policyType().integer;
+        type = node.policy_type().integer;
     }
     if (type == Mogu_Syntax::hash)
     {
@@ -188,7 +188,7 @@ void State_Parser::handle_user_field(const std::string& field, Node_Value& resul
     {
         arg.set_string(std::to_string(tm.current_token()));
     }
-    node.setArg(&arg);
+    node.set_arg(&arg);
     std::string val = node.read();
 
     result.set_string(val);
@@ -197,19 +197,16 @@ void State_Parser::handle_user_field(const std::string& field, Node_Value& resul
 void State_Parser::handle_group_field(const std::string& field, Node_Value& result)
 {
     mApp;
-    int group = app->getGroup();
-    GroupManager group_mgr(group);
-    bool read_enabled = group_mgr.hasReadAccess(field);
-    if (!read_enabled) return;
-    
-    Redis::MoguQueryHandler& grpdb = group_mgr.getContext(Prefix::group); 
-    Redis::MoguQueryHandler& plcdb = group_mgr.getContext(Prefix::policies);
+    int group = app->get_group();
+    Group_Manager group_mgr(group);
+    Redis::Mogu_Query_Handler& grpdb = group_mgr.get_context(Prefix::group); 
+    Redis::Mogu_Query_Handler& plcdb = group_mgr.get_context(Prefix::policies);
 
     plcdb.append_query( "hget policies.%s %d", field.c_str(), (int)Mogu_Syntax::type);
     plcdb.append_query( "hget policies.%s %d",
             field.c_str(), (int) Mogu_Syntax::encrypted);
-    const SyntaxDef& type = Mogu_Syntax::get(plcdb.yieldResponse<std::string>());
-    bool encrypted = plcdb.yieldResponse <bool>();
+    const Syntax_Def& type = Mogu_Syntax::get(plcdb.yield_response<std::string>());
+    bool encrypted = plcdb.yield_response <bool>();
 
     switch(type)
     {
@@ -236,8 +233,8 @@ void State_Parser::handle_group_field(const std::string& field, Node_Value& resu
     if (encrypted)
         result.set_string(
             Security::decrypt(
-                grpdb.yieldResponse <std::string>()));
+                grpdb.yield_response <std::string>()));
     else
-        result.set_string(grpdb.yieldResponse <std::string>());
+        result.set_string(grpdb.yield_response <std::string>());
 }
 }	// namespace Parsers

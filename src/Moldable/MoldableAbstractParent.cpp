@@ -48,7 +48,7 @@ void Moldable_Abstract_Parent::load(){
             Moldable* m = factor.create_moldable_widget(s);
             addWidget(m);
             Application::log.log(Log_Level::NOTICE,__FILE__,"::load:",__LINE__,
-                " ", node, "child added: ", m_child->getNode());
+                " ", node, "child added: ", m_child->get_node());
         }
     }
 }

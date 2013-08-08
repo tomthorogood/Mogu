@@ -9,8 +9,8 @@
 
 #include <Exceptions/Exceptions.h>
 #include <Mogu.h>
-#include <Redis/MoguQueryHandler.h>
-#include <Types/NodeValue.h>
+#include <Redis/Mogu_Query_Handler.h>
+#include <Types/Node_Value.h>
 #include <Types/syntax.h>
 #include <Wt/WApplication>
 #include <Wt/WValidator>
@@ -20,33 +20,32 @@
 namespace Validators {
 
 
-Wt::WValidator* createValidator(
-    const std::string& validatorName)
+Wt::WValidator* create_validator(
+    const std::string& validator_name)
 {
     mApp;
-    const char* c_node = validatorName.c_str();
-    Redis::MoguQueryHandler db(Application::contextMap, Prefix::validators);
-    db.appendQuery( "hget validators.%s %d", c_node, (int)MoguSyntax::type);
+    const char* c_node {validator_name.c_str()};
+    Redis::Mogu_Query_Handler db {Application::contextMap, Prefix::validators};
+    db.append_query( "hget validators.%s %d", c_node, (int)Mogu_Syntax::type);
     
-    NodeValue vval;
-    app->interpreter().giveInput(db.yieldResponse<std::string>(), vval);
-    switch(MoguSyntax::get((int)vval))
+    Node_Value v {};
+    app->interpreter().giveInput(db.yield_response<std::string>(), v);
+    switch(Mogu_Syntax::get(v.get_int());
     {
-        case MoguSyntax::regex:
-            return createRegexValidator(db,c_node);
+        case Mogu_Syntax::regex:
+            return create_regex_validator(db,c_node);
         default:break;
     }
     return nullptr;
 }
 
-Wt::WRegExpValidator* createRegexValidator(
-    Redis::MoguQueryHandler& db, const char* c_node)
+Wt::WRegExpValidator* create_regex_validator(
+    Redis::Mogu_Query_Handler& db, const char* c_node)
 {
-    db.appendQuery( "hget validators.%s %d", c_node, (int) MoguSyntax::test);
-
-    std::string pattern = db.yieldResponse <std::string>();
-    Wt::WString wpattern(stripquotes(pattern));
-    return new Wt::WRegExpValidator(wpattern);
+    db.append_query( "hget validators.%s %d", c_node, (int) Mogu_Syntax::test);
+    std::string pattern {db.yield_response <std::string>()};
+    Wt::WString w {stripquotes(pattern)};
+    return new Wt::WRegExpValidator {w};
 }
 
 }    //namespace Validators

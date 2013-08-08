@@ -19,7 +19,7 @@ Event_Handler::Event_Handler(Moldable& w, Prefix p, const std::string& n)
 }
 
 Event_Handler::Event_Handler(Moldable& broadcaster, Trigger_Map& triggers)
-    : CommandProcessor(broadcaster), trigger_map(triggers)
+    : Command_Processor(broadcaster), trigger_map(triggers)
 {
     process_trigger_map();
 }
@@ -59,7 +59,7 @@ void Event_Handler::process_trigger_map()
                 &Event_Handler::handle_trigger <Mogu_Syntax::click.integer>);
             break;
         case Mogu_Syntax::mouseover:
-            broadcaster.mousWentOverr().connect(this,
+            broadcaster.mouseWentOver().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::mouseover.integer>);
             break;
         case Mogu_Syntax::error_reported:

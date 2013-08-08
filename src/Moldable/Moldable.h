@@ -54,7 +54,7 @@ public:
 class Moldable : 
     public Allows_External_Manipulation
 {
-    EventHandler* bindery {};
+    Event_Handler* bindery {};
 
     Wt::Signal <> sig_style_changed;
     Wt::Signal <> sig_failed_test;
@@ -88,7 +88,7 @@ public:
 
     virtual ~Moldable();
 
-    virtual std::string moldableValue() =0;
+    virtual std::string moldable_value() =0;
 
     virtual void set_moldable_value(const std::string&) =0;
     virtual void append_child(Moldable*)  {}
@@ -107,7 +107,7 @@ public:
 
     inline const std::string& get_node() 
         { return node; }
-    inline std::string getNode()
+    inline std::string get_node()
     {
         return node;
     }

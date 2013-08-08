@@ -10,21 +10,21 @@
 #include <Wt/WAnchor>
 #include <Wt/WImage>
 #include <Redis/NodeEditor.h>
-#include <Types/WidgetAssembly.h>
+#include <Types/Widget_Assembly.h>
 
-Moldable_Image_Link::Moldable_Image_Link(WidgetAssembly* assembly)
-: MoldableLink(assembly)
+Moldable_Image_Link::Moldable_Image_Link(Widget_Assembly* assembly)
+: Moldable_Link(assembly)
 {
     init(assembly);
 }
 
-void Moldable_Image_Link::init(WidgetAssembly* assembly)
+void Moldable_Image_Link::init(Widget_Assembly* assembly)
 {
-    assembly_src = (std::string) assembly->attrdict[MoguSyntax::source.integer];
-    initializeImage();
+    assembly_src = (std::string) assembly->attrdict[Mogu_Syntax::source.integer];
+    initialize_image();
 }
 
-void Moldable_Image_Link::initializeImage()
+void Moldable_Image_Link::initialize_image()
 {
     if (image)
     {
@@ -33,7 +33,7 @@ void Moldable_Image_Link::initializeImage()
         image = nullptr;
     }
     std::string src = stripquotes(assembly_src);
-    image = new Wt::WImage(src, moldableValue());
+    image = new Wt::WImage(src, moldable_value());
     link->setImage(image);
     link->setTarget(Wt::TargetNewWindow);
 }

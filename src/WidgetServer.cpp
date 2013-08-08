@@ -5,7 +5,7 @@
 #include <Redis/MoguQueryHandler.h>
 
 
-void Widget_Server::populateMap(Redis::Node_Editor* e)
+void Widget_Server::populate_map(Redis::Node_Editor* e)
 {
     std::map <std::string, std::string> node_map;
     e->read(node_map);
@@ -16,10 +16,10 @@ void Widget_Server::populateMap(Redis::Node_Editor* e)
     }
 }
 
-void Widget_Server::resolveValues(std::map <int, Node_Value>& map_)
+void Widget_Server::resolve_values(std::map <int, Node_Value>& map_)
 {
     mApp;
-    Parsers::Node_ValueParser& nvp = app->interpreter();
+    Parsers::Node_Value_Parser& nvp = app->interpreter();
     Node_Value resolved;
     for (auto iter : map_)
     {
@@ -106,11 +106,11 @@ void Widget_Server::setup_states()
     std::string s = assembly->attrdict[Mogu_Syntax::type.integer];
     int t = Mogu_Syntax::get(s).integer;
 
-    bool is_member_widget = t == MoguSyntax::member.integer;
+    bool is_member_widget = t == Mogu_Syntax::member.integer;
 
     if (is_member_widget)
     {
-        resolveIterValues();
+        resolve_iter_values();
     }
     else
     {
@@ -128,7 +128,7 @@ Widget_Assembly* Widget_Server::request(const std::string& node)
 
 void Widget_Server::resolve_iter_values()
 {
-    std::string s = assembly->attrdict[MoguSyntax::member.integer];
+    std::string s = assembly->attrdict[Mogu_Syntax::member.integer];
     member_context = Mogu_Syntax::get(s).integer;
 
     switch(member_context)

@@ -1,9 +1,9 @@
 #include "Command_Processor.h"
-#include "../Types/CommandValue.h"
+#include "../Types/Command_Value.h"
 #include "Actions.h"
 
 
-void Command_Processor::processCommand(CommandValue& v)
+void Command_Processor::process_command(Command_Value& v)
 {
     switch(Mogu_Syntax::get(v.get(Command_Flags::action)))
     {

@@ -13,10 +13,10 @@
 #include <signal.h>
 #include <Redis/DatabaseConfigReader.h>
 #include <Moldable/Moldable.h>
-#include <Security/UserManager.h>
+#include <Security/User_Manager.h>
 #include <Factories/MoldableFactory.h>
 #include <Types/SlotManager.h>
-#include <Parsers/NodeValueParser.h>
+#include <Parsers/Node_Value_Parser.h>
 #include <Types/MoguLogger.h>
 
 class Mogu: public Wt::WApplication
@@ -56,7 +56,7 @@ public:
             widget_register.count(name) ? widget_register.at(name) : nullptr;
     }
 
-    inline Parsers::NodeValueParser& get_interpreter()
+    inline Parsers::Node_Value_Parser& get_interpreter()
         { return interpreter; }
 
     /* Expose this method to the public, instead of keeping it private. */
@@ -73,7 +73,7 @@ public:
     inline const int& get_user() const
         { return (user==-1) ? user_manager->get_user() : user; }
 
-    inline UserManager& get_user_manager() 
+    inline User_Manager& get_user_manager() 
         { return *user_manager; }
     
     inline const int& get_group() const

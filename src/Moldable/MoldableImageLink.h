@@ -1,5 +1,5 @@
 /*
- * Moldable_ImageLink.h
+ * Moldable_Image_Link.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom

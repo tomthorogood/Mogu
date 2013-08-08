@@ -15,7 +15,7 @@ enum class Read_Type
     NO_VALUE = 0x0, string_value = 0x1, int_value = 0x2, float_value = 0x3
 };
 
-/*!\brief Since a NodeValue can only be int, float, or string, the NumericUnion
+/*!\brief Since a NodeValue can only be int, float, or string, the Numeric_Union
  * consolidates the int/float possibilities into one type to save a hair of
  * memory. The string is held inside the NodeValue class itself.
  */
@@ -43,7 +43,7 @@ class Node_Value
     std::string as_string {}
 
     /*!\brief If the value is numeric, it is stord here. */
-    NumericUnion* numerics {}
+    Numeric_Union* numerics {}
 
     inline void resetStr()
         { as_string = ""; }
@@ -157,21 +157,21 @@ public:
     inline void set_string(const std::string& val)
     {
         as_string = val;
-        type = ReadType::string_value;
+        type = Read_Type::string_value;
     }
 
     inline void set_int(const int& i)
     {
         if (!numerics) numerics = new Numeric_Union();
         numerics->as_int = i;
-        type = ReadType::int_value;
+        type = Read_Type::int_value;
     }
 
     inline void setFloat(const double& d)
     {
         if (!numerics) numerics = new Numeric_Union();
         numerics->as_float = d;
-        type = ReadType::float_value;
+        type = Read_Type::float_value;
     }
 
     inline const std::string& get_string() const
@@ -195,7 +195,7 @@ public:
     inline void clear() 
     {
         as_string="";
-        type = ReadType::NO_VALUE;
+        type = Read_Type::NO_VALUE;
         if (numerics) 
         {
             delete numerics;

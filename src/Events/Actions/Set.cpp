@@ -26,7 +26,7 @@ namespace {
     inline bool do_set_user_from_slot()
     {
         mApp;
-        std::string u {app->slotManager().retrieveSlot("USERNAME")};
+        std::string u {app->slot_manager().retrieve_slot("USERNAME")};
         return login_user(u);
     }
 
@@ -46,7 +46,7 @@ void set (Moldable& broadcaster, Command_Value& v)
     switch(o)
     {
         case Mogu_Syntax::own:{
-            const SyntaxDef& a {Mogu_Syntax::get(v.get(Command_Flags::arg))};
+            const Syntax_Def& a {Mogu_Syntax::get(v.get(Command_Flags::arg))};
             broadcaster.set_attribute(a, v.get(Command_Flags::value));
             break;}
 
@@ -104,7 +104,7 @@ void set (Moldable& broadcaster, Command_Value& v)
                     "Attempting to set a slot that no name. ",
                     "Something has gone terribly wrong!");
             }
-            app->slotManager().set_slot(s,n);
+            app->slot_manager().set_slot(s,n);
             break;}
         case Mogu_Syntax::widget:{   // set arbitrary widget attribute
             Moldable* w {app->get_widget(v.get_identifier())};

@@ -11,7 +11,7 @@
 #include <string>
 namespace Hash {
 
-std::string toHash(const std::string& str);
+std::string to_hash(const std::string& str);
 
 }    //<-- namespace hash
 

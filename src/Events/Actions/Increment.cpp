@@ -13,7 +13,7 @@ void incr_db_val(Redis::Node_Editor& e, int incr_amt)
 } 
 }//anonymous namespace
 
-void increment (Moldable& broadcaster, CommandValue& v)
+void increment (Moldable& broadcaster, Command_Value& v)
 {
     mApp;
     const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
@@ -74,12 +74,12 @@ void increment (Moldable& broadcaster, CommandValue& v)
             if (final.is_string())
                 final.set_int(atoi(final.get_string().c_str()));
             i = final.get_int() + value;
-            final.setInt(
-                app->slotManager().retrieveSlot(v.getIdentifier()).getInt());
-            final.setInt(final.getInt()+value);
+            final.set_int(
+                app->slot_manager().retrieve_slot(v.get_identifier()).get_int());
+            final.set_int(final.get_int()+value);
             m.set_slot(id,final);
-            app->slotManager().setSlot(
-                    v.getIdentifier(), final);
+            app->slot_manager().set_slot(
+                    v.get_identifier(), final);
             break;}
 
         case Mogu_Syntax::widget:{
@@ -87,7 +87,7 @@ void increment (Moldable& broadcaster, CommandValue& v)
             w->get_attribute(s,current);
             if (current.is_string())
                 current.set_int(atoi(current.get_string().c_str()));
-            current.setInt(current.getInt()+value);
+            current.set_int(current.get_int()+value);
             w->set_attribute(s,current);
             break;}
         default: return;

@@ -1,5 +1,5 @@
 /*
- * MoldableImage.h
+ * Moldable_Image.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -12,7 +12,7 @@
 #include <Wt/WLink>
 #include <Wt/WImage>
 
-class MoldableImage : public Moldable
+class Moldable_Image : public Moldable
 {
     Wt::WImage* image {};
     std::string assembly_src {};

@@ -13,7 +13,7 @@ void reload(Moldable& broadcaster, Command_Value& v)
             break;}
         case (int) Mogu_Syntax::widget:{
             mApp;
-            Moldable* widget = app->get_widget(v.getIdentifier());
+            Moldable* widget = app->get_widget(v.get_identifier());
             if (widget) widget->reload();
             break;}
         default: return;
