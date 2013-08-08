@@ -46,7 +46,7 @@ class Preprocessor(object):
 
     def unpack_declaration(self, declaration):
         self.log("Unpacking Declaration:", declaration)
-        id_group = re.search("<<<[a-zA-Z:_][a-zA-Z:_]*", declaration)
+        id_group = re.search("<<<[a-zA-Z:_][a-zA-Z:_0-9]*", declaration)
         identifier = id_group.group()[3:]
         self.log("IDENTIFIER:", identifier)
         id_excluded = declaration.replace(id_group.group(),"").strip()
