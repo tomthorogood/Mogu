@@ -225,6 +225,8 @@ class PythonObjectConverter(object):
                 master_dict[master_key][syntax.as_integer("template")] = o_dict["template"]
             elif parsemap is lex_base.WIDGET_STYLE:
                 master_dict[master_key][syntax.as_integer("css")] = o_dict["css_classes"]
+            elif parsemap is lex_base.WIDGET_TOOLTIP:
+                master_dict[master_key][syntax.as_integer("tooltip")] = o_dict["tooltip"]
             elif parsemap is Lex.EVENT_BLOCK:
                 event_o_dict = self.convert_events(master_key, o_dict["block"])
                 master_dict.update(event_o_dict)

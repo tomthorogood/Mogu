@@ -10,7 +10,7 @@ class Preprocessor(object):
         self.verbose = verbose
         self.inputstream = None
         self.symbols = {}
-        self.refs = Set()
+        self.refs = []
 
     def log(self, *args):
         if self.verbose:
@@ -23,8 +23,11 @@ class Preprocessor(object):
         return quoted.group()[1:-1]
 
     def find_references(self):
-        self.refs = Set(re.findall(
-            "@[a-zA-Z_:][a-zA-Z0-9:_]*",self.inputstream))
+        refs= Set(re.findall("@[a-zA-Z_:][a-zA-Z0-9:_]*", self.inputstream))
+        refs = list(refs)
+        refs.sort(lambda x,y: cmp(len(x), len(y)))
+        refs.reverse()
+        self.refs = refs
 
     def replace_contents(self,depr,repl):
         with open(repl) as f:
@@ -74,6 +77,7 @@ class Preprocessor(object):
     def create_symbols(self):
         declarations = self.find_declarations()
         for declaration in declarations:
+            self.log("REMOVING: ", declaration)
             self.inputstream = self.inputstream.replace(declaration,"")
             identifier, definition = self.unpack_declaration(declaration)
             if self.symbol_is_markdown(definition):
@@ -117,5 +121,6 @@ class Preprocessor(object):
         self.create_symbols()
         self.expand_symbols()
         self.strip_comments()
+        self.inputstream = self.inputstream.replace("&quot;","")
         return self.inputstream.strip()
 

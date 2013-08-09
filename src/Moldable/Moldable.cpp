@@ -64,7 +64,8 @@ void Moldable::initializeGlobalAttributes()
     if (!assembly_tooltip.empty())
     {
         NodeValue nv_tooltip(assembly_tooltip);
-        setAttribute(MoguSyntax::tooltip,nv_tooltip);
+        Wt::WString w {nv_tooltip.getString()};
+        setToolTip(w,Wt::XHTMLText);
     }
 }
 
