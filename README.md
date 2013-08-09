@@ -23,10 +23,10 @@ Well, that's almost precisely what MoguScript looks like:
 
 Within the config/ folder there is a script to help you resolve dependencies.
 It requires a utility called 'AC.py' which can be installed by running
-`pip install ac`. If you're on a Debian system, it should try to resolve
+`sudo pip install ac`. If you're on a Debian system, it should try to resolve
 dependencies for you automatically. 
 
-Once you have `ac` installed, simply run `./configure` to perform the necessary
+Once you have `ac` installed, simply run `./configure` from within the config/ folder to perform the necessary
 tests and determine what you need to have installed.
 
 It is highly recommended that you also install the package `cmake-curses-gui`
