@@ -1,73 +1,73 @@
 #include "../Actions.h"
 #include "Includes.h"
-#include <Groups/GroupManager.h>
 #include <Redis/NodeEditor.h>
+#include "../../Config/inline_utils.h"
 namespace Actions {
 
 namespace {
 
-const uint8_t INVALID_CONSTRUCT         =0;
-const uint8_t VALUE_FROM_ATTRIBUTE      =1;
-const uint8_t ATTRIBUTE_FROM_OBJECT     =2;
-const uint8_t VALUE_FROM_FIELD          =3;
-const uint8_t OBJECT_FROM_APPLICATION   =4;
+const uint8_t invalid_construct         =0;
+const uint8_t value_from_attribute      =1;
+const uint8_t attribute_from_object     =2;
+const uint8_t value_from_field          =3;
+const uint8_t object_from_application   =4;
 
-const uint8_t getConstruct(CommandValue& v)
+const uint8_t get_construct(Command_Value& v)
 {
-    const SyntaxDef& obj = MoguSyntax::get(v.get(CommandFlags::OBJECT));
-    bool has_arg = v.test(CommandFlags::ARG);
-    bool has_r_object = v.test(CommandFlags::R_OBJECT);
-    bool has_value = v.test(CommandFlags::VALUE);
+    const Syntax_Def& o = Mogu_Syntax::get(v.get(Command_Flags::object));
+    bool has_arg = v.test(Command_Flags::arg);
+    bool has_r_object = v.test(Command_Flags::r_object);
+    bool has_value = v.test(Command_Flags::value);
 
     if (! (has_arg || has_r_object)) 
-        return OBJECT_FROM_APPLICATION;
+        return object_from_application;
 
-    if (obj == MoguSyntax::widget)
+    if (o == Mogu_Syntax::widget)
     {
         if (has_arg && has_value) 
-            return VALUE_FROM_ATTRIBUTE;
+            return value_from_attribute;
         else if (has_arg) 
-            return ATTRIBUTE_FROM_OBJECT;
+            return attribute_from_object;
     }
 
-    return VALUE_FROM_FIELD;
+    return value_from_field;
 }
 
-inline Moldable* setMoldablePointer(Moldable& broadcaster, CommandValue& v)
+inline Moldable* set_moldable_pointer(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    const SyntaxDef& obj = MoguSyntax::get(v.get(CommandFlags::OBJECT));
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
     return 
-        (MoguSyntax::own == obj) ?  
-            &broadcaster : app->registeredWidget(
-                (std::string) v.get(CommandFlags::IDENTIFIER));
+        (Mogu_Syntax::own == o) ?  
+            &broadcaster : app->get_widget(v.get_identifier());
 }
 
-void handle_value_from_attribute(Moldable& broadcaster, CommandValue& v)
+void handle_value_from_attribute(Moldable& broadcaster, Command_Value& v)
 {
-    NodeValue currentValue;
-    Moldable* widget = setMoldablePointer(broadcaster,v);
-    const SyntaxDef& attribute = MoguSyntax::get(v.get(CommandFlags::ARG));
-    widget->getAttribute(attribute, currentValue);
+    Node_Value n {};
+    Moldable* w {set_moldable_pointer(broadcaster,v)};
+    const Syntax_Def& attribute = Mogu_Syntax::get(v.get(Command_Flags::arg));
 
-    if (currentValue.isString())
+    w->get_attribute(attribute, n);
+
+    if (n.is_string())
     {
-        std::string newValue = sreplace(
-            (std::string) currentValue,
-            (std::string) v.get(CommandFlags::VALUE));
-        currentValue.setString(newValue);
+        std::string new_value {n.get_string()};
+        std::string rm {v.get(Command_Flags::value).get_string()};
+        sreplace(new_value,rm);
+        n.set_string(new_value);
     }
-    else currentValue.setInt(0);
+    else n.set_int(0);
 
-    widget->setAttribute(attribute, currentValue);
+    w->set_attribute(attribute,n);
 }
 
-void handle_attribute_from_object(Moldable& broadcaster, CommandValue& v)
+void handle_attribute_from_object(Moldable& broadcaster, Command_Value& v)
 {
-    NodeValue emptyValue(EMPTY);
-    const SyntaxDef& attr = MoguSyntax::get(v.get(CommandFlags::ARG));
-    Moldable* widget = setMoldablePointer(broadcaster,v);
-    widget->setAttribute(attr, emptyValue);
+    Node_Value n {};
+    const Syntax_Def& s {Mogu_Syntax::get(v.get(Command_Flags::arg))};
+    Moldable* w {set_moldable_pointer(broadcaster,v)};
+    w->set_attribute(s,n);
 }
 
 /* This removes values from collection nodes within Redis. It can be used
@@ -78,88 +78,95 @@ void handle_attribute_from_object(Moldable& broadcaster, CommandValue& v)
  * remove user somelist 2
  * remove "somevalue" from data somelist
  */
-void handle_value_from_field(Moldable& broadcaster, CommandValue& v)
+void handle_value_from_field(Moldable& broadcaster, Command_Value& v)
 {
-    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
-    Prefix prefix = syntax_to_prefix.at(object);
-    NodeValue arg = v.get(CommandFlags::ARG);
-    std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
-    std::string value = EMPTY;
+    mApp;
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
+    Prefix p {syntax_to_prefix.at(o)};
+    std::string id {v.get_identifier()};
+    
+    Node_Value arg {v.get(Command_Flags::arg)};
+    Redis::Node_Editor e {p, id, &arg};
     
 
-    if (object == MoguSyntax::group)
+    if (o == Mogu_Syntax::user)
+        e.set_id(app->get_user());
+    else if (o == Mogu_Syntax::group)
     {
-        mApp;
-        int group = app->getGroup();
-        GroupManager groupManager(group);
-        if (!groupManager.hasWriteAccess(identifier)) return;
+        int g {app->get_group()};
+//        Group_Manager m(group);
+//        if (!group_manager.has_write_access(id)) return;
+        e.set_id(g);
     }
 
-    Redis::NodeEditor editor(prefix, identifier, &arg);
-    value = (std::string) v.get(CommandFlags::VALUE);
-    editor.remove(value);
+    std::string val {v.get(Command_Flags::value).get_string()};
+    e.remove(val);
 }
 
 /* This removes widgets from the widget tree, users and groups, or nodes from
  * the database.
  */
-void handle_object_from_application(Moldable& broadcaster, CommandValue& v)
+void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
 
-    bool has_identifier = v.test(CommandFlags::IDENTIFIER);
+    bool has_identifier = v.test(Command_Flags::identifier);
     
-    const SyntaxDef& object = MoguSyntax::get(v.get(CommandFlags::OBJECT));
-    Prefix prefix = syntax_to_prefix.at(object);
-    if (object == MoguSyntax::widget)
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
+    Prefix p {syntax_to_prefix.at(o)};
+   
+    if (o == Mogu_Syntax::widget)
     {
-        Moldable* dying_widget = app->registeredWidget(
-            (std::string) v.get(CommandFlags::IDENTIFIER));
-        Moldable* parent_widget = (Moldable*) dying_widget->parent();
-        parent_widget->removeChild(dying_widget);
-    }
-    else if (object == MoguSyntax::user && !has_identifier)
+        Moldable* x {app->get_widget(v.get_identifier())};
+        Moldable* r {(Moldable*) x->parent()};
+        r->removeChild(x);
+    } 
+    else if (o == Mogu_Syntax::user && !has_identifier)
     {
         //TODO : Securely remove all user data.
     }
-    else if (object == MoguSyntax::group && !has_identifier)
+    else if (o == Mogu_Syntax::group && !has_identifier)
     {
         //TODO: Securiely remove all group data.
     }
     else // We're dealing with a database node.
     {
-        std::string identifier = (std::string) v.get(CommandFlags::IDENTIFIER);
-        // There will not be an arg in this case.
-        if (object == MoguSyntax::group)
+        std::string id {v.get_identifier()};
+        Redis::Node_Editor e {p,id};
+        if (o == Mogu_Syntax::group)
         {
-            mApp;
-            int group = app->getGroup();
-            GroupManager groupManager(group);
-            if (!groupManager.hasWriteAccess(identifier)) return;
+            int g {app->get_group()};
+//          Group_Manager m {g};
+//          if (!m.has_write_access(id)) return;
+            e.set_id(g);
         }
-        Redis::NodeEditor editor(prefix,identifier);
-        editor.remove();
+        else if (o==Mogu_Syntax::user)
+        {
+            e.set_id(app->get_user());
+        }
+
+        e.remove();
     }
 }
 
 }//anonymous local namespace
 
 
-void remove (Moldable& broadcaster, CommandValue& v)
+void remove (Moldable& broadcaster, Command_Value& v)
 {
-    const uint8_t construct = getConstruct(v);
+    const uint8_t construct = get_construct(v);
     switch(construct)
     {
-        case VALUE_FROM_ATTRIBUTE:
+        case value_from_attribute:
             handle_value_from_attribute(broadcaster,v);
             break;
-        case ATTRIBUTE_FROM_OBJECT:
+        case attribute_from_object:
             handle_attribute_from_object(broadcaster,v);
             break;
-        case VALUE_FROM_FIELD:
+        case value_from_field:
             handle_value_from_field(broadcaster,v);
             break;
-        case OBJECT_FROM_APPLICATION:
+        case object_from_application:
             handle_object_from_application(broadcaster,v);
             break;
         default:

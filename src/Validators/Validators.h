@@ -1,5 +1,4 @@
 /*
- * ValidatorParser.h
  *
  *  Created on: Aug 14, 2012
  *      Author: tom
@@ -8,11 +7,14 @@
 #ifndef VALIDATORPARSER_H_
 #define VALIDATORPARSER_H_
 
-#include <declarations.h>
+#include <Wt/WValidator>
+#include <Redis/MoguQueryHandler.h>
+
 namespace Validators {
 
-Wt::WValidator* createValidator(const std::string& validator);
-Wt::WRegExpValidator* createRegexValidator(Redis::MoguQueryHandler&,const char*);
+Wt::WValidator* create_validator(const std::string& validator);
+Wt::WRegExpValidator* create_regex_validator(
+        Redis::Mogu_Query_Handler&,const char*);
 
 }    //namespace Validators
 

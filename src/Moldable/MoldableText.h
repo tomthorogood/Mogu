@@ -1,5 +1,5 @@
 /*
- * MoldableText.h
+ * Moldable_Text.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -11,33 +11,31 @@
 #include "Moldable.h"
 #include <Wt/WText>
 
-class MoldableText : public Moldable
+class Moldable_Text : public Moldable
 {
-    Wt::WText* text;
-    void initializeText();
-    std::string assembly_text;
+    Wt::WText* text {};
+    std::string assembly_text {};
+    void initialize_text();
+
 protected:
-    virtual void init(WidgetAssembly*) override;
+    virtual void init(Widget_Assembly*) override;
+
 public:
-    MoldableText(WidgetAssembly*);
+    Moldable_Text(Widget_Assembly*);
 
-    inline virtual std::string moldableValue() {
-        return text->text().toUTF8();
-    }
+    inline virtual std::string get_moldable_value()
+        { return text->text().toUTF8(); }
 
-    inline virtual void setMoldableValue(const std::string& value) {
-        text->setText(value);
-    }
+    inline virtual void set_moldable_value(const std::string& value)
+        { text->setText(value); }
 
     inline virtual void reload()
     {
         clear();
-        testFlag(MoldableFlags::allow_reload);
-
+        test_flag(Moldable_Flags::allow_reload);
         load();
-        testFlag(MoldableFlags::allow_reload);
+        test_flag(Moldable_Flags::allow_reload);
     }
 };
-
 
 #endif /* MOLDABLETEXT_H_ */

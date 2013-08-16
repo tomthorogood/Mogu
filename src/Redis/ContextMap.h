@@ -1,19 +1,20 @@
 #ifndef CONTEXTMAP_H_
 #define CONTEXTMAP_H_
 
-#include "../Config/typedefs.h"
-#include <cassert>
 
-struct ContextMap {
-    Redis::Context*  widgets      = nullptr;
-    Redis::Context*  user         = nullptr;
-    Redis::Context*  meta         = nullptr;
-    Redis::Context*  validators   = nullptr;
-    Redis::Context*  policies     = nullptr;
-    Redis::Context*  data         = nullptr;
-    Redis::Context*  group        = nullptr;
-    Redis::Context*  temp         = nullptr;
-    Redis::Context*  perspectives = nullptr;
+#include <cassert>
+#include "QueryHandler/Context.h"
+#include "../Types/Prefixes.h"
+
+struct Context_Map {
+    Redis::Context*  widgets      {};
+    Redis::Context*  user         {};
+    Redis::Context*  meta         {};
+    Redis::Context*  validators   {};
+    Redis::Context*  policies     {};
+    Redis::Context*  data         {};
+    Redis::Context*  group        {};
+    Redis::Context*  perspectives {};
 
     Redis::Context* get (Prefix prefix) {
         switch(prefix)
@@ -26,7 +27,6 @@ struct ContextMap {
         case Prefix::validators:return validators;
         case Prefix::policies:  return policies;
         case Prefix::data:      return data;
-        case Prefix::temp:      return temp;
         default: return widgets;
         }
     }
@@ -49,8 +49,6 @@ struct ContextMap {
                                 break;
         case Prefix::data:      data = context;
                                 break;
-        case Prefix::temp:      temp = context;
-                                break;
         case Prefix::perspectives:
                                 perspectives = context;
                                 break;
@@ -58,18 +56,17 @@ struct ContextMap {
         }
     }
 
-    ContextMap(){}
+    Context_Map(){}
 
-    ~ContextMap() {
-        if (widgets != nullptr) delete widgets;
-        if (user != nullptr) delete user;
-        if (meta != nullptr) delete meta;
-        if (validators != nullptr) delete validators;
-        if (policies != nullptr) delete policies;
-        if (data != nullptr) delete data;
-        if (group != nullptr) delete group;
-        if (temp != nullptr) delete temp;
-        if (perspectives != nullptr) delete perspectives;
+    ~Context_Map() {
+        if (widgets) delete widgets;
+        if (user) delete user;
+        if (meta) delete meta;
+        if (validators) delete validators;
+        if (policies) delete policies;
+        if (data) delete data;
+        if (group) delete group;
+        if (perspectives) delete perspectives;
     }
 };
 

@@ -13,9 +13,5 @@
 #define EMPTY ""
 #define NONE 0
 
-#define MoguApp static_cast<Mogu*>(wApp)
-
-//Provides access to the user-specific instance of Mogu
-#define mApp Mogu* app = MoguApp
 
 #endif /* MACROS_H_ */

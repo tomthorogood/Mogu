@@ -6,21 +6,24 @@
  */
 #ifndef ACTIONS_H_
 #define ACTIONS_H_
-#include <declarations.h>
+
+#include "../Moldable/Moldable.h"
+#include "../Types/CommandValue.h"
+
 namespace Actions
 {
 
-void set(Moldable& broadcaster, CommandValue& command);
-void increment(Moldable& broadcaster, CommandValue& command);
-void decrement(Moldable& broadcaster, CommandValue& command);
-void test(Moldable& broadcaster, CommandValue& command);
-void email(Moldable& broadcaster, CommandValue& command);
-void reload(Moldable& broadcaster, CommandValue& command);
-void append(Moldable& broadcaster, CommandValue& command);
-void reset(Moldable& broadcaster, CommandValue& command);
-void remove(Moldable& broadcaster, CommandValue& command);
-void javascript(Moldable& broadcaster, CommandValue& command);
-void clear(Moldable& broadcaster, CommandValue& command);
+void set(Moldable& broadcaster, Command_Value& command);
+void increment(Moldable& broadcaster, Command_Value& command);
+void decrement(Moldable& broadcaster, Command_Value& command);
+void test(Moldable& broadcaster, Command_Value& command);
+void email(Moldable& broadcaster, Command_Value& command);
+void reload(Moldable& broadcaster, Command_Value& command);
+void append(Moldable& broadcaster, Command_Value& command);
+void reset(Moldable& broadcaster, Command_Value& command);
+void remove(Moldable& broadcaster, Command_Value& command);
+void javascript(Moldable& broadcaster, Command_Value& command);
+void clear(Moldable& broadcaster, Command_Value& command);
 
 }//namespace Actions
 

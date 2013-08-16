@@ -42,6 +42,7 @@ def getCLIArgs():
     args.docsubs = config.get("runtime options", "document-subs")
     args.port = config.get("runtime options", "http-port")
     args.address = config.get("runtime options", "http-address")
+    args.dblog = config.get("runtime options", "log")
 
     args.flushrules = {}
     configured_prefixes = config.options("flush configuration")

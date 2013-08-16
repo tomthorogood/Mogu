@@ -1,19 +1,12 @@
 #ifndef MOGUQUERYHANDLER_H_
 #define MOGUQUERYHANDLER_H_
 
-#include "DatabaseConfigReader.h"
+#include "../Types/Prefixes.h"
 #include "QueryHandler/QueryHandler.h"
-#include "ContextMap.h"
-
 namespace Redis {
-
-class MoguQueryHandler : public QueryHandler {
+class Mogu_Query_Handler : public Query_Handler {
 public:
-    MoguQueryHandler(ContextMap& m, Prefix prefix)
-        : QueryHandler(m.get(prefix)) {}
-
-    MoguQueryHandler(ContextMap* m, Prefix prefix)
-        : QueryHandler(m->get(prefix)) {}
+    Mogu_Query_Handler(Prefix prefix);
 };
 
 }//namespace Redis

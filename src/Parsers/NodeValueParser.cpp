@@ -1,24 +1,21 @@
 /*
- * NodeValueParser.cpp
+ * Node_Value_Parser.cpp
  *
  *  Created on: March 31, 2013
  *      Author: cameron
  */
-#include <Parsers/NodeValueParser.h>
+#include "NodeValueParser.h"
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Types/CommandValue.h>
 #include <hash.h>
 #include <cctype>
+#include "../Config/inline_utils.h"
 
 //debug
 #include <iostream>
 
 namespace Parsers {
-
-NodeValueParser::NodeValueParser() : stateParser(tm), mathParser(tm)
-{
-}
 
 /*!\brief When given a string where a second quote is expected, extracts
  * the full string, even if there are internal quotes. The opening quote does
@@ -32,108 +29,101 @@ NodeValueParser::NodeValueParser() : stateParser(tm), mathParser(tm)
  * !\return the index of the final quotation mark.
  */
 
-int NodeValueParser::find_full_quote(std::string quoted_string) {
+size_t Node_Value_Parser::find_full_quote(std::string s)
+{
     // Trim the leading quote.
-    if (quoted_string.at(0) == '"')
-        quoted_string = quoted_string.substr(1);
+    if (s.at(0) == '"')
+        s = s.substr(1);
 
-    int q = quoted_string.find_first_of('"');
-    if ((size_t) q == std::string::npos) return 0;
+    size_t q {s.find_first_of('"')};
+    if (q == std::string::npos) return 0;
     /* Determine whether the character preceeding the quotation mark is
      * an escape delimiting slash.
      */
-    while (quoted_string.at(q-1) == '\\')
+    while (s.at(q-1) == '\\')
     {
-        q = quoted_string.find('"',q+1);
+        q = s.find('"',q+1);
     };
     return q;
 }
-void NodeValueParser::tokenizeInput(std::string input, bool setAtBeginning)
+void Node_Value_Parser::tokenize_input(std::string in, bool set_at_begin)
 {
-	size_t inputIndex = 0;
-	size_t input_size = input.size(); // save from doing repeated calls.
-    int endTokenIndex = 0;
-	while(inputIndex < input_size)
-	{
-		if(input[inputIndex] == '"')
-		    // Search from the next token to the next occurence of a quotation.
-			endTokenIndex =
-			    find_full_quote(input.substr(inputIndex+1))
-			    + inputIndex
-			    + 1;
-		else {
-		    // Search for the next space delimiter.
-		    size_t search = input.find(' ',inputIndex);
-		    if (search == std::string::npos)
-		        endTokenIndex = input.size();
-		    else
-		        endTokenIndex = search - 1;
-		}
+    size_t input_index {};
+    size_t end_index {};
+    size_t input_size {in.size()};
 
-		// Extract the entire token between the indexes
-		std::string token = input.substr(inputIndex, endTokenIndex-inputIndex+1);
-
-		if (token != "") // handle cases where two spaces were input.
-		{
-            if(isdigit(token[0]))
-                tm.addToken(std::stoi(token));
+    while (end_index < input_size)
+    {
+        if (in[input_index] == '"')
+        {
+            size_t q_index {find_full_quote(in.substr(input_index+1))};
+            end_index = q_index + input_index +1;
+        }
+        else
+        {
+            size_t search {input.find(' ',input_index)};
+            if (search == std::string::npos)
+                end_index = in.size();
             else
-                tm.addToken(token);
-		}
-		// Consume any ' ' delimiters.
-		inputIndex = endTokenIndex +2;
-	}
+                end_index = search -1;
+        }
 
-	//tell TokenManager that we're done adding tokens
-	if (setAtBeginning)
-	    tm.begin();
-	else
-	    tm.end();
+        std::string t {in.substr(input_index, (end_index-input_index+1))};
+        if (!t.empty())
+        {
+            if (isdigit(t[0]))
+                tm.add_token(std::stoi(t));
+            else
+                tm.add_token(t);
+        }
+        input_index = end_index +2;
+    }
+
+    if (set_at_begin)
+        tm.begin();
+    else
+        tm.end();
 }
 
 /* Iterates through a vector of tokens and applies the core NvP logic
  * to reduce them down to one expression.
  */
-void NodeValueParser::reduceExpressions(Moldable* bc)
+void Node_Value_Parser::reduce_expressions(Moldable* bc)
 {
     // If there is only one token, it cannot be reduced any further.
-    // Leave it alone.
 	if (tm.size() == 1)
 	{
 	    tm.begin();
 	    return;
 	}
 	
-    int currToken = tm.currentToken();
-    
+    int curr_token {tm.current_token()};
 
+    
 	/* Iterate backwards through the vector of tokens until the
 	 * 'Begin' token is reached.
 	 */
-	while(currToken != MoguSyntax::OUT_OF_RANGE_BEGIN)
+	while(curr_token != Mogu_Syntax::OUT_OF_RANGE_BEGIN)
 	{
 	    /* The '(' syntax will always signify a mathematical expression.
 	     * Hand this job over to the MathParser.
 	     */
-		if(currToken == MoguSyntax::OPER_OPPAREN) 
-			mathParser.processInput();
+		if(curr_token == Mogu_Syntax::OPER_OPPAREN) 
+			math_parser.process_input();
 			
 		/*  Object tokens will refer to a database field or widget state
 		 *  that will be reduced to a string or integer.
 		 */
-		else if(isObjectToken(currToken))
-		{
-		        stateParser.processInput(bc);
-		}
+		else if(is_object_token(curr_token))
+            state_parser.process_input(bc);
 
 		tm.prev();
-
-		currToken = tm.currentToken();
+		curr_token = tm.current_token();
 	}
     tm.begin();
-    if (tm.currentToken()==MoguSyntax::hash)
+    if (tm.current_token()==Mogu_Syntax::hash)
     {
-        hashNextToken();
+        hash_next_token();
         tm.begin();
     }
 }
@@ -144,222 +134,226 @@ void NodeValueParser::reduceExpressions(Moldable* bc)
  *
  *!\param input_ The input string
  *!\param output_ The container in which the result will be placed
- *!\param memberContext_ The context [user|list|data]
- *!\param arg An optional NodeValue containing an argument to be used with the
+ *!\param member_context_ The context [user|list|data]
+ *!\param arg An optional Node_Value containing an argument to be used with the
  *      context. Default: nullptr
  */
-void NodeValueParser::giveInput(
+void Node_Value_Parser::give_input(
     std::string input_
-    , NodeValue& output
-    , const SyntaxDef& memberContext_
-    , NodeValue* arg)
+    , Node_Value& output
+    , const Syntax_Def& member_context_
+    , Node_Value* arg)
 {
 
-    switch(memberContext_)
+    switch(member_context_)
     {
-        case MoguSyntax::user:
-        case MoguSyntax::list:
+        case Mogu_Syntax::user:
+        case Mogu_Syntax::list:
             sreplace(input_, "member", "user");
             break;
-        case MoguSyntax::data:
+        case Mogu_Syntax::data:
             sreplace(input_, "member", "data");
             break;
         default:
             break;
     }
 
-    if ((memberContext_ != MoguSyntax::__NONE__) && arg)
+    if ((member_context_ != Mogu_Syntax::__NONE__) && arg)
     {
         input_ += " ";
 
-        if (arg->isString())
-            input_ += arg->getString();
-        else if (arg->isInt())
-            input_ += std::to_string(arg->getInt());
+        if (arg->is_string())
+            input_ += arg->get_string();
+        else if (arg->is_int())
+            input_ += std::to_string(arg->get_int());
         else
-            input_ += std::to_string(arg->getFloat());
+            input_ += std::to_string(arg->get_float());
     }
 
-    giveInput(input_,output);
+    give_input(input_,output);
 }
 
-void NodeValueParser::hashNextToken()
+void Node_Value_Parser::hash_next_token()
 {
-    assert(MoguSyntax::hash.integer == tm.currentToken());
-    std::string hashed_value;
-    tm.saveLocation();
+    assert(Mogu_Syntax::hash.integer == tm.current_token());
+    std::string hashed_value {};
+    tm.save_location();
     tm.next();
-    if (tm.currentToken() == MoguSyntax::TOKEN_DELIM)
-        hashed_value = Hash::toHash(tm.fetchStringToken());
+    if (tm.current_token() == Mogu_Syntax::TOKEN_DELIM)
+        hashed_value = Hash::to_hash(tm.fetch_string());
     else
-        hashed_value = Hash::toHash(std::to_string(tm.currentToken()));
-    tm.deleteFromSaved();
-    tm.injectToken(hashed_value);
+        hashed_value = Hash::to_hash(std::to_string(tm.current_token()));
+    tm.delete_from_saved();
+    tm.inject_token(hashed_value);
 }
 
-void NodeValueParser::giveInput(const std::string& input_, NodeValue& nv, Moldable* bc)
+void Node_Value_Parser::give_input(const std::string& i, Node_Value& nv, Moldable* bc)
 {
-    input = input_;
+    input = i;
     if (input.empty())
     {
-        nv.setString("");
+        nv.set_string("");
         return;
     }
-	tokenizeInput(input);
-	reduceExpressions(bc);
+	tokenize_input(input);
+	reduce_expressions(bc);
 
     /* As long as we have input that is reducable, keep reducing it.*/
-	while (MoguSyntax::TOKEN_DELIM == tm.currentToken()
-	    && (tm.fetchStringToken().at(0)!='"')
-	    && (tm.fetchStringToken().find_first_of(" ") != std::string::npos))
+	while (Mogu_Syntax::TOKEN_DELIM == tm.current_token()
+	    && (tm.fetch_string().at(0)!='"')
+	    && (tm.fetch_string().find_first_of(" ") != std::string::npos))
 	{
-	    std::string new_input = tm.fetchStringToken();
+	    std::string new_input = tm.fetch_string();
 	    tm.reset();
-	    tokenizeInput(new_input);
-	    reduceExpressions(bc);
+	    tokenize_input(new_input);
+	    reduce_expressions(bc);
 	}
 
 	//if we have more than one token in numTokens at this point (or
 	//two if the first token is TOKEN DELIM), something has gone wrong
 
-	if(tm.currentToken() == MoguSyntax::TOKEN_DELIM)
-		nv.setString(tm.fetchStringToken());
+	if(tm.current_token() == Mogu_Syntax::TOKEN_DELIM)
+		nv.set_string(tm.fetch_string());
 	else
-		nv.setInt((int)tm.currentToken());
+		nv.set_int((int)tm.current_token());
 	tm.reset(); // Clear the TokenManager to prepare for the next input
 
 }
 
-void NodeValueParser::setCommandValueObject(CommandValue& cv, bool r_tokens)
+void Node_Value_Parser::set_command_value_object(Command_Value& cv, bool r_tokens)
 {
-    int currTok;
-    NodeValue tmp;
+    int curr_tok {};
+    Node_Value tmp {};
 
-    CommandFlags obj_flag    = r_tokens ? CommandFlags::R_OBJECT :
-        CommandFlags::OBJECT;
-    CommandFlags id_flag     = r_tokens ? CommandFlags::R_IDENTIFIER :
-        CommandFlags::IDENTIFIER;
-    CommandFlags arg_flag    = r_tokens ? CommandFlags::R_ARG :
-        CommandFlags::ARG;
+    Command_Flags obj_flag {Command_Flags::object};
+    Command_Flags id_flag {Command_Flags::identifier};
+    Command_Flags arg_flag {Command_Flags::arg};
+
+    if (r_tokens)
+    {
+        obj_flag = Command_Flags::r_object;
+        id_flag = Command_Flags::r_identifier;
+        arg_flag = Command_Flags::r_arg;
+    }
 
     // Fast forward to the next object token.
     do {
-        currTok = tm.currentToken();
+        curr_tok = tm.current_token();
         tm.next();
-    } while (!isObjectToken(currTok));
+    } while (!is_object_token(curr_tok));
     tm.prev();
 
-    cv.set(obj_flag, currTok);
+    cv.set(obj_flag, curr_tok);
     tm.next();
 
     // If the next token is a string, it is necessarily an identifier.
     // It can also be another arbitrary token, however, representing a 
     // state/attribute("own content", or "app path"). In the latter case,
     // we need nothing more, though, so we return.
-    currTok = tm.currentToken();
-    if (currTok == MoguSyntax::TOKEN_DELIM)
+    curr_tok = tm.current_token();
+    if (curr_tok == Mogu_Syntax::TOKEN_DELIM)
     {
-        tmp.setString(tm.fetchStringToken());
+        tmp.set_string(tm.fetch_string());
         cv.set(id_flag, tmp);
     }
-    else if (currTok != MoguSyntax::OUT_OF_RANGE_END)
+    else if (curr_tok != Mogu_Syntax::OUT_OF_RANGE_END)
     {
-        tmp.setInt( (int) currTok );
+        tmp.set_int(curr_tok);
         cv.set(arg_flag, tmp);
         return;
     }
 
     // If we've reached this part, we're setting an arg, no ifs, ands, or buts.
     tm.next();
-    currTok = tm.currentToken();
-    if (currTok == MoguSyntax::TOKEN_DELIM)
-        tmp.setString(tm.fetchStringToken());
+    curr_tok = tm.current_token();
+    if (curr_tok == Mogu_Syntax::TOKEN_DELIM)
+        tmp.set_string(tm.fetch_string());
     else
-        tmp.setInt( (int) currTok);
+        tmp.set_int(curr_tok);
     cv.set(arg_flag, tmp);
 }
 
-void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
+void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
 {
-    int token;
-    NodeValue tmpValue;
-    std::string str;
-    uint8_t flags = cv.getFlags();
-    bool preposition_found = false;
+    //Make sure we somehow haven't gotten here by mistake.
+    if (tm.current_token() != Mogu_Syntax::append) return;
+    
+    Node_Value tmp {};
+    std::string str {};
+    uint8_t flags {cv.get_flags()};
+    int token {tm.current_token()};
+    bool preposition_found {false};
 
     // This is used for checking unexpected input to see if it's actually
     // supposed to be represented as an integer used as a list index.
-    bool check_if_list;
+    bool check_if_list {false};
 
-    if (tm.currentToken() != MoguSyntax::append) return;
     tm.next();
-    token = tm.currentToken();
 
     // Cycle through the input, testing flag combinations and setting 
     // things where appropriate, until we're out of tokens.
-    while (token != MoguSyntax::OUT_OF_RANGE_END)
+    while (token != Mogu_Syntax::OUT_OF_RANGE_END)
     {
         // A string will either be a value or an identifier.
-        if (MoguSyntax::TOKEN_DELIM == token)
+        if (Mogu_Syntax::TOKEN_DELIM == token)
         {
-            str = tm.fetchStringToken();
-            tmpValue.setString(str);
+            str = tm.fetch_string();
+            tmp.set_string(str);
             // If the only thing that has been set is the action, 
             // then the token delimiter will be a quoted string.
-            if ((flags == (uint8_t)CommandFlags::ACTION) && isQuotedString(str))
+            if ((flags == (uint8_t)Command_Flags::action) && is_quoted_string(str))
             {
-                flags = cv.set(CommandFlags::VALUE, tmpValue);
+                flags = cv.set(Command_Flags::value, tmp);
             }
-            // If the R_OBJECT has been set, but there's no identifier,
+            // If the r_object has been set, but there's no identifier,
             // the next string encountered must be the identifier.
-            else if (cv.test(CommandFlags::R_OBJECT) && 
-                    !cv.test(CommandFlags::R_IDENTIFIER))
+            else if (cv.test(Command_Flags::r_object) && 
+                    !cv.test(Command_Flags::r_identifier))
             {
-                flags = cv.set(CommandFlags::R_IDENTIFIER, tmpValue);
+                flags = cv.set(Command_Flags::r_identifier, tmp);
             }
             // Same as above, but for standard objects.
-            else if (cv.test(CommandFlags::OBJECT) && 
-                    !cv.test(CommandFlags::IDENTIFIER))
+            else if (cv.test(Command_Flags::object) && 
+                    !cv.test(Command_Flags::identifier))
             {
-                flags = cv.set(CommandFlags::IDENTIFIER, tmpValue);
+                flags = cv.set(Command_Flags::identifier, tmp);
             }
             // In all other cases, this is unexpected input, but it might
             // be a list index. 'continue' not present here because we want to
             // keep moving through the decision tree.
             else check_if_list = true;
         }
-        // Object tokens will either be the OBJECT or R_OBJECT, depending
+        // Object tokens will either be the object or r_object, depending
         // on if it was reached before the preposition or not.
-        else if (isObjectToken(token))
+        else if (is_object_token(token))
         {
-            if (!preposition_found && !cv.test(CommandFlags::R_OBJECT))
+            if (!preposition_found && !cv.test(Command_Flags::r_object))
             {
-                flags = cv.set(CommandFlags::R_OBJECT, token);
+                flags = cv.set(Command_Flags::r_object, token);
             }
-            else if (preposition_found && !cv.test(CommandFlags::OBJECT))
+            else if (preposition_found && !cv.test(Command_Flags::object))
             {
-                flags = cv.set(CommandFlags::OBJECT, token);
+                flags = cv.set(Command_Flags::object, token);
             }
             else
                 check_if_list = true;
                 // Do not continue.
         }
-        else if (isStateToken(token))
+        else if (is_state_token(token))
         {
-            tmpValue.setInt((int) token);
-            if (!preposition_found && !cv.test(CommandFlags::R_ARG))
+            tmp.set_int(token);
+            if (!preposition_found && !cv.test(Command_Flags::r_arg))
             {
-                flags = cv.set(CommandFlags::R_ARG, tmpValue);
+                flags = cv.set(Command_Flags::r_arg, tmp);
             }
-            else if (preposition_found && !cv.test(CommandFlags::ARG))
+            else if (preposition_found && !cv.test(Command_Flags::arg))
             {
-                flags = cv.set(CommandFlags::ARG, token);
+                flags = cv.set(Command_Flags::arg, token);
             }
             else
                 check_if_list = true;
-                // Do not continue;
         }
-        else if (isPrepositionToken(token))
+        else if (is_preposition_token(token))
         {
             preposition_found = true;
         }
@@ -371,100 +365,102 @@ void NodeValueParser::handleAppendCommand(CommandValue& cv, Moldable* bc)
         else if (check_if_list)
         {
             tm.prev();
-            if (MoguSyntax::list != tm.currentToken())
+            if (Mogu_Syntax::list != tm.current_token())
                 return;
             tm.next(); // Make sure to go back where we were in the input.
-            tmpValue.setInt((int) token);
-            if (!preposition_found && !cv.test(CommandFlags::R_ARG)) 
+            tmp.set_int((int) token);
+            if (!preposition_found && !cv.test(Command_Flags::r_arg)) 
             {
-                cv.set(CommandFlags::R_ARG, tmpValue);
+                cv.set(Command_Flags::r_arg, tmp);
             }
-            else if (preposition_found && !cv.test(CommandFlags::ARG))
+            else if (preposition_found && !cv.test(Command_Flags::arg))
             {
-                cv.set(CommandFlags::ARG, tmpValue);
+                cv.set(Command_Flags::arg, tmp);
             }
             // We have no clue what the hell this is. 
             else return;
         }
 
         tm.next();
-        token = tm.currentToken();
+        token = tm.current_token();
     } // end while loop
 
     // After this, there is the possibility that we'll have a reduceable value
-    // with R_OBJ/R_ID/R_ARG. If so, we'll go ahead and reduce that now:
-    if (cv.objectIsReduceable(true))
+    // with r_OBJ/r_ID/r_arg. If so, we'll go ahead and reduce that now:
+    if (cv.object_is_reduceable(true))
     {
-        cv.reduceObject(true, bc);
+        cv.reduce_object(true, bc);
     }
-       
 }
 
-void NodeValueParser::giveInput(const std::string& input_, CommandValue& cv,
+void Node_Value_Parser::give_input(const std::string& i, Command_Value& cv,
     Moldable* bc)
 {
-    NodeValue tmp;
-    input = input_;
-    tokenizeInput(input, true); // Make sure to return the iterator to
+    Node_Value tmp {};
+    input = i;
+    tokenize_input(input, true); // Make sure to return the iterator to
                                 // the BEGINNING
     // The first token is always an action
-    cv.set(CommandFlags::ACTION, tm.currentToken());
+    cv.set(Command_Flags::action, tm.current_token());
 
-    if (MoguSyntax::append == cv.get(CommandFlags::ACTION))
+    if (Mogu_Syntax::append == cv.get(Command_Flags::action))
     {
-        handleAppendCommand(cv,bc);
+        handle_append_command(cv,bc);
         tm.reset();
         return;
     }
 
     // The second token is awlays the start of the object set.
     tm.next();
-    int tok = tm.currentToken();
-    cv.set(CommandFlags::OBJECT, tok);
+    int tok = tm.current_token();
+    cv.set(Command_Flags::object, tok);
     tm.next();
 
-    while (tok != MoguSyntax::OUT_OF_RANGE_END)
+    while (tok != Mogu_Syntax::OUT_OF_RANGE_END)
     {
-        tok = tm.currentToken();
-        if (tok == MoguSyntax::TOKEN_DELIM)
+        tok = tm.current_token();
+        if (tok == Mogu_Syntax::TOKEN_DELIM)
         {
-            std::string string_token = tm.fetchStringToken();
-            if (tm.isQuotedString(string_token)) {
+            std::string string_token = tm.fetch_string();
+            if (tm.is_quoted_string(string_token)) {
                 tm.reset();
                 return;
             }
             /* The identifier should always be the first TOKEN_DELIM
              * encountered.
              */
-            if (cv.getIdentifier() == EMPTY) {
-                NodeValue tmp;
-                tmp.setString(string_token);
-                cv.set(CommandFlags::IDENTIFIER, tmp);
+            if (cv.get_identifier().empty())
+            {
+                Node_Value tmp {};
+                tmp.set_string(string_token);
+                cv.set(Command_Flags::identifier, tmp);
             }
-            else {
+            else
+            {
                 /* The only other TOKEN_DELIM that should be encountered before
                  * a preposition should be an argument (ie: database hash field)
                  */
-                tmp.setString(string_token);
-                cv.set(CommandFlags::ARG, tmp);
+                tmp.set_string(string_token);
+                cv.set(Command_Flags::arg, tmp);
             }
         }
-        else if (isStateToken(tok)) {
-            tmp.setInt(tok);
-            cv.set(CommandFlags::ARG, tmp);
+        else if (is_state_token(tok))
+        {
+            tmp.set_int(tok);
+            cv.set(Command_Flags::arg, tmp);
         }
-        else if (isPrepositionToken(tok)) {
-            bool do_not_reduce = false;
+        else if (is_preposition_token(tok)) {
+            bool do_not_reduce {false};
             /* First, check to see if the next value is 'location' */
             tm.next();
-            if (tm.currentToken() == MoguSyntax::location)
+            if (tm.current_token() == Mogu_Syntax::location)
             {
                 do_not_reduce = true;
             } else {
                 tm.prev();
             }
-            tm.saveLocation(); // We've done what we need with the preceeding
-            tm.truncateHead(); // tokens, so get rid of them.
+            tm.save_location(); // We've done what we need with the preceeding
+            tm.truncate_head(); // tokens, so get rid of them.
 
             // Simply join the remaining tokens together again as a string.
             // And set this as the "value" in CommadValue
@@ -473,31 +469,31 @@ void NodeValueParser::giveInput(const std::string& input_, CommandValue& cv,
                 tm.begin();
                 std::stringstream buf;
                 do {
-                    int tok = tm.currentToken();
-                    if (tok == MoguSyntax::TOKEN_DELIM)
-                        buf << tm.fetchStringToken();
+                    int tok {tm.current_token()};
+                    if (tok == Mogu_Syntax::TOKEN_DELIM)
+                        buf << tm.fetch_string();
                     else
-                        buf << MoguSyntax::get(tok).str;
+                        buf << Mogu_Syntax::get(tok).str;
                     buf << " ";
                     tm.next();
-                } while (tm.currentToken() != MoguSyntax::OUT_OF_RANGE_END);
-                std::string s = buf.str();
+                } while (tm.current_token() != Mogu_Syntax::OUT_OF_RANGE_END);
+                std::string s {buf.str()};
                 s = s.substr(0,s.size()-1);
-                cv.set(CommandFlags::VALUE, s);
+                cv.set(Command_Flags::value, s);
             }
             else
             {
                 tm.end(); // Allow tm to treat it as standard input.
-                reduceExpressions(bc);
-                if (tm.currentToken() == MoguSyntax::TOKEN_DELIM)
+                reduce_expressions(bc);
+                if (tm.current_token() == Mogu_Syntax::TOKEN_DELIM)
                 {
-                    tmp.setString(tm.fetchStringToken());
-                    cv.set(CommandFlags::VALUE, tmp);
+                    tmp.set_string(tm.fetch_string());
+                    cv.set(Command_Flags::value, tmp);
                 }
                 else {
                     // Any integral value here will be a true integer, not MoguSyn.
-                    tmp.setInt((int)tm.currentToken());
-                    cv.set(CommandFlags::VALUE, tmp);
+                    tmp.set_int((int)tm.current_token());
+                    cv.set(Command_Flags::value, tmp);
                 }
             }
             break; // After parsing a prepositional, there is nothing left to do.

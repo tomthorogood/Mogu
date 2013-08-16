@@ -7,31 +7,25 @@
 #include <Events/TriggerMap.h>
 #include "NodeValue.h"
 
-struct WidgetAssembly
+struct Widget_Assembly
 {
-    std::map <int,NodeValue> attrdict;
-    std::vector <std::string> children;
-    std::vector <std::string> triggers;
+    std::map <int,Node_Value> attrdict {};
+    std::vector <std::string> children {};
+    std::vector <std::string> triggers {};
     
     /* Anonymous children are those created due to 'member' templates that
      * don't actually live anywhere in the database. These will be assigned
      * names on the fly at runtime, and registered like any other widget, but
      * all interactions will be abstracted and handled by their templates.
      */
-    std::vector <WidgetAssembly> anonymous_children;
-    std::string node = "";
-    std::string tmpl = "";
-    TriggerMap* triggerMap = nullptr;
+    std::vector <Widget_Assembly> anonymous_children {};
+    std::string node {};
+    std::string tmpl {};
+    Trigger_Map* trigger_map {};
 
-    void setTriggerPrefix(Prefix prefix)
-    {
-        std::string triggerNode = (prefix == Prefix::widgets) ?
-            node : tmpl;
-        if (triggerMap != nullptr) delete triggerMap;
-        triggerMap = new TriggerMap(triggers.size(), prefix, triggerNode);
-    }
+    Widget_Assembly(){}
 
-    WidgetAssembly& operator=(const WidgetAssembly& other)
+    Widget_Assembly& operator=(const Widget_Assembly& other)
     {
         attrdict = other.attrdict;
         children = other.children;
@@ -39,14 +33,44 @@ struct WidgetAssembly
         anonymous_children = other.anonymous_children;
         node = other.node;
         tmpl = other.tmpl;
-        triggerMap = other.triggerMap;
+        trigger_map = new Trigger_Map(*other.trigger_map);
         return *this;
     }
 
-    ~WidgetAssembly()
+    Widget_Assembly(const Widget_Assembly& other)
     {
-        delete triggerMap;
+        attrdict = other.attrdict;
+        children = other.children;
+        triggers = other.triggers;
+        anonymous_children = other.anonymous_children;
+        node = other.node;
+        tmpl = other.tmpl;
+        trigger_map = new Trigger_Map(*other.trigger_map);
     }
+
+    Widget_Assembly(Widget_Assembly&& other)
+    {
+        attrdict = other.attrdict;
+        children = other.children;
+        triggers = other.triggers;
+        anonymous_children = other.anonymous_children;
+        node = other.node;
+        tmpl = other.tmpl;
+        trigger_map = other.trigger_map;
+    }
+
+    ~Widget_Assembly()
+    {
+        if (trigger_map) delete trigger_map;
+    }
+    
+    void set_trigger_prefix(Prefix p)
+    {
+        std::string trigger_node = (p==Prefix::widgets) ? node : tmpl;
+        if (trigger_map) delete trigger_map;
+        trigger_map = new Trigger_Map(triggers.size(), p, trigger_node);
+    }
+
 
 };
 

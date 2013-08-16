@@ -1,47 +1,40 @@
 #include "CommandProcessor.h"
-#include <Moldable/Moldable.h>
-#include <Types/CommandValue.h>
+#include "../Types/CommandValue.h"
 #include "Actions.h"
 
-CommandProcessor::CommandProcessor(Moldable& broadcaster_)
-    :   broadcaster(broadcaster_)
-{}
 
-void CommandProcessor::processCommand(CommandValue& v)
+void Command_Processor::process_command(Command_Value& v)
 {
-    switch(MoguSyntax::get(v.get(CommandFlags::ACTION)))
+    switch(Mogu_Syntax::get(v.get(Command_Flags::action)))
     {
-        case MoguSyntax::set:
+        case Mogu_Syntax::set:
             Actions::set(broadcaster,v);
             break;
-        case MoguSyntax::increment:
+        case Mogu_Syntax::increment:
             Actions::increment(broadcaster,v);
             break;
-        case MoguSyntax::decrement:
+        case Mogu_Syntax::decrement:
             Actions::decrement(broadcaster,v);
             break;
-        case MoguSyntax::test:
+        case Mogu_Syntax::test:
             Actions::test(broadcaster,v);
             break;
-        case MoguSyntax::email:
+        case Mogu_Syntax::email:
             Actions::email(broadcaster,v);
             break;
-        case MoguSyntax::reload:
+        case Mogu_Syntax::reload:
             Actions::reload(broadcaster,v);
             break;
-        case MoguSyntax::append:
+        case Mogu_Syntax::append:
             Actions::append(broadcaster,v);
             break;
-        case MoguSyntax::reset:
-            Actions::reset(broadcaster,v);
-            break;
-        case MoguSyntax::remove:
+        case Mogu_Syntax::remove:
             Actions::remove(broadcaster,v);
             break;
-        case MoguSyntax::script:
+        case Mogu_Syntax::script:
             Actions::javascript(broadcaster,v);
             break;
-        case MoguSyntax::clear:
+        case Mogu_Syntax::clear:
             Actions::clear(broadcaster,v);
             break;
         default:return;

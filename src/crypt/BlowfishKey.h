@@ -15,7 +15,7 @@ public:
     BlowfishKeyCreator();
     BlowfishKeyCreator(const BlowfishKeyCreator&);
     ~BlowfishKeyCreator();
-    BF_KEY* getKey() const;
+    BF_KEY* get_key() const;
 };
 
 #endif

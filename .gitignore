@@ -29,3 +29,5 @@ syntax/max
 syntax/test
 Testing/*
 .idea*
+camel_case.log
+find_camel_case.sh

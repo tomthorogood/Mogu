@@ -180,6 +180,11 @@ class RedisWriter(object):
         
         return False
 
+    def setLogging(self, level):
+        pipe=self.pipe("meta")
+        pipe.set("meta.log", level)
+        pipe.execute()
+
     def setRoot(self, root):
         pipe = self.pipe("meta")
         pipe.set("meta.root", root)

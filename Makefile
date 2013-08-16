@@ -29,7 +29,7 @@ DEBUG ?= no
 XPATH :=
 
 #= BUILD THE COMPILE COMMAND =#
-GCC := g++ -std=c++0x -Wall -DDBCONF_DIR=$(CONFIG_DIR)
+GCC := g++ -std=c++0x $(flags) -Wall -DDBCONF_DIR=$(CONFIG_DIR)
 
 ifneq ($(DEBUG), no)
 	GCC += -DDEBUG
