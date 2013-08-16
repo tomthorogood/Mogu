@@ -1,13 +1,13 @@
 #include "../Actions.h"
 #include "Includes.h"
-#include <Redis/Node_Editor.h>
+#include <Redis/NodeEditor.h>
 namespace Actions {
 
 void email(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))}
-    Prefix p {syntax_to_prefix.at(object)};
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
+    Prefix p {syntax_to_prefix.at(o)};
     std::string id {(std::string) v.get(Command_Flags::identifier)};
     Node_Value arg {};
     Node_Value message {};
@@ -18,7 +18,7 @@ void email(Moldable& broadcaster, Command_Value& v)
     Redis::Node_Editor node {p, id, &arg};
 
     email.set_recipient(v.get(Command_Flags::value).get_string());
-    email.set_subject(app->slot_manager().retrieve_slot("EMAIL_SUBJECT"));
+    email.set_subject(app->get_slot_manager().get_slot("EMAIL_SUBJECT"));
 
     const Syntax_Def& attr {Mogu_Syntax::get(arg)};
 
@@ -47,8 +47,8 @@ void email(Moldable& broadcaster, Command_Value& v)
             message.set_string(node.read());
             break;
         case Mogu_Syntax::slot:{
-            Slot_Manager& m {app->slot_manager()};
-            message.set_string(m.retrieve_slot(id));
+            Slot_Manager& m = app->get_slot_manager();
+            message.set_string(m.get_slot(id));
             break;}
         default: return;
     }

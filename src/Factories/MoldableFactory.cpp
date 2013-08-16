@@ -5,18 +5,22 @@
  *      Author: tom
  */
 
-#include "Moldable_Factory.h"
+#include "MoldableFactory.h"
 #include <Moldable/Implementations.h>
 #include <Types/syntax.h>
 #include <Mogu.h>
-#include <Widget_Server.h>
+#include <WidgetServer.h>
 #include <Types/MoguLogger.h>
 
-Moldable* Moldable_Factory::create_moldabe_widget(const std::string& node) const
+namespace Application {
+    extern Mogu_Logger log;
+}
+
+Moldable* Moldable_Factory::create_moldable_widget(const std::string& node)
 {
-    static int iters = {}
+    static int iters = {};
     ++iters;
-    Application::log.log(Log_Level::NOTICE,
+    Application::log.log(Log_Level::notice,
             "Moldable_Factory::create_moldabe_widget:", __LINE__,
             " : Creating Widget ", node, " ", iters++, ")");
 
@@ -53,7 +57,7 @@ Moldable* Moldable_Factory::create_moldabe_widget(const std::string& node) const
         product = new Moldable_Password(assembly);
         break;
     default:
-        product = new Moldable::Container(assembly);
+        product = new Moldable_Container(assembly);
         break;
     }
 

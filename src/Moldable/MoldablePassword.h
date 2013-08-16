@@ -12,8 +12,6 @@
 
 class Moldable_Password : public Moldable_Input
 {
-protected:
-
 public:
     Moldable_Password (Widget_Assembly*);
 };

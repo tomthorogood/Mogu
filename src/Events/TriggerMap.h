@@ -8,9 +8,11 @@
 #ifndef TRIGGERMAP_H_
 #define TRIGGERMAP_H_
 
-#include <declarations.h>
 #include <queue>
 #include <set>
+#include <string>
+
+#include <Types/Prefixes.h>
 #include <Types/Inthash.h>
 
 class Trigger_Map {
@@ -35,22 +37,26 @@ public:
     inline void add_event (const Syntax_Def& t, const std::string& c)
         { map[t].push(c); }
 
+    void extend_map(std::unordered_map <int, std::queue <std::string>>);
+
     inline std::queue <std::string> get_events(const int& trigger) const
         { return map.at(trigger); }
 
     const inline std::set <int>& get_triggers()
     { 
         if (triggers.size() < map.size()) populate_triggers();
-        return trigger;
+        return triggers;
     }
 
     const std::unordered_map <int, std::queue <std::string>>& get_map() const
         { return map;}
 
+
+
 private:
     void populate_triggers();
-    std::set <int> triggers {}
-    std::unordered_map <int, std::queue <std::string>> map {}
+    std::set <int> triggers {};
+    std::unordered_map <int, std::queue <std::string>> map {};
 };
 
 

@@ -30,11 +30,11 @@ public:
 
     inline void set_subject (const std::string& s)
     {
-        subect = s;
+        subject = s;
         status |= 0x2;
     }
 
-    inline void set_recippient (const std::string& r)
+    inline void set_recipient (const std::string& r)
     {
         to_address = r;
         status |= 0x4;

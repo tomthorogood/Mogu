@@ -8,11 +8,16 @@
 
 #include "Moldable.h"
 #include <Mogu.h>
-#include <Types/Node_Value.h>
+#include <Types/NodeValue.h>
 #include <Wt/WStackedWidget>
-#include <Events/Event_Handler.h>
+#include <Events/EventHandler.h>
 #include <Wt/WAnchor>
-#include <Types/Widget_Assembly.h>
+#include <Types/WidgetAssembly.h>
+#include "../Config/inline_utils.h"
+
+namespace Application {
+    extern Mogu_Logger log;
+}
 
 Moldable::Moldable (Widget_Assembly* assembly, const Syntax_Def& t )
     :sig_style_changed(this)
@@ -26,7 +31,7 @@ Moldable::Moldable (Widget_Assembly* assembly, const Syntax_Def& t )
     ,node(assembly->node)
 {
     static size_t num_constructed {};
-    Application::log.log(Log_Level::NOTICE, __FILE__, "::constructor:",__LINE__,
+    Application::log.log(Log_Level::notice, __FILE__, "::constructor:",__LINE__,
         "(", num_constructed++, "): ",node);
     init(assembly);
 }
@@ -45,8 +50,8 @@ void Moldable::init (Widget_Assembly* assembly)
     app->register_widget(node, this);
     setObjectName(node); // used mostly for selenium
 
-    assembly_style = assembly->attrdict[Mogu_Syntax::style.integer];
-    assembly_tooltip = assembly->attrdict[Mogu_Syntax::tooltip.integer];
+    assembly_style = assembly->attrdict[Mogu_Syntax::style.integer].get_string();
+    assembly_tooltip = assembly->attrdict[Mogu_Syntax::tooltip.integer].get_string();
     initialize_global_attributes();
     if (assembly->triggers.size() > 0)
         bindery = new Event_Handler(*this, *(assembly->trigger_map));
@@ -84,7 +89,7 @@ void Moldable::get_attribute(const Syntax_Def& state, Node_Value& val)
             break;
         }
         case (int) Mogu_Syntax::text: {
-            val.set_string("\""+moldable_value()+"\"");
+            val.set_string("\""+get_moldable_value()+"\"");
             break;
         }
         case (int) Mogu_Syntax::style: {
@@ -113,7 +118,7 @@ bool Moldable::update_stack_index (size_t index)
 {
     // If this is attempted on a widget without a stack, do nothing.
     if (widget_type != Mogu_Syntax::stack) return false;
-    Wt::WStackedWidget* stack {static_cast<Wt::WStackedWidget*>(widget(0))}
+    Wt::WStackedWidget* stack {static_cast<Wt::WStackedWidget*>(widget(0))};
     size_t max_index = stack->children().size() -1;
     Moldable* cur {(Moldable*) stack->currentWidget()};
 

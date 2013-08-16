@@ -1,9 +1,8 @@
 #include <Mogu.h>
-#include "Widget_Server.h"
-#include <Types/Widget_Assembly.h>
+#include "WidgetServer.h"
+#include <Types/WidgetAssembly.h>
 #include <sstream>
 #include <Redis/MoguQueryHandler.h>
-
 
 void Widget_Server::populate_map(Redis::Node_Editor* e)
 {
@@ -19,7 +18,7 @@ void Widget_Server::populate_map(Redis::Node_Editor* e)
 void Widget_Server::resolve_values(std::map <int, Node_Value>& map_)
 {
     mApp;
-    Parsers::Node_Value_Parser& nvp = app->interpreter();
+    Parsers::Node_Value_Parser& nvp = app->get_interpreter();
     Node_Value resolved;
     for (auto iter : map_)
     {
@@ -36,7 +35,7 @@ void Widget_Server::resolve_values(std::map <int, Node_Value>& map_)
     }
 }
 
-void Widget_Server::extract_node(
+void Widget_Server::unpack_node(
     Redis::Node_Editor* e
     , std::vector <std::string>& triggers
     , std::vector <std::string>& children)
@@ -44,20 +43,19 @@ void Widget_Server::extract_node(
     const static std::string ch {"children"};
     const static std::string ev {"events"};
 
-    populate_map(node);
-    node->set_sub(ch);
-    node->read(children);
-    node->set_sub(ev);
-    node->read(triggers);
-    node->clear_sub();
+    populate_map(e);
+    e->set_sub(ch);
+    e->read(children);
+    e->set_sub(ev);
+    e->read(triggers);
+    e->clear_sub();
 }
 
 void Widget_Server::setup_states()
 {
-    Node_Value arg {(int) Mogu_Syntax::type};
-(
+    Node_Value arg {Mogu_Syntax::type.integer};
     if (!wnode)
-        wnode = new Redis::Node_Editor(Prefix::widgets, assembly->node);
+        wnode = new Redis::Node_Editor {Prefix::widgets, assembly->node};
     else
         wnode->set_node(assembly->node);
 
@@ -68,8 +66,8 @@ void Widget_Server::setup_states()
      * thereby giving the more abstracted node higher precedence, as it 
      * should be.
      */
-    std::vector <std::string> tmpl_triggers {}
-    std::vector <std::string> tmpl_children {}
+    std::vector <std::string> tmpl_triggers {};
+    std::vector <std::string> tmpl_children {};
     if (!assembly->tmpl.empty())
     {
         if (!tnode)
@@ -77,10 +75,10 @@ void Widget_Server::setup_states()
         else
             tnode->set_node(assembly->tmpl);
 
-        extract_node(tnode, tmpl_triggers, tmpl_children);        
+        unpack_node(tnode, tmpl_triggers, tmpl_children);        
     }
 
-    extract_node(wnode, assembly->children, assembly->triggers);
+    unpack_node(wnode, assembly->children, assembly->triggers);
 
     /* Use the triggers from the template if one for the widget does
      * not exist.
@@ -165,7 +163,7 @@ void Widget_Server::get_values_from_user_ids()
     app->unset_temporary_user();
 }
 
-int Widget_Sever::get_max_iters(const std::string& node)
+int Widget_Server::get_max_iters(const std::string& node)
 {
     std::stringstream buf;
     Prefix p = member_context == Mogu_Syntax::list.integer ?
@@ -183,14 +181,14 @@ int Widget_Sever::get_max_iters(const std::string& node)
 void Widget_Server::get_values_from_list_node()
 {
     const static std::string anon_base {"__anon__ulist__"};
-    turnLeft::Utils::RandomCharSet r {};
+    TurnLeft::Utils::RandomCharSet r {};
     int max_iters = get_max_iters (
             extract_node_name(
                 find_member_call (assembly->attrdict)));
 
     for (int i=0; i < max_iters; ++i)
     {
-        arg.set_int(iter);
+        arg.set_int(i);
         Widget_Assembly anon_widget = *assembly;
         anon_widget.node = anon_base + r.generate(4);
         resolve_values(anon_widget.attrdict);

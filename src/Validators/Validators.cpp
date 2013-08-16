@@ -7,14 +7,13 @@
 
 #include "Validators.h"
 
-#include <Exceptions/Exceptions.h>
 #include <Mogu.h>
-#include <Redis/Mogu_Query_Handler.h>
-#include <Types/Node_Value.h>
+#include <Types/NodeValue.h>
 #include <Types/syntax.h>
 #include <Wt/WApplication>
 #include <Wt/WValidator>
 #include <Wt/WRegExpValidator>
+#include "../Config/inline_utils.h"
 
 
 namespace Validators {
@@ -25,12 +24,12 @@ Wt::WValidator* create_validator(
 {
     mApp;
     const char* c_node {validator_name.c_str()};
-    Redis::Mogu_Query_Handler db {Application::contextMap, Prefix::validators};
+    Redis::Mogu_Query_Handler db {Prefix::validators};
     db.append_query( "hget validators.%s %d", c_node, (int)Mogu_Syntax::type);
     
     Node_Value v {};
-    app->interpreter().giveInput(db.yield_response<std::string>(), v);
-    switch(Mogu_Syntax::get(v.get_int());
+    app->get_interpreter().give_input(db.yield_response<std::string>(), v);
+    switch(Mogu_Syntax::get(v.get_int()))
     {
         case Mogu_Syntax::regex:
             return create_regex_validator(db,c_node);

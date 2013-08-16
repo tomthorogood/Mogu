@@ -8,16 +8,20 @@
 #ifndef MOGU_H_
 #define MOGU_H_
 
-#include <declarations.h>
 #include <Wt/WApplication>
 #include <signal.h>
 #include <Redis/DatabaseConfigReader.h>
 #include <Moldable/Moldable.h>
-#include <Security/User_Manager.h>
+#include <Security/UserManager.h>
 #include <Factories/MoldableFactory.h>
 #include <Types/SlotManager.h>
-#include <Parsers/Node_Value_Parser.h>
+#include <Parsers/NodeValueParser.h>
 #include <Types/MoguLogger.h>
+
+#define MoguApp static_cast<Mogu*>(wApp)
+
+//Provides access to the user-specific instance of Mogu
+#define mApp Mogu* app = MoguApp
 
 class Mogu: public Wt::WApplication
 {
@@ -71,15 +75,15 @@ public:
      * currently connected user.
      */
     inline const int& get_user() const
-        { return (user==-1) ? user_manager->get_user() : user; }
+        { return (user==-1) ? user_manager.get_user() : user; }
 
     inline User_Manager& get_user_manager() 
-        { return *user_manager; }
+        { return user_manager; }
     
     inline const int& get_group() const
         { return group; }
     
-    inline const Moldable_Factory& get_factory()
+    inline Moldable_Factory& get_factory()
         { return moldable_factory; }
     
     inline Slot_Manager& get_slot_manager()
@@ -89,7 +93,7 @@ public:
         { user = temporary_user; }
 
     inline void unset_temporary_user ()
-        { user = user_manager->get_user(); }
+        { user = user_manager.get_user(); }
      
 
     inline const std::string& get_application_name() const

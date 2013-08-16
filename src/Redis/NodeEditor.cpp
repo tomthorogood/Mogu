@@ -1,7 +1,11 @@
-#include "Node_Editor.h"
+#include "NodeEditor.h"
 #include "../Security/Encryption.h"
 #include "../Types/MoguLogger.h"
 
+namespace Application{
+    extern Context_Map* context_map;
+    extern Mogu_Logger log;
+}
 
 namespace Redis {
 
@@ -292,7 +296,7 @@ bool Node_Editor::write(std::map<std::string,std::string>& iomap)
 
     for (auto iter : iomap)
     {
-        tmp.setString(iter.first); // Set the key as the arg.
+        tmp.set_string(iter.first); // Set the key as the arg.
         swap_arg(&tmp);
         write(iter.second, true);
         swap_arg();
@@ -359,7 +363,7 @@ std::string Node_Editor::build_command(const std::string& cmd, std::string extra
     if (!arg_str.empty()) cmdbuf << " " << arg_str;
     if (!extra.empty()) cmdbuf << " " << extra;
     std::string scmd {cmdbuf.str()};
-    Application::log.log(Log_Level::NOTICE, "Built Redis command: ", scmd);
+    Application::log.log(Log_Level::notice, "Built Redis command: ", scmd);
     return scmd;
 }
 

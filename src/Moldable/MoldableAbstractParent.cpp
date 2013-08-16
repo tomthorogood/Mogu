@@ -5,10 +5,14 @@
  *      Author: tom
  */
 
-#include "Moldable_Abstract_Parent.h"
-#include <Types/Widget_Assembly.h>
+#include "MoldableAbstractParent.h"
+#include <Types/WidgetAssembly.h>
 #include <Types/MoguLogger.h>
 #include <Mogu.h>
+
+namespace Application {
+    extern Mogu_Logger log;
+}
 
 Moldable_Abstract_Parent::Moldable_Abstract_Parent
     (Widget_Assembly* assembly, const Syntax_Def&  widget_type)
@@ -24,7 +28,7 @@ void Moldable_Abstract_Parent::init(Widget_Assembly* assembly)
 
 // This is called when the widget is to be rendered on screen.
 void Moldable_Abstract_Parent::load(){
-    Application::log.log(Log_Level::NOTICE, __FILE__, ":", __LINE__,
+    Application::log.log(Log_Level::notice, __FILE__, ":", __LINE__,
             ": ", node);
     // Do not reload unless the reload action is explicitly called.
     if (loaded() && !test_flag(Moldable_Flags::allow_reload)) return;
@@ -39,16 +43,16 @@ void Moldable_Abstract_Parent::load(){
     // longer loading times up front.
     if (child_nodes.size() > 0)
     {
-        Application::log.log(Log_Level::NOTICE
+        Application::log.log(Log_Level::notice
                 ,__FILE__,"::load:",__LINE__," ", node);
         mApp;
-        const Moldable_Factory & f = app->get_factory();
-        for (stdd:string s : child_nodes)
+        Moldable_Factory & f = app->get_factory();
+        for (std::string s : child_nodes)
         {
-            Moldable* m = factor.create_moldable_widget(s);
+            Moldable* m = f.create_moldable_widget(s);
             addWidget(m);
-            Application::log.log(Log_Level::NOTICE,__FILE__,"::load:",__LINE__,
-                " ", node, "child added: ", m_child->get_node());
+            Application::log.log(Log_Level::notice,__FILE__,"::load:",__LINE__,
+                " ", node, "child added: ", m->get_node());
         }
     }
 }

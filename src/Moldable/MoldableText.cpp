@@ -5,10 +5,11 @@
  *      Author: tom
  */
 
-#include "Moldable_Text.h"
+#include "MoldableText.h"
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
-#include <Types/Widget_Assembly.h>
+#include <Types/WidgetAssembly.h>
+#include "../Config/inline_utils.h"
 
 Moldable_Text::Moldable_Text(Widget_Assembly* assembly) :
     Moldable(assembly, Mogu_Syntax::text)

@@ -10,7 +10,7 @@
 
 #include <string>
 #include "../../Moldable/Moldable.h"
-#include "Token_Manager.h"
+#include "TokenManager.h"
 
 namespace Parsers {
 

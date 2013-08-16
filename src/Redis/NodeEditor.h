@@ -1,10 +1,10 @@
 #ifndef NODEDITOR_H_
 #define NODEDITOR_H_
 
-#include "Mogu_Query_Handler.h"
+#include "MoguQueryHandler.h"
 #include "DatabaseConfigReader.h"
-#include "../Types/Node_Value.h"
-#include "../Types/Syntax_Def.h"
+#include "../Types/NodeValue.h"
+#include "../Types/SyntaxDef.h"
 #include "../Types/syntax.h"
 #include <cassert>
 #include <string>
@@ -92,7 +92,7 @@ public:
     inline void set_node(const std::string& node_)
     { node = node_;}
     
-    inline const Syntax_Def& policyType()
+    inline const Syntax_Def& policy_type()
     {
         set_policy();
         policy->append_query(

@@ -1,14 +1,14 @@
 #ifndef SYNTAXDEF_H_
 #define SYNTAXDEF_H_
 
-#include "Node_Value.h"
+#include "NodeValue.h"
 #include <string>
 
 struct Syntax_Def
 {
     int integer {};
-    std::string str{}
-    std::string human
+    const char* str = "";
+    const char* human = "";
 
     constexpr Syntax_Def (int i_, const char* s_, const char* h_)
         : integer(i_)
@@ -34,7 +34,7 @@ struct Syntax_Def
 
     inline bool operator== (const Node_Value& other) const
     { 
-        if (other.is_int()) return other==integer;
+        if (other.is_int()) return other.get_int()==integer;
         else if (other.is_string())
             return (other.get_string() == str)
                 || (other.get_string() == human);

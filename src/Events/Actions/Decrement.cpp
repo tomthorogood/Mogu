@@ -1,7 +1,6 @@
 #include "../Actions.h"
 #include "Includes.h"
-#include <Redis/Node_Editor.h>
-#include <Groups/Group_Manager.h>
+#include <Redis/NodeEditor.h>
 namespace Actions {
 
 void decr_db_val(Redis::Node_Editor& e, int decr_amt)
@@ -9,17 +8,17 @@ void decr_db_val(Redis::Node_Editor& e, int decr_amt)
     std::string s {e.read()};
     int i {atoi(s.c_str())};
     s = std::to_string(i-decr_amt);
-    node.write(s);
+    e.write(s);
 }
 
 void decrement (Moldable& broadcaster, Command_Value& v)
 {
     mApp;
     const Syntax_Def& o = Mogu_Syntax::get(v.get(Command_Flags::object));
-    Prefix p = syntax_to_prefix.at(object);
+    Prefix p = syntax_to_prefix.at(o);
     std::string id = (std::string) v.get(Command_Flags::identifier);
     Node_Value arg {};
-    Node_Value final {}
+    Node_Value final {};
     std::string str {};
     int value {};
 
@@ -30,7 +29,7 @@ void decrement (Moldable& broadcaster, Command_Value& v)
 
     if (v.get_flags() & (uint8_t) Command_Flags::value)
     {
-        value = (int) v.get(Command_Flags::value)
+        value = (int) v.get(Command_Flags::value);
     }
     else
     {
@@ -50,14 +49,14 @@ void decrement (Moldable& broadcaster, Command_Value& v)
             break;}
         
         case Mogu_Syntax::group:{
-            int g {app->get_group();}
-            Group_Manager m {g};
-            if (!m.has_read_access(identifier)) return;}
+            int g {app->get_group()};
+//            Group_Manager m {g};
+//            if (!m.has_read_access(identifier)) return;}
             node.set_id(g);
             decr_db_val(node, value);
-            break;
+            break;}
         case Mogu_Syntax::user:
-            node.set_id(app->get_id());
+            node.set_id(app->get_user());
             decr_db_val(node,value);
             break;
         case Mogu_Syntax::data:
@@ -65,9 +64,9 @@ void decrement (Moldable& broadcaster, Command_Value& v)
             break;
 
         case Mogu_Syntax::slot:{
-            Slot_Manager& m {app->slot_manager()};
-            str = m.retrieve_slot(id);
-            int i {atoi(str.c_str());}
+            Slot_Manager& m = app->get_slot_manager();
+            str = m.get_slot(id).get_string();
+            int i {atoi(str.c_str())};
             i -= value;
             str = std::to_string(i);
             final.set_string(str);
@@ -75,7 +74,7 @@ void decrement (Moldable& broadcaster, Command_Value& v)
             break;}
 
         case Mogu_Syntax::widget:{
-            Moldable* w {app->registered_widget(id)};
+            Moldable* w {app->get_widget(id)};
             w->get_attribute(s, final);
             if (final.is_string())
                 final.set_int(atoi(final.get_string().c_str()));

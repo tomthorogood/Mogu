@@ -42,15 +42,15 @@ public:
 
 protected:
     virtual void setup() {
-        Redis::QueryHandler* qh = spawnHandler(); 
-        qh->executeQuery("flushall");
+        Redis::Query_Handler* qh = spawnHandler(); 
+        qh->execute_query("flushall");
         delete qh;
     }
 
 private:
     Redis::Context* context;
-    inline Redis::QueryHandler* spawnHandler() {
-        return new Redis::QueryHandler(context);
+    inline Redis::Query_Handler* spawnHandler() {
+        return new Redis::Query_Handler(context);
     }
     void single_response();
     void multi_response();
@@ -64,48 +64,48 @@ private:
 
 void QueryHandlerTestSuite::single_response()
 {
-    Redis::QueryHandler* qh = spawnHandler();
+    Redis::Query_Handler* qh = spawnHandler();
 
-    qh->executeQuery("set foo bar");
-    TEST_ASSERT_MSG(qh->lastResponseType()==REDIS_REPLY_STATUS,
-        responseType(qh->lastResponseType()).c_str())
-    std::string response = qh->yieldResponse<std::string>();
+    qh->execute_query("set foo bar");
+    TEST_ASSERT_MSG(qh->last_response_type()==REDIS_REPLY_STATUS,
+        responseType(qh->last_response_type()).c_str())
+    std::string response = qh->yield_response<std::string>();
     TEST_ASSERT_MSG(response=="OK", response.c_str());
-    qh->executeQuery("del foo");
-    int iresponse = qh->yieldResponse<int>();
+    qh->execute_query("del foo");
+    int iresponse = qh->yield_response<int>();
     TEST_ASSERT(iresponse==1);
     delete qh;
 }
 
 void QueryHandlerTestSuite::multi_response()
 {
-    Redis::QueryHandler* qh = spawnHandler();
+    Redis::Query_Handler* qh = spawnHandler();
 
-    qh->appendQuery("set %s %s", "foo", "bar");
-    qh->appendQuery("del %s", "foo");
-    qh->appendQuery("hset %s %s %s", "foo", "bar", "baz");
-    qh->appendQuery("hset %s %s %s", "foo", "qux", "quux");
-    qh->appendQuery("hget %s %s", "foo","bar");
-    qh->appendQuery("hget %s %s", "foo", "qux");
-    qh->appendQuery("del %s", "foo");
-    qh->appendQuery("set foo 7");
-    qh->appendQuery("get foo");
-    qh->appendQuery("del foo");
+    qh->append_query("set %s %s", "foo", "bar");
+    qh->append_query("del %s", "foo");
+    qh->append_query("hset %s %s %s", "foo", "bar", "baz");
+    qh->append_query("hset %s %s %s", "foo", "qux", "quux");
+    qh->append_query("hget %s %s", "foo","bar");
+    qh->append_query("hget %s %s", "foo", "qux");
+    qh->append_query("del %s", "foo");
+    qh->append_query("set foo 7");
+    qh->append_query("get foo");
+    qh->append_query("del foo");
 
-    std::string reply_set_string = qh->yieldResponse<std::string>();
-    TEST_ASSERT_MSG(qh->lastResponseType()==REDIS_REPLY_STATUS,
-        responseType(qh->lastResponseType()).c_str() );
+    std::string reply_set_string = qh->yield_response<std::string>();
+    TEST_ASSERT_MSG(qh->last_response_type()==REDIS_REPLY_STATUS,
+        responseType(qh->last_response_type()).c_str() );
 
-    std::string reply_del_string = qh->yieldResponse<std::string>();
-    TEST_ASSERT(qh->lastResponseType()==REDIS_REPLY_INTEGER);
-    int reply_hset_1 = qh->yieldResponse<int>();
-    int reply_hset_2 = qh->yieldResponse<int>();
-    std::string reply_hget_1 = qh->yieldResponse <std::string>();
-    std::string reply_hget_2 = qh->yieldResponse <std::string>();
-    int reply_del_hash = qh->yieldResponse<int>();
-    std::string reply_set_int = qh->yieldResponse <std::string>();
-    int reply_get_int = qh->yieldResponse <int>();
-    int reply_del_int = qh->yieldResponse <int>();
+    std::string reply_del_string = qh->yield_response<std::string>();
+    TEST_ASSERT(qh->last_response_type()==REDIS_REPLY_INTEGER);
+    int reply_hset_1 = qh->yield_response<int>();
+    int reply_hset_2 = qh->yield_response<int>();
+    std::string reply_hget_1 = qh->yield_response <std::string>();
+    std::string reply_hget_2 = qh->yield_response <std::string>();
+    int reply_del_hash = qh->yield_response<int>();
+    std::string reply_set_int = qh->yield_response <std::string>();
+    int reply_get_int = qh->yield_response <int>();
+    int reply_del_int = qh->yield_response <int>();
 
     TEST_ASSERT_MSG(reply_set_string=="OK", reply_set_string.c_str());
     TEST_ASSERT_MSG(reply_del_string=="1", reply_del_string.c_str());
@@ -123,28 +123,28 @@ void QueryHandlerTestSuite::multi_response()
 
 void QueryHandlerTestSuite::multi_flush()
 {
-    Redis::QueryHandler* qh = spawnHandler();
+    Redis::Query_Handler* qh = spawnHandler();
 
-    qh->executeQuery("dbsize");
-    TEST_ASSERT(qh->yieldResponse<int>()==0);
+    qh->execute_query("dbsize");
+    TEST_ASSERT(qh->yield_response<int>()==0);
 
-    qh->appendQuery("rpush foo bar");
-    qh->appendQuery("rpush foo baz");
-    qh->appendQuery("rpush foo qux");
-    qh->appendQuery("rpush foo quux");
+    qh->append_query("rpush foo bar");
+    qh->append_query("rpush foo baz");
+    qh->append_query("rpush foo qux");
+    qh->append_query("rpush foo quux");
 
     qh->flush();
 
-    qh->appendQuery("llen foo");
-    int sz = qh->yieldResponse<int>();
+    qh->append_query("llen foo");
+    int sz = qh->yield_response<int>();
     TEST_ASSERT_MSG(sz==4, std::to_string(sz).c_str());
-    qh->appendQuery("lrange foo 0 %d", sz);
+    qh->append_query("lrange foo 0 %d", sz);
 
     std::vector <std::string> v = qh->
-        yieldResponse<std::vector<std::string>>();
+        yield_response<std::vector<std::string>>();
     TEST_ASSERT_MSG(
-        qh->lastResponseType()==REDIS_REPLY_ARRAY,
-        responseType(qh->lastResponseType()).c_str());
+        qh->last_response_type()==REDIS_REPLY_ARRAY,
+        responseType(qh->last_response_type()).c_str());
 
     TEST_ASSERT_MSG(v.size()==4,
             std::to_string(v.size()).c_str());
@@ -154,40 +154,40 @@ void QueryHandlerTestSuite::multi_flush()
     TEST_ASSERT(v[2]=="qux");
     TEST_ASSERT(v[3]=="quux");
 
-    qh->executeQuery("del foo");
+    qh->execute_query("del foo");
     delete qh;
 }
 
 void QueryHandlerTestSuite::combined_use()
 {
-    Redis::QueryHandler* qh = spawnHandler();
+    Redis::Query_Handler* qh = spawnHandler();
 
-    qh->appendQuery("hset foo bar baz");            //a1
-    qh->appendQuery("hset foo qux quux");           //a2
-    qh->executeQuery("hexists foo bar");            //e1
-    TEST_ASSERT(qh->yieldResponse<bool>()==false);  //-e1
-    qh->appendQuery("hget foo bar");                //a3
-    qh->appendQuery("hget foo qux");                //a4
-    qh->executeQuery("hget foo bar");               //e2
-    TEST_ASSERT(qh->yieldResponse<bool>()==false);  //-e2
-    TEST_ASSERT(qh->yieldResponse<int>()==1);       //-a1
-    qh->executeQuery("hget foo bar");               //e3
-    TEST_ASSERT(qh->yieldResponse<std::string>()=="baz"); //-e3
+    qh->append_query("hset foo bar baz");            //a1
+    qh->append_query("hset foo qux quux");           //a2
+    qh->execute_query("hexists foo bar");            //e1
+    TEST_ASSERT(qh->yield_response<bool>()==false);  //-e1
+    qh->append_query("hget foo bar");                //a3
+    qh->append_query("hget foo qux");                //a4
+    qh->execute_query("hget foo bar");               //e2
+    TEST_ASSERT(qh->yield_response<bool>()==false);  //-e2
+    TEST_ASSERT(qh->yield_response<int>()==1);       //-a1
+    qh->execute_query("hget foo bar");               //e3
+    TEST_ASSERT(qh->yield_response<std::string>()=="baz"); //-e3
     qh->flush();                                    //-a2,-a3,-a4
-    TEST_ASSERT(qh->replyString()=="quux");         //*a4
-    qh->executeQuery("del foo");
+    TEST_ASSERT(qh->reply_string()=="quux");         //*a4
+    qh->execute_query("del foo");
 
     delete qh;
 }
 
 void QueryHandlerTestSuite::map_fill()
 {
-    Redis::QueryHandler* qh = spawnHandler();
-    qh->appendQuery("hset foo bar baz");
-    qh->appendQuery("hset foo qux quux");
-    qh->appendQuery("hgetall foo");
+    Redis::Query_Handler* qh = spawnHandler();
+    qh->append_query("hset foo bar baz");
+    qh->append_query("hset foo qux quux");
+    qh->append_query("hgetall foo");
     qh->flush();
-    std::map <std::string,std::string> m= qh-> yieldResponse<std::map<std::string,std::string>>();
+    std::map <std::string,std::string> m= qh-> yield_response<std::map<std::string,std::string>>();
     TEST_ASSERT(m["bar"] == "baz");
     TEST_ASSERT(m["qux"] == "quux");
 
@@ -196,34 +196,34 @@ void QueryHandlerTestSuite::map_fill()
 
 void QueryHandlerTestSuite::multiple_handlers()
 {
-    Redis::QueryHandler* qh1 = spawnHandler();
-    Redis::QueryHandler* qh2 = spawnHandler();
+    Redis::Query_Handler* qh1 = spawnHandler();
+    Redis::Query_Handler* qh2 = spawnHandler();
 
-    qh1->appendQuery("set foo bar");            //1a1
-    qh1->appendQuery("set bar baz");            //1a2
-    qh2->appendQuery("set bar bop");            //2a1
-    qh2->appendQuery("set fizz bang");          //2a2
-    qh1->executeQuery("get fizz");              //1e1
+    qh1->append_query("set foo bar");            //1a1
+    qh1->append_query("set bar baz");            //1a2
+    qh2->append_query("set bar bop");            //2a1
+    qh2->append_query("set fizz bang");          //2a2
+    qh1->execute_query("get fizz");              //1e1
 
-    std::string res_1e1 = qh1->yieldResponse<std::string>(); //-1e1
+    std::string res_1e1 = qh1->yield_response<std::string>(); //-1e1
     TEST_ASSERT_MSG(res_1e1.empty(), res_1e1.c_str());
     qh1->flush();
     qh2->flush();
-    qh1->executeQuery("get fizz");
-    TEST_ASSERT(qh1->yieldResponse<std::string>()=="bang");
-    qh2->executeQuery("get bar");
-    qh1->executeQuery("get bar");
+    qh1->execute_query("get fizz");
+    TEST_ASSERT(qh1->yield_response<std::string>()=="bang");
+    qh2->execute_query("get bar");
+    qh1->execute_query("get bar");
     TEST_ASSERT(
-        qh1->yieldResponse<std::string>() ==
-        qh2->yieldResponse<std::string>());
+        qh1->yield_response<std::string>() ==
+        qh2->yield_response<std::string>());
 
-    qh1->appendQuery("del foo");
-    qh2->appendQuery("del bar");
-    qh1->appendQuery("del fizz");
-    qh2->appendQuery("dbsize");
+    qh1->append_query("del foo");
+    qh2->append_query("del bar");
+    qh1->append_query("del fizz");
+    qh2->append_query("dbsize");
     qh1->flush();
     qh2->flush();
-    TEST_ASSERT(qh2->yieldResponse<int>()==0);
+    TEST_ASSERT(qh2->yield_response<int>()==0);
 
     delete qh1;
     delete qh2;
@@ -231,9 +231,9 @@ void QueryHandlerTestSuite::multiple_handlers()
 
 void QueryHandlerTestSuite::errors_handled()
 {
-    Redis::QueryHandler* qh = spawnHandler();
-    qh->appendQuery("get foo");
-    std::string r = qh->yieldResponse<std::string>();
+    Redis::Query_Handler* qh = spawnHandler();
+    qh->append_query("get foo");
+    std::string r = qh->yield_response<std::string>();
     TEST_ASSERT_MSG(r=="",r.c_str());
     delete qh;
 }

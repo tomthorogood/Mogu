@@ -5,7 +5,7 @@
  *      Author: tom
  */
 
-#include "String_Map.h"
+#include "StringMap.h"
 
 void String_Map::erase_through (size_t first, size_t last)
 {

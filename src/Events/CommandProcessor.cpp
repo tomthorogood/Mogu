@@ -1,5 +1,5 @@
-#include "Command_Processor.h"
-#include "../Types/Command_Value.h"
+#include "CommandProcessor.h"
+#include "../Types/CommandValue.h"
 #include "Actions.h"
 
 
@@ -27,9 +27,6 @@ void Command_Processor::process_command(Command_Value& v)
             break;
         case Mogu_Syntax::append:
             Actions::append(broadcaster,v);
-            break;
-        case Mogu_Syntax::reset:
-            Actions::reset(broadcaster,v);
             break;
         case Mogu_Syntax::remove:
             Actions::remove(broadcaster,v);

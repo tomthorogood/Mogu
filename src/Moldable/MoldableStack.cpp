@@ -4,7 +4,7 @@
  */
 
 
-#include "Moldable_Stack.h"
+#include "MoldableStack.h"
 #include <Wt/WAnimation>
 #include <Types/WidgetAssembly.h>
 

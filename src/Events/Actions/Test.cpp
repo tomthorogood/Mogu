@@ -1,6 +1,11 @@
 #include "../Actions.h"
 #include "Includes.h"
 #include <Types/MoguLogger.h>
+#include "../../Config/inline_utils.h"
+
+namespace Application {
+    extern Mogu_Logger log;
+}
 
 namespace Actions {
 
@@ -16,7 +21,7 @@ void test(Moldable& broadcaster, Command_Value& v)
     // much easier to understand than the previous implementation.
     std::string state = v.join_state();
 
-    app->interpreter().give_input(state, value);
+    app->get_interpreter().give_input(state, value);
     if (value.is_string())
         value.set_string(stripquotes(value.get_string()));
 

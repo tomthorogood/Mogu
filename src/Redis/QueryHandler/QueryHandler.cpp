@@ -3,17 +3,17 @@
 #include <iostream>
 namespace Redis {
 
-QueryHandler::QueryHandler(Context* c_)
-    : context (c_), c(spawnContext())
+Query_Handler::Query_Handler(Context* c_)
+    : context (c_), c(spawn_context())
 {
 }
 
-QueryHandler::~QueryHandler()
+Query_Handler::~Query_Handler()
 {
     redisFree(c);
 }
 
-redisContext* QueryHandler::spawnContext()
+redisContext* Query_Handler::spawn_context()
 {
     if (!context) return nullptr;
     redisContext* rdb = redisConnect(context->host.c_str(), context->port);
@@ -27,32 +27,32 @@ redisContext* QueryHandler::spawnContext()
     return rdb;
 }
 
-void QueryHandler::executeQuery(const std::string& str, ...)
+void Query_Handler::execute_query(const std::string& str, ...)
 {
     queue_reply = false;
-    redisContext* rdb = spawnContext();
+    redisContext* rdb {spawn_context()};
     va_list args;
     va_start(args,str);
-    SafeReplyObject r(redisvCommand(rdb,str.c_str(),args));
-    handleReply(r);
+    Safe_Reply_Object r(redisvCommand(rdb,str.c_str(),args));
+    handle_reply(r);
     va_end(args);
     redisFree(rdb);
 }
 
-void QueryHandler::appendQuery(const std::string& str, ...)
+void Query_Handler::append_query(const std::string& str, ...)
 {
     va_list args;
     va_start(args,str);
-    int status = redisvAppendCommand(c,str.c_str(),args);
+    int status {redisvAppendCommand(c,str.c_str(),args)};
     if (status != REDIS_ERR)
         ++remaining_replies;
     va_end(args);
 }
 
-void QueryHandler::handleReply(SafeReplyObject r)
+void Query_Handler::handle_reply(Safe_Reply_Object r)
 {
-    reply_str = "";
-    reply_int = 0;
+    reply_str_ = "";
+    reply_int_ = 0;
     if (reply_vec.size() > 0) reply_vec.clear();
     reply_type = r.type();
 
@@ -61,36 +61,36 @@ void QueryHandler::handleReply(SafeReplyObject r)
         case REDIS_REPLY_STRING:
         case REDIS_REPLY_ERROR:
         case REDIS_REPLY_STATUS:
-            reply_str = r.str();
+            reply_str_ = r.str();
             break;
         case REDIS_REPLY_INTEGER:
-            reply_int = r.integer();
+            reply_int_ = r.integer();
             break;
         case REDIS_REPLY_ARRAY:
-            unpackArray(r);
+            unpack_array(r);
             break;
         default: 
             break;
     }
 }
 
-void QueryHandler::flush()
+void Query_Handler::flush()
 {
     while(remaining_replies)
     {
-        nextReply();
+        next_reply();
     }
 }
 
-void QueryHandler::unpackArray(SafeReplyObject& r)
+void Query_Handler::unpack_array(Safe_Reply_Object& r)
 {
     for (int i =0; i < r.elements(); ++i)
     {
-        insertVectorElement(r.element(i),reply_vec);
+        insert_vector_element(r.element(i),reply_vec);
     }
 }
 
-void QueryHandler::insertVectorElement(redisReply* r, std::vector <std::string>& v)
+void Query_Handler::insert_vector_element(redisReply* r, std::vector <std::string>& v)
 {
     if (!r) return;
     switch(r->type)
@@ -108,7 +108,7 @@ void QueryHandler::insertVectorElement(redisReply* r, std::vector <std::string>&
     }
 }
 
-int QueryHandler::consumeReply(redisContext* rdb, SafeReplyObject& r)
+int Query_Handler::consume_reply(redisContext* rdb, Safe_Reply_Object& r)
 {
     if (!remaining_replies)
         return REDIS_REPLY_ERROR;
@@ -120,7 +120,7 @@ int QueryHandler::consumeReply(redisContext* rdb, SafeReplyObject& r)
     return status;
 }
 
-bool QueryHandler::nextReply()
+bool Query_Handler::next_reply()
 {
     // Since singleton queries use their own redis context,
     // we've already done all the work we need in order to
@@ -130,63 +130,63 @@ bool QueryHandler::nextReply()
         return true;
     }
    
-    SafeReplyObject r; 
-    int status = (consumeReply(c,r));
+    Safe_Reply_Object r {};
+    int status {consume_reply(c,r)};
     if (status != REDIS_REPLY_ERROR && r)
     {
-        handleReply(r);
+        handle_reply(r);
     }
 
     return status != REDIS_REPLY_ERROR;
 }
 
 template<>
-int QueryHandler::yieldResponse <int>()
+int Query_Handler::yield_response <int>()
 {
-    if (!nextReply())
+    if (!next_reply())
         return 0;
     else if (reply_type == REDIS_REPLY_INTEGER)
-        return reply_int;
-    else if (!reply_str.empty())
+        return reply_int_;
+    else if (!reply_str_.empty())
     {
-        if (isdigit(reply_str[0]))
-            return atoi(reply_str.c_str());
+        if (isdigit(reply_str_[0]))
+            return atoi(reply_str_.c_str());
     }
     return 0;
 }
 
 template<>
-std::string QueryHandler::yieldResponse <std::string>()
+std::string Query_Handler::yield_response <std::string>()
 {
-    if (!nextReply())
+    if (!next_reply())
         return "";
     else if (
             reply_type == REDIS_REPLY_STRING
             || reply_type == REDIS_REPLY_STATUS
             || reply_type == REDIS_REPLY_ERROR)
-        return reply_str;
+        return reply_str_;
     else if (reply_type == REDIS_REPLY_NIL)
         return "";
     else
-        return std::to_string(reply_int);
+        return std::to_string(reply_int_);
 }
 
 template<>
-std::vector <std::string> QueryHandler::yieldResponse <std::vector<std::string>>()
+std::vector <std::string> Query_Handler::yield_response <std::vector<std::string>>()
 {
-    nextReply();
+    next_reply();
     return reply_vec;
 }
 
 template<>
-bool QueryHandler::yieldResponse<bool>()
+bool Query_Handler::yield_response<bool>()
 {
-    if (!nextReply())
+    if (!next_reply())
         return false;
     else if (reply_type==REDIS_REPLY_INTEGER)
-        return static_cast<bool>(reply_int);
+        return static_cast<bool>(reply_int_);
     else if (reply_type==REDIS_REPLY_STRING)
-        return !reply_str.empty();
+        return !reply_str_.empty();
     else if (reply_type==REDIS_REPLY_ARRAY)
         return reply_vec.size() > 0;
     else
@@ -196,9 +196,9 @@ bool QueryHandler::yieldResponse<bool>()
 
 template<>
 std::map <std::string,std::string> 
-    QueryHandler::yieldResponse<std::map<std::string,std::string>>()
+    Query_Handler::yield_response<std::map<std::string,std::string>>()
 {
-    std::map <std::string,std::string> m;
+    std::map <std::string,std::string> m {};
     if (reply_vec.size() % 2 != 0) return m;
     for (int i = 0; i < reply_vec.size(); ++i)
     {

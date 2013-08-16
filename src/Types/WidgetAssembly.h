@@ -9,7 +9,7 @@
 
 struct Widget_Assembly
 {
-    std::map <int,NodeValue> attrdict {};
+    std::map <int,Node_Value> attrdict {};
     std::vector <std::string> children {};
     std::vector <std::string> triggers {};
     
@@ -23,14 +23,9 @@ struct Widget_Assembly
     std::string tmpl {};
     Trigger_Map* trigger_map {};
 
-    void set_trigger_prefix(Prefix p)
-    {
-        std::string trigger_node = (p==Prefix::widgets) ? node : tmpl;
-        if (trigger_map) delete trigger_map;
-        trigger_map = new Trigger_Map(triggers.size(), prefix, trigger_node);
-    }
+    Widget_Assembly(){}
 
-    Widget_Assembly& operator=(const WidgetAssembly& other)
+    Widget_Assembly& operator=(const Widget_Assembly& other)
     {
         attrdict = other.attrdict;
         children = other.children;
@@ -42,7 +37,7 @@ struct Widget_Assembly
         return *this;
     }
 
-    Widget_Assembly(Widget_Assembly& other)
+    Widget_Assembly(const Widget_Assembly& other)
     {
         attrdict = other.attrdict;
         children = other.children;
@@ -62,20 +57,20 @@ struct Widget_Assembly
         node = other.node;
         tmpl = other.tmpl;
         trigger_map = other.trigger_map;
-
-        other.attrdict.clear();
-        other.children.clear();
-        other.triggers.clear();
-        other.anonymous_children.clear();
-        other.node = "";
-        other.tmpl = "";
-        other.trigger_map = nullptr;
     }
 
     ~Widget_Assembly()
     {
         if (trigger_map) delete trigger_map;
     }
+    
+    void set_trigger_prefix(Prefix p)
+    {
+        std::string trigger_node = (p==Prefix::widgets) ? node : tmpl;
+        if (trigger_map) delete trigger_map;
+        trigger_map = new Trigger_Map(triggers.size(), p, trigger_node);
+    }
+
 
 };
 

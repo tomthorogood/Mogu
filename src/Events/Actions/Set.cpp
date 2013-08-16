@@ -1,6 +1,12 @@
 #include "Includes.h"
 #include "../Actions.h"
+#include "../../Config/inline_utils.h"
 #include <Redis/NodeEditor.h>
+
+namespace Application {
+    extern Mogu_Logger log;
+}
+
 namespace Actions {
 
 namespace {
@@ -10,7 +16,7 @@ namespace {
 
     inline const uint8_t logic_flags (const Command_Value& v)
     {
-        if (v.test(Command_Flags::value)
+        if (v.test(Command_Flags::value))
             return v.test(Command_Flags::identifier) ? set_field : set_user_from_value;
         return set_user_from_slot;
     }
@@ -18,7 +24,7 @@ namespace {
     inline bool login_user(std::string& username)
     {
         mApp;
-        std::string pw {app->slot_manager().retrieve_slot("USERAUTH")};
+        std::string pw {app->get_slot_manager().get_slot("USERAUTH").get_string()};
         Security_Status s {app->get_user_manager().login_user(username,pw)};
         return s == Security_Status::ok_login;
     }
@@ -26,7 +32,7 @@ namespace {
     inline bool do_set_user_from_slot()
     {
         mApp;
-        std::string u {app->slot_manager().retrieve_slot("USERNAME")};
+        std::string u {app->get_slot_manager().get_slot("USERNAME").get_string()};
         return login_user(u);
     }
 
@@ -67,8 +73,8 @@ void set (Moldable& broadcaster, Command_Value& v)
             }
             else if (f == set_user_from_value)
             {
-                std::string val {v.get(Command_Flags::value)};
-                if (!set_user_from_value(val))
+                std::string val {v.get(Command_Flags::value).get_string()};
+                if (!do_set_user_from_value(val))
                     broadcaster.fail().emit();
                 else
                     broadcaster.succeed().emit();
@@ -86,7 +92,6 @@ void set (Moldable& broadcaster, Command_Value& v)
          {
              Node_Value arg {};
              bool has_arg {v.test(Command_Flags::arg)};
-             Node_Value arg {};
              if (has_arg) arg = v.get(Command_Flags::arg);
              Prefix p {syntax_to_prefix.at(o)};
              std::string id {v.get_identifier()};
@@ -104,13 +109,13 @@ void set (Moldable& broadcaster, Command_Value& v)
                     "Attempting to set a slot that no name. ",
                     "Something has gone terribly wrong!");
             }
-            app->slot_manager().set_slot(s,n);
+            app->get_slot_manager().set_slot(s,n);
             break;}
         case Mogu_Syntax::widget:{   // set arbitrary widget attribute
             Moldable* w {app->get_widget(v.get_identifier())};
             if (!w) break;
             const Syntax_Def& a {Mogu_Syntax::get(v.get(Command_Flags::arg))};
-            w->set_attribute(a, v.get(Command_Flags::VALUE));
+            w->set_attribute(a, v.get(Command_Flags::value));
             break;}
         default: break; // If bad input, stop immediately
     }

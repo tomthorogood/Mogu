@@ -1,23 +1,24 @@
 /*
- * Molable_Input.cpp
+ * Moldable_Input.cpp
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
  */
 
-#include "Molable_Input.h"
+#include "MoldableInput.h"
 #include <Validators/Validators.h>
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
-#include <Types/Widget_Assembly.h>
+#include <Types/WidgetAssembly.h>
+#include "../Config/inline_utils.h"
 
-Molable_Input::Molable_Input (Widget_Assembly* assembly)
+Moldable_Input::Moldable_Input (Widget_Assembly* assembly)
 : Moldable(assembly, Mogu_Syntax::input)
 {
     init(assembly);
 }
 
-void Molable_Input::init(Widget_Assembly* assembly)
+void Moldable_Input::init(Widget_Assembly* assembly)
 {
     assembly_txt = (std::string) assembly->attrdict[Mogu_Syntax::text.integer];
     assembly_validator = (std::string)
@@ -25,7 +26,7 @@ void Molable_Input::init(Widget_Assembly* assembly)
     initialize_input();
 }
 
-void Molable_Input::initialize_input()
+void Moldable_Input::initialize_input()
 {
     if (input)
     {
@@ -43,7 +44,7 @@ void Molable_Input::initialize_input()
     {
         validator_ptr = Validators::create_validator(validator);
         input->setValidator(validator_ptr);
-        input->keyWentUp().connect(this, &Molable_Input::validate);
+        input->keyWentUp().connect(this, &Moldable_Input::validate);
     }
     addWidget(input);
 }

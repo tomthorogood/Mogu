@@ -7,7 +7,7 @@
 
 
 #include "../Actions.h"
-#include <Types/Command_Value.h>
+#include <Types/CommandValue.h>
 #include <Mogu.h>
 
 namespace Actions
@@ -15,7 +15,7 @@ namespace Actions
 
 void clear(Moldable& broadcaster, Command_Value& v)
 {
-    switch(Mogu_Syntax::get(v.get(Command_Flags::OBJECT)).integer)
+    switch(Mogu_Syntax::get(v.get(Command_Flags::object)).integer)
     {
     case Mogu_Syntax::own:
         broadcaster.clear();

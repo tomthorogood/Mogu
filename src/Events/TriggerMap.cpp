@@ -5,7 +5,7 @@
  *      Author: tom
  */
 
-#include "Trigger_Map.h"
+#include "TriggerMap.h"
 #include <Redis/MoguQueryHandler.h>
 #include <Redis/DatabaseConfigReader.h>
 
@@ -14,7 +14,7 @@ Trigger_Map::Trigger_Map(const int& i, Prefix p, const std::string& n)
 :map()
 {
     Redis::Mogu_Query_Handler q {p};
-    std::string g {prefix_map().at(prefix)};
+    std::string g {prefix_map().at(p)};
 
     q.append_query("lrange %s.%s.events 0 %d", g.c_str(), n.c_str(), i);
 
@@ -22,7 +22,7 @@ Trigger_Map::Trigger_Map(const int& i, Prefix p, const std::string& n)
      * and for each of those retrieve the list of commands, appending
      * the commands to the trigger's command queue
      */
-    for (std::string s : db.yield_response <std::vector <std::string>>())
+    for (std::string s : q.yield_response <std::vector <std::string>>())
     {
 
         //Convert "12" to 12
@@ -33,25 +33,26 @@ Trigger_Map::Trigger_Map(const int& i, Prefix p, const std::string& n)
         // Get the number of commands associated with that trigger
         q.append_query("llen %s.%s.events.%d", g.c_str(), n.c_str(), t);
         
-        int r = db.yield_response<int>();
-        db.append_query("lrange %s.%s.events.%d 0 %d", g.c_str(), n.c_str(),t,r);
+        int r = q.yield_response<int>();
+        q.append_query("lrange %s.%s.events.%d 0 %d", g.c_str(), n.c_str(),t,r);
 
         // Store the commands in the trigger queue
-        for (std::string cmd : db.yield_response <std::vector <std::string>>())
+        for (std::string cmd : q.yield_response <std::vector <std::string>>())
         {
             map[(int)Mogu_Syntax::get(t)].push(cmd);
         }
     }
 }
 
-Trigger_Map::extend_map(std::unordered_map <int, std::queue <std::string>> m)
+void Trigger_Map::extend_map(std::unordered_map <int, std::queue <std::string>> m)
 {
     for (auto i : m)
     {
-        int t {i->first};
-        while (i->first.size())
+        int t {i.first};
+        std::queue<std::string> q {i.second};
+        while (i.second.size())
         {
-            std::string s {q.first()};
+            std::string s {q.front()};
             q.pop();
             map[t].push(s);
         }

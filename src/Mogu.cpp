@@ -18,11 +18,12 @@ ed * preview.cpp
 #include "Factories/MoldableFactory.h"
 #include "Events/PerspectiveHandler.h"
 #include "Redis/NodeEditor.h"
+#include "Config/inline_utils.h"
 
 Mogu::Mogu(
     const Wt::WEnvironment& env)
     : Wt::WApplication(env)
-    , moldable_factory(this)
+    , moldable_factory()
 {
 
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());

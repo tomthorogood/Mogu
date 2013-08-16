@@ -4,8 +4,7 @@
  *  Created on: March 12th, 2013
  *      Author: cameron
  */
-
-#include <Parsers/NodeValueParser/Math_Parser.h>
+#include "MathParser.h"
 #include <Types/syntax.h>
 #include <cassert>
 #include <cstdlib>
@@ -13,6 +12,13 @@
 #include <iostream>
 
 namespace Parsers {
+
+namespace {
+    bool is_operator(const int& t)
+    {
+        return (t > 100000) && (t != Mogu_Syntax::TOKEN_DELIM.integer);
+    }
+}
 
 int Math_Parser::process_input()
 {

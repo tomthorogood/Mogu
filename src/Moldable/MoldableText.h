@@ -13,8 +13,8 @@
 
 class Moldable_Text : public Moldable
 {
-    Wt::WText* text {}
-    std::string assembly_text {}
+    Wt::WText* text {};
+    std::string assembly_text {};
     void initialize_text();
 
 protected:

@@ -5,9 +5,9 @@
  *      Author: tom
  */
 
-#include "Command_Value.h"
+#include "CommandValue.h"
 #include <Moldable/Moldable.h>
-#include <Types/Node_Value.h>
+#include <Types/NodeValue.h>
 #include <Redis/NodeEditor.h>
 
 Command_Value::Command_Value(Moldable& widget)
@@ -18,11 +18,14 @@ uint8_t Command_Value::set(const Command_Flags& flag, Node_Value v)
 {
     switch(flag)
     {
+        case Command_Flags::object:
+            object = v;
+            break;
+        case Command_Flags::r_object:
+            r_object = v;
+            break;
         case Command_Flags::action:
             action = v;
-            break;
-        case Command_Flags::object:
-            object = Mogu_Syntax::get(v);
             break;
         case Command_Flags::identifier:
             identifier = v;
@@ -32,9 +35,6 @@ uint8_t Command_Value::set(const Command_Flags& flag, Node_Value v)
             break;
         case Command_Flags::value:
             value = v;
-            break;
-        case Command_Flags::r_object:
-            r_object = v;
             break;
         case Command_Flags::r_identifier:
             r_identifier = v;
@@ -50,16 +50,17 @@ uint8_t Command_Value::set(const Command_Flags& flag, Node_Value v)
 
 uint8_t Command_Value::set(const Command_Flags& flag, const Syntax_Def& v)
 {
+    Node_Value n{v.integer};
     switch(flag)
     {
         case Command_Flags::object:
-            object = v;
+            object = n;
             break;
         case Command_Flags::r_object:
-            r_object = v;
+            r_object = n;
             break;
         case Command_Flags::action:
-            action = v;
+            action = n;
             break;
         default: break;
     };
@@ -67,15 +68,15 @@ uint8_t Command_Value::set(const Command_Flags& flag, const Syntax_Def& v)
     return flags;
 }
 
-Node_Value Command_Value::get(Command_Flags flag) const
+Node_Value& Command_Value::get(Command_Flags flag)
 {
     switch(flag)
     {
         case Command_Flags::action:
-            return Node_Value((int) action);
+            return action;
 
         case Command_Flags::object:
-            return Node_Value(int(object));
+            return object;
 
         case Command_Flags::identifier:
             return identifier;
@@ -87,15 +88,15 @@ Node_Value Command_Value::get(Command_Flags flag) const
             return value;
 
         case Command_Flags::r_object:
-            return Node_Value((int)r_object);
+            return r_object;
 
         case Command_Flags::r_identifier:
             return r_identifier;
 
         case Command_Flags::r_arg:
             return r_arg;
-        
-        default: return Node_Value();
+        default:
+            return identifier;
     };
 }
 
@@ -115,7 +116,7 @@ bool Command_Value::object_is_reduceable(bool r)
         local_obj.set_int((int) r_object);
         arg_flag = Command_Flags::r_arg;
         id_flag = Command_Flags::r_identifier;
-        obj_flag = r_object;
+        obj_flag = Command_Flags::r_object;
     }
 
     if (!test(obj_flag)) return false;
@@ -141,7 +142,7 @@ bool Command_Value::object_is_reduceable(bool r)
    
     Prefix p {syntax_to_prefix.at(Mogu_Syntax::get(local_obj))};
     
-    Redis::Node_Edtir node {p, (std::string) local_id}
+    Redis::Node_Editor node {p, (std::string) local_id};
     
     const Syntax_Def& node_type = node.get_type();
 
@@ -156,7 +157,7 @@ std::string Command_Value::join_state(bool r)
 {
     Node_Value local_obj {(int) object};
     Command_Flags arg_flag {Command_Flags::arg};
-    Command_Flags obj_flag {Commad_Flags::object};
+    Command_Flags obj_flag {Command_Flags::object};
     Command_Flags id_flag {Command_Flags::identifier};
     Node_Value& local_arg = r ? r_arg : arg;
     Node_Value& local_id = r ? r_identifier : identifier;
@@ -164,9 +165,9 @@ std::string Command_Value::join_state(bool r)
     if (r)
     {
         local_obj.set_int((int) r_object);
-        arg_flag = r_arg;
-        obj_flag = r_object;
-        id_flag = r_identifier;
+        arg_flag = Command_Flags::r_arg;
+        obj_flag = Command_Flags::r_object;
+        id_flag = Command_Flags::r_identifier;
     }
 
     if (!test(obj_flag)) return "";

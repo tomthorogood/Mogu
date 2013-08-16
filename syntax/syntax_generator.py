@@ -43,23 +43,23 @@ with open("cpp_template.cpp","r") as f:
 
 PY_ADDITIONS = """
 def as_integer(string):
-    global MoguSyntax
-    return MoguSyntax[string.strip()][0]
+    global Mogu_Syntax
+    return Mogu_Syntax[string.strip()][0]
 
 def as_string(integer):
-    global MoguSyntax
+    global Mogu_Syntax
     integer = integer.strip()
     if int(integer) == 0:
         return "0"
-    reverseDict = dict.fromkeys(MoguSyntax,None)
-    for key in MoguSyntax:
-        ival = MoguSyntax[key][0]
+    reverseDict = dict.fromkeys(Mogu_Syntax,None)
+    for key in Mogu_Syntax:
+        ival = Mogu_Syntax[key][0]
         reverseDict[ival] = key
     return reverseDict[int(integer)]
 """
 
 OPERATORS=OrderedDict([
-        # Will be in the c++ form: SyntaxDef KEY (VAL[0],"KEY");
+        # Will be in the c++ form: Syntax_Def KEY (VAL[0],"KEY");
         # Syntactical operators (as opposed to placeholders)
         # will be represented in Python with:
         #   MoguOperators[KEY] = (val[0],[val1])
@@ -159,13 +159,13 @@ class SyntaxTableRow(object):
         self.enumerated = EnumeratedValue(parsed_input["enum"])
         self.notes = TokenNotes(parsed_input["notes"])
 
-class SyntaxDefDecl(object):
+class Syntax_DefDecl(object):
     def __init__(self, identifier, integer):
         self.identifier = identifier
         self.integer = str(integer)
 
     def __str__(self):
-        return '\tconstexpr const SyntaxDef %(identifier)s (%(integer)s, "%(integer)s","%(identifier)s");' % self.__dict__
+        return '\tconstexpr const Syntax_Def %(identifier)s (%(integer)s, "%(integer)s","%(identifier)s");' % self.__dict__
 
 class InitializerLine(object):
     def __init__(self, key, value):
@@ -267,10 +267,10 @@ def generate_cpp(enum_name, entries):
             }
     syntax_definition_list = []
     for entry in entries:
-        definition = SyntaxDefDecl(entry[0],entry[1])
+        definition = Syntax_DefDecl(entry[0],entry[1])
         syntax_definition_list.append(str(definition))
     for entry in OPERATORS:
-        definition = SyntaxDefDecl(entry,OPERATORS[entry][0])
+        definition = Syntax_DefDecl(entry,OPERATORS[entry][0])
         syntax_definition_list.append(str(definition))
     output["syntax_definitions"] = "\n".join(syntax_definition_list)
 
@@ -278,24 +278,24 @@ def generate_cpp(enum_name, entries):
     hmap_tpl = OrderedDict()
     smap_tpl = OrderedDict()
     for entry in entries:
-        imap_tpl[str(entry[1])] = "MoguSyntax::%s" % entry[0]
-        hmap_tpl["\"%s\""% entry[0]] = "MoguSyntax::%s" % entry[0]
-        smap_tpl["\"%s\"" %str(entry[1])] = "MoguSyntax::%s" % entry[0]
+        imap_tpl[str(entry[1])] = "Mogu_Syntax::%s" % entry[0]
+        hmap_tpl["\"%s\""% entry[0]] = "Mogu_Syntax::%s" % entry[0]
+        smap_tpl["\"%s\"" %str(entry[1])] = "Mogu_Syntax::%s" % entry[0]
 
     for oper in OPERATORS:
         enum = oper
         intg = OPERATORS[oper][0]
         common = OPERATORS[oper][1]
 
-        imap_tpl["%s" % str(intg)] = "MoguSyntax::%s" % enum
-        smap_tpl['"%s"' % str(intg)] = "MoguSyntax::%s" % enum
+        imap_tpl["%s" % str(intg)] = "Mogu_Syntax::%s" % enum
+        smap_tpl['"%s"' % str(intg)] = "Mogu_Syntax::%s" % enum
         if common:
-            hmap_tpl['"%s"' % common] = "MoguSyntax::%s" % enum 
+            hmap_tpl['"%s"' % common] = "Mogu_Syntax::%s" % enum 
 
 
-    imap = MapDef("imap","const int", "const SyntaxDef&",imap_tpl)
-    hmap = MapDef("hmap","const std::string", "const SyntaxDef&", hmap_tpl)
-    smap = MapDef("smap", "const std::string", "const SyntaxDef&", smap_tpl);
+    imap = MapDef("imap","const int", "const Syntax_Def&",imap_tpl)
+    hmap = MapDef("hmap","const std::string", "const Syntax_Def&", hmap_tpl)
+    smap = MapDef("smap", "const std::string", "const Syntax_Def&", smap_tpl);
 
     output["syntax_imap"] = str(imap)
     output["syntax_hmap"] = str(hmap)
@@ -327,7 +327,7 @@ for line in lines:
         continue
 
 py_out = generate_py("MoguSyntax",py_entries) 
-cpp_out = generate_cpp("MoguSyntax",cpp_entries)
+cpp_out = generate_cpp("Mogu_Syntax",cpp_entries)
 
 
 

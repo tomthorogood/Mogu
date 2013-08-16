@@ -1,5 +1,9 @@
 #ifndef PREFIXES_H_
 #define PREFIXES_H_
+
+#include <unordered_map>
+#include "syntax.h"
+
 enum class Prefix {
     __NONE__    =0,
     widgets     =1,
@@ -34,13 +38,13 @@ extern const std::map <Prefix, std::string>& prefix_map()
 }
 
 extern const std::unordered_map <int, Prefix> syntax_to_prefix = {
-    { (int)MoguSyntax::own,      Prefix::widgets },
-    { (int)MoguSyntax::widget,   Prefix::widgets },
-    { (int)MoguSyntax::data,     Prefix::data    },
-    { (int)MoguSyntax::user,     Prefix::user    },
-    { (int)MoguSyntax::group,    Prefix::group   },
-    { (int)MoguSyntax::template_,Prefix::templates},
-    { (int)MoguSyntax::validator,Prefix::validators},
+    { (int)Mogu_Syntax::own,      Prefix::widgets },
+    { (int)Mogu_Syntax::widget,   Prefix::widgets },
+    { (int)Mogu_Syntax::data,     Prefix::data    },
+    { (int)Mogu_Syntax::user,     Prefix::user    },
+    { (int)Mogu_Syntax::group,    Prefix::group   },
+    { (int)Mogu_Syntax::template_,Prefix::templates},
+    { (int)Mogu_Syntax::validator,Prefix::validators},
 };
 }
 

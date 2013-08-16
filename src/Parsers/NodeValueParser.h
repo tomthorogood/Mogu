@@ -8,9 +8,9 @@
 #ifndef NODEVALUEPARSER_H_
 #define NODEVALUEPARSER_H_
 
-#include "Node_Value_Parser/State_Parser.h"
-#include "Node_Value_Parser/Math_Parser.h"
-#include "Node_Value_Parser/Token_Manager.h"
+#include "NodeValueParser/StateParser.h"
+#include "NodeValueParser/MathParser.h"
+#include "NodeValueParser/TokenManager.h"
 #include <string>
 #include <vector>
 
@@ -40,9 +40,9 @@ class Node_Value_Parser
 		void tokenize_input(std::string input, bool set_at_beginning=false);
         void hash_next_token();
 		void reduce_expressions(Moldable* bc);
-		int find_full_quote(std::string str);
-        void handle_append_command(command_value&, Moldable*);
-        void set_command_value_object(command_value&, bool r_object=false); 
+		size_t find_full_quote(std::string str);
+        void handle_append_command(Command_Value&, Moldable*);
+        void set_command_value_object(Command_Value&, bool r_object=false); 
 };
 
 }	// namespace Parsers

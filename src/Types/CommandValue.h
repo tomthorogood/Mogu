@@ -8,9 +8,8 @@
 #ifndef COMMANDVALUE_H_
 #define COMMANDVALUE_H_
 
-#include <declarations.h>
-#include <Types/Node_Value.h>
-#include <Parsers/Node_ValueParser.h>
+#include <Types/NodeValue.h>
+#include <Parsers/NodeValueParser.h>
 /*!\brief Holds parsed values from the CommandParser which can then be used
  * to handle events.
  */
@@ -33,10 +32,10 @@ public:
 
     uint8_t set(const Command_Flags& flag, Node_Value v);
     uint8_t set(const Command_Flags& flag, const Syntax_Def& v);
-    Node_Value get ( Command_Flags flag) const ;
+    Node_Value& get ( Command_Flags flag);
 
     inline const std::string& get_identifier() const
-        { return (std::string) identifier; }
+        { return identifier.get_string(); }
     
     inline const uint8_t& get_flags() const 
         { return flags; }
@@ -45,7 +44,7 @@ public:
         { return broadcaster; }
   
     std::string join_state(bool reverse=false);  
-    bool object_is_reduceable(bool reverse_object=false;);
+    bool object_is_reduceable(bool reverse_object=false);
 
     inline bool is_reversed() const { return reversed; }
 
@@ -58,12 +57,12 @@ public:
         nvp.give_input(join_state(reverse), value);
         set(Command_Flags::value, value);
 
-        Command_Flags arg_flag = reverse ? Command_Flags::R_ARG
-            : Command_Flags::ARG;
-        Command_Flags obj_flag = reverse ? Command_Flags::R_OBJECT
-            : Command_Flags::OBJECT;
-        Command_Flags id_flag  = reverse ? Command_Flags::R_IDENTIFIER
-            : Command_Flags::IDENTIFIER;
+        Command_Flags arg_flag = reverse ? Command_Flags::r_arg
+            : Command_Flags::arg;
+        Command_Flags obj_flag = reverse ? Command_Flags::r_object
+            : Command_Flags::object;
+        Command_Flags id_flag  = reverse ? Command_Flags::r_identifier
+            : Command_Flags::identifier;
 
         if (test(arg_flag)) flags -= (uint8_t) arg_flag;
         if (test(obj_flag)) flags -= (uint8_t) obj_flag;
@@ -72,10 +71,10 @@ public:
 
 private:
     bool reversed {false};
-
-    int action {Mogu_Syntax::__NONE__};
-    int object {Mogu_Syntax::__NONE__};
-    int r_object {Mogu_Syntax::__NONE__};
+    
+    Node_Value action {};
+    Node_Value object {};
+    Node_Value r_object {};
 
     Node_Value identifier {};
     Node_Value r_identifier {};

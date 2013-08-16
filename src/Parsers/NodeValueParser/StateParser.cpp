@@ -6,11 +6,10 @@
  */
 
 #include <Mogu.h>
-#include <Parsers/Node_ValueParser/State_Parser.h>
+#include <Parsers/NodeValueParser/StateParser.h>
 #include <Types/syntax.h>
-#include <Redis/Mogu_Query_Handler.h>
+#include <Redis/MoguQueryHandler.h>
 #include <Security/Encryption.h>
-#include <Groups/Group_Manager.h>
 
 
 namespace Parsers {
@@ -39,8 +38,8 @@ void State_Parser::process_input(Moldable* broadcaster)
     tm.save_location();
 
     int curr_token {tm.current_token()};
-    Node_Value result {}
-    std::string identifier {}
+    Node_Value result {};
+    std::string identifier {};
 
 	switch(curr_token)
 	{
@@ -67,11 +66,11 @@ void State_Parser::process_input(Moldable* broadcaster)
 		case Mogu_Syntax::slot:{
             mApp;
             identifier = get_identifier();
-            result = app->slot_manager().retrieve_slot(identifier);
+            result = app->get_slot_manager().get_slot(identifier);
             break;
           }
         default:{
-            result.set_int((int)current_token);
+            result.set_int(curr_token);
             break;
         }
 	}
@@ -114,7 +113,7 @@ void State_Parser::handle_widget(const std::string& identifier, Node_Value& resu
 void State_Parser::handle_data(const std::string& identifier, Node_Value& result)
 {
     const char* c_node = identifier.c_str();
-    Redis::Mogu_Query_Handler db(Application::context_map, Prefix::data);
+    Redis::Mogu_Query_Handler db(Prefix::data);
     db.append_query( "type data.%s", c_node); 
     std::string node_type = db.yield_response <std::string>();
     if (node_type == "string")
@@ -196,45 +195,45 @@ void State_Parser::handle_user_field(const std::string& field, Node_Value& resul
 
 void State_Parser::handle_group_field(const std::string& field, Node_Value& result)
 {
-    mApp;
-    int group = app->get_group();
-    Group_Manager group_mgr(group);
-    Redis::Mogu_Query_Handler& grpdb = group_mgr.get_context(Prefix::group); 
-    Redis::Mogu_Query_Handler& plcdb = group_mgr.get_context(Prefix::policies);
+//  mApp;
+//  int group = app->get_group();
+//  Group_Manager group_mgr(group);
+//  Redis::Mogu_Query_Handler& grpdb = group_mgr.get_context(Prefix::group); 
+//  Redis::Mogu_Query_Handler& plcdb = group_mgr.get_context(Prefix::policies);
 
-    plcdb.append_query( "hget policies.%s %d", field.c_str(), (int)Mogu_Syntax::type);
-    plcdb.append_query( "hget policies.%s %d",
-            field.c_str(), (int) Mogu_Syntax::encrypted);
-    const Syntax_Def& type = Mogu_Syntax::get(plcdb.yield_response<std::string>());
-    bool encrypted = plcdb.yield_response <bool>();
+//  plcdb.append_query( "hget policies.%s %d", field.c_str(), (int)Mogu_Syntax::type);
+//  plcdb.append_query( "hget policies.%s %d",
+//          field.c_str(), (int) Mogu_Syntax::encrypted);
+//  const Syntax_Def& type = Mogu_Syntax::get(plcdb.yield_response<std::string>());
+//  bool encrypted = plcdb.yield_response <bool>();
 
-    switch(type)
-    {
-        case Mogu_Syntax::string:
-            grpdb.append_query( "get groups.%s.%s", group,
-                    field.c_str());
-            break;
-        case Mogu_Syntax::list:{
-            // Get the index of list item
-            int index = tm.current_token();
-            grpdb.append_query( "lindex groups.%s.%s %d", group,
-                    field.c_str(), index);
-            break;}
-        case Mogu_Syntax::hash:{
-            // Ensure that the next token is in fact a key:
-            if (tm.current_token() != Mogu_Syntax::TOKEN_DELIM) return;
-            std::string key = tm.fetch_string();
-            grpdb.append_query( "hget groups.%s.%s %s",
-                    group, field.c_str(), key.c_str());
-            break;}
-        default: return;
-    };
+//  switch(type)
+//  {
+//      case Mogu_Syntax::string:
+//          grpdb.append_query( "get groups.%s.%s", group,
+//                  field.c_str());
+//          break;
+//      case Mogu_Syntax::list:{
+//          // Get the index of list item
+//          int index = tm.current_token();
+//          grpdb.append_query( "lindex groups.%s.%s %d", group,
+//                  field.c_str(), index);
+//          break;}
+//      case Mogu_Syntax::hash:{
+//          // Ensure that the next token is in fact a key:
+//          if (tm.current_token() != Mogu_Syntax::TOKEN_DELIM) return;
+//          std::string key = tm.fetch_string();
+//          grpdb.append_query( "hget groups.%s.%s %s",
+//                  group, field.c_str(), key.c_str());
+//          break;}
+//      default: return;
+//  };
 
-    if (encrypted)
-        result.set_string(
-            Security::decrypt(
-                grpdb.yield_response <std::string>()));
-    else
-        result.set_string(grpdb.yield_response <std::string>());
+//  if (encrypted)
+//      result.set_string(
+//          Security::decrypt(
+//              grpdb.yield_response <std::string>()));
+//  else
+//      result.set_string(grpdb.yield_response <std::string>());
 }
 }	// namespace Parsers

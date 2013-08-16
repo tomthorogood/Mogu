@@ -4,12 +4,13 @@
  *  Created on: March 31, 2013
  *      Author: cameron
  */
-#include "Node_Value_Parser.h"
-#include <Types/Node_Value.h>
+#include "NodeValueParser.h"
+#include <Types/NodeValue.h>
 #include <Types/syntax.h>
-#include <Types/command_value.h>
+#include <Types/CommandValue.h>
 #include <hash.h>
 #include <cctype>
+#include "../Config/inline_utils.h"
 
 //debug
 #include <iostream>
@@ -163,7 +164,7 @@ void Node_Value_Parser::give_input(
 
         if (arg->is_string())
             input_ += arg->get_string();
-        else if (arg->it_int())
+        else if (arg->is_int())
             input_ += std::to_string(arg->get_int());
         else
             input_ += std::to_string(arg->get_float());
@@ -228,11 +229,11 @@ void Node_Value_Parser::set_command_value_object(Command_Value& cv, bool r_token
     Command_Flags id_flag {Command_Flags::identifier};
     Command_Flags arg_flag {Command_Flags::arg};
 
-    if (r_value)
+    if (r_tokens)
     {
         obj_flag = Command_Flags::r_object;
         id_flag = Command_Flags::r_identifier;
-        arg_flag = Command_Flags:r_arg;
+        arg_flag = Command_Flags::r_arg;
     }
 
     // Fast forward to the next object token.
@@ -304,12 +305,12 @@ void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
             {
                 flags = cv.set(Command_Flags::value, tmp);
             }
-            // If the R_object has been set, but there's no identifier,
+            // If the r_object has been set, but there's no identifier,
             // the next string encountered must be the identifier.
-            else if (cv.test(Command_Flags::R_object) && 
-                    !cv.test(Command_Flags::R_identifier))
+            else if (cv.test(Command_Flags::r_object) && 
+                    !cv.test(Command_Flags::r_identifier))
             {
-                flags = cv.set(Command_Flags::R_identifier, tmp);
+                flags = cv.set(Command_Flags::r_identifier, tmp);
             }
             // Same as above, but for standard objects.
             else if (cv.test(Command_Flags::object) && 
@@ -322,13 +323,13 @@ void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
             // keep moving through the decision tree.
             else check_if_list = true;
         }
-        // Object tokens will either be the object or R_object, depending
+        // Object tokens will either be the object or r_object, depending
         // on if it was reached before the preposition or not.
         else if (is_object_token(token))
         {
-            if (!preposition_found && !cv.test(Command_Flags::R_object))
+            if (!preposition_found && !cv.test(Command_Flags::r_object))
             {
-                flags = cv.set(Command_Flags::R_object, token);
+                flags = cv.set(Command_Flags::r_object, token);
             }
             else if (preposition_found && !cv.test(Command_Flags::object))
             {
@@ -385,18 +386,18 @@ void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
     } // end while loop
 
     // After this, there is the possibility that we'll have a reduceable value
-    // with R_OBJ/R_ID/r_arg. If so, we'll go ahead and reduce that now:
+    // with r_OBJ/r_ID/r_arg. If so, we'll go ahead and reduce that now:
     if (cv.object_is_reduceable(true))
     {
         cv.reduce_object(true, bc);
     }
 }
 
-void Node_Value_Parser::give_input(const std::string& i, command_value& cv,
+void Node_Value_Parser::give_input(const std::string& i, Command_Value& cv,
     Moldable* bc)
 {
     Node_Value tmp {};
-    input {i};
+    input = i;
     tokenize_input(input, true); // Make sure to return the iterator to
                                 // the BEGINNING
     // The first token is always an action
@@ -454,7 +455,7 @@ void Node_Value_Parser::give_input(const std::string& i, command_value& cv,
             tm.next();
             if (tm.current_token() == Mogu_Syntax::location)
             {
-                do_not_reduce {true};
+                do_not_reduce = true;
             } else {
                 tm.prev();
             }

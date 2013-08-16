@@ -6,14 +6,15 @@
  */
 
 
-#include "Event_Handler.h"
-#include "Trigger_Map.h"
+#include "EventHandler.h"
+#include "TriggerMap.h"
 #include "Actions.h"
 #include "../Moldable/Moldable.h"
-#include "../Types/Command_Value.h"
+#include "../Types/CommandValue.h"
 
 Event_Handler::Event_Handler(Moldable& w, Prefix p, const std::string& n)
-    : trigger_map(broadcaster.count_triggers(), p, n)
+    : Command_Processor(w)
+    , trigger_map(broadcaster.count_triggers(), p, n)
 {
     process_trigger_map();
 }
@@ -31,7 +32,7 @@ void Event_Handler::process_trigger_map()
         switch (trigger)
         {
         case Mogu_Syntax::style_changed:
-            broadcaster.style_changed().connect(this,
+            broadcaster.styleChanged().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::style_changed.integer>);
             break;
         case Mogu_Syntax::fail:
@@ -43,15 +44,15 @@ void Event_Handler::process_trigger_map()
                 &Event_Handler::handle_trigger <Mogu_Syntax::succeed.integer>);
             break;
         case Mogu_Syntax::onload:
-            broadcaster.on_load().connect(this,
+            broadcaster.onLoad().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::onload.integer>);
             break;
         case Mogu_Syntax::hidden_changed:
-            broadcaster.hidden_changed().connect(this,
+            broadcaster.hiddenChanged().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::hidden_changed.integer>);
             break;
         case Mogu_Syntax::index_changed:
-            broadcaster.index_changed().connect(this,
+            broadcaster.indexChanged().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::index_changed.integer>);
             break;
         case Mogu_Syntax::click:
@@ -63,7 +64,7 @@ void Event_Handler::process_trigger_map()
                 &Event_Handler::handle_trigger <Mogu_Syntax::mouseover.integer>);
             break;
         case Mogu_Syntax::error_reported:
-            broadcaster.error_reported().connect(this,
+            broadcaster.errorReported().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::error_reported.integer>);
             break;
         case Mogu_Syntax::keyup:
@@ -98,9 +99,6 @@ void Event_Handler::process_command(Command_Value& v)
             break;
         case Mogu_Syntax::append:
             Actions::append(broadcaster,v);
-            break;
-        case Mogu_Syntax::reset:
-            Actions::reset(broadcaster,v);
             break;
         case Mogu_Syntax::remove:
             Actions::remove(broadcaster,v);

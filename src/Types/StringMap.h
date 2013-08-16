@@ -22,8 +22,7 @@ public:
 
     inline std::string get (size_t key) const
     {
-        return key_exists(key) ? 
-            map.at(key) : ""
+        return key_exists(key) ?  map.at(key) : "";
     }
 
     inline void set(size_t key, const std::string& val) 

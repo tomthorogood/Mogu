@@ -1,5 +1,5 @@
 /*
- * Molable_Input.h
+ * Moldable_Input.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -12,7 +12,7 @@
 #include <Wt/WValidator>
 #include <Wt/WLineEdit>
 
-class Molable_Input : public Moldable
+class Moldable_Input : public Moldable
 {
     std::string assembly_validator {};
     std::string assembly_txt {};
@@ -24,7 +24,7 @@ protected:
     void initialize_input();
 
 public:
-    Molable_Input (Widget_Assembly*);
+    Moldable_Input (Widget_Assembly*);
 
     inline virtual std::string get_moldable_value() {
         std::string val = input->text().toUTF8();

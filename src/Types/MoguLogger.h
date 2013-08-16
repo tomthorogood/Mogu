@@ -48,7 +48,7 @@ public:
     Mogu_Logger(int i)
         : log_level(i)
     {
-        if (LOG_OVERRIDE) log_level = (int) log_level::ALL;
+        if (LOG_OVERRIDE) log_level = (int) Log_Level::all;
     }
 
     inline bool do_log(Log_Level v) const
@@ -64,7 +64,7 @@ public:
     void log(Log_Level msg_level, T head, U... tail)
     {
         if (!do_log(msg_level)) return;
-        if ((int) msg_level >= (int) Log_Level::WARN)
+        if ((int) msg_level >= (int) Log_Level::warn)
         {
             vstderr(get_level_name(msg_level) + ": ");
             vstderr(head);
@@ -73,7 +73,7 @@ public:
         }
         else
         {
-            vstdout(get_level_name(msg_level+": "));
+            vstdout(get_level_name(msg_level)+": ");
             vstdout(head);
             vstdout(tail...);
             out_end();
@@ -104,9 +104,5 @@ public:
         { std::cerr << std::endl;}
 
 };
-
-namespace Application {
-    extern Mogu_Logger log;
-}
 
 #endif /* MOGULOGGER_H_ */

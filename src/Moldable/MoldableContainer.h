@@ -8,7 +8,7 @@
 #ifndef MOLDABLECONTAINER_H_
 #define MOLDABLECONTAINER_H_
 
-#include "Moldable_Abstract_Parent.h"
+#include "MoldableAbstractParent.h"
 
 class Moldable_Container : public Moldable_Abstract_Parent
 {
@@ -17,7 +17,7 @@ public:
     : Moldable_Abstract_Parent(assembly, Mogu_Syntax::container){}
 
     //Containers have no textual value:
-    inline virtual std::string moldable_value(){return "";}
+    inline virtual std::string get_moldable_value(){return "";}
     inline virtual void set_moldable_value(const std::string&) {}
 
     // public access for adding children to the widget

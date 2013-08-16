@@ -8,8 +8,8 @@
 #ifndef TOKENMANAGER_H_
 #define TOKENMANAGER_H_
 
-#include <declarations.h>
-#include <Types/String_Map.h>
+#include <Types/StringMap.h>
+#include <Types/syntax.h>
 
 #include <string>
 #include <unordered_set>
@@ -101,7 +101,7 @@ class Token_Manager
         {
             i_tokens.clear();
             s_tokens.clear();
-            index {0};
+            index = 0 ;
             begin_ptr = i_tokens.begin();
         }
         inline void add_token(int num_token)
@@ -203,8 +203,8 @@ class Token_Manager
 	private:
         size_t index {};
         size_t sz {};
-		std::vector<int> i_tokens {}
-		String_Map s_tokens {}
+		std::vector<int> i_tokens {};
+		String_Map s_tokens {};
 		fwd_iterator it {};
 		fwd_iterator savedit {};
 		fwd_iterator begin_ptr {};

@@ -1,5 +1,6 @@
 #include <Wt/WObject>
-#include <../Moldable/Moldable.h>
+#include "../Moldable/Moldable.h"
+#include "../Types/CommandValue.h"
 class Command_Processor : public Wt::WObject
 {
 public:

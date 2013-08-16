@@ -5,8 +5,8 @@
  *      Author: tom
  */
 
-#include "Moldable_Password.h"
-#include <Types/Widget_Assembly.h>
+#include "MoldablePassword.h"
+#include <Types/WidgetAssembly.h>
 
 Moldable_Password::Moldable_Password(Widget_Assembly* assembly)
 : Moldable_Input(assembly)

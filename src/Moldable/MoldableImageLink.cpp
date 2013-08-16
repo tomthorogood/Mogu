@@ -5,12 +5,13 @@
  *      Author: tom
  */
 
-#include "Moldable_Image_Link.h"
+#include "MoldableImageLink.h"
 #include <Mogu.h>
 #include <Wt/WAnchor>
 #include <Wt/WImage>
 #include <Redis/NodeEditor.h>
-#include <Types/Widget_Assembly.h>
+#include <Types/WidgetAssembly.h>
+#include "../Config/inline_utils.h"
 
 Moldable_Image_Link::Moldable_Image_Link(Widget_Assembly* assembly)
 : Moldable_Link(assembly)
@@ -33,7 +34,7 @@ void Moldable_Image_Link::initialize_image()
         image = nullptr;
     }
     std::string src = stripquotes(assembly_src);
-    image = new Wt::WImage(src, moldable_value());
+    image = new Wt::WImage(src, get_moldable_value());
     link->setImage(image);
     link->setTarget(Wt::TargetNewWindow);
 }

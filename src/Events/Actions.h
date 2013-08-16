@@ -6,7 +6,10 @@
  */
 #ifndef ACTIONS_H_
 #define ACTIONS_H_
-#include <declarations.h>
+
+#include "../Moldable/Moldable.h"
+#include "../Types/CommandValue.h"
+
 namespace Actions
 {
 

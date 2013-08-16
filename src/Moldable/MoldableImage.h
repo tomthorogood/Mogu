@@ -24,7 +24,7 @@ protected:
 public:
     Moldable_Image(Widget_Assembly*);
 
-    inline virtual std::string moldable_value()
+    inline virtual std::string get_moldable_value()
     {
         return image->imageLink().url();
     }

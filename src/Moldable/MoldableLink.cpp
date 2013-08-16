@@ -5,10 +5,11 @@
  *      Author: tom
  */
 
-#include "Moldable_Link.h"
+#include "MoldableLink.h"
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
-#include <Types/Widget_Assembly.h>
+#include <Types/WidgetAssembly.h>
+#include "../Config/inline_utils.h"
 
 Moldable_Link::Moldable_Link (Widget_Assembly* assembly)
 : Moldable(assembly, Mogu_Syntax::anchor)

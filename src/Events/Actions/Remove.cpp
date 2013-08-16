@@ -1,7 +1,7 @@
 #include "../Actions.h"
 #include "Includes.h"
-#include <Groups/Group_Manager.h>
-#include <Redis/Node_Editor.h>
+#include <Redis/NodeEditor.h>
+#include "../../Config/inline_utils.h"
 namespace Actions {
 
 namespace {
@@ -17,7 +17,7 @@ const uint8_t get_construct(Command_Value& v)
     const Syntax_Def& o = Mogu_Syntax::get(v.get(Command_Flags::object));
     bool has_arg = v.test(Command_Flags::arg);
     bool has_r_object = v.test(Command_Flags::r_object);
-    bool has_value = v.test(Command_Flags::VALUE);
+    bool has_value = v.test(Command_Flags::value);
 
     if (! (has_arg || has_r_object)) 
         return object_from_application;
@@ -44,16 +44,16 @@ inline Moldable* set_moldable_pointer(Moldable& broadcaster, Command_Value& v)
 
 void handle_value_from_attribute(Moldable& broadcaster, Command_Value& v)
 {
-    Node_Value n {}
+    Node_Value n {};
     Moldable* w {set_moldable_pointer(broadcaster,v)};
     const Syntax_Def& attribute = Mogu_Syntax::get(v.get(Command_Flags::arg));
 
-    widget->get_attribute(attribute, n);
+    w->get_attribute(attribute, n);
 
     if (n.is_string())
     {
-        std::string new_value {n};
-        std::string rm {v.get(Command_Flags::VALUE).get_string};
+        std::string new_value {n.get_string()};
+        std::string rm {v.get(Command_Flags::value).get_string()};
         sreplace(new_value,rm);
         n.set_string(new_value);
     }
@@ -82,7 +82,7 @@ void handle_value_from_field(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
     const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
-    Prefix p {syntax_to_prefix.at(object)};
+    Prefix p {syntax_to_prefix.at(o)};
     std::string id {v.get_identifier()};
     
     Node_Value arg {v.get(Command_Flags::arg)};
@@ -94,13 +94,13 @@ void handle_value_from_field(Moldable& broadcaster, Command_Value& v)
     else if (o == Mogu_Syntax::group)
     {
         int g {app->get_group()};
-        Group_Manager m(group);
-        if (!group_manager.has_write_access(id)) return;
+//        Group_Manager m(group);
+//        if (!group_manager.has_write_access(id)) return;
         e.set_id(g);
     }
 
-    std::string val {v.get(Command_Flags::VALUE)};
-    editor.remove(value);
+    std::string val {v.get(Command_Flags::value).get_string()};
+    e.remove(val);
 }
 
 /* This removes widgets from the widget tree, users and groups, or nodes from
@@ -118,7 +118,7 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
     if (o == Mogu_Syntax::widget)
     {
         Moldable* x {app->get_widget(v.get_identifier())};
-        Moldable* r {(Moldable*) x->parent();}
+        Moldable* r {(Moldable*) x->parent()};
         r->removeChild(x);
     } 
     else if (o == Mogu_Syntax::user && !has_identifier)
@@ -136,8 +136,8 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
         if (o == Mogu_Syntax::group)
         {
             int g {app->get_group()};
-            Group_Manager m {g};
-            if (!m.has_write_access(id)) return;
+//          Group_Manager m {g};
+//          if (!m.has_write_access(id)) return;
             e.set_id(g);
         }
         else if (o==Mogu_Syntax::user)
@@ -145,7 +145,7 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
             e.set_id(app->get_user());
         }
 
-        editor.remove();
+        e.remove();
     }
 }
 

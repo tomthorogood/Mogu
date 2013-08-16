@@ -8,8 +8,11 @@
 #include "ContextMap.h"
 #include <cassert>
 #include <iostream>
+#include <fstream>
 
 namespace Application {
+
+Context_Map* context_map =nullptr;
 
 template <typename T>
 bool str_contains(const std::string& s, T v)
@@ -61,7 +64,7 @@ Prefix match_prefix (int& prefix_mask, const std::string& prefix)
     }
     else if (str_contains(prefix,"meta"))
     {
-        PREFIX_MASK |= (int) Prefix::meta;
+        prefix_mask |= (int) Prefix::meta;
         return Prefix::meta;
     }
     else return Prefix::__NONE__;
@@ -95,20 +98,21 @@ inline bool ignore_line(const std::string& line)
 
 void load_database_contexts()
 {
+    extern Context_Map* context_map;
     if (context_map) return;
     int prefix_mask {};
     context_map = new Context_Map();
 
     std::ifstream buf;
     buf.open(DBCONFIG_FILE);
-    assert(infile.is_open());
+    assert(buf.is_open());
 
     std::string line {};
     
     while (!buf.eof())
     {
         getline(buf,line);
-        if (ignore_line) continue;
+        if (ignore_line(line)) continue;
         else if (str_contains(line,'@'))
         {
             int port {};
@@ -119,10 +123,11 @@ void load_database_contexts()
             // One bit is set each time one of the above is found.
             // This allows for any number of newlines or comments.
             uint8_t completion {};
+            Prefix p {match_prefix(prefix_mask, line)};
             while ((completion != 7) && !buf.eof())
             {
                 getline(buf,line);
-                if (ignore_line) continue;
+                if (ignore_line(line)) continue;
                 else if (str_contains(line,"port"))
                 {
                     port = extract_integer(line);
@@ -144,12 +149,12 @@ void load_database_contexts()
             c->port = port;
             c->host = host;
             c->db_num = db_num;
-            context_map->set(prefix,c);
-            assert(context_map->get(prefix))
+            context_map->set(p,c);
+            assert(context_map->get(p));
         }
     }
-    infile.close();
-    assert(PREFIX_MASK >= MAX_PREFIX_MASK);
+    buf.close();
+    assert(prefix_mask >= max_prefix_mask);
     assert(context_map);
 }
 

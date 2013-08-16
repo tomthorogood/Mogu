@@ -5,6 +5,10 @@
 #include <cpptest.h>
 #include <hiredis/hiredis.h>
 
+namespace Application {
+    extern Context_Map* context_map;
+}
+
 class UserManagerTestSuite : public Test::Suite
 {
 public:
@@ -45,7 +49,7 @@ private:
 
     void flushdb()
     {
-        Redis::Context* cxt = Application::contextMap->get(Prefix::user);
+        Redis::Context* cxt = Application::context_map->get(Prefix::user);
         redisContext* rdb = redisConnect(cxt->host.c_str(),cxt->port);
         redisReply* r = (redisReply*) redisCommand(rdb, "select %d", cxt->db_num);
         freeReplyObject(r);
@@ -55,80 +59,80 @@ private:
     }
 };
 
-std::string strStatus(SecurityStatus s)
+std::string strStatus(Security_Status s)
 {
     switch(s)
     {
-        case SecurityStatus::OK_LOGIN: return "OK_LOGIN";
-        case SecurityStatus::OK_REGISTER: return "OK_REGISTER";
-        case SecurityStatus::ERR_USER_EXISTS: return "ERR_USER_EXISTS";
-        case SecurityStatus::ERR_BAD_AUTH:  return "ERR_BAD_AUTH";
-        case SecurityStatus::ERR_USER_NOT_FOUND: return "ERR_USER_NOT_FOUND";
-        case SecurityStatus::OK_PASSWORD_RESET: return "OK_PASSWORD_RESET";
+        case Security_Status::ok_login: return "ok_login";
+        case Security_Status::ok_register: return "ok_register";
+        case Security_Status::err_user_exists: return "err_user_exists";
+        case Security_Status::err_bad_auth:  return "err_bad_auth";
+        case Security_Status::err_user_not_found: return "err_user_not_found";
+        case Security_Status::ok_password_reset: return "ok_password_reset";
         default: return "ERR_UNKNOWN";
     }
 }
 
 void UserManagerTestSuite::register_new_user()
 {
-    UserManager m;
-    SecurityStatus status = m.registerUser(good_username, good_password);
+    User_Manager m;
+    Security_Status status = m.register_user(good_username, good_password);
     std::string str_status = strStatus(status);
-    TEST_ASSERT_MSG(status==SecurityStatus::OK_REGISTER, str_status.c_str());
-    assigned_id = m.getUser();
+    TEST_ASSERT_MSG(status==Security_Status::ok_register, str_status.c_str());
+    assigned_id = m.get_user();
 }
 
 void UserManagerTestSuite::register_existing_user()
 {
-    UserManager m;
-    SecurityStatus status = m.registerUser(good_username, bad_password);
+    User_Manager m;
+    Security_Status status = m.register_user(good_username, bad_password);
     std::string str_status = strStatus(status);
-    TEST_ASSERT_MSG(status==SecurityStatus::ERR_USER_EXISTS, str_status.c_str());
+    TEST_ASSERT_MSG(status==Security_Status::err_user_exists, str_status.c_str());
 }
 
 void UserManagerTestSuite::login_existing_success()
 {
-    UserManager m;
-    SecurityStatus status = m.loginUser(good_username, good_password);
+    User_Manager m;
+    Security_Status status = m.login_user(good_username, good_password);
     std::string str_status = strStatus(status);
-    TEST_ASSERT_MSG(status==SecurityStatus::OK_LOGIN, str_status.c_str());
+    TEST_ASSERT_MSG(status==Security_Status::ok_login, str_status.c_str());
 }
 
 void UserManagerTestSuite::login_nonexisting_user()
 {
-    UserManager m;
-    SecurityStatus status = m.loginUser(bad_username, good_password);
+    User_Manager m;
+    Security_Status status = m.login_user(bad_username, good_password);
     std::string str_status = strStatus(status);
-    TEST_ASSERT_MSG(status==SecurityStatus::ERR_USER_NOT_FOUND, str_status.c_str());
+    TEST_ASSERT_MSG(status==Security_Status::err_user_not_found, str_status.c_str());
 }
 
 void UserManagerTestSuite::login_existing_fail()
 {
-    UserManager m;
-    SecurityStatus status = m.loginUser(good_username, bad_password);
+    User_Manager m;
+    Security_Status status = m.login_user(good_username, bad_password);
     std::string str_status = strStatus(status);
-    TEST_ASSERT_MSG(status==SecurityStatus::ERR_BAD_AUTH, str_status.c_str());
+    TEST_ASSERT_MSG(status==Security_Status::err_bad_auth, str_status.c_str());
 }
 
 void UserManagerTestSuite::login_existing_CAPS_success()
 {
-    UserManager m;
-    SecurityStatus status = m.loginUser(caps_username, good_password);
+    User_Manager m;
+    Security_Status status = m.login_user(caps_username, good_password);
     std::string str_status = strStatus(status);
-    TEST_ASSERT_MSG(status==SecurityStatus::OK_LOGIN, str_status.c_str());
+    TEST_ASSERT_MSG(status==Security_Status::ok_login, str_status.c_str());
 }
 
 void UserManagerTestSuite::login_existing_CAPS_fail()
 {
-    UserManager m;
-    SecurityStatus status = m.loginUser(caps_username, caps_password);
+    User_Manager m;
+    Security_Status status = m.login_user(caps_username, caps_password);
     std::string str_status = strStatus(status);
-    TEST_ASSERT_MSG(status==SecurityStatus::ERR_BAD_AUTH, str_status.c_str());
+    TEST_ASSERT_MSG(status==Security_Status::err_bad_auth, str_status.c_str());
 }
 
 int main()
 {
-    Application::loadDatabaseContexts();
+    Application::load_database_contexts();
     Test::TextOutput output(Test::TextOutput::Verbose);
     UserManagerTestSuite umts;
     return umts.run(output,false) ? EXIT_SUCCESS : EXIT_FAILURE;

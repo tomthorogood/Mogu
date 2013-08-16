@@ -14,22 +14,22 @@ public:
 private:
     void test1()
     {
-        std::string a = Hash::toHash("abcdefgh");
-        std::string b = Hash::toHash("abcdefgh");
+        std::string a = Hash::to_hash("abcdefgh");
+        std::string b = Hash::to_hash("abcdefgh");
         TEST_ASSERT(a==b);
     }
 
     void test2()
     {
-        std::string a = Hash::toHash("123456789");
-        std::string b = Hash::toHash("123456789");
+        std::string a = Hash::to_hash("123456789");
+        std::string b = Hash::to_hash("123456789");
         TEST_ASSERT(a==b);
     }
 
     void test3()
     {
-        std::string a = Hash::toHash("Once upon a time a long way away, I ate a baby.");
-        std::string b = Hash::toHash("Once upon a time a long way away, I ate a baby.");
+        std::string a = Hash::to_hash("Once upon a time a long way away, I ate a baby.");
+        std::string b = Hash::to_hash("Once upon a time a long way away, I ate a baby.");
         TEST_ASSERT(a==b);
     }
 };

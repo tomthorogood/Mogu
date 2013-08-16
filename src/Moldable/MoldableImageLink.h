@@ -13,7 +13,7 @@
 class Moldable_Image_Link : public Moldable_Link
 {
     Wt::WImage* image {};
-    std::string assembly_src {}
+    std::string assembly_src {};
 
 protected:
     virtual void init(Widget_Assembly* assembly);

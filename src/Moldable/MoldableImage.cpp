@@ -5,11 +5,12 @@
  *      Author: tom
  */
 
-#include "Moldable_Image.h"
+#include "MoldableImage.h"
 #include <Parsers/NodeValueParser.h>
 #include <Redis/NodeEditor.h>
 #include <Mogu.h>
-#include <Types/Widget_Assembly.h>
+#include <Types/WidgetAssembly.h>
+#include "../Config/inline_utils.h"
 
 Moldable_Image::Moldable_Image (Widget_Assembly* assembly)
 : Moldable(assembly, Mogu_Syntax::image)

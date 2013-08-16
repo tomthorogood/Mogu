@@ -8,10 +8,11 @@
 #ifndef EVENTHANDLER_H_
 #define EVENTHANDLER_H_
 
-#include <Mogu.h>
-#include <Parsers/Node_Value_Parser.h>
+#include "../Mogu.h"
 #include "TriggerMap.h"
-#include <Types/MoguLogger.h>
+#include "CommandProcessor.h"
+#include "../Parsers/NodeValueParser.h"
+#include "../Types/MoguLogger.h"
 
 class Event_Handler : public Command_Processor
 {
@@ -32,19 +33,16 @@ template <const int T> void Event_Handler::handle_trigger()
 {
     static int cmd_count =0;
     mApp;
-    Parsers::Node_Value_Parser& nvp = app->interpreter();
+    Parsers::Node_Value_Parser& nvp = app->get_interpreter();
     //COPY the queue, do not use the reference, or commands will only be fired
     //once per element!
     std::queue <std::string> q = trigger_map.get_events(T);
-
+    
     while (!q.empty())
     {
         Command_Value v(broadcaster);
-        std::string cmd = commands.front();
-        Application::log.log(
-                Log_Level::NOTICE, "Processing command ",
-                cmd_count++, ": ", cmd);
-        commands.pop();
+        std::string cmd = q.front();
+        q.pop();
         nvp.give_input(cmd,v,&broadcaster);
         process_command(v);
     }

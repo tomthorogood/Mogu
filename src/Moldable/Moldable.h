@@ -8,14 +8,16 @@
 #ifndef MOLDABLE_H_
 #define MOLDABLE_H_
 
-#include <declarations.h>
+
 #include <Wt/WContainerWidget>
 #include <Wt/WSignal>
-#include <Types/Node_Value.h>
-#include <Types/syntax.h>
 #include <Redis/NodeEditor.h>
 
-class Moldable;
+#include <Types/NodeValue.h>
+#include <Types/syntax.h>
+
+class Event_Handler;
+class Widget_Assembly;
 
 enum class Moldable_Flags
 {
@@ -38,14 +40,14 @@ public:
     /* Overload of the parent class 'addChild' widget to provide public access
      * to manipulate widget tree for Moldable widgets.
      */
-    inline virtual void addChild(Moldable* child) {
+    inline virtual void addChild(Allows_External_Manipulation* child) {
         Wt::WContainerWidget::addChild(reinterpret_cast<Wt::WWidget*>(child));
     }
 
     /* Overload of the parent class 'removeChild' widget to provide public
      * access to manipulate widget tree for Moldable widgets.
      */
-    inline virtual void removeChild(Moldable* child) {
+    inline virtual void removeChild(Allows_External_Manipulation* child) {
         Wt::WContainerWidget::removeChild(reinterpret_cast<Wt::WWidget*>(child));
     }
 };
@@ -76,8 +78,8 @@ class Moldable :
 
 protected:
     uint8_t flags {};
-    std::string node {}
-    std::string template_name {}
+    std::string node {};
+    std::string template_name {};
 
     virtual void init(Widget_Assembly*);
     void initialize_global_attributes();
@@ -88,29 +90,24 @@ public:
 
     virtual ~Moldable();
 
-    virtual std::string moldable_value() =0;
+    virtual std::string get_moldable_value() =0;
 
     virtual void set_moldable_value(const std::string&) =0;
     virtual void append_child(Moldable*)  {}
 
-    inline size_t get_num_triggers() { return num_triggers;}
+    inline size_t count_triggers() { return num_triggers;}
 
     virtual void get_attribute(const Syntax_Def& a, Node_Value& v);
     virtual bool set_attribute(const Syntax_Def& a, Node_Value& v);
 
-    /* Overload of parent class, which also emits the style_chaned signal.*/
     inline virtual void setStyleClass (const Wt::WString& style)
     {
         Wt::WContainerWidget::setStyleClass(style);
         sig_style_changed.emit();
     }
 
-    inline const std::string& get_node() 
+    inline const std::string& get_node() const
         { return node; }
-    inline std::string get_node()
-    {
-        return node;
-    }
 
     inline virtual void load() override
     {
@@ -172,7 +169,7 @@ public:
     inline void unset_flag(Moldable_Flags f)
         { flags -= (uint8_t)f;}
     
-    inline void test_flag(Moldable_Flags f)
+    inline bool test_flag(Moldable_Flags f)
         { return flags & (uint8_t) f; }
 
     inline void shun()
