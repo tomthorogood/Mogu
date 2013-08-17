@@ -43,17 +43,17 @@ with open("cpp_template.cpp","r") as f:
 
 PY_ADDITIONS = """
 def as_integer(string):
-    global Mogu_Syntax
-    return Mogu_Syntax[string.strip()][0]
+    global MoguSyntax
+    return MoguSyntax[string.strip()][0]
 
 def as_string(integer):
-    global Mogu_Syntax
+    global MoguSyntax
     integer = integer.strip()
     if int(integer) == 0:
         return "0"
-    reverseDict = dict.fromkeys(Mogu_Syntax,None)
-    for key in Mogu_Syntax:
-        ival = Mogu_Syntax[key][0]
+    reverseDict = dict.fromkeys(MoguSyntax,None)
+    for key in MoguSyntax:
+        ival = MoguSyntax[key][0]
         reverseDict[ival] = key
     return reverseDict[int(integer)]
 """

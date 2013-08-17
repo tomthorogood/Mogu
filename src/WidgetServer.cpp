@@ -24,8 +24,7 @@ void Widget_Server::resolve_values(std::map <int, Node_Value>& map_)
     {
         int attr = iter.first;
         std::string value = iter.second;
-        nvp.give_input(
-            value, resolved, Mogu_Syntax::get(member_context), &arg);
+        nvp.give_input(value, resolved);
         if (resolved.is_string())
             map_[attr] = resolved.get_string();
         else if (resolved.is_int())

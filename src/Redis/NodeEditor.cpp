@@ -127,8 +127,9 @@ std::string Node_Editor::read()
             db->append_query(build_command("hexists"));
             if (db->yield_response<bool>())
                 db->append_query(build_command("hget"));
-            else
+            else if (is_dynamic_type())
                 return get_default();
+            else return "";
         }
     }
 

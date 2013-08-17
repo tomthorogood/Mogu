@@ -167,6 +167,7 @@ class Token_Manager
         inline std::string fetch_string()
         {
             if(is_delim()) return s_tokens.get(index);
+            return "";
         }
 
         inline bool is_quoted_string(const std::string& str) const

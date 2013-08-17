@@ -31,7 +31,6 @@ private:
 
 template <const int T> void Event_Handler::handle_trigger()
 {
-    static int cmd_count =0;
     mApp;
     Parsers::Node_Value_Parser& nvp = app->get_interpreter();
     //COPY the queue, do not use the reference, or commands will only be fired

@@ -52,6 +52,11 @@ public:
         set_type();
     }
 
+    inline bool is_dynamic_type ()
+    {
+        return (prefix == Prefix::user || prefix == Prefix::group);
+    }
+
     int get_policy_type();
 
     /* Read a single value */

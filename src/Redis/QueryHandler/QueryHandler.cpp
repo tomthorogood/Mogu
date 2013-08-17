@@ -200,7 +200,7 @@ std::map <std::string,std::string>
 {
     std::map <std::string,std::string> m {};
     if (reply_vec.size() % 2 != 0) return m;
-    for (int i = 0; i < reply_vec.size(); ++i)
+    for (size_t i = 0; i < reply_vec.size(); ++i)
     {
         std::string key = reply_vec[i];
         std::string val = reply_vec[++i];
