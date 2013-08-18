@@ -79,6 +79,7 @@ class Preprocessor(object):
             if self.symbol_is_markdown(definition):
                 definition = markdown(definition)
                 definition = definition.replace("\n"," ")
+                definition = definition.replace(r'"',r'\"')
                 self.log("Processed Markdown:", definition)
             self.symbols[identifier] = '"%s"' % definition
             self.log("Added symbol",identifier)
@@ -118,3 +119,13 @@ class Preprocessor(object):
         self.strip_comments()
         return self.inputstream.strip()
 
+if __name__ == "__main__":
+    import redis
+    p = Preprocessor()
+    with open("test_input.md")as f:
+        x = p.processInput(f.read(),"")
+        print(x)
+        print(repr(x))
+
+    r = redis.Redis()
+    r.set("test", x)

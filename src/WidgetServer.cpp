@@ -36,8 +36,8 @@ void Widget_Server::resolve_values(std::map <int, Node_Value>& map_)
 
 void Widget_Server::unpack_node(
     Redis::Node_Editor* e
-    , std::vector <std::string>& triggers
-    , std::vector <std::string>& children)
+    , std::vector <std::string>& children
+    , std::vector <std::string>& triggers)
 {
     const static std::string ch {"children"};
     const static std::string ev {"events"};

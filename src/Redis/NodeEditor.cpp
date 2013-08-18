@@ -190,7 +190,7 @@ void Node_Editor::read(std::map<std::string,std::string>& iomap)
 void Node_Editor::read(std::vector <std::string>& iovec)
 {
     std::string full_node {build_node()};
-    if (exists && type != Mogu_Syntax::list.integer) return;
+    if (exists && get_type() != Mogu_Syntax::list) return;
     if (!exists) 
     {
         if (prefix != Prefix::user || prefix != Prefix::group)

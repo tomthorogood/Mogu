@@ -175,6 +175,7 @@ template<>
 std::vector <std::string> Query_Handler::yield_response <std::vector<std::string>>()
 {
     next_reply();
+    size_t s = reply_vec.size();
     return reply_vec;
 }
 

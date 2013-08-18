@@ -52,7 +52,7 @@ void Node_Value_Parser::tokenize_input(std::string in, bool set_at_begin)
     size_t end_index {};
     size_t input_size {in.size()};
 
-    while (end_index < input_size)
+    while (input_index < input_size)
     {
         if (in[input_index] == '"')
         {
