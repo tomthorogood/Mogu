@@ -1,5 +1,5 @@
 /*
- * SlotManager.h
+ * Slot_Manager.h
  *
  *  Created on: Apr 22, 2013
  *      Author: tom
@@ -10,44 +10,23 @@
 #include "NodeValue.h"
 #include <unordered_map>
 #include <string>
-#include <Types/MoguLogger.h>
 
-class SlotManager
+class Slot_Manager
 {
 public:
-    SlotManager(){}
+    Slot_Manager(){}
 
-    inline void setSlot(const std::string& name, const NodeValue& value)
-    {
-        if (name.empty())
-        {
-            Application::log.log(LogLevel::CRITICAL,
-                "Attempting to set an anonymous slot. Something has "
-                , "to have gone wrong for this to be the case.");
-            return ;
-        }
-        if (value.getString().empty())
-        {
-            Application::log.log(LogLevel::WARN, "Setting an empty string "
-                , "(", value.getString(), ") "
-                , "in slot ", name, ". Refusing to comply.");
-            return;
-        }
-        map[name] = value;
-    }
+    inline void set_slot(const std::string& s, const Node_Value& v)
+        { m[s]=v; }
 
-    inline NodeValue retrieveSlot(const std::string& name) const
-    {
-        if (!map.count(name)) return NodeValue("");
-        return NodeValue(map.at(name));
-    }
+    inline Node_Value get_slot(const std::string& s) const
+        { return m.count(s) ? m.at(s) : Node_Value{""}; }
 
-    inline void clearSlot(const std::string& name)
-    { map.erase(name);}
+    inline void clear_slot(const std::string& s)
+        { m.erase(s); }
 
 private:
-    std::unordered_map <std::string,NodeValue> map;
-
+    std::unordered_map <std::string,Node_Value> m;
 };
 
 

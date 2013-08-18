@@ -2,40 +2,40 @@
 #include "../Security/Encryption.h"
 #include "../Types/MoguLogger.h"
 
+namespace Application{
+    extern Context_Map* context_map;
+    extern Mogu_Logger log;
+}
 
 namespace Redis {
 
-NodeEditor::NodeEditor()
-    : db(new MoguQueryHandler(Application::contextMap, Prefix::widgets))
+Node_Editor::Node_Editor()
+    : db(new Mogu_Query_Handler(Prefix::widgets))
 {
 }
 
-NodeEditor::NodeEditor(
-
-    const Prefix& prefix_
-    , const std::string& node_
-    , NodeValue* arg_)
-    :
-        prefix(prefix_)
-        , db(new MoguQueryHandler(Application::contextMap, prefix_))
-        , arg(arg_)
-        , prefix_str(prefixMap().at(prefix_))
-        , node(node_)
+Node_Editor::Node_Editor(
+        const Prefix& prefix_, const std::string& node_, Node_Value* arg_)
+    : prefix(prefix_)
+    , db(new Mogu_Query_Handler(prefix_))
+    , arg(arg_)
+    , prefix_str(prefix_map().at(prefix_))
+    , node(node_)
         
 {
     setup();
 }
 
-void NodeEditor::setup()
+void Node_Editor::setup()
 {
-    if (id_required() && !hasId()) return;
-    db->appendQuery(buildCommand("exists"));
+    if (id_required() && !has_id()) return;
+    db->append_query(build_command("exists"));
 
     /* Get the raw type of the node.*/
-    db->appendQuery(buildCommand("type"));
-    exists = db->yieldResponse <bool>();
+    db->append_query(build_command("type"));
+    exists = db->yield_response <bool>();
     if (exists)
-        type = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
+        type = Mogu_Syntax::get(db->yield_response<std::string>()).integer;
     /* Don't try and guess the type of a node that doesn't exist. */
     else
     {
@@ -44,51 +44,56 @@ void NodeEditor::setup()
 
     if (prefix == Prefix::user || prefix == Prefix::group)
     {
-        type = getPolicyType();
-        setEncrypted();
+        type = get_policy_type();
+        set_encrypted();
     }
 
-    if (arg) setArgInfo();
+    if (arg) set_arg_info();
     is_setup = true;
 }
 
 
-int NodeEditor::getPolicyType()
+int Node_Editor::get_policy_type()
 {
-    NodeValue tmp(MoguSyntax::type.integer);
-    setPolicy();
-    policy->appendQuery(
-        "hget policies.%s %d", node.c_str(), MoguSyntax::type.integer);
-    int type_ = MoguSyntax::get(policy->yieldResponse<std::string>());
+    Node_Value tmp(Mogu_Syntax::type.integer);
+    set_policy();
+    policy->append_query(
+        "hget policies.%s %d", node.c_str(), Mogu_Syntax::type.integer);
+    int type_ = Mogu_Syntax::get(policy->yield_response<std::string>());
     return type_;
-
 }
 
 /* Resets anything that could potentially change
  * by the changing of a prefix, changes the prefix.
  */
-void NodeEditor::setPrefix(Prefix prefix_)
+void Node_Editor::set_prefix(Prefix prefix_)
 {
     if (prefix_ == prefix) return; // Ignore this request
     prefix = prefix_;
     id = -1;
-    prefix_str = prefixMap().at(prefix);
-    db->newContext(Application::contextMap->get(prefix_));
-    unsetArgInfo();
+    prefix_str = prefix_map().at(prefix);
+    db->new_context(Application::context_map->get(prefix_));
+    unset_arg_info();
 
-    db->appendQuery(buildCommand("exists"));
-    db->appendQuery(buildCommand("type"));
-    exists = db->yieldResponse<bool>();
-    if (exists) type = MoguSyntax::get(db->yieldResponse<std::string>()).integer;
-    else db->flush();
-    setArgInfo();
+    db->append_query(build_command("exists"));
+    db->append_query(build_command("type"));
+    exists = db->yield_response<bool>();
+    if (exists)
+    {
+        type = Mogu_Syntax::get(db->yield_response<std::string>()).integer;
+    }
+    else
+    {
+        db->flush();
+    }
+    set_arg_info();
 }
 
 
 /* A standard read command will be either 
  * 'get', 'lindex', or 'hget'
  */
-std::string NodeEditor::read()
+std::string Node_Editor::read()
 {
     if (!exists)
     {
@@ -101,52 +106,53 @@ std::string NodeEditor::read()
             /* If the node doesn't exist, we can try and see if there is
              * a default set in the node's policy.
              */
-            return getDefault();
+            return get_default();
         }
     }
-    if (type == MoguSyntax::string.integer)
+    if (type == Mogu_Syntax::string.integer)
     {
-        unsetArgInfo();
-        db->appendQuery(buildCommand("get"));
-        setArgInfo();
+        unset_arg_info();
+        db->append_query(build_command("get"));
+        set_arg_info();
     }
-    else if (type == MoguSyntax::list.integer)
+    else if (type == Mogu_Syntax::list.integer)
     {
         if (isdigit(arg_str[0]))
-            db->appendQuery(buildCommand("lindex"));
+            db->append_query(build_command("lindex"));
     }
     else
     {
         if (!arg_str.empty())
         {
-            db->appendQuery(buildCommand("hexists"));
-            if (db->yieldResponse<bool>())
-                db->appendQuery(buildCommand("hget"));
-            else
-                return getDefault();
+            db->append_query(build_command("hexists"));
+            if (db->yield_response<bool>())
+                db->append_query(build_command("hget"));
+            else if (is_dynamic_type())
+                return get_default();
+            else return "";
         }
     }
 
     if (encrypted)
-        return Security::decrypt(db->yieldResponse<std::string>());
-    return db->yieldResponse <std::string>();
+        return Security::decrypt(db->yield_response<std::string>());
+    return db->yield_response <std::string>();
 }
 
-bool NodeEditor::setEncrypted()
+bool Node_Editor::set_encrypted()
 {
-    setPolicy();
-    policy->appendQuery(
-        "hget policies.%s %d", node.c_str(), MoguSyntax::encrypted.integer);
-    std::string encryption_result = policy->yieldResponse <std::string>();
+    set_policy();
+    policy->append_query(
+        "hget policies.%s %d", node.c_str(), Mogu_Syntax::encrypted.integer);
+    std::string encryption_result {policy->yield_response <std::string>()};
     encrypted = encryption_result=="yes";
     return encrypted;
 }
 
 
-void NodeEditor::read(std::map<std::string,std::string>& iomap)
+void Node_Editor::read(std::map<std::string,std::string>& iomap)
 {
     /* This is only a valid action when we're dealing with a hash node. */
-    if (type != MoguSyntax::hash.integer && exists) return;
+    if (type != Mogu_Syntax::hash.integer && exists) return;
 
     /* If it doesn't exist, we can check to see if there is a default set, 
      * which will only be the case in a user or group prefix. */
@@ -158,33 +164,33 @@ void NodeEditor::read(std::map<std::string,std::string>& iomap)
         }
         else
         {
-            getDefault(iomap);
+            get_default(iomap);
             return;
         }
     }
 
     /* We have to clear arg info in order for an 'hgetall' command to work. */
-    unsetArgInfo();
-    db->appendQuery(buildCommand("hgetall"));
+    unset_arg_info();
+    db->append_query(build_command("hgetall"));
     std::vector <std::string> response =
-        db->yieldResponse <std::vector <std::string>>();
+        db->yield_response <std::vector <std::string>>();
     
     for (size_t index = 0; index < response.size(); ++index)
     {
-        std::string key = response[index];
-        std::string val = response[++index];
+        std::string key {response[index]};
+        std::string val {response[++index]};
         if (encrypted)
             val = Security::decrypt(val);
         iomap[key] = val;
     }
 
-    setArgInfo();
+    set_arg_info();
 }
 
-void NodeEditor::read(std::vector <std::string>& iovec)
+void Node_Editor::read(std::vector <std::string>& iovec)
 {
-    std::string full_node = buildNode();
-    if (exists && type != MoguSyntax::list.integer) return;
+    std::string full_node {build_node()};
+    if (exists && get_type() != Mogu_Syntax::list) return;
     if (!exists) 
     {
         if (prefix != Prefix::user || prefix != Prefix::group)
@@ -196,105 +202,105 @@ void NodeEditor::read(std::vector <std::string>& iovec)
             /* If the node doesn't exist, we can try and see if there is
              * a default set in the node's policy.
              */
-            getDefault(iovec);
+            get_default(iovec);
             return;
         }
     }
-    db->appendQuery(buildCommand("llen"));
-    int range = db->yieldResponse <int>();
+    db->append_query(build_command("llen"));
+    int range {db->yield_response <int>()};
     
     // Since this is a very specific command format, we will 
     // not worry about building this logic into the 'appendCommand'
     // tree.
 
-    db->appendQuery("lrange %s 0 %d", full_node.c_str(), range);
+    db->append_query("lrange %s 0 %d", full_node.c_str(), range);
 
-    iovec = db->yieldResponse<std::vector<std::string>>();
+    iovec = db->yield_response<std::vector<std::string>>();
     if (encrypted)
     {
         for (size_t i = 0; i < iovec.size(); ++i)
         {
-            std::string decrypted = Security::decrypt(iovec[i]);
+            std::string decrypted {Security::decrypt(iovec[i])};
             iovec[i] = decrypted;
         }
     }
 }
 
-std::string NodeEditor::getDefault()
+std::string Node_Editor::get_default()
 {
-    NodeValue nv(MoguSyntax::default_.str);
-    NodeEditor def(Prefix::policies, node, arg);
-    def.setSub(MoguSyntax::default_.str);
+    Node_Value nv {Mogu_Syntax::default_.str};
+    Node_Editor def {Prefix::policies, node, arg};
+    def.set_sub(Mogu_Syntax::default_.str);
     return def.read();
 }
 
-void NodeEditor::getDefault(std::vector<std::string>& iovec)
+void Node_Editor::get_default(std::vector<std::string>& iovec)
 {
-    std::string node(node);
-    NodeEditor editor(Prefix::policies, node, arg);
-    editor.setSub(MoguSyntax::default_.str);
+    std::string node {node};
+    Node_Editor editor {Prefix::policies, node, arg};
+    editor.set_sub(Mogu_Syntax::default_.str);
     editor.read(iovec);
 }
 
-void NodeEditor::getDefault(std::map<std::string,std::string>& iomap)
+void Node_Editor::get_default(std::map<std::string,std::string>& iomap)
 {
-    NodeEditor editor(Prefix::policies, node, arg);
-    editor.setSub(MoguSyntax::default_.str);
+    Node_Editor editor {Prefix::policies, node, arg};
+    editor.set_sub(Mogu_Syntax::default_.str);
     editor.read(iomap);
 }
 
 
-bool NodeEditor::write(std::string value, bool hold_queue)
+bool Node_Editor::write(std::string value, bool hold_queue)
 {
     if (encrypted) value = Security::encrypt(value);
-    NodeValue tmp(value);
-    if (type==MoguSyntax::string.integer)
+    Node_Value tmp(value);
+    if (type==Mogu_Syntax::string.integer)
     {
         // We shouldn't already have an arg, and if we do, it's 
         // probably not there on purpose, so we'll allow the overwrite.
-        swapArg(&tmp);
-        db->appendQuery(buildCommand("set"));
-        swapArg();
+        swap_arg(&tmp);
+        db->append_query(build_command("set"));
+        swap_arg();
     }
-    else if (type==MoguSyntax::list.integer)
+    else if (type==Mogu_Syntax::list.integer)
     {
-        swapArg(&tmp);
-        db->appendQuery(buildCommand("rpush"));
-        swapArg();
+        swap_arg(&tmp);
+        db->append_query(build_command("rpush"));
+        swap_arg();
     }
     /* This is a special circumstance, so we'll build the logic right here. 
      * The 'arg' should be the key in the Redis hash.
      */
-    else if (type==MoguSyntax::hash.integer && !arg_str.empty())
+    else if (type==Mogu_Syntax::hash.integer && !arg_str.empty())
     {
-        db->appendQuery(buildCommand("hset","%s"),value.c_str());
+        db->append_query(build_command("hset","%s"),value.c_str());
     }
     if (!hold_queue) db->flush();
     return true;
 }
 
-bool NodeEditor::write(std::map<std::string,std::string>& iomap)
+bool Node_Editor::write(std::map<std::string,std::string>& iomap)
 {
     if (encrypted)
     {
         for (auto iter : iomap)
         {
-            std::string val = Security::encrypt(iter.second);
-            iomap[iter.first] = val;
+            std::string s {Security::encrypt(iter.second)};
+            iomap[iter.first] = s;
         }
     }
     /* Here, we are necessarily dealing with a hash node.*/
-    if (type != MoguSyntax::hash.integer) return false;
+    if (type != Mogu_Syntax::hash.integer) return false;
     
-    NodeValue tmp;
+    Node_Value tmp {};
     delay_execution = true;
 
     for (auto iter : iomap)
     {
-        tmp.setString(iter.first); // Set the key as the arg.
-        swapArg(&tmp);
+        tmp.set_string(iter.first); // Set the key as the arg.
+        swap_arg(&tmp);
         write(iter.second, true);
-        swapArg();
+        swap_arg();
     }
     db->flush();
 
@@ -302,17 +308,17 @@ bool NodeEditor::write(std::map<std::string,std::string>& iomap)
 }
 
 /* Here, we are necessarily dealing with a list node. */
-bool NodeEditor::write(std::vector<std::string>& iovec)
+bool Node_Editor::write(std::vector<std::string>& iovec)
 {
     if (encrypted)
     {
         for (size_t i =0; i < iovec.size(); ++i)
         {
-            std::string str = Security::encrypt(iovec[i]);
+            std::string str {Security::encrypt(iovec[i])};
             iovec[i] = str;
         }
     }
-    if (type != MoguSyntax::list.integer) return false;
+    if (type != Mogu_Syntax::list.integer) return false;
 
     /* Write everything as a batch */
     delay_execution = true;
@@ -324,46 +330,46 @@ bool NodeEditor::write(std::vector<std::string>& iovec)
     return true;
 }
 
-bool NodeEditor::remove()
+bool Node_Editor::remove()
 {
-    if (arg == NULL)
+    if (!arg)
     {
-        db->appendQuery(buildCommand("del"));
+        db->append_query(build_command("del"));
     }
-    else if (type == MoguSyntax::hash.integer)
+    else if (type == Mogu_Syntax::hash.integer)
     {
-        db->appendQuery(buildCommand("hdel"));
+        db->append_query(build_command("hdel"));
     }
     else return false;
     return true;
 }
 
-bool NodeEditor::remove(const std::string& value)
+bool Node_Editor::remove(const std::string& value)
 {
-    std::string s_node = buildNode();
-    if (type == MoguSyntax::list.integer)
+    std::string s_node {build_node()};
+    if (type == Mogu_Syntax::list.integer)
     {
-        db->appendQuery("lrem %s 1 %s", s_node.c_str(), value.c_str());
+        db->append_query("lrem %s 1 %s", s_node.c_str(), value.c_str());
         return true;
     }
     else return false;
 
 }
 
-std::string NodeEditor::buildCommand(const std::string& cmd, std::string extra)
+std::string Node_Editor::build_command(const std::string& cmd, std::string extra)
 {
-    std::string s_node = buildNode();
+    std::string s_node {build_node()};
     std::stringstream cmdbuf;
     cmdbuf << cmd << " " << s_node;
     if (!arg_str.empty()) cmdbuf << " " << arg_str;
     if (!extra.empty()) cmdbuf << " " << extra;
-    std::string scmd = cmdbuf.str();
-    Application::log.log(LogLevel::NOTICE, "Built Redis command: ", scmd);
+    std::string scmd {cmdbuf.str()};
+    Application::log.log(Log_Level::notice, "Built Redis command: ", scmd);
     return scmd;
 }
 
 
-void NodeEditor::setArgInfo()
+void Node_Editor::set_arg_info()
 {
     if (arg == NULL) return;
 
@@ -371,13 +377,13 @@ void NodeEditor::setArgInfo()
      * assume that's what we'll be dealing with for a dash of type safety.
      */
 
-    if (arg->isString())
+    if (arg->is_string())
     {
-        arg_str = arg->getString();
+        arg_str = arg->get_string();
     }
-    else if (arg->isInt())
+    else if (arg->is_int())
     {
-        std::string s = std::to_string(arg->getInt());
+        std::string s {std::to_string(arg->get_int())};
         arg_str = s;
     }
 }

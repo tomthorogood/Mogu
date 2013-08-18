@@ -3,11 +3,11 @@
 
 
 template <typename T>
-struct IntHash 
+struct Int_Hash 
 {
 public:
-    IntHash() {}
-    IntHash(const T& t) {}
+    Int_Hash() {}
+    Int_Hash(const T& t) {}
     size_t operator()(T t)const noexcept
     {
         return static_cast<size_t>(t);

@@ -12,9 +12,9 @@ namespace Security {
     std::string encrypt(const std::string&);
     std::string decrypt(const std::string&);
 
-    std::string processPacket(const std::string&, int method);
-    std::string processString(const std::string&, int method);
-    std::string trimPadding (const std::string&);
+    std::string process_packet(const std::string&, int method);
+    std::string process_string(const std::string&, int method);
+    std::string trim_padding (const std::string&);
 
 }
 

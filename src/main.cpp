@@ -13,7 +13,7 @@ Wt::WApplication* createApplication(
 int main(
     int argc, char** argv)
 {
-    Application::loadDatabaseContexts();
+    Application::load_database_contexts();
     Wt::ApplicationCreator fn = &createApplication;
     return Wt::WRun(argc, argv, fn);
 }

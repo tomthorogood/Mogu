@@ -8,16 +8,18 @@
 #ifndef MOLDABLE_H_
 #define MOLDABLE_H_
 
-#include <declarations.h>
+
 #include <Wt/WContainerWidget>
 #include <Wt/WSignal>
-#include <Types/NodeValue.h>
-#include <Types/syntax.h>
 #include <Redis/NodeEditor.h>
 
-class Moldable;
+#include <Types/NodeValue.h>
+#include <Types/syntax.h>
 
-enum class MoldableFlags
+class Event_Handler;
+class Widget_Assembly;
+
+enum class Moldable_Flags
 {
     is_templated        =1
     , has_children      =2
@@ -32,29 +34,29 @@ enum class MoldableFlags
 /* Simply an interface that can be implemented to expose widgets to 
  * manipulation by external forces.
  */
-class AllowsExternalManipulation : public Wt::WContainerWidget
+class Allows_External_Manipulation : public Wt::WContainerWidget
 {
 public:
     /* Overload of the parent class 'addChild' widget to provide public access
      * to manipulate widget tree for Moldable widgets.
      */
-    inline virtual void addChild(Moldable* child) {
+    inline virtual void addChild(Allows_External_Manipulation* child) {
         Wt::WContainerWidget::addChild(reinterpret_cast<Wt::WWidget*>(child));
     }
 
     /* Overload of the parent class 'removeChild' widget to provide public
      * access to manipulate widget tree for Moldable widgets.
      */
-    inline virtual void removeChild(Moldable* child) {
+    inline virtual void removeChild(Allows_External_Manipulation* child) {
         Wt::WContainerWidget::removeChild(reinterpret_cast<Wt::WWidget*>(child));
     }
 };
 
 
 class Moldable : 
-    public AllowsExternalManipulation
+    public Allows_External_Manipulation
 {
-    EventHandler* bindery = nullptr;
+    Event_Handler* bindery {};
 
     Wt::Signal <> sig_style_changed;
     Wt::Signal <> sig_failed_test;
@@ -64,41 +66,39 @@ class Moldable :
     Wt::Signal <> sig_index_changed;
     Wt::Signal <> sig_error_reported;
 
-    const SyntaxDef&  widget_type;
+    const Syntax_Def&  widget_type;
 
-    size_t num_triggers;
+    size_t num_triggers {};
 
-    bool updateStackIndex(size_t  index);
-    void setFlags(Redis::NodeEditor&);
+    bool update_stack_index(size_t);
+    void set_flags(Redis::Node_Editor&);
 
-    std::string assembly_style;
-    std::string assembly_tooltip;
+    std::string assembly_style {};
+    std::string assembly_tooltip {};
 
 protected:
-    uint8_t flags     = 0;
-    std::string node;
-    std::string template_name;
+    uint8_t flags {};
+    std::string node {};
+    std::string template_name {};
 
-    virtual void init(WidgetAssembly*);
-    void initializeGlobalAttributes();
+    virtual void init(Widget_Assembly*);
+    void initialize_global_attributes();
 
 public:
 
-    Moldable(WidgetAssembly*, const SyntaxDef& widget_type);
+    Moldable(Widget_Assembly*, const Syntax_Def& type);
 
     virtual ~Moldable();
 
-    virtual std::string moldableValue()                 =0;
+    virtual std::string get_moldable_value() =0;
 
-    virtual void setMoldableValue(const std::string&)   =0;
-    virtual void appendChild(Moldable*){}
+    virtual void set_moldable_value(const std::string&) =0;
+    virtual void append_child(Moldable*)  {}
 
-    inline size_t getNumTriggers() { return num_triggers;}
+    inline size_t count_triggers() { return num_triggers;}
 
-    virtual void getAttribute(const SyntaxDef& state, NodeValue& val);
-    virtual bool setAttribute(const SyntaxDef& state, NodeValue& val);
-    inline virtual bool setAttribute(const SyntaxDef& state, NodeValue&& val)
-        { return setAttribute(state, val);}
+    virtual void get_attribute(const Syntax_Def& a, Node_Value& v);
+    virtual bool set_attribute(const Syntax_Def& a, Node_Value& v);
 
     inline virtual void setStyleClass (const Wt::WString& style)
     {
@@ -106,21 +106,19 @@ public:
         sig_style_changed.emit();
     }
 
-    inline std::string getNode()
-    {
-        return node;
-    }
+    inline const std::string& get_node() const
+        { return node; }
 
     inline virtual void load() override
     {
         if (loaded())
         {
-            if (!testFlag(MoldableFlags::allow_reload))
-                return;
+            if (!test_flag(Moldable_Flags::allow_reload)) return;
         }
         Wt::WContainerWidget::load();
     }
 
+    /* Keeping with the Wt signal styling here...hence the camelCase */
     inline Wt::Signal <>& styleChanged()    { return sig_style_changed; }
     inline Wt::Signal <>& fail()            { return sig_failed_test; }
     inline Wt::Signal <>& succeed()         { return sig_succeeded_test;}
@@ -129,60 +127,57 @@ public:
     inline Wt::Signal <>& indexChanged()    { return sig_index_changed;}
     inline Wt::Signal <>& errorReported()   { return sig_error_reported;}
 
-    inline void increment(int byAmount=1) {
-        NodeValue v(0);
-        getAttribute(MoguSyntax::index,v);
-        int newindex = v.getInt() + byAmount;
-        v.setInt(newindex);
-        setAttribute(MoguSyntax::index,v);
+    inline void increment(int amt=1)
+    {
+        Node_Value v {};
+        get_attribute(Mogu_Syntax::index,v);
+        int i {v.get_int() + amt};
+        v.set_int(i);
+        set_attribute(Mogu_Syntax::index,v);
     }
 
-    inline void increment(NodeValue& val) {
-        int amt = val.getInt();
-        getAttribute(MoguSyntax::index,val);
-        amt += val.getInt();
-        val.setInt(amt);
-        setAttribute(MoguSyntax::index,val);
+    inline void increment(Node_Value& v)
+    {
+        increment(v.get_int());
     }
 
-    inline void decrement(int byAmount=1) {
-        NodeValue v(0);
-        getAttribute(MoguSyntax::index,v);
-        int newindex = v.getInt()-byAmount;
-        v.setInt(newindex);
-        setAttribute(MoguSyntax::index,v);
+    inline void decrement(int amt=1)
+    {
+        Node_Value v {};
+        get_attribute(Mogu_Syntax::index,v);
+        int i {v.get_int()-amt};
+        v.set_int(i);
+        set_attribute(Mogu_Syntax::index,v);
     }
 
-    inline void decrement(NodeValue& val) {
-        int amt = val.getInt();
-        getAttribute(MoguSyntax::index,val);
-        amt = val.getInt()-amt;
-        setAttribute(MoguSyntax::index,val);
+    inline void decrement(Node_Value& val) {
+        decrement(val.get_int());
     }
-
 
     virtual void inline reload()
     {
-        flags |= (uint8_t)MoldableFlags::allow_reload;
+        flags |= (uint8_t)Moldable_Flags::allow_reload;
         clear();
-        initializeGlobalAttributes();
+        initialize_global_attributes();
         load();
-        flags -= (uint8_t)MoldableFlags::allow_reload;
+        flags -= (uint8_t)Moldable_Flags::allow_reload;
     }
 
-    /*!\deprecated*/
-    inline virtual void reset()     {reload();}
-    inline void setFlag(MoldableFlags flag) { flags |= (uint8_t) flag; }
+    inline void set_flag(Moldable_Flags f) 
+        { flags |= (uint8_t) f;}
 
-    inline void unsetFlag(MoldableFlags flag) { 
-        if (testFlag(flag))
-            flags -= (uint8_t) flag; 
-    }
-    inline bool testFlag(MoldableFlags flag) {return flags & (uint8_t) flag; }
-    inline void shun() { setFlag(MoldableFlags::shun); }
-    inline void unshun() { unsetFlag(MoldableFlags::shun); }
+    inline void unset_flag(Moldable_Flags f)
+        { flags -= (uint8_t)f;}
+    
+    inline bool test_flag(Moldable_Flags f)
+        { return flags & (uint8_t) f; }
+
+    inline void shun()
+        { set_flag(Moldable_Flags::shun); }
+    
+    inline void unshun() 
+        { unset_flag(Moldable_Flags::shun); }
 
 };
-
 
 #endif /* MOLDABLE_H_ */

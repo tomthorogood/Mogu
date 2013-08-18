@@ -4,64 +4,65 @@
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <string>
 #include "../Redis/MoguQueryHandler.h"
-enum class SecurityStatus
+enum class Security_Status
 {
-    ERR_UNKNOWN
-    , ERR_USER_EXISTS
-    , ERR_USER_NOT_FOUND
-    , ERR_BAD_AUTH
-    , OK_REGISTER
-    , OK_LOGIN
-    , OK_PASSWORD_RESET
+    err_unknown
+    , err_user_exists
+    , err_user_not_found
+    , err_bad_auth
+    , ok_register
+    , ok_login
+    , ok_password_reset
 };
 
-class UserManager {
+class User_Manager {
 public:
 
-    UserManager() {}
-    SecurityStatus registerUser(
+    User_Manager() {}
+    Security_Status register_user(
             std::string& username, const std::string& password);
 
-    SecurityStatus loginUser(
+    Security_Status login_user(
             std::string& username, const std::string& password);
 
-    SecurityStatus deleteUser(int userid);
+    Security_Status delete_user(int userid);
 
     /* For a user that's already logged in, allows them to change
      * their password.
      */
-    void changePassword(const std::string& new_password); 
+    void change_password(const std::string& new_password); 
 
     /* For a user that cannot login, resets their password to
      * something else, and emails it to them.
      */
-    SecurityStatus resetPassword(int userid, std::string email,
+    Security_Status reset_password(int userid, std::string email,
             const std::string& appname);
-    SecurityStatus resetPassword(std::string& userid,
+    Security_Status reset_password(std::string& userid,
             const std::string& email, const std::string& appname);
 
-    inline const int& getUser() { return userid;}
+    inline const int& get_user() const { return userid;}
 
 private:
-    std::string sanitizePassword(
+    int userid {-1};
+    
+    std::string sanitize_password(
             const std::string& password, const std::string& salt);
 
-    inline std::string generateSalt()
+    inline std::string generate_salt()
     {
         TurnLeft::Utils::RandomCharSet rchar;
         return rchar.generate(1);
     }
 
-    std::string getUserSalt(std::string userid, Redis::MoguQueryHandler* db =nullptr);
-    std::string getUserSalt(const int& userid, Redis::MoguQueryHandler* db=nullptr);
+    std::string get_user_salt(std::string userid, Redis::Mogu_Query_Handler* db =nullptr);
+    std::string get_user_salt(const int& userid, Redis::Mogu_Query_Handler* db=nullptr);
     std::pair <std::string,std::string>
-        getSanitizedInfo(std::string& uname, const std::string& password);
-    std::string getSalt(const std::string& username);
-    int getUserId(const std::string& username);
+        get_sanitized_info(std::string& uname, const std::string& password);
+    std::string get_salt(const std::string& username);
+    int get_user_id(const std::string& username);
 
     /* Either returns an abandoned userid, or creates a new one. */
-    int consumeUserId(Redis::MoguQueryHandler&);
-    int userid = -1;
+    int consume_user_id(Redis::Mogu_Query_Handler&);
 };
 
 #endif

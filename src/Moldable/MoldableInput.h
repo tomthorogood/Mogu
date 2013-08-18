@@ -1,5 +1,5 @@
 /*
- * MoldableInput.h
+ * Moldable_Input.h
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -12,26 +12,27 @@
 #include <Wt/WValidator>
 #include <Wt/WLineEdit>
 
-class MoldableInput : public Moldable
+class Moldable_Input : public Moldable
 {
-    std::string assembly_validator;
-    std::string assembly_txt;
-    Wt::WValidator* validator_ptr = nullptr;
+    std::string assembly_validator {};
+    std::string assembly_txt {};
+    Wt::WValidator* validator_ptr {};
+
 protected:
-    Wt::WLineEdit* input = nullptr;
-    virtual void init(WidgetAssembly* assembly) override;
-    void initializeInput();
+    Wt::WLineEdit* input {};
+    virtual void init(Widget_Assembly* assembly) override;
+    void initialize_input();
 
 public:
-    MoldableInput (WidgetAssembly*);
+    Moldable_Input (Widget_Assembly*);
 
-    inline virtual std::string moldableValue() {
+    inline virtual std::string get_moldable_value() {
         std::string val = input->text().toUTF8();
         return val;
         //return input->valueText().toUTF8();
     }
 
-    inline virtual void setMoldableValue(const std::string& txt) {
+    inline virtual void set_moldable_value(const std::string& txt) {
         input->setEmptyText(txt);
     }
 
@@ -47,11 +48,11 @@ public:
 
     inline virtual void reload()
     {
-        setFlag(MoldableFlags::allow_reload);
-        initializeGlobalAttributes();
-        initializeInput();
+        set_flag(Moldable_Flags::allow_reload);
+        initialize_global_attributes();
+        initialize_input();
         load();
-        unsetFlag(MoldableFlags::allow_reload);;
+        unset_flag(Moldable_Flags::allow_reload);;
     }
 };
 

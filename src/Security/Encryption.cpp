@@ -17,7 +17,7 @@ namespace {
         }
     }
 
-    void trimPadding(std::string& str)
+    void trim_padding(std::string& str)
     {
         size_t cl_brace = str.find_first_of('}');
         std::string orig_size = str.substr(1,cl_brace-1);
@@ -26,10 +26,10 @@ namespace {
     }
 }
 
-std::string processPacket (const std::string& packet, int method)
+std::string process_packet (const std::string& packet, int method)
 {
     BlowfishKeyCreator k;
-    BF_KEY* key = k.getKey();
+    BF_KEY* key = k.get_key();
     unsigned char* input = 
         (unsigned char*) calloc(packet.size()+1,sizeof(char));
     unsigned char* output = 
@@ -53,25 +53,25 @@ std::string processPacket (const std::string& packet, int method)
     return ret;
 }
 
-std::string processString (const std::string& input, int method)
+std::string process_string (const std::string& input, int method)
 {
     std::string ret ="";
     BFString bf_str(input, method==BF_DECRYPT);
     while (bf_str)
-        ret += processPacket(bf_str.yield(), method);
-    if (method==BF_DECRYPT) trimPadding(ret);
+        ret += process_packet(bf_str.yield(), method);
+    if (method==BF_DECRYPT) trim_padding(ret);
     return ret;
 }
 
 std::string encrypt(const std::string& str)
 {
-    std::string e = processString(str, BF_ENCRYPT);
+    std::string e = process_string(str, BF_ENCRYPT);
     return e;
 }
 
 std::string decrypt(const std::string& str)
 {
-    std::string d = processString(str, BF_DECRYPT);
+    std::string d = process_string(str, BF_DECRYPT);
     return d;
 }
 

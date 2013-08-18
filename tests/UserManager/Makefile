@@ -9,8 +9,8 @@ deps := \
 	$(base_dir)src/Redis/DatabaseConfigReader.cpp \
 	$(base_dir)src/Redis/NodeEditor.cpp \
 	$(base_dir)src/Types/MoguLogger.cpp \
+	$(base_dir)src/Redis/MoguQueryHandler.cpp \
 	$(base_dir)src/Redis/QueryHandler/QueryHandler.cpp \
-	$(base_dir)src/Types/NodeValue.cpp \
 	$(base_dir)src/Security/Encryption.cpp \
 	$(base_dir)src/crypt/BlowfishKey.cpp \
 	$(base_dir)src/hash.cpp

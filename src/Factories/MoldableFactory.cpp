@@ -1,5 +1,5 @@
 /*
- * MoldableFactory.cpp
+ * Moldable_Factory.cpp
  *
  *  Created on: Sep 27, 2012
  *      Author: tom
@@ -12,56 +12,52 @@
 #include <WidgetServer.h>
 #include <Types/MoguLogger.h>
 
-MoldableFactory::MoldableFactory (Mogu* application) : 
-    server(new WidgetServer(application))
-{
+namespace Application {
+    extern Mogu_Logger log;
 }
 
-MoldableFactory::~MoldableFactory()
+Moldable* Moldable_Factory::create_moldable_widget(const std::string& node)
 {
-    delete server;
-}
-
-Moldable* MoldableFactory::createMoldableWidget(const std::string& node) const
-{
-    static int iters = 0;
+    static int iters = {};
     ++iters;
-    Application::log.log(LogLevel::NOTICE,
-            "MoldableFactory::createMoldableWidget:", __LINE__,
+    Application::log.log(Log_Level::notice,
+            "Moldable_Factory::create_moldabe_widget:", __LINE__,
             " : Creating Widget ", node, " ", iters++, ")");
-    WidgetAssembly* assembly = server->request(node);
-    std::string s_type = (std::string)
-        assembly->attrdict[MoguSyntax::type.integer];
-    const SyntaxDef& widget_type = MoguSyntax::get(s_type);
-    Moldable* product = nullptr;
+
+    Widget_Assembly* assembly = server.request(node);
+
+    std::string s = assembly->attrdict[Mogu_Syntax::type.integer].get_string();
+    const Syntax_Def& widget_type = Mogu_Syntax::get(s);
+    Moldable* product {};
+
     switch(widget_type)
     {
-    case MoguSyntax::container:
-        product =  new MoldableContainer(assembly);
+    case Mogu_Syntax::container:
+        product = new Moldable_Container(assembly);
         break;
-    case MoguSyntax::stack:
-        product =  new MoldableStack(assembly);
+    case Mogu_Syntax::stack:
+        product = new Moldable_Stack(assembly);
         break;
-    case MoguSyntax::text:
-        product =  new MoldableText(assembly);
+    case Mogu_Syntax::text:
+        product = new Moldable_Text(assembly);
         break;
-    case MoguSyntax::anchor:
-        product =  new MoldableLink(assembly);
+    case Mogu_Syntax::anchor:
+        product = new Moldable_Link(assembly);
         break;
-    case MoguSyntax::image:
-        product =  new MoldableImage(assembly);
+    case Mogu_Syntax::image:
+        product = new Moldable_Image(assembly);
         break;
-    case MoguSyntax::image_link:
-        product =  new MoldableImageLink(assembly);
+    case Mogu_Syntax::image_link:
+        product = new Moldable_Image_Link(assembly);
         break;
-    case MoguSyntax::input:
-        product =  new MoldableInput(assembly);
+    case Mogu_Syntax::input:
+        product = new Moldable_Input(assembly);
         break;
-    case MoguSyntax::password:
-        product =  new MoldablePassword(assembly);
+    case Mogu_Syntax::password:
+        product = new Moldable_Password(assembly);
         break;
     default:
-        product =  new MoldableContainer(assembly);
+        product = new Moldable_Container(assembly);
         break;
     }
 

@@ -1,5 +1,5 @@
 /*
- * MoldableImageLink.cpp
+ * Moldable_Image_Link.cpp
  *
  *  Created on: Dec 10, 2012
  *      Author: tom
@@ -11,29 +11,30 @@
 #include <Wt/WImage>
 #include <Redis/NodeEditor.h>
 #include <Types/WidgetAssembly.h>
+#include "../Config/inline_utils.h"
 
-MoldableImageLink::MoldableImageLink(WidgetAssembly* assembly)
-: MoldableLink(assembly)
+Moldable_Image_Link::Moldable_Image_Link(Widget_Assembly* assembly)
+: Moldable_Link(assembly)
 {
     init(assembly);
 }
 
-void MoldableImageLink::init(WidgetAssembly* assembly)
+void Moldable_Image_Link::init(Widget_Assembly* assembly)
 {
-    assembly_src = (std::string)
-        assembly->attrdict[MoguSyntax::source.integer];
-    initializeImage();
+    assembly_src = (std::string) assembly->attrdict[Mogu_Syntax::source.integer];
+    initialize_image();
 }
 
-void MoldableImageLink::initializeImage()
+void Moldable_Image_Link::initialize_image()
 {
     if (image)
     {
         removeWidget(image);
         delete image;
+        image = nullptr;
     }
     std::string src = stripquotes(assembly_src);
-    image = new Wt::WImage(src, moldableValue());
+    image = new Wt::WImage(src, get_moldable_value());
     link->setImage(image);
     link->setTarget(Wt::TargetNewWindow);
 }

@@ -1,167 +1,169 @@
 #include "../Actions.h"
 #include "Includes.h"
 
-#include <Groups/GroupManager.h>
 #include <Redis/NodeEditor.h>
+
+namespace Application {
+    extern Mogu_Logger log;
+}
 
 namespace Actions {
 
 namespace {
-const uint8_t INVALID_CONSTRUCT     =0;
+const uint8_t invalid_construct     =0;
 
 // "append [object [identifier]] to [object [identifier]]"
-const uint8_t OBJECT_TO_OBJECT      =1;
+const uint8_t object_to_object      =1;
 
 // "append [value] to [object identifier attribute]"
-const uint8_t VALUE_TO_ATTRIBUTE    =2;
+const uint8_t value_to_attribute    =2;
 
 // "append [value] to [data|user|group identifier [argument]]"
-const uint8_t VALUE_TO_FIELD        =3;
+const uint8_t value_to_field        =3;
 
 // "append user"
-const uint8_t USER_TO_APPLICATION   =4;
+const uint8_t user_to_application   =4;
 
-// Based on the flags set in the CommandValue, determine what kind
+// Based on the flags set in the Command_Value, determine what kind
 // of 'append' construct we have (of the 
-const uint8_t getConstruct(CommandValue& v)
+const uint8_t get_construct(Command_Value& v)
 {
 
-    // OBJECT_TO_OBJECT will always have an R_IDENTIFIER, 
+    // object_to_object will always have an r_identifier, 
     // but the main object may be "self" OR another widget.
-    if (v.test(CommandFlags::R_IDENTIFIER) &&
-            (v.test(CommandFlags::IDENTIFIER) 
-            || MoguSyntax::own == v.get(CommandFlags::OBJECT))
+    if (v.test(Command_Flags::r_identifier) &&
+            (v.test(Command_Flags::identifier) 
+            || Mogu_Syntax::own == v.get(Command_Flags::object))
        )
-        return OBJECT_TO_OBJECT;
+        return object_to_object;
 
-    if (v.test(CommandFlags::VALUE))
+    if (v.test(Command_Flags::value))
     {
-        if (MoguSyntax::widget == v.get(CommandFlags::OBJECT))
-            return VALUE_TO_ATTRIBUTE;
-        else return VALUE_TO_FIELD;
+        if (Mogu_Syntax::widget == v.get(Command_Flags::object))
+            return value_to_attribute;
+        else return value_to_field;
     }
 
-    if (MoguSyntax::user == v.get(CommandFlags::R_OBJECT))
-        return USER_TO_APPLICATION;
+    if (Mogu_Syntax::user == v.get(Command_Flags::r_object))
+        return user_to_application;
 
-    return INVALID_CONSTRUCT;
+    return invalid_construct;
 }
 
 /* The only valid use case for this function is when a single widget
  * shall be appended to another single widget. This will return without
  * effect if there's a problem resolving any of the requisite objects.
  */
-void handleObjectToObject(Moldable& broadcaster, CommandValue& v)
+void handle_object_to_object(Moldable& broadcaster, Command_Value& v)
 {   
     mApp;
 
-    std::string new_obj_id = (std::string) v.get(CommandFlags::R_IDENTIFIER);
-    Moldable* new_widget = app->getFactory().createMoldableWidget(new_obj_id); 
+    std::string new_obj_id = (std::string) v.get(Command_Flags::r_identifier);
+    Moldable* new_widget = app->get_factory().create_moldable_widget(new_obj_id); 
 
-    Moldable* curr_widget = app->registeredWidget( 
-            (std::string) v.get(CommandFlags::IDENTIFIER));
+    Moldable* curr_widget = app->get_widget( 
+            (std::string) v.get(Command_Flags::identifier));
     if (curr_widget != nullptr) curr_widget->addWidget(new_widget);
 }
 
 /* Appends a resolved value to an existing attribute. Sums two numbers. */
-void handleValueToAttribute(Moldable& broadcaster, CommandValue& v)
+void handle_value_to_attribute(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    NodeValue tmp;
-    Moldable* curr_widget = app->registeredWidget(
-            (std::string) v.get(CommandFlags::IDENTIFIER));
+    Node_Value tmp;
+    Moldable* curr_widget = app->get_widget(
+            (std::string) v.get(Command_Flags::identifier));
     
     if (curr_widget == nullptr) return;
 
-    const SyntaxDef& attribute = 
-        MoguSyntax::get(v.get(CommandFlags::ARG));
+    const Syntax_Def& attribute = 
+        Mogu_Syntax::get(v.get(Command_Flags::arg));
 
-    curr_widget->getAttribute(attribute, tmp);
-    tmp += v.get(CommandFlags::VALUE);
-    curr_widget->setAttribute(attribute, tmp);
+    curr_widget->get_attribute(attribute, tmp);
+    tmp += v.get(Command_Flags::value);
+    curr_widget->set_attribute(attribute, tmp);
 }
 
 /* Adds data to the database by first retrieving the value, 
  * ensuring the the current user has write access to the value, 
  * and then writing the appended value. 
  */
-void handleValueToField(Moldable& broadcaster, CommandValue& v)
+void handle_value_to_field(Moldable& broadcaster, Command_Value& v)
 {
-    mApp;
-    NodeValue arg;
-    if (v.test(CommandFlags::ARG))
-        arg = v.get(CommandFlags::ARG);
+    Node_Value arg;
+    if (v.test(Command_Flags::arg))
+        arg = v.get(Command_Flags::arg);
 
     bool writeable = true;
     Prefix obj = 
-        syntax_to_prefix.at((MoguSyntax::get(v.get(CommandFlags::OBJECT))));
-    std::string node = (std::string) v.get(CommandFlags::IDENTIFIER);
+        syntax_to_prefix.at((Mogu_Syntax::get(v.get(Command_Flags::object))));
+    std::string node = (std::string) v.get(Command_Flags::identifier);
 
-    if (Prefix::group == obj)
-    {
-        GroupManager gm(app->getGroup());
-        writeable = gm.hasWriteAccess(node);
-    }
+//    if (Prefix::group == obj)
+//    {
+//        Group_Manager gm(app->get_group());
+//        writeable = gm.has_write_access(node);
+//    }
 
     if (!writeable) return;
 
-    NodeValue current_value;
-    Redis::NodeEditor editor(obj, node, &arg);
-    if (editor.getType() == MoguSyntax::string)
+    Node_Value current_value;
+    Redis::Node_Editor editor(obj, node, &arg);
+    if (editor.get_type() == Mogu_Syntax::string)
     {
         std::string cv = editor.read();
-        cv += (std::string) v.get(CommandFlags::VALUE);
-        current_value.setString(cv);
+        cv += (std::string) v.get(Command_Flags::value);
+        current_value.set_string(cv);
     }
     else
     {
-        current_value.setString(v.get(CommandFlags::VALUE).getString());
+        current_value.set_string(v.get(Command_Flags::value).get_string());
     }
     editor.write(current_value);
 }
 
-void handleUserToApplication(Moldable& broadcaster, CommandValue& v)
+void handle_user_to_application(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
     if (&broadcaster==nullptr)
     {
-        Application::log.log(LogLevel::WARN,__FILE__, " ", __LINE__,
+        Application::log.log(Log_Level::warn,__FILE__, " ", __LINE__,
             ": Broadcaster is null.");
     }
 
-    std::string p_username = app->slotManager().retrieveSlot("USERNAME");
-    std::string p_userauth = app->slotManager().retrieveSlot("USERAUTH");
+    std::string p_username = app->get_slot_manager().get_slot("USERNAME");
+    std::string p_userauth = app->get_slot_manager().get_slot("USERAUTH");
     if (p_username.empty())
-        Application::log.log(LogLevel::ERROR,__FILE__," ", __LINE__,
+        Application::log.log(Log_Level::error,__FILE__," ", __LINE__,
             "Username is Empty \"", p_username, "\"");
     if (p_userauth.empty())
-        Application::log.log(LogLevel::ERROR, __FILE__," ", __LINE__,
+        Application::log.log(Log_Level::error, __FILE__," ", __LINE__,
             "Userauth is Empty \"", p_userauth, "\"");
-    SecurityStatus status = app->getUserManager().registerUser(
+    Security_Status status = app->get_user_manager().register_user(
         p_username,p_userauth);
 
-    if (status != SecurityStatus::OK_REGISTER)
+    if (status != Security_Status::ok_register)
         broadcaster.errorReported().emit();
 }
 
 }//anonymous local namespace
 
-void append(Moldable& broadcaster, CommandValue& v)
+void append(Moldable& broadcaster, Command_Value& v)
 {
-   const uint8_t construct = getConstruct(v); 
+   const uint8_t construct = get_construct(v); 
    switch(construct)
    {
-       case OBJECT_TO_OBJECT: 
-            handleObjectToObject(broadcaster,v);
+       case object_to_object: 
+            handle_object_to_object(broadcaster,v);
             break;
-       case VALUE_TO_ATTRIBUTE:
-            handleValueToAttribute(broadcaster,v);
+       case value_to_attribute:
+            handle_value_to_attribute(broadcaster,v);
             break;
-       case VALUE_TO_FIELD:
-            handleValueToField(broadcaster,v);
+       case value_to_field:
+            handle_value_to_field(broadcaster,v);
             break;
-       case USER_TO_APPLICATION:
-            handleUserToApplication(broadcaster,v);
+       case user_to_application:
+            handle_user_to_application(broadcaster,v);
             break;
        default: 
             return;

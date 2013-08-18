@@ -52,7 +52,7 @@ BlowfishKeyCreator::BlowfishKeyCreator()
 }
 
 BlowfishKeyCreator::BlowfishKeyCreator(const BlowfishKeyCreator& proto)
-    : bf_key(proto.getKey())
+    : bf_key(proto.get_key())
 {
     key = nullptr;
 }
@@ -64,7 +64,7 @@ BlowfishKeyCreator::~BlowfishKeyCreator()
 
 
 
-BF_KEY* BlowfishKeyCreator::getKey() const
+BF_KEY* BlowfishKeyCreator::get_key() const
 {
     return bf_key.get();
 }

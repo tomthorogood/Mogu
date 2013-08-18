@@ -1,5 +1,5 @@
 /*
- * NodeValueParser.h
+ * Node_Value_Parser.h
  *
  *  Created on: March 31, 2013
  *      Author: cameron
@@ -8,46 +8,41 @@
 #ifndef NODEVALUEPARSER_H_
 #define NODEVALUEPARSER_H_
 
-#include <Parsers/NodeValueParser/StateParser.h>
-#include <Parsers/NodeValueParser/MathParser.h>
-#include <Parsers/NodeValueParser/TokenManager.h>
-class NodeValue;
-class CommandValue;
-
+#include "NodeValueParser/StateParser.h"
+#include "NodeValueParser/MathParser.h"
+#include "NodeValueParser/TokenManager.h"
 #include <string>
 #include <vector>
 
+class Node_Value;
+class Command_Value;
+
+
 namespace Parsers {
 
-//TODO: clear all the token vectors for new iteration of NVP
-
-class NodeValueParser 
+class Node_Value_Parser 
 {
 	public:
-		NodeValueParser();
-        void giveInput(std::string input, NodeValue& output,
-                const SyntaxDef& context, NodeValue* arg=nullptr);
-		void giveInput(const std::string& input, NodeValue& nv,
+		Node_Value_Parser() : state_parser(tm), math_parser(tm) {}
+        void give_input(std::string input, Node_Value& output,
+                const Syntax_Def& context, Node_Value* arg=nullptr);
+		void give_input(const std::string& input, Node_Value&,
 		    Moldable* bc = nullptr);
-		void giveInput(const std::string& input, CommandValue& cv,
+		void give_input(const std::string& input, Command_Value&,
 		    Moldable *bc = nullptr);
 
 	private:
-        std::string input;
-		StateParser stateParser;
-		MathParser mathParser;
-		TokenManager tm;
+		Token_Manager tm {};
+        std::string input {};
+		State_Parser state_parser;
+		Math_Parser math_parser;
 
-		void tokenizeInput(std::string input, bool setAtBeginning=false);
-        void hashNextToken();
-		void reduceExpressions(Moldable* bc);
-		int find_full_quote(std::string str);
-        void handleAppendCommand(CommandValue&, Moldable*);
-        void setCommandValueObject(CommandValue&, bool r_object=false); 
-        
-        inline bool isQuotedString(const std::string& str) {
-            return str[0] == '"';
-        }
+		void tokenize_input(std::string input, bool set_at_beginning=false);
+        void hash_next_token();
+		void reduce_expressions(Moldable* bc);
+		size_t find_full_quote(std::string str);
+        void handle_append_command(Command_Value&, Moldable*);
+        void set_command_value_object(Command_Value&, bool r_object=false); 
 };
 
 }	// namespace Parsers

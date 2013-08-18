@@ -1,5 +1,5 @@
 /*
- * TriggerMap.cpp
+ * Trigger_Map.cpp
  *
  *  Created on: Apr 19, 2013
  *      Author: tom
@@ -10,57 +10,59 @@
 #include <Redis/DatabaseConfigReader.h>
 
 
-TriggerMap::TriggerMap() : map() {}
-
-TriggerMap::TriggerMap(const int& num_triggers, Prefix prefix, const std::string& node)
+Trigger_Map::Trigger_Map(const int& i, Prefix p, const std::string& n)
 :map()
 {
-    Redis::MoguQueryHandler db(Application::contextMap, prefix);
-    std::string s_prefix = prefixMap().at(prefix);
-    const char* c_prefix = s_prefix.c_str();
+    Redis::Mogu_Query_Handler q {p};
+    std::string g {prefix_map().at(p)};
 
-    const char* c_node = node.c_str();
-    db.appendQuery("lrange %s.%s.events 0 %d", c_prefix, c_node, num_triggers);
+    q.append_query("lrange %s.%s.events 0 %d", g.c_str(), n.c_str(), i);
 
     /* Retrieve the list of all event triggers for the widget
      * and for each of those retrieve the list of commands, appending
      * the commands to the trigger's command queue
      */
-    for (std::string s_trigger : db.yieldResponse <std::vector <std::string>>())
+    for (std::string s : q.yield_response <std::vector <std::string>>())
     {
 
         //Convert "12" to 12
-        const char* c_trigger = s_trigger.c_str();
-        int trigger = atoi(c_trigger);
-        triggers.insert(MoguSyntax::get(trigger));
+        const char* c = s.c_str();
+        int t = atoi(c);
+        triggers.insert(Mogu_Syntax::get(t));
+        
         // Get the number of commands associated with that trigger
-        db.appendQuery("llen %s.%s.events.%d", c_prefix, c_node, trigger);
-
-        int mrange = db.yieldResponse <int>();
-
-        db.appendQuery("lrange %s.%s.events.%d 0 %d",
-                c_prefix, c_node, trigger, mrange);
-
+        q.append_query("llen %s.%s.events.%d", g.c_str(), n.c_str(), t);
+        
+        int r = q.yield_response<int>();
+        q.append_query("lrange %s.%s.events.%d 0 %d", g.c_str(), n.c_str(),t,r);
 
         // Store the commands in the trigger queue
-        for (std::string command : db.yieldResponse <std::vector <std::string>>())
+        for (std::string cmd : q.yield_response <std::vector <std::string>>())
         {
-            map[(int)MoguSyntax::get(trigger)].push(command);
+            map[(int)Mogu_Syntax::get(t)].push(cmd);
         }
     }
 }
 
-TriggerMap::TriggerMap(TriggerMap& other)
-    : triggers(other.getTriggers()), map(other.getMap())
+void Trigger_Map::extend_map(std::unordered_map <int, std::queue <std::string>> m)
 {
-    
+    for (auto i : m)
+    {
+        int t {i.first};
+        std::queue<std::string> q {i.second};
+        while (i.second.size())
+        {
+            std::string s {q.front()};
+            q.pop();
+            map[t].push(s);
+        }
+    }
 }
 
-void TriggerMap::populateTriggers()
+void Trigger_Map::populate_triggers()
 {
-    auto iter = map.begin();
-    for (size_t i = 0; i < map.size(); ++i)
+    for (auto i = map.begin(); i != map.end(); ++i)
     {
-        triggers.insert(iter->first);
+        triggers.insert(i->first);
     }
 }

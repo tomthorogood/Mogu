@@ -1,5 +1,5 @@
 /*
- * MathParser.h
+ * Math_Parser.h
  *
  *  Created on: March 12th, 2013
  *      Author: cameron
@@ -15,39 +15,36 @@
 
 #include <Parsers/NodeValueParser/TokenManager.h>
 
-//TODO: replace these macros with generated syntax values
-#define LOWEST_OP_ENUM (INT_MAX - 5)
-#define isOperator(a) ( (a) >= LOWEST_OP_ENUM )
-
-
 namespace Parsers {
 
-class MathParser
+class Math_Parser
 {
 	public:
 		// empty constructor
-		MathParser(TokenManager& tm);
+		Math_Parser(Token_Manager& tm_) : tm(tm_) {}
 
 		// convert the input tokens into postfix, and then evaluate
 		// the postfix expression.
-		int processInput();
+		int process_input();
 
 	private:
 		// vector to build/store an equivalent postfix expression
-		std::vector<int> postfixExpression;
+		std::vector<int> postfix_expression;
 
 		// stack used for postfix evaluation
-		std::stack<int> operandStack;
+		std::stack<int> operand_stack;
 
 		// token manager from NVP 
-		TokenManager& tm;
+		Token_Manager& tm;
 
 		// compare precedence to do proper order-of-operations
 		// returns true if op1 has higher precedence than op2
-		bool hasHigherPrecedence(const SyntaxDef& op1, const SyntaxDef& op2);
-        inline bool hasHigherPrecedence(const int& op1, const int& op2)
+		bool has_higher_precedence(const Syntax_Def& op1, const Syntax_Def& op2);
+
+        inline bool has_higher_precedence(const int& op1, const int& op2)
         {
-            return hasHigherPrecedence(MoguSyntax::get(op1), MoguSyntax::get(op2));
+            return has_higher_precedence(
+                    Mogu_Syntax::get(op1), Mogu_Syntax::get(op2));
         }
 
 		// reset the parser so we're ready for the next input
