@@ -14,7 +14,7 @@ Haven't you wanted to just tell the computer,
 Well, that's almost precisely what MoguScript looks like:
 
     when clicked {
-        set widget b css to "hiden"
+        set widget b css to "hidden"
     }
 
 
@@ -23,10 +23,10 @@ Well, that's almost precisely what MoguScript looks like:
 
 Within the config/ folder there is a script to help you resolve dependencies.
 It requires a utility called 'AC.py' which can be installed by running
-`pip install ac`. If you're on a Debian system, it should try to resolve
+`sudo pip install ac`. If you're on a Debian system, it should try to resolve
 dependencies for you automatically. 
 
-Once you have `ac` installed, simply run `./configure` to perform the necessary
+Once you have `ac` installed, simply run `./configure` from within the config/ folder to perform the necessary
 tests and determine what you need to have installed.
 
 It is highly recommended that you also install the package `cmake-curses-gui`
@@ -64,7 +64,7 @@ This file allows you to change other runtime options, and is heavily commented.
 
 ### Static Resources
 
-Witihin mogu.conf, there is an option for the document-root. This folder should
+Within mogu.conf, there is an option for the document-root. This folder should
 *contain* a folder called "resources". There is a folder within the repository
 titled as such, which contains many default resources for some of Wt's 
 utilities, but you are more than welcome to come up with your own if you like.
@@ -73,8 +73,8 @@ utilities, but you are more than welcome to come up with your own if you like.
 # Getting started
 
 After building you may run `make install` to copy and create symlinks of the
-necessary files where they belong. Otherwise, you are welcome to manually
-run the mogu server and mogu CLI utilities manually.
+necessary files where they belong. Otherwise, you are welcome to run the mogu 
+server and CLI utilities manually.
 
 After installing, you can run `mogu start` to start the server, which defaults
 to port 9090 (but can be changed in the configuration file). The other important
