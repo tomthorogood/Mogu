@@ -40,7 +40,7 @@ void Moldable_Input::initialize_input()
     input = new Wt::WLineEdit();
     input->setEmptyText(txt);
 
-    if (!validator.empty() && (validator_ptr))
+    if (!validator.empty() && (!validator_ptr))
     {
         validator_ptr = Validators::create_validator(validator);
         input->setValidator(validator_ptr);

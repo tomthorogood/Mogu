@@ -24,11 +24,10 @@ Trigger_Map::Trigger_Map(const int& i, Prefix p, const std::string& n)
      */
     for (std::string s : q.yield_response <std::vector <std::string>>())
     {
+        const Syntax_Def& x {Mogu_Syntax::get(s)};
+        int t {x.integer};
 
-        //Convert "12" to 12
-        const char* c = s.c_str();
-        int t = atoi(c);
-        triggers.insert(Mogu_Syntax::get(t));
+        triggers.insert(x);
         
         // Get the number of commands associated with that trigger
         q.append_query("llen %s.%s.events.%d", g.c_str(), n.c_str(), t);
@@ -39,7 +38,7 @@ Trigger_Map::Trigger_Map(const int& i, Prefix p, const std::string& n)
         // Store the commands in the trigger queue
         for (std::string cmd : q.yield_response <std::vector <std::string>>())
         {
-            map[(int)Mogu_Syntax::get(t)].push(cmd);
+            map[t].push(cmd);
         }
     }
 }

@@ -59,12 +59,9 @@ void Event_Handler::process_trigger_map()
             broadcaster.clicked().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::click.integer>);
             break;
-        case MoguSyntax::mouseover:
-            broadcaster.mouseWentOver().connect(
-                this, &EventHandler::handleTrigger <MoguSyntax::mouseover.integer>);
         case Mogu_Syntax::mouseover:
-            broadcaster.mouseWentOver().connect(this,
-                &Event_Handler::handle_trigger <Mogu_Syntax::mouseover.integer>);
+            broadcaster.mouseWentOver().connect(
+                this, &Event_Handler::handle_trigger <Mogu_Syntax::mouseover.integer>);
             break;
         case Mogu_Syntax::error_reported:
             broadcaster.errorReported().connect(this,

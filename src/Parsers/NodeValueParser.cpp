@@ -204,8 +204,9 @@ void Node_Value_Parser::give_input(const std::string& i, Node_Value& nv, Moldabl
 	    && (tm.fetch_string().find_first_of(" ") != std::string::npos))
 	{
 	    std::string new_input = tm.fetch_string();
+	    input = new_input;
 	    tm.reset();
-	    tokenize_input(new_input);
+	    tokenize_input(input);
 	    reduce_expressions(bc);
 	}
 
@@ -289,6 +290,7 @@ void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
     bool check_if_list {false};
 
     tm.next();
+    token = tm.current_token();
 
     // Cycle through the input, testing flag combinations and setting 
     // things where appropriate, until we're out of tokens.

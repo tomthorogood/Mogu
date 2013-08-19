@@ -31,10 +31,11 @@ const uint8_t get_construct(Command_Value& v)
 
     // object_to_object will always have an r_identifier, 
     // but the main object may be "self" OR another widget.
-    if (v.test(Command_Flags::r_identifier) &&
-            (v.test(Command_Flags::identifier) 
-            || Mogu_Syntax::own == v.get(Command_Flags::object))
-       )
+    bool has_r_identifier {v.test(Command_Flags::r_identifier)};
+    bool has_identifier {v.test(Command_Flags::identifier)};
+    bool is_self {Mogu_Syntax::own == v.get(Command_Flags::object)};
+
+    if (has_r_identifier && (has_identifier || is_self))
         return object_to_object;
 
     if (v.test(Command_Flags::value))
@@ -63,7 +64,7 @@ void handle_object_to_object(Moldable& broadcaster, Command_Value& v)
 
     Moldable* curr_widget = app->get_widget( 
             (std::string) v.get(Command_Flags::identifier));
-    if (curr_widget != nullptr) curr_widget->addWidget(new_widget);
+    if (curr_widget) curr_widget->addWidget(new_widget);
 }
 
 /* Appends a resolved value to an existing attribute. Sums two numbers. */

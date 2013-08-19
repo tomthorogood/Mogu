@@ -74,7 +74,7 @@ void Widget_Server::setup_states()
         else
             tnode->set_node(assembly->tmpl);
 
-        unpack_node(tnode, tmpl_triggers, tmpl_children);        
+        unpack_node(tnode, tmpl_children, tmpl_triggers);
     }
 
     unpack_node(wnode, assembly->children, assembly->triggers);

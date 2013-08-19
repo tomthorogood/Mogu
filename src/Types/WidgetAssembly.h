@@ -66,6 +66,7 @@ struct Widget_Assembly
     
     void set_trigger_prefix(Prefix p)
     {
+        if (!triggers.size()) return;
         std::string trigger_node = (p==Prefix::widgets) ? node : tmpl;
         if (trigger_map) delete trigger_map;
         trigger_map = new Trigger_Map(triggers.size(), p, trigger_node);
