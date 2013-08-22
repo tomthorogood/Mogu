@@ -28,7 +28,7 @@ Widget_Assembly Widget_Server::request(const std::string& node)
     Redis::Node_Editor wnode {Prefix::widgets, node};
     std::string type {get_attribute(wnode, Mogu_Syntax::type)};
     
-    if (type==Mogu_Syntax::container.str
+    if ( (type==Mogu_Syntax::container.str || type==Mogu_Syntax::stack.str)
         && !get_attribute(&wnode, Mogu_Syntax::source).empty())
     {
         return dynamic.request(node);

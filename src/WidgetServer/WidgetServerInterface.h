@@ -36,11 +36,17 @@ public:
     Assembly_Tuple merge_node_attributes(
         const std::string& node_name, std::string template_name="");
 
-    Widget_Assembly request (const std::string& node_name) =0;
+    Widget_Assembly request 
+        ( const std::string& node_name
+        , const int& user_id=-1
+        , const int& group_id=-1) =0;
     
     bool has_template (Redis::Node_Editor*, const std::string& node_name);
 
 protected:
+
+    int user_id {};
+    int group_id {};
 
     inline std::string get_attribute(
             Redis::Node_Editor* node, const Syntax_Def& attr)
