@@ -1,7 +1,6 @@
 #include "GroupManager.h"
 #include "../Types/Prefixes.h"
 #include "../Redis/QueryHandler/QueryHandler.h"
-#include "../hash.h"
 #include <vector>
 #include <algorithm>
 

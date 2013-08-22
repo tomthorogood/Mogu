@@ -15,7 +15,6 @@ public:
     }
     
     int create_group(const std::string& group_name);
-    
     bool user_is_member(const int& user_id);
     bool user_is_admin(const int& user_id);
 
@@ -30,7 +29,6 @@ public:
     inline int get_id() { return id; }
     inline bool is_valid() { return id > -1; }
 
-
 private:
 
     inline bool redis_connect() 
@@ -42,10 +40,11 @@ private:
     std::string create_salt();
     std::string create_key();
 
-
     int id {-1};
     Redis::Query_Handler* db {};
     std::vector <std::string> keylist {};
+    int id {-1};
+    Redis::Query_Handler* db {};
 
 };
 
