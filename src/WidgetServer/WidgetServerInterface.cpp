@@ -45,7 +45,7 @@ std::tuple <
     if (!template_name.empty())
     {
         Redis::Node_Editor t(Prefix::templates, template_name);
-        unpack_node(&t, t_chldre, t_triggers, attributes);
+        unpack_node(&t, t_chldren, t_triggers, attributes);
     }
 
     unpack_node(&w, w_children, w_triggers, attributes);

@@ -2,22 +2,25 @@
 #define ABSTRACT_WIDGET_SERVER_H_
 
 #include "../Types/WidgetAssembly.h"
+#include "../Types/AssemblyCache.h"
+#include "../Redis/NodeEditor.h"
+#include "../Parsers/Node_Value_Parser.h"
 
 #include <string>
 #include <map>
 #include <vector>
 #include <type_traits>
-#include "../Redis/NodeEditor.h"
-#include "../Parsers/Node_Value_Parser.h"
 
 class Widget_Server_Interface
 {
+    using Attribute_Map = std::map<int,Node_Value>;
     using Assembly_Tuple = std::tuple <
         std::vector<std::string>
         , std::vector<std::string>
-        , std::map<int,Node_Value>>;
+        , Attribute_Map >;
 public:
     Abstract_Widget_Server (){}
+    virtual ~Abstract_Widget_Server() {}
 
     void populate_map(Redis::Node_Editor*, std::map<std::string,std::string>&);
 
@@ -33,16 +36,31 @@ public:
     Assembly_Tuple merge_node_attributes(
         const std::string& node_name, std::string template_name="");
 
-    Widget_Assembly* request (const std::string& node_name) =0;
+    Widget_Assembly request (const std::string& node_name) =0;
+    
+    bool has_template (Redis::Node_Editor*, const std::string& node_name);
 
+protected:
+
+    inline std::string get_attribute(
+            Redis::Node_Editor* node, const Syntax_Def& attr)
+    {
+        Node_Value arg {attr.str};
+        node->swap_arg(&arg);
+        std::string val {node->read()};
+        node->swap_arg();
+        return attr_val;
+    }
+    
+    Assembly_Cache local_cache {};
 };
 
 template <class T,class U>
-void Abstract_Widget_Server::resolve_map_values(std::map<T,U>& m)
+bool Abstract_Widget_Server::resolve_map_values(std::map<T,U>& m)
 {
     static_assert(std::is_convertible<U,std::string>(), 
             "Map values must be convertible to string for use in NVP");
-
+    bool cacheable {true};
     Node_Value_Parser nvp {};
     for (auto i : m)
     {
@@ -51,7 +69,9 @@ void Abstract_Widget_Server::resolve_map_values(std::map<T,U>& m)
         Node_Value n {};
         nvp.give_input(v,n);
         m[k] = (U) n;
+        if (cacheable) cacheable = !nvp.resolved_dynamic.value(); 
     }
+    return cacheable;
 }
 
 #endif //ABSTRACT_WIDGET_SERVER_H_
