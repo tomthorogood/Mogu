@@ -10,7 +10,7 @@
 
 #include <string>
 
-enum class : unsigned char Read_Type
+enum class Read_Type : unsigned char
 {
     NO_VALUE
     , string_value

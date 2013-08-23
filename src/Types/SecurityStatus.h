@@ -1,7 +1,7 @@
 #ifndef SECURITY_STATUS_H_
 #define SECURITY_STATUS_H_
 
-enum class : unsigned char Security_Status
+enum class Security_Status : unsigned char 
 {
     err_unknown
     , err_user_exists
