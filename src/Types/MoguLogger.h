@@ -23,7 +23,7 @@
     constexpr bool LOG_OVERRIDE = false;
 #endif
 
-enum class Log_Level
+enum class : unsigned char Log_Level
 {
     all         =1  //Log all the things
     , notice    =2  //Log only notices

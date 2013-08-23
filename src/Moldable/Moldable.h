@@ -19,7 +19,7 @@
 class Event_Handler;
 class Widget_Assembly;
 
-enum class Moldable_Flags
+enum class : unsigned char Moldable_Flags
 {
     is_templated        =1
     , has_children      =2

@@ -10,9 +10,12 @@
 
 #include <string>
 
-enum class Read_Type
+enum class : unsigned char Read_Type
 {
-    NO_VALUE = 0x0, string_value = 0x1, int_value = 0x2, float_value = 0x3
+    NO_VALUE
+    , string_value
+    , int_value 
+    , float_value
 };
 
 /*!\brief Since a Node_Value can only be int, float, or string, the Numeric_Union

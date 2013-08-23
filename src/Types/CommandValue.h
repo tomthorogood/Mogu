@@ -14,7 +14,7 @@
  * to handle events.
  */
 
-enum class Command_Flags {
+enum class : unsigned char Command_Flags {
     action          =1
     , object        =2
     , identifier    =4
