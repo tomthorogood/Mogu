@@ -44,5 +44,7 @@ Widget_Assembly Widget_Server::request(const std::string& node)
     assembly.triggers = t.get<2>();
     assembly.attrdict = t.get<3>();
 
+    if (resolve_map_values(assembly.attrdict)) global_cache.add(assembly);
+
     return assembly;
 }

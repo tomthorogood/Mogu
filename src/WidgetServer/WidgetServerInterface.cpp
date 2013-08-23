@@ -1,4 +1,4 @@
-#include "AbstractWidgetServer.h"
+#include "WidgetServerInterface.h"
 
 void Widget_Server_Interface::populate_map(
         Redis::Node_Editor* e, std::map<int,Node_Value>& m)
@@ -54,6 +54,5 @@ std::tuple <
         w_children = std::move(t_children);
     if (!w_triggers.size() && t_triggers.size())
         w_triggers = std::move(t_triggers);
-
     return std::make_tuple(w_children, w_triggers, attributes);
 }

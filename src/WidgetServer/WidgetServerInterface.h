@@ -25,7 +25,7 @@ public:
     void populate_map(Redis::Node_Editor*, std::map<std::string,std::string>&);
 
     template <class T, class U>
-    void resolve_map_values(std::map<T,std::string>&);
+    bool resolve_map_values(std::map<T,std::string>&);
 
     void unpack_node(
             Node_Editor*
@@ -68,6 +68,8 @@ bool Abstract_Widget_Server::resolve_map_values(std::map<T,U>& m)
             "Map values must be convertible to string for use in NVP");
     bool cacheable {true};
     Node_Value_Parser nvp {};
+    nvp.set_user_id(user_id);
+    nvp.set_group_id(group_id);
     for (auto i : m)
     {
         T k {i.first};
