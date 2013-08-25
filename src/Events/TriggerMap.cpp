@@ -1,67 +1,58 @@
-/*
- * Trigger_Map.cpp
- *
- *  Created on: Apr 19, 2013
- *      Author: tom
- */
-
 #include "TriggerMap.h"
-#include <Redis/MoguQueryHandler.h>
-#include <Redis/DatabaseConfigReader.h>
 
-
-Trigger_Map::Trigger_Map(const int& i, Prefix p, const std::string& n)
-:map()
+Trigger_Map::Trigger_Map(const std::string& n, const Prefix& p)
 {
-    Redis::Mogu_Query_Handler q {p};
-    std::string g {prefix_map().at(p)};
+    Redis::Query_Handler q {p};
+    std::string prefix {prefix_map.at(p)};
+    const char* c {Mogu_Syntax::get(prefix).str};
 
-    q.append_query("lrange %s.%s.events 0 %d", g.c_str(), n.c_str(), i);
+    q.append_query("llen %s.%s.events", c, n.c_str());
 
-    /* Retrieve the list of all event triggers for the widget
-     * and for each of those retrieve the list of commands, appending
-     * the commands to the trigger's command queue
-     */
-    for (std::string s : q.yield_response <std::vector <std::string>>())
+    int num_triggers {q.yield_response <int>()};
+    q.append_query("lrange %s.%s.events 0 %d", c, n.c_str(), num_triggers);
+    std::vector <std::string> v {q.yield_response<std::vector<std::string>>()};
+
+    for (int i = 0; i < num_triggers; ++i)
     {
-        const Syntax_Def& x {Mogu_Syntax::get(s)};
-        int t {x.integer};
+        std::string tr {v[i]};
+        q.append_query("llen %s.%s.events.%s", c, n.c_str(), tr.c_str());
+        int num_cmds {q.yield_response<int>()};
+        q.append_query("lrange %s.%s.events.%s 0 %d",
+            c, n.c_str(), tr.c_str(), num_cmds);
+        auto vec {q.yield_response <std::vector<std::string>>()};
+        int trigger {atoi(tr.c_str())};
+        m[trigger] = {};
+        for (std::string cmd : vec) m[trigger].push(cmd);
+    }
+}
 
-        triggers.insert(x);
-        
-        // Get the number of commands associated with that trigger
-        q.append_query("llen %s.%s.events.%d", g.c_str(), n.c_str(), t);
-        
-        int r = q.yield_response<int>();
-        q.append_query("lrange %s.%s.events.%d 0 %d", g.c_str(), n.c_str(),t,r);
-
-        // Store the commands in the trigger queue
-        for (std::string cmd : q.yield_response <std::vector <std::string>>())
+void Trigger_Map::extend(const Trigger_Map& t)
+{
+    std::vector<int>&& v {t.get_triggers()};
+    for (int i =0; i < v.size(); ++i)
+    {
+        if (!trigger_exists(v[i]))
         {
-            map[t].push(cmd);
+            m[i] = t.get_commands(v[i]);
+        }
+        else
+        {
+            std::queue <std::string> q {t.get_commands(v[i])};
+            for (auto s : q) m[i].push(s);
         }
     }
 }
 
-void Trigger_Map::extend_map(std::unordered_map <int, std::queue <std::string>> m)
+std::vector <int> get_triggers() 
 {
-    for (auto i : m)
+    std::vector <int> v {m.size(),0};
+    int i {};
+    auto iter = m.begin();
+    while (iter != iter.end())
     {
-        int t {i.first};
-        std::queue<std::string> q {i.second};
-        while (i.second.size())
-        {
-            std::string s {q.front()};
-            q.pop();
-            map[t].push(s);
-        }
+        v[i] = iter.first;
+        ++iter;
+        ++i;
     }
-}
-
-void Trigger_Map::populate_triggers()
-{
-    for (auto i = map.begin(); i != map.end(); ++i)
-    {
-        triggers.insert(i->first);
-    }
+    return v;
 }

@@ -1,63 +1,30 @@
-/*
- * Trigger_Map.h
- *
- *  Created on: Apr 19, 2013
- *      Author: tom
- */
+#ifndef TRIGGER_MAP_H_
+#define TRIGGER_MAP_H_
 
-#ifndef TRIGGERMAP_H_
-#define TRIGGERMAP_H_
-
+#include <unordered_map>
 #include <queue>
-#include <set>
 #include <string>
 
-#include <Types/Prefixes.h>
-#include <Types/Inthash.h>
+class Trigger_Map
+{
+    using Command_Queue = std::queue<std::string>;
 
-class Trigger_Map {
 public:
-    Trigger_Map() {}
-    Trigger_Map(const int& num_triggers,Prefix prefix, const std::string& node_name);
-    
-    Trigger_Map(Trigger_Map& o)
-        : triggers(o.triggers)
-        , map(o.map)
-    {}
+    Trigger_Map () {}
+    Trigger_Map (const std::string& node, const Prefix& p);
+    Trigger_Map (const Trigger_Map& t) : m(t.m) {}
+    Trigger_Map (const Trigger_Map && t) : m(t.m) { t.m.clear(); }
 
+    void extend (const Trigger_Map&);
 
-    Trigger_Map(Trigger_Map&& o)
-        : triggers(o.triggers)
-        , map(o.map)
-    {
-        o.triggers.clear();
-        o.map.clear();
-    }
+    inline Command_Queue get_commands(const int& i) { return m.at(i); }
+    inline bool trigger_exists (const int& i)
+        { return static_cast<bool>(m.count(i)); }
 
-    inline void add_event (const Syntax_Def& t, const std::string& c)
-        { map[t].push(c); }
-
-    void extend_map(std::unordered_map <int, std::queue <std::string>>);
-
-    inline std::queue <std::string> get_events(const int& trigger) const
-        { return map.at(trigger); }
-
-    const inline std::set <int>& get_triggers()
-    { 
-        if (triggers.size() < map.size()) populate_triggers();
-        return triggers;
-    }
-
-    const std::unordered_map <int, std::queue <std::string>>& get_map() const
-        { return map;}
-
-
+    inline std::vector <int> get_triggers();
 
 private:
-    void populate_triggers();
-    std::set <int> triggers {};
-    std::unordered_map <int, std::queue <std::string>> map {};
+    std::unordered_map <int, Command_Queue> m {};
 };
 
-
-#endif /* TRIGGERMAP_H_ */
+#endif
