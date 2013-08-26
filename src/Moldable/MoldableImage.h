@@ -18,11 +18,11 @@ class Moldable_Image : public Moldable
     std::string assembly_src {};
     std::string assembly_txt {};
 protected:
-    virtual void init(Widget_Assembly*) override;
+    virtual void init(Widget_Assembly&) override;
     void initialize_image();
 
 public:
-    Moldable_Image(Widget_Assembly*);
+    Moldable_Image(Widget_Assembly&);
 
     inline virtual std::string get_moldable_value()
     {

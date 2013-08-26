@@ -18,10 +18,10 @@ class Moldable_Text : public Moldable
     void initialize_text();
 
 protected:
-    virtual void init(Widget_Assembly*) override;
+    virtual void init(Widget_Assembly&) override;
 
 public:
-    Moldable_Text(Widget_Assembly*);
+    Moldable_Text(Widget_Assembly&);
 
     inline virtual std::string get_moldable_value()
         { return text->text().toUTF8(); }

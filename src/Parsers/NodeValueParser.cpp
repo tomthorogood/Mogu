@@ -115,7 +115,11 @@ void Node_Value_Parser::reduce_expressions(Moldable* bc)
 		 *  that will be reduced to a string or integer.
 		 */
 		else if(is_object_token(curr_token))
+        {
+            state_parser.set_user_id(user_id);
+            state_parser.set_group_id(group_id);
             state_parser.process_input(bc);
+        }
 
 		tm.prev();
 		curr_token = tm.current_token();
@@ -128,50 +132,6 @@ void Node_Value_Parser::reduce_expressions(Moldable* bc)
     }
 }
 
-/*!\brief Allows for contextual interpretation of iterative data such as
- * user field in a list of users,
- * specific item in a list of items
- *
- *!\param input_ The input string
- *!\param output_ The container in which the result will be placed
- *!\param member_context_ The context [user|list|data]
- *!\param arg An optional Node_Value containing an argument to be used with the
- *      context. Default: nullptr
- */
-void Node_Value_Parser::give_input(
-    std::string input_
-    , Node_Value& output
-    , const Syntax_Def& member_context_
-    , Node_Value* arg)
-{
-
-    switch(member_context_)
-    {
-        case Mogu_Syntax::user:
-        case Mogu_Syntax::list:
-            sreplace(input_, "member", "user");
-            break;
-        case Mogu_Syntax::data:
-            sreplace(input_, "member", "data");
-            break;
-        default:
-            break;
-    }
-
-    if ((member_context_ != Mogu_Syntax::__NONE__) && arg)
-    {
-        input_ += " ";
-
-        if (arg->is_string())
-            input_ += arg->get_string();
-        else if (arg->is_int())
-            input_ += std::to_string(arg->get_int());
-        else
-            input_ += std::to_string(arg->get_float());
-    }
-
-    give_input(input_,output);
-}
 
 void Node_Value_Parser::hash_next_token()
 {

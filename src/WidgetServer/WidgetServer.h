@@ -2,6 +2,7 @@
 #define WIDGETSERVER_H_
 
 #include "WidgetServerInterface.h"
+#include "DynamicServer.h"
 
 /*\brief The Widget_Server acts as the intermediary between Redis and
  * the Mogu renderer, putting together a nice package to be passed into
@@ -18,9 +19,9 @@ public:
     /* This will always be the root widget of that which has been
      * requested.
      */
-    virtual Widget_Assembly* request(const std::string& node);
+    virtual Widget_Assembly request(const std::string&, const int&, const int&);
 
-    inline Assembly_Cache& dynamic_cache() { return dynamic; }
+    inline Dynamic_Server& dynamic_cache() { return dynamic; }
 
 private:
 
@@ -34,7 +35,7 @@ private:
         return attr_val;
     }
 
-    Assembly_Cache dynamic {};
+    Dynamic_Server dynamic {};
 };
 
 #endif

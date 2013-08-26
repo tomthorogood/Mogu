@@ -11,12 +11,11 @@
 #include "Actions.h"
 #include "../Moldable/Moldable.h"
 #include "../Types/CommandValue.h"
+#include "../Types/KeyGenerator.h"
 
 Event_Handler::Event_Handler(Moldable& w, Prefix p, const std::string& n)
     : Command_Processor(w)
-    , trigger_map(broadcaster.count_triggers(), p, n)
 {
-    process_trigger_map();
 }
 
 Event_Handler::Event_Handler(Moldable& broadcaster, Trigger_Map& triggers)
@@ -27,8 +26,11 @@ Event_Handler::Event_Handler(Moldable& broadcaster, Trigger_Map& triggers)
 
 void Event_Handler::process_trigger_map()
 {
-    for (int trigger : trigger_map.get_triggers())
+    Key_Generator<int> triggers {trigger_map.peek()};
+    while (triggers)
     {
+        int trigger {triggers.yield()};
+
         switch (trigger)
         {
         case Mogu_Syntax::style_changed:

@@ -9,7 +9,6 @@
 #include <Moldable/Implementations.h>
 #include <Types/syntax.h>
 #include <Mogu.h>
-#include <WidgetServer.h>
 #include <Types/MoguLogger.h>
 
 namespace Application {
@@ -18,15 +17,17 @@ namespace Application {
 
 Moldable* Moldable_Factory::create_moldable_widget(const std::string& node)
 {
+    mApp;
     static int iters = {};
     ++iters;
     Application::log.log(Log_Level::notice,
             "Moldable_Factory::create_moldabe_widget:", __LINE__,
             " : Creating Widget ", node, " ", iters++, ")");
 
-    Widget_Assembly* assembly = server.request(node);
+    Widget_Assembly&& assembly = server.request(
+            node,app->get_user(), app->get_group());
 
-    std::string s = assembly->attrdict[Mogu_Syntax::type.integer].get_string();
+    std::string s = assembly.attrdict[Mogu_Syntax::type.integer].get_string();
     const Syntax_Def& widget_type = Mogu_Syntax::get(s);
     Moldable* product {};
 
@@ -61,6 +62,5 @@ Moldable* Moldable_Factory::create_moldable_widget(const std::string& node)
         break;
     }
 
-    delete assembly;
     return product;
 }

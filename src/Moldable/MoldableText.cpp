@@ -11,15 +11,15 @@
 #include <Types/WidgetAssembly.h>
 #include "../Config/inline_utils.h"
 
-Moldable_Text::Moldable_Text(Widget_Assembly* assembly) :
+Moldable_Text::Moldable_Text(Widget_Assembly& assembly) :
     Moldable(assembly, Mogu_Syntax::text)
 {
     init(assembly);
 }
 
-void Moldable_Text::init(Widget_Assembly* assembly)
+void Moldable_Text::init(Widget_Assembly& assembly)
 {
-    assembly_text = (std::string) assembly->attrdict[Mogu_Syntax::text.integer];
+    assembly_text = (std::string) assembly.attrdict[Mogu_Syntax::text.integer];
     text = new Wt::WText;
     initialize_text();
     addWidget(text);

@@ -11,18 +11,18 @@
 #include <Types/WidgetAssembly.h>
 #include "../Config/inline_utils.h"
 
-Moldable_Link::Moldable_Link (Widget_Assembly* assembly)
+Moldable_Link::Moldable_Link (Widget_Assembly& assembly)
 : Moldable(assembly, Mogu_Syntax::anchor)
 {
     init(assembly);
 }
 
-void Moldable_Link::init(Widget_Assembly* assembly)
+void Moldable_Link::init(Widget_Assembly& assembly)
 {
     assembly_location = (std::string)
-        assembly->attrdict[Mogu_Syntax::location.integer];
+        assembly.attrdict[Mogu_Syntax::location.integer];
     assembly_text = (std::string)
-        assembly->attrdict[Mogu_Syntax::text.integer];
+        assembly.attrdict[Mogu_Syntax::text.integer];
     initialize_link();
 }
 

@@ -4,16 +4,7 @@
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <string>
 #include "../Redis/MoguQueryHandler.h"
-enum class Security_Status
-{
-    err_unknown
-    , err_user_exists
-    , err_user_not_found
-    , err_bad_auth
-    , ok_register
-    , ok_login
-    , ok_password_reset
-};
+#include "../Types/SecurityStatus.h"
 
 class User_Manager {
 public:

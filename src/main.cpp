@@ -2,6 +2,11 @@
 #include <exception>
 #include <Types/syntax.h>
 #include <Redis/DatabaseConfigReader.h>
+#include "Types/AssemblyCache.h"
+
+namespace Application { 
+    Timed_Assembly_Cache global_cache {300};
+}
 
 
 Wt::WApplication* createApplication(

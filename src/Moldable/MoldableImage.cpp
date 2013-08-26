@@ -12,19 +12,19 @@
 #include <Types/WidgetAssembly.h>
 #include "../Config/inline_utils.h"
 
-Moldable_Image::Moldable_Image (Widget_Assembly* assembly)
+Moldable_Image::Moldable_Image (Widget_Assembly& assembly)
 : Moldable(assembly, Mogu_Syntax::image)
 {
     init(assembly);
 }
 
-void Moldable_Image::init(Widget_Assembly* assembly)
+void Moldable_Image::init(Widget_Assembly& assembly)
 {
     assembly_src = (std::string)
-        assembly->attrdict[Mogu_Syntax::source.integer];
+        assembly.attrdict[Mogu_Syntax::source.integer];
 
     assembly_txt = (std::string)
-        assembly->attrdict[Mogu_Syntax::text.integer];
+        assembly.attrdict[Mogu_Syntax::text.integer];
     initialize_image();
 }
 

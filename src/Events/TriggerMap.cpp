@@ -1,9 +1,10 @@
 #include "TriggerMap.h"
+#include "../Types/KeyGenerator.h"
 
 Trigger_Map::Trigger_Map(const std::string& n, const Prefix& p)
 {
-    Redis::Query_Handler q {p};
-    std::string prefix {prefix_map.at(p)};
+    Redis::Mogu_Query_Handler q {p};
+    std::string prefix {prefix_map().at(p)};
     const char* c {Mogu_Syntax::get(prefix).str};
 
     q.append_query("llen %s.%s.events", c, n.c_str());
@@ -12,47 +13,59 @@ Trigger_Map::Trigger_Map(const std::string& n, const Prefix& p)
     q.append_query("lrange %s.%s.events 0 %d", c, n.c_str(), num_triggers);
     std::vector <std::string> v {q.yield_response<std::vector<std::string>>()};
 
-    for (int i = 0; i < num_triggers; ++i)
+    Events::Trigger_Map_Info info {num_triggers, c, v, n, q};
+    fill_command_map(info);
+}
+
+void Trigger_Map::fill_command_map(Events::Trigger_Map_Info& i)
+{
+    for (int j = 0; j < i.num_triggers; ++j)
     {
-        std::string tr {v[i]};
-        q.append_query("llen %s.%s.events.%s", c, n.c_str(), tr.c_str());
-        int num_cmds {q.yield_response<int>()};
-        q.append_query("lrange %s.%s.events.%s 0 %d",
-            c, n.c_str(), tr.c_str(), num_cmds);
-        auto vec {q.yield_response <std::vector<std::string>>()};
+        std::string tr {i.v[j]};
+        
+        i.q.append_query("llen %s.%s.events.%s"
+                , i.prefix.c_str(), i.node.c_str(), tr.c_str());
+        
+        int num_cmds {i.q.yield_response<int>()};
+        
+        i.q.append_query("lrange %s.%s.events.%s 0 %d",
+            i.prefix.c_str(), i.node.c_str(), tr.c_str(), num_cmds);
+        
+        std::vector <std::string> vec 
+            {i.q.yield_response <std::vector<std::string>>()};
+        
         int trigger {atoi(tr.c_str())};
-        m[trigger] = {};
-        for (std::string cmd : vec) m[trigger].push(cmd);
+
+        if (!m.count(trigger))
+            m[trigger] = {};
+
+        for (std::string cmd : vec)
+            m[trigger].push(cmd);
     }
 }
 
-void Trigger_Map::extend(const Trigger_Map& t)
+Trigger_Map& Trigger_Map::extend(const Trigger_Map& t)
 {
-    std::vector<int>&& v {t.get_triggers()};
-    for (int i =0; i < v.size(); ++i)
+    Key_Generator <int> triggers {t.peek()};
+    while (triggers)
     {
-        if (!trigger_exists(v[i]))
+        int trigger {triggers.yield()};
+
+        // If the trigger doesn't exist in this queue,
+        // pull it from the other one.
+        if (!trigger_exists(trigger))
         {
-            m[i] = t.get_commands(v[i]);
+            m[trigger] = t.get_commands(trigger);
         }
         else
         {
-            std::queue <std::string> q {t.get_commands(v[i])};
-            for (auto s : q) m[i].push(s);
+            auto q(t.get_commands(trigger));
+            while (q.size())
+            {
+                m[trigger].push(q.front());
+                q.pop();
+            }
         }
     }
-}
-
-std::vector <int> get_triggers() 
-{
-    std::vector <int> v {m.size(),0};
-    int i {};
-    auto iter = m.begin();
-    while (iter != iter.end())
-    {
-        v[i] = iter.first;
-        ++iter;
-        ++i;
-    }
-    return v;
+    return *this;
 }

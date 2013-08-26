@@ -19,7 +19,7 @@ namespace Application {
     extern Mogu_Logger log;
 }
 
-Moldable::Moldable (Widget_Assembly* assembly, const Syntax_Def& t )
+Moldable::Moldable (Widget_Assembly& assembly, const Syntax_Def& t )
     :sig_style_changed(this)
     ,sig_failed_test(this)
     ,sig_succeeded_test(this)
@@ -28,7 +28,7 @@ Moldable::Moldable (Widget_Assembly* assembly, const Syntax_Def& t )
     ,sig_index_changed(this)
     ,sig_error_reported(this)
     ,widget_type(t)
-    ,node(assembly->node)
+    ,node(assembly.node)
 {
     static size_t num_constructed {};
     Application::log.log(Log_Level::notice, __FILE__, "::constructor:",__LINE__,
@@ -44,17 +44,17 @@ Moldable::~Moldable()
     if (bindery) delete bindery;
 }
 
-void Moldable::init (Widget_Assembly* assembly)
+void Moldable::init (Widget_Assembly& assembly)
 {
     mApp;
     app->register_widget(node, this);
     setObjectName(node); // used mostly for selenium
 
-    assembly_style = assembly->attrdict[Mogu_Syntax::style.integer].get_string();
-    assembly_tooltip = assembly->attrdict[Mogu_Syntax::tooltip.integer].get_string();
+    assembly_style = assembly.attrdict[Mogu_Syntax::style.integer].get_string();
+    assembly_tooltip = assembly.attrdict[Mogu_Syntax::tooltip.integer].get_string();
     initialize_global_attributes();
-    if (assembly->triggers.size() > 0)
-        bindery = new Event_Handler(*this, *(assembly->trigger_map));
+    if (assembly.trigger_map.size() > 0)
+        bindery = new Event_Handler(*this, assembly.trigger_map);
 }
 
 void Moldable::initialize_global_attributes()

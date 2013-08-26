@@ -20,11 +20,11 @@ class Moldable_Input : public Moldable
 
 protected:
     Wt::WLineEdit* input {};
-    virtual void init(Widget_Assembly* assembly) override;
+    virtual void init(Widget_Assembly& assembly) override;
     void initialize_input();
 
 public:
-    Moldable_Input (Widget_Assembly*);
+    Moldable_Input (Widget_Assembly&);
 
     inline virtual std::string get_moldable_value() {
         std::string val = input->text().toUTF8();

@@ -13,15 +13,15 @@
 #include <Types/WidgetAssembly.h>
 #include "../Config/inline_utils.h"
 
-Moldable_Image_Link::Moldable_Image_Link(Widget_Assembly* assembly)
+Moldable_Image_Link::Moldable_Image_Link(Widget_Assembly& assembly)
 : Moldable_Link(assembly)
 {
     init(assembly);
 }
 
-void Moldable_Image_Link::init(Widget_Assembly* assembly)
+void Moldable_Image_Link::init(Widget_Assembly& assembly)
 {
-    assembly_src = (std::string) assembly->attrdict[Mogu_Syntax::source.integer];
+    assembly_src = (std::string) assembly.attrdict[Mogu_Syntax::source.integer];
     initialize_image();
 }
 

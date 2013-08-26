@@ -12,17 +12,17 @@
 #include <Types/WidgetAssembly.h>
 #include "../Config/inline_utils.h"
 
-Moldable_Input::Moldable_Input (Widget_Assembly* assembly)
+Moldable_Input::Moldable_Input (Widget_Assembly& assembly)
 : Moldable(assembly, Mogu_Syntax::input)
 {
     init(assembly);
 }
 
-void Moldable_Input::init(Widget_Assembly* assembly)
+void Moldable_Input::init(Widget_Assembly& assembly)
 {
-    assembly_txt = (std::string) assembly->attrdict[Mogu_Syntax::text.integer];
+    assembly_txt = (std::string) assembly.attrdict[Mogu_Syntax::text.integer];
     assembly_validator = (std::string)
-        assembly->attrdict[Mogu_Syntax::validator.integer];
+        assembly.attrdict[Mogu_Syntax::validator.integer];
     initialize_input();
 }
 

@@ -20,8 +20,13 @@ class State_Parser
 		State_Parser(Token_Manager& tm_) : tm(tm_) {}
 		void process_input(Moldable* broadcaster);
 
+        inline void set_user_id (const int& i) { user_id = i; }
+        inline void set_group_id (const int& i) { group_id = i; }
+
 	private:
 		Token_Manager& tm;
+        int user_id {-1};
+        int group_id {-1};
 
         // When a TOKEN_DELIM is expected as a placeholder for an
         // object's identifier, this method will advance the TM pointer,

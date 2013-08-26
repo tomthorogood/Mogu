@@ -15,15 +15,15 @@ namespace Application {
 }
 
 Moldable_Abstract_Parent::Moldable_Abstract_Parent
-    (Widget_Assembly* assembly, const Syntax_Def&  widget_type)
+    (Widget_Assembly& assembly, const Syntax_Def&  widget_type)
 : Moldable(assembly, widget_type)
 {
     init(assembly);
 }
 
-void Moldable_Abstract_Parent::init(Widget_Assembly* assembly)
+void Moldable_Abstract_Parent::init(Widget_Assembly& assembly)
 {
-    child_nodes = assembly->children;
+    child_nodes = assembly.children;
 }
 
 // This is called when the widget is to be rendered on screen.

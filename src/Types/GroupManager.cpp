@@ -1,6 +1,8 @@
 #include "GroupManager.h"
 #include "../Types/Prefixes.h"
 #include "../Redis/QueryHandler/QueryHandler.h"
+#include "../hash.h"
+#include <TurnLeftLib/Utils/randomcharset.h>
 #include <vector>
 #include <algorithm>
 
@@ -11,7 +13,7 @@ Group_Manager::Group_Manager(const int& id_)
 Group_Manager::Group_Manager(const std::string& key)
 {
     redis_connect();
-    db->.append_query("hexists group.__meta__.keys %s", key.c_str());
+    db->append_query("hexists group.__meta__.keys %s", key.c_str());
     if (db->yield_response<bool>())
     {
         db->append_query("hget group.__meta__.keys %s", key.c_str());
@@ -39,7 +41,7 @@ bool Group_Manager::user_is_admin(const int& u)
 std::string Group_Manager::get_key()
 {
     redis_connect();
-    if (!is_valid) return "";
+    if (!is_valid()) return "";
 
     db->append_query("hget group.%d.__meta__ k", id);
     return db->yield_response<std::string>();
@@ -49,12 +51,12 @@ Security_Status Group_Manager::add_user(const int& u)
 {
     redis_connect();
     if (!is_valid()) return Security_Status::err_no_group_selected;
-    if (user_exists(u)) return Security_Status::err_user_exists;
+    if (user_is_member(u)) return Security_Status::err_user_exists;
     db->execute_query("sadd group.%d.__meta__.m %d", id, u);
 
 
     // Also add the group to the user's grup list.
-    Redis::Query_Handler q {Prefix::user};
+    Redis::Mogu_Query_Handler q {Prefix::user};
     q.execute_query("sadd user.%d.__meta__.g %d", u, id);
     return Security_Status::ok_register;
 }
@@ -63,7 +65,7 @@ Security_Status Group_Manager::promote_user(const int& u)
 {
     redis_connect();
     if (!is_valid()) return Security_Status::err_no_group_selected;
-    if (!user_exists(u)) return Security_Status::err_user_not_found;
+    if (!user_is_member(u)) return Security_Status::err_user_not_found;
     db->execute_query("sadd group.%d.__meta__.a %d", id, u);
     return Security_Status::ok_register;
 }
@@ -72,12 +74,12 @@ Security_Status Group_Manager::remove_user(const int& u)
 {
     redis_connect();
     if (!is_valid()) return Security_Status::err_no_group_selected;
-    if (!user_exists(u)) return Security_Status::err_user_not_found;
+    if (!user_is_member(u)) return Security_Status::err_user_not_found;
     if (user_is_admin(u)) demote_user(u);
     db->execute_query("srem group.%d.__meta__.m %d", id, u);
 
     // Also remove the group from the user's group list
-    Redis::Query_Handler q {Prefix::user};
+    Redis::Mogu_Query_Handler q {Prefix::user};
     q.execute_query("srem user.%d.__meta__.g %d", u, id);
 
     return Security_Status::ok_remove;
@@ -87,7 +89,7 @@ Security_Status Group_Manager::demote_user(const int& u)
 {
     redis_connect();
     if (!is_valid()) return Security_Status::err_no_group_selected;
-    if (!user_is_admin(u) || !user_exists(u)) return Security_Status::err_user_not_found;
+    if (!user_is_admin(u) || !user_is_member(u)) return Security_Status::err_user_not_found;
     db->execute_query("srem group.%d.__meta__.a %d", id, u);
     return Security_Status::ok_remove;
 }
@@ -128,12 +130,13 @@ bool Group_Manager::key_exists(const std::string& k)
  * human-typable with minimal typos. More characters from the hash are added
  * if they are necessary.
  */
-std::string create_key(const std::string& seed, const std::string& salt)
+std::string Group_Manager::create_key(
+        const std::string& seed, const std::string& salt)
 {
     std::string salted {seed + salt};
     std::string h = Hash::to_hash(salted);
 
-    for (int i = 8; i < h.size(); ++i)
+    for (size_t i = 8; i < h.size(); ++i)
     {
         std::string s {h.substr(0,i)};
         if (!key_exists(s))

@@ -19,6 +19,7 @@ class Event_Handler : public Command_Processor
 public:
     Event_Handler(Moldable& broadcaster, Prefix, const std::string& node);
     Event_Handler(Moldable& broadcaster, Trigger_Map&);
+    inline void set_trigger_map(Trigger_Map& t) { trigger_map = t; }
 
     virtual ~Event_Handler(){}
 
@@ -35,7 +36,7 @@ template <const int T> void Event_Handler::handle_trigger()
     Parsers::Node_Value_Parser& nvp = app->get_interpreter();
     //COPY the queue, do not use the reference, or commands will only be fired
     //once per element!
-    std::queue <std::string> q = trigger_map.get_events(T);
+    std::queue <std::string> q = trigger_map.get_commands(T);
     
     while (!q.empty())
     {

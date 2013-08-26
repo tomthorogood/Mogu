@@ -2,7 +2,9 @@
 #define GROUP_MANAGER_H_
 
 #include "../Types/SecurityStatus.h"
-
+#include "../Redis/MoguQueryHandler.h"
+#include <string>
+#include <vector>
 
 class Group_Manager
 {
@@ -10,11 +12,9 @@ public:
     Group_Manager(){}
     Group_Manager(const int& group_id);
     Group_Manager(const std::string& group_key);
-    ~GroupManager() { 
-        if (db) delete db;
-    }
+    ~Group_Manager() { if (db) delete db; }
     
-    int create_group(const std::string& group_name);
+    int create_group(const std::string& group_name, const int& founder);
     bool user_is_member(const int& user_id);
     bool user_is_admin(const int& user_id);
 
@@ -29,23 +29,22 @@ public:
     inline int get_id() { return id; }
     inline bool is_valid() { return id > -1; }
 
+    bool user_exists();
+
 private:
 
-    inline bool redis_connect() 
-        { if (!db) db = new Redis::Query_Handler(Prefix::group); }
+    inline void redis_connect() 
+        { if (!db) db = new Redis::Mogu_Query_Handler(Prefix::group); }
 
-    bool key_exists();
+    bool key_exists(const std::string&);
 
     int consume_id();
     std::string create_salt();
-    std::string create_key();
+    std::string create_key(const std::string&, const std::string&);
 
     int id {-1};
-    Redis::Query_Handler* db {};
+    Redis::Mogu_Query_Handler* db {};
     std::vector <std::string> keylist {};
-    int id {-1};
-    Redis::Query_Handler* db {};
-
 };
 
 #endif

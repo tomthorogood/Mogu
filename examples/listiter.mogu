@@ -1,0 +1,40 @@
+# Problem: A teacher wants to view her classroom of 26 students, sorted by
+# last name, along with their first name, and all of their grades. Assume that
+# there are a fixed number of grades, and the names are stored in a data list. 
+# There are ten total grades.
+
+data gradenames
+    list
+        "Quiz 1"
+        "Quiz 2"
+        "Test 1"
+        "Quiz 3"
+        "Quiz 4"
+        "Test 2"
+        "Quiz 5"
+        "Research Paper"
+        "Quiz 6"
+        "Final Exam"
+    end list
+end data
+
+widget grade_table
+    type        :   container
+    source      :   group member
+    sort        :   ascending 0
+    children
+        member contact last using template foobar
+        member contact first using template foobar
+        member grade "Quiz 1" using template foobar
+        member grade "Quiz 2" using template foobar
+        member grade "Test 1" using template foobar
+        member grade "Quiz 3" using template foobar
+        member grade "Quiz 4" using template foobar
+        member grade "Test 2" using template foobar
+        member grade "Quiz 5" using template foobar
+        member grade "Research Paper" using template foobar
+        member grade "Quiz 6" using template foobar
+        member grade "Final Exam" using template foobar
+    end children
+end widget
+

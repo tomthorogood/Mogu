@@ -24,18 +24,23 @@ class Node_Value_Parser
 {
 	public:
 		Node_Value_Parser() : state_parser(tm), math_parser(tm) {}
-        void give_input(std::string input, Node_Value& output,
-                const Syntax_Def& context, Node_Value* arg=nullptr);
 		void give_input(const std::string& input, Node_Value&,
 		    Moldable* bc = nullptr);
 		void give_input(const std::string& input, Command_Value&,
 		    Moldable *bc = nullptr);
+
+        inline void set_user_id(const int& i) { user_id = i; }
+        inline void set_group_id(const int& i) { group_id = i; }
+        inline bool resolved_dynamic_value() const { return resolved_dynamic; }
 
 	private:
 		Token_Manager tm {};
         std::string input {};
 		State_Parser state_parser;
 		Math_Parser math_parser;
+        bool resolved_dynamic {true};
+        int group_id {};
+        int user_id {};
 
 		void tokenize_input(std::string input, bool set_at_beginning=false);
         void hash_next_token();

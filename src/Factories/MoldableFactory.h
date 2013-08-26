@@ -8,7 +8,7 @@
 #ifndef MOLDABLEFACTORY_H_
 #define MOLDABLEFACTORY_H_
 
-#include "../WidgetServer.h"
+#include "../WidgetServer/WidgetServer.h"
 #include <string>
 
 class Moldable;

@@ -26,9 +26,9 @@ syn keyword moguReserved increment decrement email reload emit append
 syn keyword moguReserved set reset remove clear script
 
 " Attributes
-syn keyword moguReserved tooltip path app regex slot source location
-syn keyword moguReserved content text contents member moderator
-syn keyword moguReserved read write default key encrypted mode type
+syn keyword moguReserved tooltip path regex slot source location
+syn keyword moguReserved content text contents member sort
+syn keyword moguReserved default key encrypted mode type ascending descending
 
 " Data Types
 syn keyword moguReserved list string hash
@@ -38,7 +38,7 @@ syn keyword moguReserved link image submit radio textarea input dropdown
 syn keyword moguReserved multi container password stack  
 
 " Prepositions
-syn keyword humanSyntax to as at with from for is
+syn keyword humanSyntax to as at with from for is using
 
 "Object Types 
 syn keyword moguObject data user group validator widget template policy

@@ -19,11 +19,11 @@ private:
 
 protected:
     Wt::WAnchor* link {};
-    virtual void init(Widget_Assembly*) override;
+    virtual void init(Widget_Assembly&) override;
     void initialize_link();
 
 public:
-    Moldable_Link (Widget_Assembly* assembly);
+    Moldable_Link (Widget_Assembly& assembly);
 
     inline virtual std::string get_moldable_value()
     {

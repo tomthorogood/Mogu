@@ -15,10 +15,10 @@ class Moldable_Abstract_Parent : public Moldable
 protected:
     int num_children;
     std::vector <Moldable*> moldable_children;
-    virtual void init(Widget_Assembly*) override;
+    virtual void init(Widget_Assembly&) override;
     std::vector <std::string> child_nodes;
 public:
-    Moldable_Abstract_Parent (Widget_Assembly*, const Syntax_Def&);
+    Moldable_Abstract_Parent (Widget_Assembly&, const Syntax_Def&);
     virtual void load() override;
 
     virtual void append_child(Moldable*) =0;

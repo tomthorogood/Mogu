@@ -13,7 +13,7 @@
 class Moldable_Password : public Moldable_Input
 {
 public:
-    Moldable_Password (Widget_Assembly*);
+    Moldable_Password (Widget_Assembly&);
 };
 
 #endif /* MOLDABLEPASSWORD_H_ */

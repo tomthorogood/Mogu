@@ -165,11 +165,10 @@ void State_Parser::handle_widget(Moldable* widget, Node_Value& result)
 
 void State_Parser::handle_user_field(const std::string& field, Node_Value& result)
 {
-    mApp;
     int token;
     Node_Value arg;
     Redis::Node_Editor node(Prefix::user, field);
-    node.set_id(app->get_user());
+    node.set_id(user_id);
     int type = node.get_type().integer;
     if (type == Mogu_Syntax::__NONE__)
     {

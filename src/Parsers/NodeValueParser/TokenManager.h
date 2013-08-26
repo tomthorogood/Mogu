@@ -36,7 +36,6 @@ namespace Parsers {
 
     const static std::unordered_set<int> db_tokens = {
 		 (int) Mogu_Syntax::user,
-		 (int) Mogu_Syntax::session,
 		 (int) Mogu_Syntax::group,
 		 (int) Mogu_Syntax::data
 	};
@@ -44,7 +43,6 @@ namespace Parsers {
     const static std::unordered_set<int> object_tokens = {
 		 (int) Mogu_Syntax::own,
 		 (int) Mogu_Syntax::user,
-		 (int) Mogu_Syntax::session,
 		 (int) Mogu_Syntax::group,
 		 (int) Mogu_Syntax::data,
 		 (int) Mogu_Syntax::slot,

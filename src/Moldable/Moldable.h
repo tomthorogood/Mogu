@@ -81,12 +81,12 @@ protected:
     std::string node {};
     std::string template_name {};
 
-    virtual void init(Widget_Assembly*);
+    virtual void init(Widget_Assembly&);
     void initialize_global_attributes();
 
 public:
 
-    Moldable(Widget_Assembly*, const Syntax_Def& type);
+    Moldable(Widget_Assembly&, const Syntax_Def& type);
 
     virtual ~Moldable();
 

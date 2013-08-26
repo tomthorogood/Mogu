@@ -37,20 +37,17 @@
 
 
 (   clear                   ,   clear           ,   action          )
-(   increment|incr          ,   increment       ,   action          )
-(   decrement|decr          ,   decrement       ,   action          )
+(   increment|incr|ascending,   increment       ,   action          )
+(   decrement|decr|descending,  decrement       ,   action          )
 (   test                    ,   test            ,   action attribute hashkey )
 (   tooltip                 ,   tooltip         ,   hashkey         )
 (   email                   ,   email           ,   action          )
-(   reload                  ,   reload          ,   action          )
+(   reload|reset            ,   reload          ,   action          )
 (   emit                    ,   emit            ,   action          )
 (   append                  ,   append          ,   action          )
 (   set                     ,   set             ,   action datatype )
 (   path                    ,   path            ,   object          )
 (   user                    ,   user            ,   object          )
-(   session                 ,   session         ,   object          )
-(   app                     ,   app             ,   object          )
-(   reset                   ,   reset           ,   action          )
 (   style|css               ,   style           ,   attribute hashkey  )
 (   group                   ,   group           ,   object          )
 (   remove                  ,   remove          ,   action          )
@@ -86,7 +83,7 @@
 
 # All prepositions are treated equally in the backend. And yes, I know
 # 'is' is not a preposition, but contextually the same for purposes.
-(   to|as|at|with|from|for|is  ,   preposition              ,   preposition     )
+(   to|as|at|with|from|for|is|using,   preposition              ,   preposition     )
 (   widget                  ,   widget          ,   object          )
 (   type                    ,   type            ,   hashkey         )
 (   encrypted               ,   encrypted       ,   hashkey         )
@@ -95,15 +92,9 @@
 (   location                ,   location        ,   hashkey attribute  )
 (   template                ,   template_       ,   hashkey         )
 (   member                  ,   member          ,   object attribute  )
-(   moderator               ,   moderator       ,   descriptor  )
-(   write                   ,   write           ,   access_level )
-(   read                    ,   read            ,   access_level )
 (   default                 ,   default_        ,   hashkey )
 (   meta                    ,   meta            ,   prefix )
-
-# Either retrieves random data from a set, or generates a string of 
-# random letters (with parameter delimiting the length of the string)
-(   random                  ,   random          ,   descriptor object  )
+(   sort                    ,   sort            ,   hashkey         )
 
 # Keys are attached to groups. A given key value will correlate to 
 # at most one group ID, and can be used for reverse lookups of groups,

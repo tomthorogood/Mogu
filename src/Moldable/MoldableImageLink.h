@@ -16,11 +16,11 @@ class Moldable_Image_Link : public Moldable_Link
     std::string assembly_src {};
 
 protected:
-    virtual void init(Widget_Assembly* assembly);
+    virtual void init(Widget_Assembly& assembly);
     void initialize_image();
 
 public:
-    Moldable_Image_Link(Widget_Assembly*);
+    Moldable_Image_Link(Widget_Assembly&);
     inline virtual void reload()
     {
         set_flag(Moldable_Flags::allow_reload);
