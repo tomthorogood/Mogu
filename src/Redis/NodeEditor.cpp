@@ -289,6 +289,7 @@ bool Node_Editor::write(std::string value, bool hold_queue)
         db->append_query(build_command("hset", "%s"), value.c_str());
     }
     if (!hold_queue) db->flush();
+    exists = true;
     return true;
 }
 
@@ -316,7 +317,7 @@ bool Node_Editor::write(std::map<std::string,std::string>& iomap)
         swap_arg();
     }
     db->flush();
-
+    exists = true;
     return true;
 }
 
@@ -341,6 +342,7 @@ bool Node_Editor::write(std::vector<std::string>& iovec)
         write(str,true);
     }
     db->flush();
+    exists = true;
     return true;
 }
 
@@ -353,9 +355,9 @@ bool Node_Editor::remove()
     else if (type == Mogu_Syntax::hash.integer)
     {
         db->append_query(build_command("hdel"));
-        std::cout << "\nDeleting hkey " << arg->get_string() << std::endl;
     }
     else return false;
+    db->flush();
     return true;
 }
 
@@ -365,6 +367,7 @@ bool Node_Editor::remove(const std::string& value)
     if (type == Mogu_Syntax::list.integer)
     {
         db->append_query("lrem %s 1 %s", s_node.c_str(), value.c_str());
+        db->flush();
         return true;
     }
     else return false;
