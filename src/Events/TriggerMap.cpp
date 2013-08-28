@@ -5,8 +5,7 @@ Trigger_Map::Trigger_Map(const std::string& n, const Prefix& p)
 {
     Redis::Mogu_Query_Handler q {p};
     std::string prefix {prefix_to_string(p)};
-    const char* c {Mogu_Syntax::get(prefix).str};
-
+    const char* c {prefix.c_str()};
     q.append_query("llen %s.%s.events", c, n.c_str());
 
     int num_triggers {q.yield_response <int>()};
