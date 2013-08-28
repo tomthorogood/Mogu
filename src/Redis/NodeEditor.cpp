@@ -355,6 +355,7 @@ bool Node_Editor::remove()
     else if (type == Mogu_Syntax::hash.integer)
     {
         db->append_query(build_command("hdel"));
+        std::cout << "\nDeleting hkey " << arg->get_string() << std::endl;
     }
     else return false;
     db->flush();
