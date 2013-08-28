@@ -1,9 +1,9 @@
-
+suites = QueryHandler MoguQueryHandler NodeEditor
 root_dir = $(CURDIR)/../../
 GCC := g++ -std=c++0x $(flags) -DNOLOGOVERRIDE
 includes := -I$(root_dir)
 
-all: QueryHandler MoguQueryHandler NodeEditor
+all: $(suites)
 
 QueryHandler: obj/QueryHandler.o
 	@$(GCC) $(includes) -o $@ $@.Test.cpp $< -lhiredis -lcpptest
@@ -44,13 +44,13 @@ obj/NodeEditor.o: obj/QueryHandler.o
 obj:
 	@mkdir -pv $@
 
-test: QueryHandler MoguQueryHandler NodeEditor
-	@($(util) ./QueryHandler && \
-	$(util) ./MoguQueryHandler && \
-	$(util) ./NodeEditor) \
-	|| echo "Could not complete tests, because one or more base tests failed."
+test: $(suites)
+	@$(util) ./QueryHandler 
+	@$(util) ./MoguQueryHandler
+	@$(util) ./NodeEditor
 
 make clean:
 	rm -rf obj/
 	rm -f QueryHandler
+	rm -f MoguQueryHandler
 	rm -f NodeEditor
