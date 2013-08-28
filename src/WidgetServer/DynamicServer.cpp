@@ -119,7 +119,7 @@ Widget_Assembly Dynamic_Server::spawn_anonymous_assembly
         resolvable = data_point;
     }
     p.give_input(resolvable,v);
-    Assembly_Tuple t {merge_node_attributes("",tmpl)};
+    Attribute_Tuple t {merge_node_attributes("",tmpl)};
     a.children = std::get<0>(t);
     a.trigger_map = std::get<1>(t);
     a.attrdict = std::get<2>(t);
@@ -143,7 +143,7 @@ Widget_Assembly Dynamic_Server::request
 
     std::vector <std::string>&& data_list = fill_data_list(wnode,sdp);
 
-    Assembly_Tuple&& t {merge_node_attributes(
+    Attribute_Tuple&& t {merge_node_attributes(
             node, get_attribute(&wnode, Mogu_Syntax::template_))};
     Attribute_Map&& m {std::get<2>(t)};
 

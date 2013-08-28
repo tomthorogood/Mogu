@@ -12,8 +12,6 @@
 
 namespace Application {
 
-Context_Map* context_map =nullptr;
-
 template <typename T>
 bool str_contains(const std::string& s, T v)
 {
@@ -96,13 +94,10 @@ inline bool ignore_line(const std::string& line)
     return (str_contains(line,'#') || line.empty());
 }
 
-void load_database_contexts()
+void load_database_contexts(Context_Map* context_map)
 {
-    extern Context_Map* context_map;
-    if (context_map) return;
     int prefix_mask {};
-    context_map = new Context_Map();
-
+    
     std::ifstream buf;
     buf.open(DBCONFIG_FILE);
     assert(buf.is_open());

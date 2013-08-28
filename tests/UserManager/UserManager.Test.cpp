@@ -5,10 +5,6 @@
 #include <cpptest.h>
 #include <hiredis/hiredis.h>
 
-namespace Application {
-    extern Context_Map* context_map;
-}
-
 class UserManagerTestSuite : public Test::Suite
 {
 public:
@@ -49,7 +45,7 @@ private:
 
     void flushdb()
     {
-        Redis::Context* cxt = Application::context_map->get(Prefix::user);
+        Redis::Context* cxt = Application::context_map()->get(Prefix::user);
         redisContext* rdb = redisConnect(cxt->host.c_str(),cxt->port);
         redisReply* r = (redisReply*) redisCommand(rdb, "select %d", cxt->db_num);
         freeReplyObject(r);
@@ -132,7 +128,6 @@ void UserManagerTestSuite::login_existing_CAPS_fail()
 
 int main()
 {
-    Application::load_database_contexts();
     Test::TextOutput output(Test::TextOutput::Verbose);
     UserManagerTestSuite umts;
     return umts.run(output,false) ? EXIT_SUCCESS : EXIT_FAILURE;

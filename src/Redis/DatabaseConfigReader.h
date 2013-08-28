@@ -3,6 +3,8 @@
  *
  *  Created on: Apr 4, 2013
  *      Author: tom
+ *
+ *  Source: DatabaseConfigReader.cpp
  */
 
 #ifndef DATABASECONFIGREADER_H_
@@ -23,8 +25,23 @@ namespace Application { //static namespace
  * all of the prefix bits.
  */
 constexpr int max_prefix_mask = (((int) Prefix::meta) << 1) -1;
+void load_database_contexts(Context_Map*);
 
-void load_database_contexts();
+namespace {
+Context_Map* map_ {};
+
+extern Context_Map* context_map() 
+{
+    if (!map_)
+    {
+        map_ = new Context_Map {};
+        load_database_contexts(map_);
+    }
+    return map_;
+}
+
+}//namespace
+
 
 } //namespace Application
 

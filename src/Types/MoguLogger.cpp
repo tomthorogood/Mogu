@@ -25,8 +25,7 @@ Mogu_Logger::Mogu_Logger()
         log_level = (int)Log_Level::all;
         return;
     }
-    Application::load_database_contexts(); 
-
+    
     Redis::Node_Editor log_config {Prefix::meta, "log"};
     if (!log_config.node_exists())
     {
@@ -40,6 +39,9 @@ Mogu_Logger::Mogu_Logger()
 
     std::string cfg_level = log_config.read();
     log_level = (int) get_level_enum(cfg_level);
+    std::cout << "Logger created with log level "
+        << get_level_name((Log_Level)log_level) 
+        << std::endl;
 }
 
 

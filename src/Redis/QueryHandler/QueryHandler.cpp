@@ -10,7 +10,7 @@ Query_Handler::Query_Handler(Context* c_)
 
 Query_Handler::~Query_Handler()
 {
-    redisFree(c);
+    if(c) redisFree(c);
 }
 
 redisContext* Query_Handler::spawn_context()
@@ -185,14 +185,13 @@ bool Query_Handler::yield_response<bool>()
     if (!next_reply())
         return false;
     else if (reply_type==REDIS_REPLY_INTEGER)
-        return static_cast<bool>(reply_int_);
+        return reply_int_ == 0 ? false : true;
     else if (reply_type==REDIS_REPLY_STRING)
         return !reply_str_.empty();
     else if (reply_type==REDIS_REPLY_ARRAY)
         return reply_vec.size() > 0;
     else
         return false;
-
 }
 
 template<>
