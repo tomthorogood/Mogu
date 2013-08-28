@@ -12,7 +12,7 @@ public:
     Perspective_Handler(Moldable& broadcaster, const std::string& perspective);
     void mold_perspective();
 private:
-    Redis::Mogu_Query_Handler db;
+    Redis::Node_Editor db {};
     std::vector <std::string> commands {};
     int num_commands {};
     std::string perspective {};
