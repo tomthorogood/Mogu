@@ -27,7 +27,7 @@ Widget_Assembly Widget_Server::request(
     }
 
     Widget_Assembly assembly;
-    Redis::Node_Editor wnode {Prefix::widgets, node};
+    Redis::Node_Editor wnode {Prefix::widget, node};
     std::string type {get_attribute(&wnode, Mogu_Syntax::type)};
     
     if ( (type==Mogu_Syntax::container.str || type==Mogu_Syntax::stack.str)

@@ -38,7 +38,7 @@ class PythonObjectConverter(object):
         if lex_map is Lex.WIDGET_BLOCK:
             return self.convert_widget(lexed_results)
         elif lex_map is Lex.TEMPLATE_BLOCK:
-            return self.convert_widget(lexed_results, prefix="templates")
+            return self.convert_widget(lexed_results, prefix="template")
         elif lex_map is Lex.POLICY_BLOCK:
             return self.convert_policy(lexed_results)
         elif lex_map is Lex.DATA_BLOCK:
@@ -112,7 +112,7 @@ class PythonObjectConverter(object):
 
     def convert_perspective(self, result_dict):
         identifier = result_dict["identifier"]
-        node_name = "perspectives.%s" % identifier
+        node_name = "perspective.%s" % identifier
         event_list = []
         for result_tuple in result_dict["block"]:
             result = result_tuple[0]
@@ -130,7 +130,7 @@ class PythonObjectConverter(object):
         master_dict = OrderedDict()
         redis_objects = []
         identifier = result_dict["identifier"]
-        master_key = "validators.%s" % identifier
+        master_key = "validator.%s" % identifier
         master_dict[master_key] = OrderedDict()
         params = result_dict["validator_def"]
         for param in params:
@@ -160,7 +160,7 @@ class PythonObjectConverter(object):
         master_dict = OrderedDict()
         redis_objects = []
         identifier = result_dict["identifier"]
-        master_key = "policies.%s" % identifier
+        master_key = "policy.%s" % identifier
         default_key = "%s.%d" % (master_key, syntax.as_integer("default"))
         master_dict[master_key] = OrderedDict()
         params = result_dict["policy_def"]
@@ -192,7 +192,7 @@ class PythonObjectConverter(object):
                 self.convert_to_redis_object(entry, master_dict[entry]))
         return redis_objects 
         
-    def convert_widget(self, result_dict, prefix="widgets"):
+    def convert_widget(self, result_dict, prefix="widget"):
         """
         The result_dict is the OrderedDict instance returned from using 
         the WIDGET_BLOCK.parse method, and contains all of the building
@@ -207,7 +207,7 @@ class PythonObjectConverter(object):
 
         # Contains information about the widget, and
         # is a list of other result dicts.
-        key = "widget_def" if prefix == "widgets" else "template_def"
+        key = "widget_def" if prefix == "widget" else "template_def"
         params = result_dict[key]
         for param in params:
             o_dict = param[0]
@@ -247,7 +247,7 @@ class PythonObjectConverter(object):
         
         The goal is to return
         an OrderedDict in the following format:
-            {"widgets.[identifier].events.[trigger]" : [cmd A ... cmd Z], }
+            {"widget.[identifier].events.[trigger]" : [cmd A ... cmd Z], }
         """
         event_dict = OrderedDict()
         triggers = []

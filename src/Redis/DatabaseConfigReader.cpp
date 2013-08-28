@@ -20,10 +20,10 @@ bool str_contains(const std::string& s, T v)
 
 Prefix match_prefix (int& prefix_mask, const std::string& prefix)
 {
-    if (str_contains(prefix, "widgets"))
+    if (str_contains(prefix, "widget"))
     {
-        prefix_mask |= (int) Prefix::widgets;
-        return Prefix::widgets;
+        prefix_mask |= (int) Prefix::widget;
+        return Prefix::widget;
     }
     else if (str_contains(prefix, "data"))
     {
@@ -42,23 +42,23 @@ Prefix match_prefix (int& prefix_mask, const std::string& prefix)
     }
     else if (str_contains(prefix,"template"))
     {
-        prefix_mask |= (int) Prefix::templates;
-        return Prefix::templates;
+        prefix_mask |= (int) Prefix::template_;
+        return Prefix::template_;
     }
     else if (str_contains(prefix,"perspective"))
     {
-        prefix_mask |= (int) Prefix::perspectives;
-        return Prefix::perspectives;
+        prefix_mask |= (int) Prefix::perspective;
+        return Prefix::perspective;
     }
-    else if (str_contains(prefix,"validators"))
+    else if (str_contains(prefix,"validator"))
     {
-        prefix_mask |= (int) Prefix::validators;
-        return Prefix::validators;
+        prefix_mask |= (int) Prefix::validator;
+        return Prefix::validator;
     }
-    else if (str_contains(prefix,"policies"))
+    else if (str_contains(prefix,"policy"))
     {
-        prefix_mask |= (int) Prefix::policies;
-        return Prefix::policies;
+        prefix_mask |= (int) Prefix::policy;
+        return Prefix::policy;
     }
     else if (str_contains(prefix,"meta"))
     {

@@ -93,7 +93,7 @@ void set (Moldable& broadcaster, Command_Value& v)
              Node_Value arg {};
              bool has_arg {v.test(Command_Flags::arg)};
              if (has_arg) arg = v.get(Command_Flags::arg);
-             Prefix p {syntax_to_prefix.at(o)};
+             Prefix p {syntax_to_prefix(o)};
              std::string id {v.get_identifier()};
              Redis::Node_Editor e {p, id, has_arg ? &arg : nullptr};
              if (i>=0) e.set_id(i);

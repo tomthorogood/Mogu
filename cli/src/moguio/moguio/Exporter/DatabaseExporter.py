@@ -5,11 +5,13 @@ from moguio.MoguString import MoguString
 
 class DatabaseExporter(object):
     EXPORT_KEYSPACES = (
-            "widgets",
-            "templates",
-            "validators",
+            "widget",
+            "template",
+            "validator",
             "data",
-            "policies"
+            "policy",
+            "perspective",
+            "meta"
     )
 
     @staticmethod
@@ -74,11 +76,11 @@ class DatabaseExporter(object):
 
             attributes = self.db.hgetall(widget)
             
-            if datatype == 'widgets':
+            if datatype == 'widget':
                 container.append(ScriptWriter.WidgetWriter(
                     identifier,attributes,children=children,events=events)
                 )
-            elif datatype == 'templates':
+            elif datatype == 'template':
                 container.append(ScriptWriter.TemplateWriter(
                     identifier,attributes,children=children,events=events)
                 )
@@ -91,11 +93,11 @@ class DatabaseExporter(object):
 
     def export_widgets(self,callback=None):
         self.widgetWriters = []
-        return self.export_abstract_widget('widgets',self.widgetWriters,callback)
+        return self.export_abstract_widget('widget',self.widgetWriters,callback)
 
     def export_templates(self, callback=None):
         self.templateWriters = []
-        return self.export_abstract_widget('templates',self.templateWriters,callback)
+        return self.export_abstract_widget('template',self.templateWriters,callback)
 
     def export_data(self, callback=None):
         self.dataWriters = []
@@ -119,8 +121,8 @@ class DatabaseExporter(object):
 
     def export_validators(self,callback=None):
         self.validatorWriters = []
-        for validator in self.roots['validators']:
-            identifier = Keyspace.identifier('validators',validator)
+        for validator in self.roots['validator']:
+            identifier = Keyspace.identifier('validator',validator)
             attrs = self.db.hgetall(validator)
             self.validatorWriters.append(ScriptWriter.ValidatorWriter(identifier,attrs))
         self.convert_output(self.validatorWriters)
@@ -131,8 +133,8 @@ class DatabaseExporter(object):
 
     def export_policies(self,callback=None):
         self.policyWriters = []
-        for policy in self.roots['policies']:
-            identifier = Keyspace.identifier('policies',policy)
+        for policy in self.roots['policy']:
+            identifier = Keyspace.identifier('policy',policy)
             attrs = self.db.hgetall(policy)
             self.policyWriters.append(ScriptWriter.PolicyWriter(identifier,attrs))
         self.convert_output(self.policyWriters)

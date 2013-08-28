@@ -24,7 +24,7 @@ Wt::WValidator* create_validator(
 {
     mApp;
     const char* c_node {validator_name.c_str()};
-    Redis::Mogu_Query_Handler db {Prefix::validators};
+    Redis::Mogu_Query_Handler db {Prefix::validator};
     db.append_query( "hget validators.%s %d", c_node, (int)Mogu_Syntax::type);
     
     Node_Value v {};

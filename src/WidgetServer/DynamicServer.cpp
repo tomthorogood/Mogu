@@ -136,7 +136,7 @@ Widget_Assembly Dynamic_Server::request
     group_id = g;
 
     Widget_Assembly assembly {};
-    Redis::Node_Editor wnode {Prefix::widgets, node};
+    Redis::Node_Editor wnode {Prefix::widget, node};
     std::string source_declaration {get_attribute(&wnode, Mogu_Syntax::source)};
     Source_Declaration_Parser sdp {source_declaration};
     Source_Declaration_Type source_type {sdp.get_type()};

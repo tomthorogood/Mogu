@@ -10,7 +10,7 @@ namespace Application{
 namespace Redis {
 
 Node_Editor::Node_Editor()
-    : db(new Mogu_Query_Handler(Prefix::widgets))
+    : db(new Mogu_Query_Handler(Prefix::widget))
 {
 }
 
@@ -19,7 +19,7 @@ Node_Editor::Node_Editor(
     : prefix(prefix_)
     , db(new Mogu_Query_Handler(prefix_))
     , arg(arg_)
-    , prefix_str(prefix_map().at(prefix_))
+    , prefix_str(prefix_to_string(prefix_))
     , node(node_)
         
 {
@@ -58,7 +58,7 @@ int Node_Editor::get_policy_type()
     Node_Value tmp(Mogu_Syntax::type.integer);
     set_policy();
     policy->append_query(
-        "hget policies.%s %d", node.c_str(), Mogu_Syntax::type.integer);
+        "hget policy.%s %d", node.c_str(), Mogu_Syntax::type.integer);
     int type_ = Mogu_Syntax::get(policy->yield_response<std::string>());
     return type_;
 }
@@ -71,7 +71,7 @@ void Node_Editor::set_prefix(Prefix prefix_)
     if (prefix_ == prefix) return; // Ignore this request
     prefix = prefix_;
     id = -1;
-    prefix_str = prefix_map().at(prefix);
+    prefix_str = prefix_to_string(prefix);
     db->new_context(Application::context_map()->get(prefix_));
     unset_arg_info();
 
@@ -144,7 +144,7 @@ bool Node_Editor::set_encrypted()
 {
     set_policy();
     policy->append_query(
-        "hget policies.%s %d", node.c_str(), Mogu_Syntax::encrypted.integer);
+        "hget policy.%s %d", node.c_str(), Mogu_Syntax::encrypted.integer);
     std::string encryption_result {policy->yield_response <std::string>()};
     encrypted = encryption_result=="yes";
     return encrypted;
@@ -231,7 +231,7 @@ void Node_Editor::read(std::vector <std::string>& iovec)
 std::string Node_Editor::get_default()
 {
     Node_Value nv {Mogu_Syntax::default_.str};
-    Node_Editor def {Prefix::policies, node, arg};
+    Node_Editor def {Prefix::policy, node, arg};
     def.set_sub(Mogu_Syntax::default_.str);
     return def.read();
 }
@@ -239,14 +239,14 @@ std::string Node_Editor::get_default()
 void Node_Editor::get_default(std::vector<std::string>& iovec)
 {
     std::string node {node};
-    Node_Editor editor {Prefix::policies, node, arg};
+    Node_Editor editor {Prefix::policy, node, arg};
     editor.set_sub(Mogu_Syntax::default_.str);
     editor.read(iovec);
 }
 
 void Node_Editor::get_default(std::map<std::string,std::string>& iomap)
 {
-    Node_Editor editor {Prefix::policies, node, arg};
+    Node_Editor editor {Prefix::policy, node, arg};
     editor.set_sub(Mogu_Syntax::default_.str);
     editor.read(iomap);
 }

@@ -27,7 +27,7 @@ Moldable* Moldable_Factory::create_moldable_widget(const std::string& node)
     Widget_Assembly&& assembly = server.request(
             node,app->get_user(), app->get_group());
 
-    std::string s = assembly.attrdict[Mogu_Syntax::type.integer].get_string();
+    Node_Value& s = assembly.attrdict[Mogu_Syntax::type.integer];
     const Syntax_Def& widget_type = Mogu_Syntax::get(s);
     Moldable* product {};
 

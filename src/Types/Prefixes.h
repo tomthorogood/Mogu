@@ -6,14 +6,14 @@
 
 enum class Prefix {
     __NONE__    =0,
-    widgets     =1,
+    widget      =1,
     data        =2,
     user        =4,
     group       =8,
-    templates   =16,
-    validators  =32,
-    policies    =64,
-    perspectives=128,
+    template_   =16,
+    validator   =32,
+    policy      =64,
+    perspective =128,
     /* If adding prefixes, add them BEFORE META, and UPDATE META to reflect
      * a new bit-aligned number.
      */
@@ -21,31 +21,69 @@ enum class Prefix {
 };
 
 namespace {
-extern const std::map <Prefix, std::string>& prefix_map()
+
+extern const std::map <Prefix, std::string>& prefix_to_string()
 {
     static std::map <Prefix, std::string> map_ = {
-        { Prefix::widgets,      "widgets"},
+        { Prefix::widget ,      "widget"},
         { Prefix::data,         "data"},
         { Prefix::user,         "user"},
         { Prefix::group,        "group"},
-        { Prefix::templates,    "templates"},
-        { Prefix::validators,   "validators"},
-        { Prefix::policies,     "policies"},
+        { Prefix::template_,    "template"},
+        { Prefix::validator,    "validator"},
+        { Prefix::policy,       "policy"},
         { Prefix::meta,         "meta"},
-        { Prefix::perspectives, "perspectives"}
+        { Prefix::perspective,  "perspective"}
     };
     return map_;
 }
 
-extern const std::unordered_map <int, Prefix> syntax_to_prefix = {
-    { (int)Mogu_Syntax::own,      Prefix::widgets },
-    { (int)Mogu_Syntax::widget,   Prefix::widgets },
-    { (int)Mogu_Syntax::data,     Prefix::data    },
-    { (int)Mogu_Syntax::user,     Prefix::user    },
-    { (int)Mogu_Syntax::group,    Prefix::group   },
-    { (int)Mogu_Syntax::template_,Prefix::templates},
-    { (int)Mogu_Syntax::validator,Prefix::validators},
-};
+extern const std::string& prefix_to_string(const Prefix& p)
+{
+    return prefix_to_string().at(p);
 }
 
-#endif //PREFIXES_H_
+extern const std::unordered_map<int,Prefix>& syntax_to_prefix() {
+    static std::unordered_map <int, Prefix> m {
+        { (int)Mogu_Syntax::own,      Prefix::widget  },
+        { (int)Mogu_Syntax::widget,   Prefix::widget  },
+        { (int)Mogu_Syntax::data,     Prefix::data    },
+        { (int)Mogu_Syntax::user,     Prefix::user    },
+        { (int)Mogu_Syntax::group,    Prefix::group   },
+        { (int)Mogu_Syntax::template_,Prefix::template_},
+        { (int)Mogu_Syntax::validator,Prefix::validator},
+    };
+    return m;
+}
+
+extern const Prefix& syntax_to_prefix (const Syntax_Def& s)
+{
+    return syntax_to_prefix().at((int)s);
+}
+
+extern const Prefix& syntax_to_prefix (const int& i)
+{
+    return syntax_to_prefix().at(i);
+}
+
+extern const std::map <Prefix, int> prefix_to_syntax() {
+    static std::map <Prefix, int> m {
+        { Prefix::widget,   (int) Mogu_Syntax::widget   },
+        { Prefix::data,     (int) Mogu_Syntax::data     },
+        { Prefix::user,     (int) Mogu_Syntax::user     },
+        { Prefix::group,    (int) Mogu_Syntax::group    },
+        { Prefix::template_,(int) Mogu_Syntax::template_},
+        { Prefix::validator,(int) Mogu_Syntax::validator}
+    };
+    return m;
+}
+
+extern const int& prefix_to_syntax(const Prefix& p)
+{
+    return prefix_to_syntax().at(p);
+}
+
+}//namespace
+
+
+#endif //PREFIXES_H

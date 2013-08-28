@@ -198,10 +198,10 @@ void State_Parser::handle_group_field(const std::string& field, Node_Value& resu
 //  int group = app->get_group();
 //  Group_Manager group_mgr(group);
 //  Redis::Mogu_Query_Handler& grpdb = group_mgr.get_context(Prefix::group); 
-//  Redis::Mogu_Query_Handler& plcdb = group_mgr.get_context(Prefix::policies);
+//  Redis::Mogu_Query_Handler& plcdb = group_mgr.get_context(Prefix::policy);
 
-//  plcdb.append_query( "hget policies.%s %d", field.c_str(), (int)Mogu_Syntax::type);
-//  plcdb.append_query( "hget policies.%s %d",
+//  plcdb.append_query( "hget policy.%s %d", field.c_str(), (int)Mogu_Syntax::type);
+//  plcdb.append_query( "hget policy.%s %d",
 //          field.c_str(), (int) Mogu_Syntax::encrypted);
 //  const Syntax_Def& type = Mogu_Syntax::get(plcdb.yield_response<std::string>());
 //  bool encrypted = plcdb.yield_response <bool>();

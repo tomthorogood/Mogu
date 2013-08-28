@@ -16,7 +16,7 @@ void increment (Moldable& broadcaster, Command_Value& v)
 {
     mApp;
     const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
-    Prefix p {syntax_to_prefix.at(o)};
+    Prefix p {syntax_to_prefix(o)};
     std::string id {v.get(Command_Flags::identifier).get_string()};
     Node_Value arg {};
     Node_Value final {};

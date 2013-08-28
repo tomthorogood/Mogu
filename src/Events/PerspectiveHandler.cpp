@@ -11,7 +11,7 @@ namespace Application {
 
 Perspective_Handler::Perspective_Handler(Moldable& w, const std::string& p)
     : Command_Processor(w)
-    , db(Prefix::perspectives, p)
+    , db(Prefix::perspective, p)
     , perspective(p)
 {
 }

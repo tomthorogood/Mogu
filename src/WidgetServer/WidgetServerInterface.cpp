@@ -33,24 +33,29 @@ std::tuple
 Widget_Server_Interface::merge_node_attributes (
     const std::string& node_name, std::string template_name)
 {
-    Redis::Node_Editor w(Prefix::widgets, node_name);
+    Redis::Node_Editor w(Prefix::widget, node_name);
     std::vector <std::string> w_children {}, t_children {};
     Attribute_Map attributes {};
-    Trigger_Map *t_trigger_map {};
+    Trigger_Map* t_trigger_map {};
 
     if (!template_name.empty())
     {
-        Redis::Node_Editor t(Prefix::templates, template_name);
+        Redis::Node_Editor t(Prefix::template_, template_name);
         unpack_node(&t, t_children, attributes);
-        t_trigger_map = new Trigger_Map {template_name, Prefix::templates};
+        t_trigger_map = new Trigger_Map {template_name, Prefix::template_};
     }
 
-    Trigger_Map w_trigger_map {node_name, Prefix::widgets};
+    Trigger_Map w_trigger_map {node_name, Prefix::widget};
     unpack_node(&w, w_children, attributes);
 
     if (!w_children.size() && t_children.size())
         w_children = std::move(t_children);
-    if (t_trigger_map) t_trigger_map->extend(w_trigger_map); 
+
+    if (t_trigger_map)
+        t_trigger_map->extend(w_trigger_map);
+    else
+        t_trigger_map = &w_trigger_map;
+
     Trigger_Map&& m {*t_trigger_map};
     return std::make_tuple(w_children, m, attributes);
 }

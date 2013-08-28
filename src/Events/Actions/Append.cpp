@@ -96,8 +96,8 @@ void handle_value_to_field(Moldable& broadcaster, Command_Value& v)
         arg = v.get(Command_Flags::arg);
 
     bool writeable = true;
-    Prefix obj = 
-        syntax_to_prefix.at((Mogu_Syntax::get(v.get(Command_Flags::object))));
+    Prefix obj {syntax_to_prefix(
+            Mogu_Syntax::get(v.get(Command_Flags::object)))};
     std::string node = (std::string) v.get(Command_Flags::identifier);
 
 //    if (Prefix::group == obj)

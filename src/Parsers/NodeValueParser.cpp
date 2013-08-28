@@ -68,7 +68,9 @@ void Node_Value_Parser::tokenize_input(std::string in, bool set_at_begin)
                 end_index = search -1;
         }
 
-        std::string t {in.substr(input_index, (end_index-input_index+1))};
+        size_t substr_len {end_index-input_index+1};
+        if (substr_len > in.size()) substr_len = in.size();
+        std::string t {in.substr(input_index, substr_len)};
         if (!t.empty())
         {
             if (isdigit(t[0]))

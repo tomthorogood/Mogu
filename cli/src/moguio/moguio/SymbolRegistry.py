@@ -206,11 +206,11 @@ class SymbolRegistry(object):
                 nonrefs.append(key)
         return nonrefs
 
-widgetRegistry      = SymbolRegistry("widgets")
-templateRegistry    = SymbolRegistry("templates")
+widgetRegistry      = SymbolRegistry("widget")
+templateRegistry    = SymbolRegistry("template")
 dataRegistry        = SymbolRegistry("data")
-validatorRegistry   = SymbolRegistry("validators")
-policyRegistry      = SymbolRegistry("policies")
+validatorRegistry   = SymbolRegistry("validator")
+policyRegistry      = SymbolRegistry("policy")
 
 registries = (
     widgetRegistry,

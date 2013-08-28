@@ -19,13 +19,13 @@ struct Context_Map {
     Redis::Context* get (Prefix prefix) {
         switch(prefix)
         {
-        case Prefix::widgets:   return widgets;
+        case Prefix::widget:   return widgets;
         case Prefix::user:      return user;
-        case Prefix::perspectives: return perspectives;
+        case Prefix::perspective: return perspectives;
         case Prefix::meta:      return meta;
         case Prefix::group:     return group;
-        case Prefix::validators:return validators;
-        case Prefix::policies:  return policies;
+        case Prefix::validator:return validators;
+        case Prefix::policy:  return policies;
         case Prefix::data:      return data;
         default: return widgets;
         }
@@ -35,7 +35,7 @@ struct Context_Map {
     {
         switch(prefix)
         {
-        case Prefix::widgets:   widgets = context;
+        case Prefix::widget:   widgets = context;
                                 break;
         case Prefix::user:      user = context;
                                 break;
@@ -43,13 +43,13 @@ struct Context_Map {
                                 break;
         case Prefix::group:     group = context;
                                 break;
-        case Prefix::validators:validators = context;
+        case Prefix::validator:validators = context;
                                 break;
-        case Prefix::policies:  policies = context;
+        case Prefix::policy:  policies = context;
                                 break;
         case Prefix::data:      data = context;
                                 break;
-        case Prefix::perspectives:
+        case Prefix::perspective:
                                 perspectives = context;
                                 break;
         default: break;

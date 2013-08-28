@@ -108,7 +108,7 @@ public:
     {
         set_policy();
         policy->append_query(
-            "hget policies.%s %d", node.c_str(), Mogu_Syntax::type.integer);
+            "hget policy.%s %d", node.c_str(), Mogu_Syntax::type.integer);
         return Mogu_Syntax::get(policy->yield_response<std::string>());
     }
 
@@ -231,7 +231,7 @@ private:
 
     inline void set_policy()
     {
-        if (!policy) policy = new Redis::Mogu_Query_Handler(Prefix::policies);
+        if (!policy) policy = new Redis::Mogu_Query_Handler(Prefix::policy);
     }
 
     inline void set_exists()

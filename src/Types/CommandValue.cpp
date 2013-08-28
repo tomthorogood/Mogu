@@ -140,7 +140,7 @@ bool Command_Value::object_is_reduceable(bool r)
     // If we've reached this point, we have to determine whether
     // or not the node in question is a string, list, or hash.
    
-    Prefix p {syntax_to_prefix.at(Mogu_Syntax::get(local_obj))};
+    Prefix p {syntax_to_prefix(Mogu_Syntax::get(local_obj))};
     
     Redis::Node_Editor node {p, (std::string) local_id};
     
