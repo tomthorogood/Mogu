@@ -1,9 +1,9 @@
 #include "NodeEditor.h"
 #include "../Security/Encryption.h"
+#include "DatabaseConfigReader.h"
 #include "../Types/MoguLogger.h"
 
 namespace Application{
-    extern Context_Map* context_map;
     extern Mogu_Logger log;
 }
 
@@ -72,7 +72,7 @@ void Node_Editor::set_prefix(Prefix prefix_)
     prefix = prefix_;
     id = -1;
     prefix_str = prefix_map().at(prefix);
-    db->new_context(Application::context_map->get(prefix_));
+    db->new_context(Application::context_map()->get(prefix_));
     unset_arg_info();
 
     db->append_query(build_command("exists"));
@@ -124,8 +124,10 @@ std::string Node_Editor::read()
     {
         if (!arg_str.empty())
         {
+            db->flush();
             db->append_query(build_command("hexists"));
-            if (db->yield_response<bool>())
+            bool response {db->yield_response<bool>()};
+            if (response)
                 db->append_query(build_command("hget"));
             else if (is_dynamic_type())
                 return get_default();
@@ -275,6 +277,17 @@ bool Node_Editor::write(std::string value, bool hold_queue)
     {
         db->append_query(build_command("hset","%s"),value.c_str());
     }
+    /* If the node doesn't exist */
+    else if (!arg)
+    {
+        swap_arg(&tmp);
+        db->append_query(build_command("set"));
+        swap_arg();
+    }
+    else
+    {
+        db->append_query(build_command("hset", "%s"), value.c_str());
+    }
     if (!hold_queue) db->flush();
     return true;
 }
@@ -318,7 +331,8 @@ bool Node_Editor::write(std::vector<std::string>& iovec)
             iovec[i] = str;
         }
     }
-    if (type != Mogu_Syntax::list.integer) return false;
+    if (type != Mogu_Syntax::list.integer)
+        return false;
 
     /* Write everything as a batch */
     delay_execution = true;
@@ -339,6 +353,7 @@ bool Node_Editor::remove()
     else if (type == Mogu_Syntax::hash.integer)
     {
         db->append_query(build_command("hdel"));
+        std::cout << "\nDeleting hkey " << arg->get_string() << std::endl;
     }
     else return false;
     return true;

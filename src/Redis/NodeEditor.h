@@ -1,3 +1,10 @@
+/* NodeEditor.h
+ *
+ * Source: NodeEditor.cpp
+ *
+ * Tom A. Thorogood (2013)
+ */
+
 #ifndef NODEDITOR_H_
 #define NODEDITOR_H_
 
@@ -147,6 +154,11 @@ public:
     }
 
     inline bool node_exists() const { return exists; }
+
+    inline void set_type (const Syntax_Def& t) { type = t.integer; }
+    inline void set_type (const std::string& t)
+        { type = Mogu_Syntax::get(t).integer; }
+    inline void set_type (const int& t) { type = t; }
 
 private:
 

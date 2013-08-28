@@ -38,7 +38,7 @@ Widget_Assembly Widget_Server::request(
     
     std::string tmpl {get_attribute(&wnode, Mogu_Syntax::template_)};
 
-    Assembly_Tuple&& t {merge_node_attributes(node, tmpl)};
+    Attribute_Tuple&& t {merge_node_attributes(node, tmpl)};
 
     assembly.node = node;
     assembly.tmpl = tmpl;

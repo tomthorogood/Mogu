@@ -1,3 +1,10 @@
+/* QueryHandler.h
+ *
+ * Source: QueryHandler.cpp
+ *
+ * Tom A. Thorogood (2013)
+ */
+
 #ifndef QUERYHANDLER_H_
 #define QUERYHANDLER_H_
 
@@ -14,7 +21,7 @@ namespace Redis {
 class Query_Handler
 {
 public:
-    Query_Handler(Context* c);
+    Query_Handler(Context*);
     ~Query_Handler();
     void append_query(const std::string&, ...);
     void execute_query(const std::string&, ...);
@@ -32,8 +39,9 @@ public:
     bool next_reply();
     inline void new_context(Context* context_) {
         if (c) redisFree(c);
+        c = nullptr;
         context = context_;
-        spawn_context();
+        c = spawn_context();
     }
 
 private:

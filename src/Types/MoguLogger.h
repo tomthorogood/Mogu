@@ -16,10 +16,10 @@
 #ifdef DEBUG
 #ifndef NOLOGOVERRIDE
     constexpr bool LOG_OVERRIDE = true;
-#else
+#else // ifdef NOLOGOVERRIDE
     constexpr bool LOG_OVERRIDE = false;
-#endif
-#else
+#endif 
+#else // ifndef DEBUG
     constexpr bool LOG_OVERRIDE = false;
 #endif
 

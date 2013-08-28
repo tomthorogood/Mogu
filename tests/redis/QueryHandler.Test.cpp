@@ -33,6 +33,7 @@ public:
         TEST_ADD(QueryHandlerTestSuite::combined_use);
         TEST_ADD(QueryHandlerTestSuite::multiple_handlers);
         TEST_ADD(QueryHandlerTestSuite::errors_handled);
+        TEST_ADD(QueryHandlerTestSuite::set_delete_hkey);
     }
 
     ~QueryHandlerTestSuite() 
@@ -59,6 +60,7 @@ private:
     void combined_use();
     void multiple_handlers();
     void errors_handled();
+    void set_delete_hkey();
 
 };
 
@@ -192,6 +194,21 @@ void QueryHandlerTestSuite::map_fill()
     TEST_ASSERT(m["qux"] == "quux");
 
     delete qh;
+}
+
+void QueryHandlerTestSuite::set_delete_hkey()
+{
+    Redis::Query_Handler* q {spawnHandler()};
+    q->append_query("hset foo bar baz");
+    q->append_query("hexists foo bar");
+    q->append_query("hdel foo bar");
+    q->append_query("hexists foo bar");
+    
+    TEST_ASSERT(q->yield_response<int>()==1);
+    TEST_ASSERT(q->yield_response<bool>());
+    TEST_ASSERT(q->yield_response<int>()==1);
+    TEST_ASSERT(!q->yield_response<bool>());
+
 }
 
 void QueryHandlerTestSuite::multiple_handlers()
