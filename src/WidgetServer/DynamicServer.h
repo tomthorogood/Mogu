@@ -1,3 +1,10 @@
+/* DynamicServer.h
+ * Source: DynamicServer.cpp
+ *
+ * Tom A. Thorogood
+ * August 2013
+ *
+ */
 #ifndef DYNAMIC_SERVER_H_
 #define DYNAMIC_SERVER_H_
 
@@ -34,6 +41,8 @@ private:
         const std::string& data_point
         , const std::string& anon_tmpl
         , const Source_Declaration_Type &);
+    std::string get_template_name(const std::string&);
+    std::string get_resolvable_string(const std::string&);
 };
 
 
