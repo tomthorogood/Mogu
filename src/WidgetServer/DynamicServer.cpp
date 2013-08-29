@@ -3,6 +3,20 @@
 #include "../Types/SyntaxDef.h"
 
 namespace{
+
+template <class T>
+bool str_contains(const std::string& s, T v)
+{
+    return s.find(v) != std::string::npos;
+}
+
+std::string trim(const std::string& s)
+{
+    size_t i {};
+    while (isspace(s[i])) ++i;
+    return s.substr(i);
+}
+
 std::tuple<const Syntax_Def&,int> parse_sort_definition (
         const std::string& s)
 {
@@ -76,6 +90,33 @@ void Dynamic_Server::sort(
     }
 }
 
+std::string Dynamic_Server::get_template_name(const std::string& declaration)
+{
+    const static std::string using_ {Mogu_Syntax::preposition.str};
+    const static std::string template_ {Mogu_Syntax::template_.str};
+    const static size_t tmemplate_len {template_.size()};
+
+    if (!str_contains(declaration, using_))
+        return "";
+    // Get the index of "template"
+    size_t tmpl_index {declaration.find(template_)};
+
+    if (tmpl_index==std::string::npos) return "";
+
+    size_t tmpl_name_start = tmpl_index+2;
+    std::string sub = declaration.substr(tmpl_name_start);
+    return trim(sub);
+
+}
+
+std::string Dynamic_Server::get_resolvable_string(const std::string& declaration)
+{
+    const static std::string using_ {Mogu_Syntax::preposition.str};
+    size_t using_index {declaration.find(using_)};
+    if (using_index==0) return "";
+    return declaration.substr(0,using_index-1);
+}
+
 Widget_Assembly Dynamic_Server::spawn_anonymous_assembly
     ( const std::string& data_point
     , const std::string& anon_tmpl
@@ -84,40 +125,27 @@ Widget_Assembly Dynamic_Server::spawn_anonymous_assembly
     mApp;
     Parsers::Node_Value_Parser& p = app->get_interpreter();
 
-    const std::string using_ {Mogu_Syntax::preposition.str};
-    const std::string template_ {Mogu_Syntax::template_.str};
 
-    std::string resolvable {anon_tmpl};
-    std::string tmpl {};
+    std::string resolvable {get_resolvable_string(anon_tmpl)};
+    std::string tmpl {get_template_name(anon_tmpl)};
 
     Widget_Assembly a {};
     Node_Value v{};
     a.node = create_unique_node_name();
-    size_t using_index = anon_tmpl.find(Mogu_Syntax::preposition.str);
-
-    if (using_index != std::string::npos)
-    {
-        size_t u {using_index + using_.size()};
-        size_t q {u+1+template_.size()};
-        size_t suffix_index {q+1};
-        a.tmpl = anon_tmpl.substr(q);
-        resolvable = anon_tmpl.substr(0,suffix_index);
-    }
 
     if (type == Source_Declaration_Type::group_members) 
     {
         p.set_user_id(atoi(data_point.c_str()));
     }
-    else if (type == Source_Declaration_Type::user_list)
+    else
     {
-        p.set_user_id(user_id);
+        if (type==Source_Declaration_Type::user_list)
+            p.set_user_id(atoi(data_point.c_str()));
+        else if (type==Source_Declaration_Type::group_list)
+            p.set_group_id(atoi(data_point.c_str()));
         resolvable = data_point;
     }
-    else if (type == Source_Declaration_Type::group_list)
-    {
-        p.set_group_id(group_id);
-        resolvable = data_point;
-    }
+
     p.give_input(resolvable,v);
     Attribute_Tuple t {merge_node_attributes("",tmpl)};
     a.children = std::get<0>(t);
@@ -143,44 +171,59 @@ Widget_Assembly Dynamic_Server::request
 
     std::vector <std::string>&& data_list = fill_data_list(wnode,sdp);
 
-    Attribute_Tuple&& t {merge_node_attributes(
-            node, get_attribute(&wnode, Mogu_Syntax::template_))};
+    Attribute_Tuple&& t {
+        merge_node_attributes(node, get_attribute(
+            &wnode, Mogu_Syntax::template_))
+    };
+
     Attribute_Map&& m {std::get<2>(t)};
 
     std::vector <std::string>&& child_declarations {std::get<0>(t)};
+    size_t num_children {data_list.size()};
 
     std::tuple <const Syntax_Def&,int>&& sort_info 
         {parse_sort_definition(m[Mogu_Syntax::sort.integer])};
 
-    std::vector <Sortable> sortable_containers { data_list.size(), Sortable{} };
-    for (size_t i = 0; i < sortable_containers.size(); ++i)
+    std::vector <Sortable> sortable_containers {};
+
+    for (size_t i = 0; i < num_children; ++i)
     {
-        Sortable& k = sortable_containers[i];
-        Widget_Assembly& w = k.get_assembly();
-        w.children.reserve(child_declarations.size());
+        Sortable k {};
         std::string key {};
+
         std::string data_point {data_list[i]};
+
+        Widget_Assembly& w = k.get_assembly();
+
         for (size_t j = 0; j < child_declarations.size(); ++j)
         {
-            Widget_Assembly&& anon {spawn_anonymous_assembly(
-                        data_point, child_declarations[j], source_type)};
+            Widget_Assembly&& anon
+            {
+                spawn_anonymous_assembly(
+                    data_point, child_declarations[j], source_type)
+            };
+
             local_cache.add(anon);
+
             if (j==(size_t) std::get<1>(sort_info))
                 key = (std::string) anon.attrdict[Mogu_Syntax::text.integer];
-            w.children[j] = anon.node;
+
+            w.children.push_back(anon.node);
         }
+
         k.set_key(key);
         w.attrdict = m;
         w.node = create_unique_node_name();
-        w.trigger_map = std::move(std::get<1>(t));
+        w.trigger_map = std::get<1>(t);
         local_cache.add(w);
+        sortable_containers.push_back(k);
     }
+
     sort(std::get<0>(sort_info),sortable_containers);
-    assembly.children.reserve(sortable_containers.size());
 
     for (size_t i = 0; i < sortable_containers.size(); ++i)
     {
-        assembly.children[i] = sortable_containers[i].get_assembly().node;
+        assembly.children.push_back(sortable_containers[i].get_assembly().node);
     }
 
     return assembly;
