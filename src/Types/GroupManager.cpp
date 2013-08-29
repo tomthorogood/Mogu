@@ -6,6 +6,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <cassert>
+
 Group_Manager::Group_Manager(const int& id_)
     : id(id_)
 {}
@@ -26,7 +28,7 @@ bool Group_Manager::user_is_member(const int& u)
 {
     redis_connect();
     if (!is_valid()) return false;
-    db->append_query("sismember group.%d.__meta__.m %s", id, u);
+    db->execute_query("sismember group.%d.__meta__.m %d", id, u);
     return db->yield_response<bool>();
 }
 
@@ -34,7 +36,7 @@ bool Group_Manager::user_is_admin(const int& u)
 {
     redis_connect();
     if (!is_valid()) return false;
-    db->append_query("sismember group.%d.__meta__.a %s", id, u);
+    db->execute_query("sismember group.%d.__meta__.a %d", id, u);
     return db->yield_response<bool>();
 }
 
@@ -42,8 +44,7 @@ std::string Group_Manager::get_key()
 {
     redis_connect();
     if (!is_valid()) return "";
-
-    db->append_query("hget group.%d.__meta__ k", id);
+    db->execute_query("hget group.%d.__meta__ k", id);
     return db->yield_response<std::string>();
 }
 
@@ -53,7 +54,6 @@ Security_Status Group_Manager::add_user(const int& u)
     if (!is_valid()) return Security_Status::err_no_group_selected;
     if (user_is_member(u)) return Security_Status::err_user_exists;
     db->execute_query("sadd group.%d.__meta__.m %d", id, u);
-
 
     // Also add the group to the user's grup list.
     Redis::Mogu_Query_Handler q {Prefix::user};
@@ -116,7 +116,7 @@ bool Group_Manager::key_exists(const std::string& k)
     redis_connect();
     if (!keylist.size())
     {
-        db->append_query("hvals group.__meta__.keys");
+        db->execute_query("hvals group.__meta__.keys");
         keylist = db->yield_response<std::vector<std::string>>();
     }
     return std::count(keylist.begin(),keylist.end(),k) > 0;
@@ -148,16 +148,19 @@ std::string Group_Manager::create_key(
     return h;
 }
 
-int Group_Manager::create_group(
+void Group_Manager::create_group(
     const std::string& group_name, const int& founding_user)
 {
     std::string salt {create_salt()};
     std::string key {create_key(group_name, salt)};
     id = consume_id();
-
+    assert(id > -1);
     db->append_query("hset group.%d.__meta__ k %s", id, key.c_str());
     db->append_query("hset group.%d.__meta__ n %s", id, group_name.c_str());
     db->append_query("hset group.%d.__meta__ s %s", id, salt.c_str());
+    db->append_query("hset group.__meta__.keys %s %d", key.c_str(), id);
+    db->flush();
     add_user(founding_user);
     promote_user(founding_user);
+    assert(user_is_member(founding_user));
 }

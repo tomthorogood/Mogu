@@ -199,14 +199,8 @@ int User_Manager::consume_user_id(Redis::Mogu_Query_Handler& db)
     }
     else
     {
+        db.flush();
         // Otherwise, increment and return the next user count.
-        db.append_query("exists user.meta.count");
-        if (!db.yield_response<bool>())
-        {
-            db.execute_query("set user.meta.count 0");
-            Application::log.log(Log_Level::notice, "Not users found. Creating ",
-                "new user count.");
-        }
         db.append_query("incr user.meta.count");
         return db.yield_response <int>();
     }

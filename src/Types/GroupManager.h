@@ -14,7 +14,7 @@ public:
     Group_Manager(const std::string& group_key);
     ~Group_Manager() { if (db) delete db; }
     
-    int create_group(const std::string& group_name, const int& founder);
+    void create_group(const std::string& group_name, const int& founder);
     bool user_is_member(const int& user_id);
     bool user_is_admin(const int& user_id);
 
@@ -29,12 +29,13 @@ public:
     inline int get_id() { return id; }
     inline bool is_valid() { return id > -1; }
 
-    bool user_exists();
-
 private:
 
     inline void redis_connect() 
-        { if (!db) db = new Redis::Mogu_Query_Handler(Prefix::group); }
+    { if (!db)
+        db = new Redis::Mogu_Query_Handler(Prefix::group); 
+      else db->flush();
+    }
 
     bool key_exists(const std::string&);
 
