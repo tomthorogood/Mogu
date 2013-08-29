@@ -37,6 +37,7 @@ public:
         TEST_ADD(GMTS::create_group);
         TEST_ADD(GMTS::key_resolution);
         TEST_ADD(GMTS::add_users);
+        TEST_ADD(GMTS::user_table);
         TEST_ADD(GMTS::remove_users);
     }
 private:
@@ -48,6 +49,7 @@ private:
     void key_resolution();
     void add_users();
     void remove_users();
+    void user_table();
 };
 
 void populate_users()
@@ -146,6 +148,18 @@ void GMTS::remove_users()
         g.remove_user(i);
         TEST_ASSERT(!g.user_is_admin(i));
         TEST_ASSERT(!g.user_is_member(i));
+    }
+}
+
+void GMTS::user_table()
+{
+    Group_Manager g {group_key};
+    Redis::Mogu_Query_Handler q {Prefix::user};
+    int id {g.get_id()};
+    for (int i = 1; i <= 5; ++i)
+    {
+        q.execute_query("sismember user.%d.__meta__.g %d", i, id);
+        TEST_ASSERT(q.yield_response<bool>());
     }
 }
 
