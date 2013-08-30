@@ -131,6 +131,12 @@ WIDGET_TYPE = pyboro.Lexer.ParseMap((
     ("end",     r"\S*"                                      , IGNORE)
 ))
 
+WIDGET_SORT = pyboro.Lexer.ParseMap((
+    ("begin",   DIRECTIVE_START(syntax.as_integer("sort"))  , IGNORE),
+    ("declaration", r"[^\n]*"                               , trim),
+    ("end",     r"\S*"                                      , IGNORE)
+))
+
 WIDGET_STYLE = pyboro.Lexer.ParseMap((
     ("begin",       DIRECTIVE_START(syntax.as_integer("css"))   , IGNORE),
     ("css_classes", regexlib['value']                           , trim),

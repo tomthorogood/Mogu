@@ -219,6 +219,8 @@ class PythonObjectConverter(object):
                 master_dict[master_key][syntax.as_integer("content")] = o_dict["content"]
             elif parsemap is lex_base.WIDGET_SOURCE:
                 master_dict[master_key][syntax.as_integer("source")] = o_dict["source"]
+            elif parsemap is lex_base.WIDGET_SORT:
+                master_dict[master_key][syntax.as_integer("sort")] = o_dict["declaration"]
             elif parsemap is lex_base.WIDGET_LOCATION:
                 master_dict[master_key][syntax.as_integer("location")] = o_dict["location"]
             elif parsemap is lex_base.WIDGET_TEMPLATE:
