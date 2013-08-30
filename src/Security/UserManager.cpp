@@ -6,6 +6,8 @@
 #include "../Redis/NodeEditor.h"
 #include "../hash.h"
 
+#include <cassert>
+
 namespace Application {
     extern Mogu_Logger log;
 }
@@ -64,10 +66,10 @@ int User_Manager::get_user_id(const std::string& username)
 Security_Status User_Manager::register_user(
         std::string& username, const std::string& password)
 {
-    std::pair <std::string,std::string> info = 
-        get_sanitized_info(username,password);
+    std::pair <std::string,std::string> info
+        {get_sanitized_info(username,password)};
 
-    Redis::Mogu_Query_Handler udb(Prefix::user);
+    Redis::Mogu_Query_Handler udb {Prefix::user};
 
     Application::log.log(Log_Level::notice, "Registering user ", username);
 
@@ -80,11 +82,11 @@ Security_Status User_Manager::register_user(
     /* First, check to see whether the user already exists */
     if (get_user_id(info.first) != -1)
     {
-
         return Security_Status::err_user_exists;
     }
 
     userid = consume_user_id(udb);
+    assert(userid!=-1);
     
     udb.append_query("hset user.%d.__meta__ u %s", userid, info.first.c_str());
     udb.append_query("hset user.%d.__meta__ p %s", userid, info.second.c_str());

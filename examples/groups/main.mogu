@@ -1,0 +1,58 @@
+widget wrapper
+    type    :   container
+    children
+        register_login
+        info_display
+        switch
+    end children
+end widget
+
+widget register_login
+    type    :   stack
+    children
+        :login
+        :register
+    end children
+end widget
+
+widget info_display
+    type    :   container
+end widget
+
+widget colors
+    type    :   container
+    source  :   group member
+    sort    :   ascending 0
+    
+    children
+        user name using template column
+        user favorite color using template column
+    end children
+end widget
+
+widget switch
+    type    :   text
+    text    :   "Register Instead"
+    css     :   "linkified friends_coloring"
+    events
+        when clicked {
+            test widget switch text is "Register Instead"
+        }
+
+        when succeeded test {
+            set widget register_login index to 1
+            set own text to "Login Instead"
+        }
+        when failed test {
+            set widget register_login index to 0
+            set own text to "Register Instead"
+        }
+    end events 
+end widget
+
+template column
+    type    :   text
+    css     :   "INLINE finances_coloring"
+end template
+
+

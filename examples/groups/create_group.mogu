@@ -1,0 +1,32 @@
+widget creategroup
+    type    :   container
+    children
+        :name
+        :submit
+        :key
+    end children
+end widget
+
+widget creategroup:name
+    type    :   input
+    text    :   "Group Name"
+end widget
+
+widget creategroup:submit
+    type    :   text
+    text    :   "Create!"
+    css     :   "linkified friends_coloring"
+    events
+        when clicked {
+            set slot GROUPNAME to widget creategroup:name
+            append group
+            set widget creategroup:key text to slot GROUPKEY
+            set user homegroup to slot GROUPKEY
+        }
+    end events
+end widget
+
+widget creategroup:key
+    type    :   text
+    text    :   " " 
+end widget

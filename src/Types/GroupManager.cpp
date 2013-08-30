@@ -2,6 +2,7 @@
 #include "../Types/Prefixes.h"
 #include "../Redis/QueryHandler/QueryHandler.h"
 #include "../hash.h"
+#include "../Config/inline_utils.h"
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <vector>
 #include <algorithm>
@@ -15,13 +16,32 @@ Group_Manager::Group_Manager(const int& id_)
 Group_Manager::Group_Manager(const std::string& key)
 {
     redis_connect();
-    db->append_query("hexists group.__meta__.keys %s", key.c_str());
+    std::string k {stripquotes(key)};
+    db->append_query("hexists group.__meta__.keys %s", k.c_str());
     if (db->yield_response<bool>())
     {
-        db->append_query("hget group.__meta__.keys %s", key.c_str());
+        db->append_query("hget group.__meta__.keys %s", k.c_str());
         id = db->yield_response<int>();
     }
     else db->flush();
+}
+
+Group_Manager::Group_Manager(const Node_Value& v)
+{
+    if (v.is_int()) id = v.get_int();
+    else if (v.is_string())
+    {
+        std::string key {v.get_string()};
+        key = stripquotes(key);
+        redis_connect();
+        db->append_query("hexists group.__meta__.keys %s", key.c_str());
+        if (db->yield_response<bool>())
+        {
+            db->append_query("hget group.__meta__.keys %s", key.c_str());
+            id = db->yield_response<int>();
+        }
+        else db->flush();
+    }
 }
 
 bool Group_Manager::user_is_member(const int& u)

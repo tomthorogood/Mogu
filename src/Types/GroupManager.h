@@ -1,3 +1,14 @@
+/* GroupManager.h
+ *
+ * Provides functions for managing group membership, creating, and 
+ * destroying groups.
+ *
+ * Source: GroupManager.cpp
+ *
+ * Author: Tom A. Thorogood | August 2013
+ */
+
+
 #ifndef GROUP_MANAGER_H_
 #define GROUP_MANAGER_H_
 
@@ -12,6 +23,7 @@ public:
     Group_Manager(){}
     Group_Manager(const int& group_id);
     Group_Manager(const std::string& group_key);
+    Group_Manager(const Node_Value& v);
     ~Group_Manager() { if (db) delete db; }
     
     void create_group(const std::string& group_name, const int& founder);

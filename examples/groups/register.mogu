@@ -1,0 +1,95 @@
+widget register_login:login
+    type    :   container
+    children
+        :userid
+        :password
+        :submit
+    end children
+end widget
+
+widget register_login:login:userid
+    type    :   input
+    text    :   "Username"
+end widget
+
+widget register_login:login:password
+    type    :   password
+    text    :   "Password"
+end widget
+
+widget register_login:login:submit
+    type    :   text
+    text    :   "Submit"
+    css     :   "linkified friends_coloring"
+
+    events
+        when clicked {
+            set slot USERNAME to widget register_login:login:userid text
+            set slot USERAUTH to widget register_login:login:password text
+            set user to slot USERNAME
+        }
+
+        when succeeded test {
+            set group to user homegroup 
+            append widget colors to widget info_display
+        }
+    end events
+end widget
+
+widget register_login:register
+    type    :   container
+    children    
+        :username
+        :password
+        :name
+        :color
+        :groupkey
+        :submit
+    end children
+end widget
+
+widget register_login:register:username
+    type    :   input
+    text    :   "Username"
+end widget
+
+widget register_login:register:password
+    type    :   password
+    text    :   "Password"
+end widget
+
+widget register_login:register:name
+    type    :   input
+    text    :   "First Name"
+end widget
+
+widget register_login:register:color
+    type    :   input
+    text    :   "Favorite Color"
+end widget
+
+widget register_login:register:groupkey
+    type    :   input
+    text    :   "Group Key"
+end widget
+
+widget register_login:register:submit
+    type    :   text
+    text    :   "Register"
+    css     :   "linkified friends_coloring"
+    events
+        when clicked {
+            set slot USERNAME to widget register_login:register:username text
+            set slot USERAUTH to widget register_login:register:password text
+            append user
+        }
+
+        when succeeded test {
+            append user to group widget register_login:register:groupkey text
+            set user homegroup to widget register_login:register:groupkey text
+            set user name to widget register_login:register:name text
+            set user favorite color to widget register_login:register:color text
+            append widget creategroup to widget info_display
+        }
+    end events
+end widget

@@ -1,6 +1,7 @@
 #include "Includes.h"
 #include "../Actions.h"
 #include "../../Config/inline_utils.h"
+#include "../../Types/GroupManager.h"
 #include <Redis/NodeEditor.h>
 
 namespace Application {
@@ -10,15 +11,33 @@ namespace Application {
 namespace Actions {
 
 namespace {
-    const uint8_t set_user_from_slot    =1;
-    const uint8_t set_user_from_value   =2;
-    const uint8_t set_field             =3;
+    constexpr uint8_t set_user_from_slot    =1;
+    constexpr uint8_t set_user_from_value   =2;
+    constexpr uint8_t set_field             =3;
+    constexpr uint8_t set_group_from_slot   =4;
+    constexpr uint8_t set_group_from_value  =5;
 
-    inline const uint8_t logic_flags (const Command_Value& v)
+
+    inline const uint8_t logic_flags (Command_Value& v)
     {
-        if (v.test(Command_Flags::value))
-            return v.test(Command_Flags::identifier) ? set_field : set_user_from_value;
-        return set_user_from_slot;
+        Node_Value& o = v.get(Command_Flags::object);
+        if (Mogu_Syntax::user == o)
+        {
+            if (v.test(Command_Flags::identifier))
+                return set_field;
+            else if (v.test(Command_Flags::value))
+                return set_user_from_value;
+            else return set_user_from_slot;
+        }
+        else if (Mogu_Syntax::group == o)
+        {
+            if (v.test(Command_Flags::identifier))
+                return set_field;
+            else if (v.test(Command_Flags::value))
+                return set_group_from_value;
+            else return set_group_from_slot;
+        }
+        return set_field;
     }
 
     inline bool login_user(std::string& username)
@@ -40,6 +59,33 @@ namespace {
     {
         return login_user(value);
     }
+
+    inline bool do_set_group_from_value(std::string& value)
+    {
+        mApp;
+        Group_Manager g{value};
+        if (g.is_valid())
+        {
+            app->set_group(g.get_id());
+            Node_Value k(g.get_key());
+            app->get_slot_manager().set_slot("GROUPKEY", k);
+            return true;
+        }
+        else return false;
+    }
+
+    inline bool do_set_group_from_slot()
+    {
+        mApp;
+        std::string key {app->get_slot_manager().get_slot("GROUPKEY").get_string()};
+        Group_Manager g{key};
+        if (g.is_valid())
+        {
+            app->set_group(g.get_id());
+            return true;
+        }
+        return false;
+    }
 }
 
 
@@ -48,6 +94,7 @@ void set (Moldable& broadcaster, Command_Value& v)
     mApp;
     const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
     int i {-1};
+    const uint8_t f {logic_flags(v)};
     
     switch(o)
     {
@@ -62,7 +109,6 @@ void set (Moldable& broadcaster, Command_Value& v)
                                
         case Mogu_Syntax::user:
         {
-            const uint8_t f = logic_flags(v);
             if (f == set_user_from_slot)
             {
                 if (!do_set_user_from_slot())
@@ -84,9 +130,19 @@ void set (Moldable& broadcaster, Command_Value& v)
             {
                 i = app->get_user();
             }
-         }
+         } //NO BREAK
         case Mogu_Syntax::group: // Don't do if i already set. 
+        {
+            if (f==set_group_from_value)
+            {
+                std::string val {v.get(Command_Flags::value).get_string()};
+                do_set_group_from_value(val);
+            }
+            else if (f==set_group_from_slot)
+                do_set_group_from_slot();
+
             i = i>=0 ? i : app->get_group();
+        } // NO BREAK
         case Mogu_Syntax::data:
         case Mogu_Syntax::meta:
          {

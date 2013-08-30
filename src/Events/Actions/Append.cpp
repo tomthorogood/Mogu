@@ -1,4 +1,5 @@
 #include "../Actions.h"
+#include "../../Types/GroupManager.h"
 #include "Includes.h"
 
 #include <Redis/NodeEditor.h>
@@ -10,34 +11,41 @@ namespace Application {
 namespace Actions {
 
 namespace {
-const uint8_t invalid_construct     =0;
+constexpr uint8_t invalid_construct     =0;
 
 // "append [object [identifier]] to [object [identifier]]"
-const uint8_t object_to_object      =1;
+constexpr uint8_t object_to_object      =1;
 
 // "append [value] to [object identifier attribute]"
-const uint8_t value_to_attribute    =2;
+constexpr uint8_t value_to_attribute    =2;
 
 // "append [value] to [data|user|group identifier [argument]]"
-const uint8_t value_to_field        =3;
+constexpr uint8_t value_to_field        =3;
 
 // "append user"
-const uint8_t user_to_application   =4;
+constexpr uint8_t user_to_application   =4;
+
+// "append group"
+constexpr uint8_t group_to_application  =5;
+
+// "append user to group [identififer expr]"
+constexpr uint8_t user_to_group         =6;
 
 // Based on the flags set in the Command_Value, determine what kind
 // of 'append' construct we have (of the 
 const uint8_t get_construct(Command_Value& v)
 {
 
-    // object_to_object will always have an r_identifier, 
-    // but the main object may be "self" OR another widget.
     bool has_r_identifier {v.test(Command_Flags::r_identifier)};
     bool has_identifier {v.test(Command_Flags::identifier)};
     bool is_self {Mogu_Syntax::own == v.get(Command_Flags::object)};
 
+    // object_to_object will always have an r_identifier, 
+    // but the main object may be "self" OR another widget.
     if (has_r_identifier && (has_identifier || is_self))
         return object_to_object;
 
+    // if a value is present, it will always be written to a widget or a field.
     if (v.test(Command_Flags::value))
     {
         if (Mogu_Syntax::widget == v.get(Command_Flags::object))
@@ -46,7 +54,13 @@ const uint8_t get_construct(Command_Value& v)
     }
 
     if (Mogu_Syntax::user == v.get(Command_Flags::r_object))
+    {
+        if (Mogu_Syntax::group == v.get(Command_Flags::object))
+            return user_to_group;
         return user_to_application;
+    }
+    else if (Mogu_Syntax::group == v.get(Command_Flags::r_object))
+        return group_to_application;
 
     return invalid_construct;
 }
@@ -134,17 +148,39 @@ void handle_user_to_application(Moldable& broadcaster, Command_Value& v)
 
     std::string p_username = app->get_slot_manager().get_slot("USERNAME");
     std::string p_userauth = app->get_slot_manager().get_slot("USERAUTH");
+
     if (p_username.empty())
         Application::log.log(Log_Level::error,__FILE__," ", __LINE__,
             "Username is Empty \"", p_username, "\"");
     if (p_userauth.empty())
         Application::log.log(Log_Level::error, __FILE__," ", __LINE__,
             "Userauth is Empty \"", p_userauth, "\"");
+
     Security_Status status = app->get_user_manager().register_user(
         p_username,p_userauth);
 
     if (status != Security_Status::ok_register)
         broadcaster.errorReported().emit();
+    else
+        broadcaster.succeed().emit();
+}
+
+void handle_user_to_group(Moldable& broadcaster, Command_Value& v)
+{
+    mApp;
+    int user {app->get_user()};
+    Group_Manager g {v.get(Command_Flags::identifier)};
+    if (g.is_valid()) g.add_user(user);
+}
+
+void handle_group_to_application(Moldable& broadcaster, Command_Value& v)
+{
+    mApp;
+    std::string groupname = app->get_slot_manager().get_slot("GROUPNAME");
+    Group_Manager g {};
+    g.create_group(groupname, app->get_user());
+    Node_Value k {g.get_key()};
+    app->get_slot_manager().set_slot("GROUPKEY", k);
 }
 
 }//anonymous local namespace
@@ -165,6 +201,12 @@ void append(Moldable& broadcaster, Command_Value& v)
             break;
        case user_to_application:
             handle_user_to_application(broadcaster,v);
+            break;
+       case group_to_application:
+            handle_group_to_application(broadcaster,v);
+            break;
+       case user_to_group:
+            handle_user_to_group(broadcaster,v);
             break;
        default: 
             return;

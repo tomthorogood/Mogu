@@ -25,12 +25,10 @@
 
 class Mogu: public Wt::WApplication
 {
-    /*!\brief Changes the state of the application based on the URL */
-    int user {-1};
-    int group {};
+    int group {-1};
     std::string application_name {};
     
-    Moldable_Factory moldable_factory;
+    Moldable_Factory moldable_factory {};
     
     Moldable* wrapper {};
     User_Manager user_manager {};
@@ -70,12 +68,8 @@ public:
     inline void deregister_widget(const std::string& name)
         { if (widget_register.count(name)) widget_register.erase(name); }
 
-    /*\brief If the user id has been set temporarily, return that. Otherwise,
-     * return the actual user id from the user_manager, which is the id of the
-     * currently connected user.
-     */
     inline const int& get_user() const
-        { return (user==-1) ? user_manager.get_user() : user; }
+        { return user_manager.get_user(); }
 
     inline User_Manager& get_user_manager() 
         { return user_manager; }
@@ -83,18 +77,15 @@ public:
     inline const int& get_group() const
         { return group; }
     
+    inline void set_group(const int& i) {
+        group = i;
+    }
+
     inline Moldable_Factory& get_factory()
         { return moldable_factory; }
     
     inline Slot_Manager& get_slot_manager()
         { return slot_manager; }
-   
-    inline void set_temporary_user (int temporary_user)
-        { user = temporary_user; }
-
-    inline void unset_temporary_user ()
-        { user = user_manager.get_user(); }
-     
 
     inline const std::string& get_application_name() const
         { return application_name; }

@@ -42,7 +42,8 @@ void Node_Editor::setup()
         db->flush();
     }
 
-    if (prefix == Prefix::user || prefix == Prefix::group)
+    if ((prefix == Prefix::user || prefix == Prefix::group)
+        && type <= Mogu_Syntax::__NONE__.integer)
     {
         type = get_policy_type();
         set_encrypted();

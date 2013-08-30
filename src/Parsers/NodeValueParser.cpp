@@ -7,7 +7,7 @@
 #include "NodeValueParser.h"
 #include <Types/NodeValue.h>
 #include <Types/syntax.h>
-#include <Types/CommandValue.h>
+#include "../Types/CommandValue.h"
 #include <hash.h>
 #include <cctype>
 #include "../Config/inline_utils.h"
@@ -236,9 +236,32 @@ void Node_Value_Parser::set_command_value_object(Command_Value& cv, bool r_token
     cv.set(arg_flag, tmp);
 }
 
+void Node_Value_Parser::handle_user_to_group(Command_Value& cv, Moldable* bc)
+{
+    if (tm.current_token() != Mogu_Syntax::preposition) return;
+    tm.next();
+    if (tm.current_token() != Mogu_Syntax::group) return;
+    tm.next();
+
+    cv.set(Command_Flags::object, Mogu_Syntax::group);
+
+    std::stringstream buf;
+    while (tm.current_token() != Mogu_Syntax::OUT_OF_RANGE_END)
+    {
+        if (tm.current_token() == Mogu_Syntax::TOKEN_DELIM)
+            buf << tm.fetch_string();
+        else buf << tm.current_token();
+        buf << " ";
+        tm.next();
+    }
+    Node_Value_Parser p {};
+    Node_Value r {};
+    p.give_input(buf.str(),r,bc);
+    cv.set(Command_Flags::identifier, r);
+}
+
 void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
 {
-    //Make sure we somehow haven't gotten here by mistake.
     if (tm.current_token() != Mogu_Syntax::append) return;
     
     Node_Value tmp {};
@@ -294,6 +317,19 @@ void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
             if (!preposition_found && !cv.test(Command_Flags::r_object))
             {
                 flags = cv.set(Command_Flags::r_object, token);
+                if (token == Mogu_Syntax::user)
+                {   // The only instance where we have
+                    // "append user to ..." is when we are
+                    // appending a user to a group.
+                    tm.next();
+                    if (tm.current_token()==Mogu_Syntax::preposition)
+                    {
+                        handle_user_to_group(cv,bc);
+                        break;
+                    }
+                    else
+                        tm.prev();
+                }
             }
             else if (preposition_found && !cv.test(Command_Flags::object))
             {
@@ -414,52 +450,44 @@ void Node_Value_Parser::give_input(const std::string& i, Command_Value& cv,
             cv.set(Command_Flags::arg, tmp);
         }
         else if (is_preposition_token(tok)) {
-            bool do_not_reduce {false};
+            bool reduce {true};
             /* First, check to see if the next value is 'location' */
             tm.next();
+            int tok = tm.current_token();
+
             if (tm.current_token() == Mogu_Syntax::location)
             {
-                do_not_reduce = true;
-            } else {
-                tm.prev();
+                reduce = false;
+                tm.next();
+                tok = tm.current_token();
             }
-            tm.save_location(); // We've done what we need with the preceeding
-            tm.truncate_head(); // tokens, so get rid of them.
 
-            // Simply join the remaining tokens together again as a string.
-            // And set this as the "value" in CommadValue
-            if (do_not_reduce)
+            std::stringstream buf;
+            while (tok != Mogu_Syntax::OUT_OF_RANGE_END)
             {
-                tm.begin();
-                std::stringstream buf;
-                do {
-                    int tok {tm.current_token()};
-                    if (tok == Mogu_Syntax::TOKEN_DELIM)
-                        buf << tm.fetch_string();
-                    else
-                        buf << Mogu_Syntax::get(tok).str;
-                    buf << " ";
-                    tm.next();
-                } while (tm.current_token() != Mogu_Syntax::OUT_OF_RANGE_END);
-                std::string s {buf.str()};
-                s = s.substr(0,s.size()-1);
-                cv.set(Command_Flags::value, s);
+                if (tok == Mogu_Syntax::TOKEN_DELIM)
+                    buf << tm.fetch_string();
+                else buf << tok;
+                buf << " ";
+                tm.next();
+                tok = tm.current_token();
+            }
+
+            std::string s{buf.str()};
+            Node_Value r {};
+
+            if (reduce)
+            {
+                Node_Value_Parser p {};
+                p.set_user_id(user_id);
+                p.set_group_id(group_id);
+                p.give_input(s,r,bc);
             }
             else
             {
-                tm.end(); // Allow tm to treat it as standard input.
-                reduce_expressions(bc);
-                if (tm.current_token() == Mogu_Syntax::TOKEN_DELIM)
-                {
-                    tmp.set_string(tm.fetch_string());
-                    cv.set(Command_Flags::value, tmp);
-                }
-                else {
-                    // Any integral value here will be a true integer, not MoguSyn.
-                    tmp.set_int((int)tm.current_token());
-                    cv.set(Command_Flags::value, tmp);
-                }
+                r.set_string(s);
             }
+            cv.set(Command_Flags::value, r);
             break; // After parsing a prepositional, there is nothing left to do.
         }
         tm.next();

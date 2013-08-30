@@ -43,7 +43,7 @@ std::vector <std::string> Dynamic_Server::fill_data_list (
     if (source_type == Source_Declaration_Type::group_members)
     {
         Redis::Mogu_Query_Handler q {Prefix::group};
-        q.execute_query("smembers group.%d.__meta__.members", group_id);
+        q.execute_query("smembers group.%d.__meta__.m", group_id);
         data_list = q.yield_response<std::vector<std::string>>();
     }
     else

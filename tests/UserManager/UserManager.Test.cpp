@@ -75,6 +75,7 @@ void UserManagerTestSuite::register_new_user()
     Security_Status status = m.register_user(good_username, good_password);
     std::string str_status = strStatus(status);
     TEST_ASSERT_MSG(status==Security_Status::ok_register, str_status.c_str());
+    TEST_ASSERT(m.get_user()!=-1);
     assigned_id = m.get_user();
 }
 

@@ -15,8 +15,7 @@ Wt::WApplication* createApplication(
     return new Mogu(env);
 }
 
-int main(
-    int argc, char** argv)
+int main(int argc, char** argv)
 {
     Wt::ApplicationCreator fn = &createApplication;
     return Wt::WRun(argc, argv, fn);

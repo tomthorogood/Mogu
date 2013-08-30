@@ -43,6 +43,8 @@ template <const int T> void Event_Handler::handle_trigger()
         Command_Value v(broadcaster);
         std::string cmd = q.front();
         q.pop();
+        nvp.set_user_id(app->get_user());
+        nvp.set_group_id(app->get_group());
         nvp.give_input(cmd,v,&broadcaster);
         process_command(v);
     }
