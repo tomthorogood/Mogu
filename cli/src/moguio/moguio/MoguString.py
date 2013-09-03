@@ -212,8 +212,8 @@ class MoguString(MultiString):
         if len(self.maths) == len(formats):
             return False
 
-        if self.maths and self.formats:
-            for entry in self.formats:
+        if self.maths and formats:
+            for entry in formats:
                 format_id = entry[1:-1]
                 if format_id in self.maths:
                     self.maths.remove(format_id)

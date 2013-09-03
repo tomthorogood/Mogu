@@ -50,7 +50,10 @@ class Preprocessor(object):
     def unpack_declaration(self, declaration):
         self.log("Unpacking Declaration:", declaration)
         id_group = re.search("<<<[a-zA-Z:_][a-zA-Z:_0-9]*", declaration)
-        identifier = id_group.group()[3:]
+        try:
+            identifier = id_group.group()[3:]
+        except AttributeError:
+            raise AttributeError("File not found in %s" % declaration)
         self.log("IDENTIFIER:", identifier)
         id_excluded = declaration.replace(id_group.group(),"").strip()
         self.log("ID_EXCLUDED:",id_excluded)

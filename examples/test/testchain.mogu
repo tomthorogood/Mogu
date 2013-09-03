@@ -1,0 +1,21 @@
+widget tested
+    type    :   text
+    text    :   "Sample text"
+
+    events
+        when clicked { do test self text alpha }
+        when alpha succeeded { do test self text beta }
+        when alpha failed { do test self text gamma }
+        when beta succeeded { append widget bar to self }
+        when beta failed { do test self gamma }
+        when gamma succeeded { do set self text alpha }
+    end events
+
+    labels
+        alpha   : object is "Sample text"
+        beta    : object is "Changed text"
+        gamma   : object is "Last chance!"
+    end labels
+
+    end events
+end widget

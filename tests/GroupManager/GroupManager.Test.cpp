@@ -42,6 +42,7 @@ public:
     }
 private:
     std::string group_key {};
+    std::string group_name {"Test Group"};
     int group_id {};
 
     void basic_constructors();
@@ -97,7 +98,7 @@ void GMTS::basic_constructors()
 void GMTS::create_group()
 {
     Group_Manager g {};
-    g.create_group("Test Group", 1);
+    g.create_group(group_name, 1);
     TEST_ASSERT(g.user_is_member(1));
     TEST_ASSERT(g.user_is_admin(1));
     group_id = g.get_id();
@@ -111,7 +112,9 @@ void GMTS::key_resolution()
     std::string m {cmpstr(g.get_key(),group_key)};
     TEST_ASSERT_MSG(g.get_key()==group_key,m.c_str());
     Group_Manager h {group_key};
+    Group_Manager j {group_name, 1};
     TEST_ASSERT(g.get_id()==group_id);
+    TEST_ASSERT(j.get_id()==group_id);
 }
 
 void GMTS::add_users()

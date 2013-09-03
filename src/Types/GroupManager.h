@@ -23,6 +23,7 @@ public:
     Group_Manager(){}
     Group_Manager(const int& group_id);
     Group_Manager(const std::string& group_key);
+    Group_Manager(const std::string& group_name, const int& user_id);
     Group_Manager(const Node_Value& v);
     ~Group_Manager() { if (db) delete db; }
     
@@ -50,6 +51,8 @@ private:
     }
 
     bool key_exists(const std::string&);
+    std::vector <std::string> get_user_groups(const int& user_id);
+    int get_id_from_name(const std::string& name, const int& user_id);
 
     int consume_id();
     std::string create_salt();

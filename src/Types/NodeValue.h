@@ -155,7 +155,8 @@ public:
     }
 
     operator std::string() const {
-        return as_string;
+        return is_string() ? as_string :
+            is_int() ? std::to_string(get_int()) : std::to_string(get_float());
     }
 
     void operator+= (const Node_Value& n)

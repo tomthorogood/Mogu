@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <vector>
 #include <cassert>
+#include <sstream>
 
 namespace Parsers {
 
@@ -94,6 +95,23 @@ class Token_Manager
 		void delete_to_saved();
 		void delete_from_saved();
 		void truncate_head();
+
+		inline std::string stitch()
+		{
+		    std::stringstream buf;
+		    int t {current_token()};
+		    while (current_token()!=Mogu_Syntax::OUT_OF_RANGE_END)
+		    {
+		        std::string o
+		        {
+		            Mogu_Syntax::TOKEN_DELIM == t ? fetch_string() : std::to_string(t)
+		        };
+		        buf << o << " ";
+		        next();
+		        t = current_token();
+		    }
+		    return buf.str();
+		}
 
         inline void reset()
         {

@@ -13,6 +13,15 @@
 #include <string>
 #include <map>
 
+inline std::string trim(const std::string& s)
+{
+    size_t b {};
+    size_t e {s.size()-1};
+    while (isspace(s[b])) ++b;
+    while (isspace(s[e])) --e;
+    return s.substr(b,e-b+1);
+}
+
 inline std::string stripquotes(const std::string& str) {
     if (str[0] != '"') return str;
     std::string newstr = str.substr(1,str.size()-2);

@@ -1,0 +1,44 @@
+# This example exists to make sure that there are no segfaults
+# when a child removes a parent from the widget tree.
+
+widget wrapper
+    type    :   container
+    children
+        appender
+    end children
+end widget
+
+widget appender
+    type    :   text
+    text    :   "Append!"
+
+    events
+        when clicked {
+            append widget parent to widget wrapper
+        }
+    end events
+end widget
+
+widget parent
+    type    :   container
+    children
+        :remove
+        :text
+    end children
+end widget
+
+widget parent:remove
+    type    :   text
+    text    :   "Remove!"
+
+    events
+        when clicked {
+            remove widget parent
+        }
+    end events
+end widget
+
+widget parent:text
+    type    :   text
+    text    :   "This text should go away and come back!"
+end widget

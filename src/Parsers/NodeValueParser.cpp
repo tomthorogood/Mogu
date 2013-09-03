@@ -166,10 +166,15 @@ void Node_Value_Parser::give_input(const std::string& i, Node_Value& nv, Moldabl
 	    && (tm.fetch_string().find_first_of(" ") != std::string::npos))
 	{
 	    std::string new_input = tm.fetch_string();
-	    input = new_input;
-	    tm.reset();
-	    tokenize_input(input);
-	    reduce_expressions(bc);
+
+	    if (input!=new_input)
+	    {
+	        tm.reset();
+	        input = new_input;
+	        tokenize_input(input);
+            reduce_expressions(bc);
+	    }
+	    else break;
 	}
 
 	//if we have more than one token in numTokens at this point (or
@@ -282,6 +287,43 @@ void Node_Value_Parser::handle_append_command(Command_Value& cv, Moldable* bc)
     while (token != Mogu_Syntax::OUT_OF_RANGE_END)
     {
         // A string will either be a value or an identifier.
+        if (!preposition_found && Mogu_Syntax::location == token)
+        {
+            tm.next();
+            std::stringstream buf;
+            // append location user foo bar to self
+            while (token != Mogu_Syntax::preposition)
+            {
+                if (Mogu_Syntax::TOKEN_DELIM == token)
+                    buf << tm.fetch_string();
+                else buf << tm.current_token();
+                buf << " ";
+                tm.next();
+                token = tm.current_token();
+            }
+            std::string in {buf.str()}; //user foo bar
+            Node_Value_Parser p {};
+            Command_Value c {*bc};
+            Node_Value v {};
+            p.set_user_id(user_id);
+            p.set_group_id(group_id);
+            p.give_input(in,v); //"widget baz bop"
+            in = stripquotes(v.get_string()); // widget baz bop
+            buf.str(std::string{});
+            buf << Mogu_Syntax::append.str << " " << in << " ";
+            while (token != Mogu_Syntax::OUT_OF_RANGE_END)
+            {
+                if (Mogu_Syntax::TOKEN_DELIM == token)
+                    buf << tm.fetch_string();
+                else buf << tm.current_token();
+                buf << " ";
+                tm.next();
+                token = tm.current_token();
+            }
+            p.give_input(buf.str(),c,bc);
+            cv = c;
+            return;
+        }
         if (Mogu_Syntax::TOKEN_DELIM == token)
         {
             str = tm.fetch_string();

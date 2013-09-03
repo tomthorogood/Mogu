@@ -11,7 +11,7 @@
 #include <Redis/NodeEditor.h>
 
 Command_Value::Command_Value(Moldable& widget)
-    : broadcaster(widget)
+    : broadcaster(&widget)
 {}
 
 uint8_t Command_Value::set(const Command_Flags& flag, Node_Value v)

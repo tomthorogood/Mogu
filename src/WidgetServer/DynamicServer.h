@@ -41,6 +41,10 @@ private:
         const std::string& data_point
         , const std::string& anon_tmpl
         , const Source_Declaration_Type &);
+    Widget_Assembly spawn_anonymous_assembly(
+        const std::string& data_point
+        , const std::string& anon_tmpl
+        , const int& alias_type);
     std::string get_template_name(const std::string&);
     std::string get_resolvable_string(const std::string&);
 };

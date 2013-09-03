@@ -26,6 +26,18 @@ Group_Manager::Group_Manager(const std::string& key)
     else db->flush();
 }
 
+Group_Manager::Group_Manager(const std::string& name, const int& user)
+{
+    id = get_id_from_name(name,user);
+}
+
+std::vector <std::string> Group_Manager::get_user_groups(const int& user)
+{
+    Redis::Mogu_Query_Handler q {Prefix::user};
+    q.execute_query("smembers user.%d.__meta__.g", user);
+    return q.yield_response <std::vector<std::string>>();
+}
+
 Group_Manager::Group_Manager(const Node_Value& v)
 {
     if (v.is_int()) id = v.get_int();
@@ -131,6 +143,21 @@ std::string Group_Manager::create_salt()
     return r.generate(1);
 }
 
+int Group_Manager::get_id_from_name(const std::string& name, const int& user)
+{
+    redis_connect();
+    std::string n {stripquotes(name)};
+    std::vector <std::string>&& v {get_user_groups(user)};
+    for (std::string g : v)
+    {
+        int i {atoi(g.c_str())};
+        db->execute_query("hget group.%d.__meta__ n", i);
+        if (db->yield_response<std::string>()==name)
+            return i;
+    }
+    return -1;
+}
+
 bool Group_Manager::key_exists(const std::string& k)
 {
     redis_connect();
@@ -171,6 +198,10 @@ std::string Group_Manager::create_key(
 void Group_Manager::create_group(
     const std::string& group_name, const int& founding_user)
 {
+    // A user may not create a group if it has the same name as another
+    // group of which they are already a member.
+    if (get_id_from_name(group_name, founding_user) != -1) return;
+
     std::string salt {create_salt()};
     std::string key {create_key(group_name, salt)};
     id = consume_id();

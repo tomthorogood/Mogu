@@ -23,26 +23,27 @@ Wt::WValidator* create_validator(
     const std::string& validator_name)
 {
     mApp;
-    const char* c_node {validator_name.c_str()};
-    Redis::Mogu_Query_Handler db {Prefix::validator};
-    db.append_query( "hget validators.%s %d", c_node, (int)Mogu_Syntax::type);
-    
-    Node_Value v {};
-    app->get_interpreter().give_input(db.yield_response<std::string>(), v);
+    Node_Value arg {Mogu_Syntax::type.str};
+    Redis::Node_Editor e {Prefix::validator, validator_name, &arg};
+    std::string s {e.read()};
+        Node_Value v {};
+    app->get_interpreter().give_input(s, v);
     switch(Mogu_Syntax::get(v.get_int()))
     {
         case Mogu_Syntax::regex:
-            return create_regex_validator(db,c_node);
+        {
+            arg.set_string(Mogu_Syntax::test.str);
+            e.swap_arg(&arg);
+            std::string test {e.read()};
+            return create_regex_validator(test);
+        }
         default:break;
     }
     return nullptr;
 }
 
-Wt::WRegExpValidator* create_regex_validator(
-    Redis::Mogu_Query_Handler& db, const char* c_node)
+Wt::WRegExpValidator* create_regex_validator(const std::string& pattern)
 {
-    db.append_query( "hget validators.%s %d", c_node, (int) Mogu_Syntax::test);
-    std::string pattern {db.yield_response <std::string>()};
     Wt::WString w {stripquotes(pattern)};
     return new Wt::WRegExpValidator {w};
 }

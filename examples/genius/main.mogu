@@ -1,0 +1,347 @@
+<<<@include "text.mogu">>>
+<<<display
+display mock_link nextbutton
+>>>
+
+template bigtext
+    type    :   text
+    css     :   "EIGHTEENPT"
+end template
+
+template medtext
+    type    :   text
+    css     :   "FOURTEENPT"
+
+widget wrapper
+    type    :   container
+    children
+        genius
+        show:rewind
+        show:advance
+    end children      
+end widget
+
+widget DEBUG
+    type    :   text
+    text    :   "DEBUGGING"
+end widget
+
+template next
+    type    :   text
+    css     :   "mock_link"
+    text    :   "> > >"
+end template
+
+widget show:rewind
+    type    :   text
+    css     :   "display rewind"
+    text    :   "< < <"
+
+    events
+        when clicked {
+            decrement widget genius index
+            set widget show:advance css to "hidden"
+        }
+    end events
+end widget
+
+widget show:advance
+    type    :   text
+    css     :   "hidden"
+    text    :   "> > >"
+    events
+        when clicked {
+            increment widget genius index
+            set own css to "hidden"
+        }
+    end events
+end widget
+
+widget genius
+    type    :   stack
+    children
+        :introduction
+        :server
+        :database
+        :language
+        :demo
+        :dynamic
+        :metaprogramming
+        :future
+        :problems
+    end children
+end widget
+
+widget genius:introduction
+    type :   container
+    children
+        :hook
+        :nbullets
+    end children
+end widget
+
+widget genius:introduction:hook
+    template    :   medtext
+    text    :   @introduction:hook
+end widget
+
+widget genius:introduction:nbullets
+    template    :   next
+    events
+        when clicked {
+            append widget genius:introduction:bullets to widget genius:introduction
+            set widget show:advance css to @display 
+            remove widget genius:introduction:nbullets
+        }
+    end events
+end widget
+
+widget genius:introduction:bullets
+    template    :   medtext
+    text        :   @introduction:bullets
+end widget
+
+widget genius:server
+    type    :   container
+    children
+        :hook
+        :nbullets
+    end children
+end widget
+
+widget genius:server:hook
+    template    :   medtext
+    text    :   @server:hook
+end widget
+
+widget genius:server:nbullets
+    template    :   next
+    events
+        when clicked {
+            append widget genius:server:bullets to widget genius:server
+            set widget show:advance css to @display
+            remove widget genius:server:nbullets
+        }
+    end events
+end widget
+
+widget genius:server:bullets
+    type    :   text
+    template    :   medtext
+    text    :   @server:bullets
+end widget
+
+widget genius:database
+    type    :   container
+    children
+        :hook
+        :nbullets
+    end children
+end widget
+
+widget genius:database:hook
+    type    :   text
+    template    :   medtext
+    text    :   @database:hook
+end widget
+
+widget genius:database:nbullets
+    template    :   next
+    events
+        when clicked {
+            append widget genius:database:bullets to widget genius:database
+            set widget show:advance css to @display
+            remove widget genius:database:nbullets
+        }
+    end events
+end widget
+
+widget genius:database:bullets
+    type    :   text
+    template    :   medtext
+    text    :   @database:bullets
+end widget
+
+widget genius:language
+    type    :   stack
+    children
+        :1
+        :2
+    end children
+end widget
+
+widget genius:language:1
+    type    :   container
+    children
+        :features
+        :next
+    end children
+end widget
+
+widget genius:language:1:features
+    type    :   text
+    template    :   medtext
+    text    :   @language:features
+end widget
+
+widget genius:language:1:next
+    template    :   next
+    events
+        when clicked {
+            increment widget genius:language index
+            remove widget genius:language:1:next
+        }
+    end events
+end widget
+
+widget genius:language:2
+    type    :   container
+    children
+        :features
+        :nbullets
+    end children
+end widget
+
+widget genius:language:2:features
+    type    :   text
+    template    :   medtext
+    text    :   @language:features:2
+end widget
+
+widget genius:language:2:nbullets
+    template    :   next
+    events
+        when clicked {
+            append widget genius:language:2:bullets to widget genius:language:2
+            set widget show:advance css to @display
+            remove widget genius:language:2:nbullets
+        }
+    end events
+end widget
+
+widget genius:language:2:bullets
+    type    :   text
+    template    :   medtext
+    text    :   @language:bullets
+end widget
+
+widget genius:demo
+    type    :   container
+    children
+        say_hello
+        empty
+    end children
+end widget
+
+widget say_hello
+    type    :   text
+    template    :   bigtext
+    text    :   "Say hello!"
+    css     :   "mock_link"
+
+    events
+        when clicked {
+            set widget empty text to "Hello, House of Genius!"
+            set widget show:advance css to @display
+        }
+    end events
+end widget
+
+widget empty
+    type    :   text
+    template    :   bigtext
+
+    text    :   " "
+end widget
+
+widget genius:dynamic
+    type    :   container
+    children
+        :hook
+        :nbullets
+    end children
+end widget
+
+widget genius:dynamic:hook
+    type    :   text
+    template    :   medtext
+    text    :   @dynamic:hook
+end widget
+
+widget genius:dynamic:nbullets
+    template    :   next
+    events
+        when clicked {
+            append widget genius:dynamic:bullets to widget genius:dynamic
+            set widget show:advance css to @display
+            remove widget genius:dynamic:nbullets
+        }
+    end events
+end widget
+
+widget genius:dynamic:bullets
+    type    :   text
+    template    :   medtext
+    text    :   @dynamic:bullets
+end widget
+
+widget genius:metaprograming
+    type    :   container
+    children    
+        :hook
+        :n
+    end children
+end widget
+
+widget genius:metaprogramming:hook
+    type    :   text
+    template    :   medtext
+    text    :   @metaprogramming:hook
+end widget
+
+widget genius:metaprogramming:n
+    template    :   next
+    events
+        when clicked {
+            set widget show:advance css to @display
+            remove widget genius:metaprogramming:n
+        }
+    end events
+end widget
+
+widget genius:future
+    type    :   container
+    children
+        :text
+        :n
+    end children
+end widget
+
+widget genius:future:text
+    type    :   text
+    template    :   medtext
+    text    :   @future
+end widget
+
+widget genius:future:n
+    template    :   next
+    events
+        when clicked {
+            set widget show:advance css to @display
+            remove widget genius:metaprogramming:n
+        }
+    end events
+end widget
+
+widget genius:problems
+    type    :   container
+    children
+        :text
+    end children
+end widget
+
+widget genius:problems:text
+    type    :   text
+    template    :   medtext
+    text    :   @problems
+end widget

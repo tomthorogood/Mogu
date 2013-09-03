@@ -18,6 +18,7 @@ namespace {
     constexpr uint8_t set_group_from_value  =5;
 
 
+
     inline const uint8_t logic_flags (Command_Value& v)
     {
         Node_Value& o = v.get(Command_Flags::object);
@@ -63,15 +64,26 @@ namespace {
     inline bool do_set_group_from_value(std::string& value)
     {
         mApp;
-        Group_Manager g{value};
-        if (g.is_valid())
+        Group_Manager* g {};
+        g = new Group_Manager {value};
+        if (!g->is_valid())
         {
-            app->set_group(g.get_id());
-            Node_Value k(g.get_key());
+            delete g;
+            g = new Group_Manager{value, app->get_user()};
+        }
+        if (g->is_valid())
+        {
+            app->set_group(g->get_id());
+            Node_Value k(g->get_key());
             app->get_slot_manager().set_slot("GROUPKEY", k);
+            delete g;
             return true;
         }
-        else return false;
+        else
+        {
+            delete g;
+            return false;
+        }
     }
 
     inline bool do_set_group_from_slot()
@@ -82,6 +94,45 @@ namespace {
         if (g.is_valid())
         {
             app->set_group(g.get_id());
+            return true;
+        }
+        return false;
+    }
+
+    inline bool group_is_set(const uint8_t& f, Command_Value& v)
+    {
+        if (f==set_group_from_value)
+        {
+            std::string val {v.get(Command_Flags::value).get_string()};
+            do_set_group_from_value(val);
+            return true;
+        }
+        else if (f==set_group_from_slot)
+        {
+            do_set_group_from_slot();
+            return true;
+        }
+        return false;
+    }
+
+    inline bool user_is_set(const uint8_t& f, Command_Value& v, Moldable& broadcaster)
+    {
+
+        if (f == set_user_from_slot)
+        {
+            if (!do_set_user_from_slot())
+                broadcaster.fail().emit();
+            else
+                broadcaster.succeed().emit();
+            return true;
+        }
+        else if (f == set_user_from_value)
+        {
+            std::string val {v.get(Command_Flags::value).get_string()};
+            if (!do_set_user_from_value(val))
+                broadcaster.fail().emit();
+            else
+                broadcaster.succeed().emit();
             return true;
         }
         return false;
@@ -109,23 +160,7 @@ void set (Moldable& broadcaster, Command_Value& v)
                                
         case Mogu_Syntax::user:
         {
-            if (f == set_user_from_slot)
-            {
-                if (!do_set_user_from_slot())
-                    broadcaster.fail().emit();
-                else
-                    broadcaster.succeed().emit();
-                return;
-            }
-            else if (f == set_user_from_value)
-            {
-                std::string val {v.get(Command_Flags::value).get_string()};
-                if (!do_set_user_from_value(val))
-                    broadcaster.fail().emit();
-                else
-                    broadcaster.succeed().emit();
-                return;
-            }
+            if (user_is_set(f,v, broadcaster)) break;
             else // Cascade to node editor case
             {
                 i = app->get_user();
@@ -133,15 +168,12 @@ void set (Moldable& broadcaster, Command_Value& v)
          } //NO BREAK
         case Mogu_Syntax::group: // Don't do if i already set. 
         {
-            if (f==set_group_from_value)
+            if (o==Mogu_Syntax::group)
             {
-                std::string val {v.get(Command_Flags::value).get_string()};
-                do_set_group_from_value(val);
+                if (group_is_set(f,v)) break;
+                else
+                    i = i>=0 ? i : app->get_group();
             }
-            else if (f==set_group_from_slot)
-                do_set_group_from_slot();
-
-            i = i>=0 ? i : app->get_group();
         } // NO BREAK
         case Mogu_Syntax::data:
         case Mogu_Syntax::meta:

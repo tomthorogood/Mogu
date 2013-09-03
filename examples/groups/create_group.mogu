@@ -18,7 +18,7 @@ widget creategroup:submit
     css     :   "linkified friends_coloring"
     events
         when clicked {
-            set slot GROUPNAME to widget creategroup:name
+            set slot GROUPNAME to widget creategroup:name text
             append group
             set widget creategroup:key text to slot GROUPKEY
             set user homegroup to slot GROUPKEY

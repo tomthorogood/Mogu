@@ -42,7 +42,7 @@ public:
         { return flags; }
     
     inline Moldable& get_widget()
-        { return broadcaster; }
+        { return *broadcaster; }
   
     std::string join_state(bool reverse=false);  
     bool object_is_reduceable(bool reverse_object=false);
@@ -70,6 +70,21 @@ public:
         if (test(id_flag)) flags -= (uint8_t) id_flag;
     }
 
+    Command_Value& operator=(Command_Value& o)
+    {
+        action = o.action;
+        object = o.object;
+        r_object = o.r_object;
+        identifier = o.identifier;
+        r_identifier = o.r_identifier;
+        arg = o.arg;
+        r_arg = o.r_arg;
+        value = o.value;
+        broadcaster = o.broadcaster;
+        flags = o.flags;
+        return *this;
+    }
+
 private:
     bool reversed {false};
     
@@ -85,7 +100,7 @@ private:
 
     Node_Value value {};
 
-    Moldable& broadcaster;
+    Moldable* broadcaster {};
 
     uint8_t flags {};
 };

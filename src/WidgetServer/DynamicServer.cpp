@@ -1,6 +1,7 @@
 #include "../Mogu.h"
 #include "DynamicServer.h"
 #include "../Types/SyntaxDef.h"
+#include "../Config/inline_utils.h"
 
 namespace{
 
@@ -8,13 +9,6 @@ template <class T>
 bool str_contains(const std::string& s, T v)
 {
     return s.find(v) != std::string::npos;
-}
-
-std::string trim(const std::string& s)
-{
-    size_t i {};
-    while (isspace(s[i])) ++i;
-    return s.substr(i);
 }
 
 std::tuple<const Syntax_Def&,int> parse_sort_definition (
@@ -45,6 +39,18 @@ std::vector <std::string> Dynamic_Server::fill_data_list (
         Redis::Mogu_Query_Handler q {Prefix::group};
         q.execute_query("smembers group.%d.__meta__.m", group_id);
         data_list = q.yield_response<std::vector<std::string>>();
+    }
+    else if (source_type == Source_Declaration_Type::user_groups)
+    {
+        mApp;
+        int u {app->get_user()};
+        Redis::Mogu_Query_Handler q {Prefix::user};
+        q.execute_query("smembers user.%d.__meta__.g", u);
+        data_list = q.yield_response<std::vector<std::string>>();
+    }
+    else if (source_type == Source_Declaration_Type::alias)
+    {
+        data_list.push_back(p.get_data());
     }
     else
     {
@@ -94,7 +100,6 @@ std::string Dynamic_Server::get_template_name(const std::string& declaration)
 {
     const static std::string using_ {Mogu_Syntax::preposition.str};
     const static std::string template_ {Mogu_Syntax::template_.str};
-    const static size_t tmemplate_len {template_.size()};
 
     if (!str_contains(declaration, using_))
         return "";
@@ -117,6 +122,36 @@ std::string Dynamic_Server::get_resolvable_string(const std::string& declaration
     return declaration.substr(0,using_index-1);
 }
 
+Widget_Assembly Dynamic_Server::spawn_anonymous_assembly(
+    const std::string& alias_value
+    , const std::string& anon_tmpl
+    , const int& alias_type)
+{
+    mApp;
+    Parsers::Node_Value_Parser& p = app->get_interpreter();
+    std::string resolvable {get_resolvable_string(anon_tmpl)};
+    std::string tmpl {get_template_name(anon_tmpl)};
+    Widget_Assembly a {};
+    Node_Value v {};
+    a.node = create_unique_node_name();
+    if (alias_type == Mogu_Syntax::user.integer)
+    {
+        p.set_user_id(atoi(alias_value.c_str()));
+    }
+    else if (alias_type == Mogu_Syntax::group.integer)
+    {
+        p.set_group_id(atoi(alias_value.c_str()));
+    }
+    p.give_input(resolvable, v);
+    Attribute_Tuple t {merge_node_attributes("",tmpl)};
+    a.children = std::get<0>(t);
+    a.trigger_map = std::get<1>(t);
+    a.attrdict = std::get<2>(t);
+    a.attrdict[Mogu_Syntax::text.integer] = v;
+    return a;
+
+}
+
 Widget_Assembly Dynamic_Server::spawn_anonymous_assembly
     ( const std::string& data_point
     , const std::string& anon_tmpl
@@ -136,6 +171,10 @@ Widget_Assembly Dynamic_Server::spawn_anonymous_assembly
     if (type == Source_Declaration_Type::group_members) 
     {
         p.set_user_id(atoi(data_point.c_str()));
+    }
+    else if (type == Source_Declaration_Type::user_groups)
+    {
+        p.set_group_id(atoi(data_point.c_str()));
     }
     else
     {
@@ -199,8 +238,12 @@ Widget_Assembly Dynamic_Server::request
         {
             Widget_Assembly&& anon
             {
-                spawn_anonymous_assembly(
-                    data_point, child_declarations[j], source_type)
+                source_type != Source_Declaration_Type::alias ?
+                    spawn_anonymous_assembly(
+                        data_point, child_declarations[j], source_type)
+                    : spawn_anonymous_assembly(
+                        data_point, child_declarations[j]
+                        , sdp.get_alias_type())
             };
 
             local_cache.add(anon);

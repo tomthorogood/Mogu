@@ -118,8 +118,11 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
     if (o == Mogu_Syntax::widget)
     {
         Moldable* x {app->get_widget(v.get_identifier())};
-        Moldable* r {(Moldable*) x->parent()};
-        r->removeChild(x);
+        if (x)
+        {
+            Moldable* r {(Moldable*) x->parent()};
+            r->removeChild(x);
+        }
     } 
     else if (o == Mogu_Syntax::user && !has_identifier)
     {

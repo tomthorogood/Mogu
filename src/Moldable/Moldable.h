@@ -116,6 +116,7 @@ public:
             if (!test_flag(Moldable_Flags::allow_reload)) return;
         }
         Wt::WContainerWidget::load();
+        sig_loaded.emit();
     }
 
     /* Keeping with the Wt signal styling here...hence the camelCase */

@@ -1,0 +1,187 @@
+<<<prev
+Back
+<<<
+
+<<<next
+Next
+>>>
+
+<<<introduction:hook
+
+![Mogu: Bend the Web](/resources/images/mogu-logo.png)
+
+## No was written in the creation of this presentation.
+
+## No JavaScript, either.
+
+>>>
+
+<<<introduction:bullets
+
+Mogu is a full-stack, widget-centric language with two main goals:
+
++ Make it easy for new programmers to learn
++ Offer a high level of maintainability for applications
+
+>>>
+
+<<<server:hook
+
+The webserver is built on top of [Wt](http://www.webtoolkit.eu), a C++ library
+which enables the creation of web applications that behave like desktop 
+applications.
+
+>>>
+
+<<<server:bullets
+
++ Automatic graceful degradation
++ Automatic creation of JavaScript compliant with your user's browser
++ No HTML templates
++ Each widget for each user is connected to the server in real-time, making
+interactions trivial microtransactions.
+
+>>>
+
+<<<database:hook
+
+As a data store, Mogu employs [Redis](http://www.redis.io), with built-in 
+support for "chunking" the database based on data usage for easier scalability.
+
+>>>
+
+<<<database:bullets
+
++ Expertly compressed data allows for storage of millions of keys in a single
+database prefix with little effect on performance.
++ Redis holds everything in memory, while saving to disk periodically, making
+it, in a word **superfast**.
++ Unified storage of data as byte-safe strings makes it possible to store
+just about anything without worrying about how to retrieve the data later.
+
+>>>
+
+<<<language:features
+
+To unify all of this technology, the C++, HTML, JavaScript, and Redis 
+scripting, a single declarative syntax was created to abstract all of the
+complicated pieces in order to make building web applications easy.
+
+Most of all, Mogu aims to be readable. 
+
+>>>
+
+<<<language:features:2
+
+Very little punctuation:
+
+# "{}:
+
+## The rest is made up of human words.
+>>>
+
+<<<language:bullets
+
++ Most languages are designed to mimic how computers think, Mogu is designed
+for the end user.
++ Flexible construction allows for intellient A.I. that attempts to deduce
+the meaning of instructions contextually.
++ Two-stage interpreting process allows for syntax-checking before deployment,
+but rapid runtime interpretation. 
++ Widget templating and event chaining
++ Macro expansion allows decoupling of text from application logic
++ Supports Markdown
+
+>>>
+
+<<<language:example:button
+
+    widget say_hello
+        type    :   text
+        css     :   "mock_link"
+        text    :   "Say hello!"
+
+        events
+            when clicked {
+                set widget empty text to "Hello, World!"
+            }
+        end events
+    end widget
+>>>
+
+<<<language:example:empty
+   
+    widget empty
+        type    :   text
+        text    :   " "
+    end widget
+
+>>>
+
+<<<language:example:wrapper
+    
+    widget wrapper
+        type    :   container
+        children
+            say_hello
+            empty
+        end children
+    end widget
+>>>
+
+
+<<<dynamic:hook
+
+Mogu also makes user management easy, with support for encryption, user groups,
+and easy reads/writes from the database. Here's some example syntax:
+
+    set user favorite color to "green"
+
+    set widget favorite_color text to user favorite color
+
+    append user to group "Redis Fans"
+
+    set group slogan to "We <3 Redis!"
+
+>>>
+
+<<<dynamic:bullets
+
++ The core schema is already designed; all a developer has to do is focus on
+naming the fields.
+
+>>>
+
+<<<metaprogramming:hook
+
+Because Mogu aims to be easy to read, write, and learn, it does come at a cost:
+it's repetitive. To fix this, anyone with a "real" programming background
+can utilize the Python API to automate the creation of widgets.
+
+    w = ScriptWriter.WidgetWriter("say_hello", {"type" : "text", "css" : "mock_link"})
+    w.add_event("click", "set widget empty text to \"Hello, World!\")
+
+>>>
+
+<<<future
+
++ Basic functional support
++ More dynamic feature support
++ Increased memory efficiency by using symbol tables for string literals
++ Added security
++ Added ease of deployment
++ Multimedia (video, music) support
++ Support for data visualization
++ Friendlier compiler messages
+
+>>>
+
+<<<problems
+
+1) It's both open sourced and free. Those are only problems because:
+2) I'm just one guy, and it can't be my full-time job
+3) The world is awash in technologies already -- are people convinceable?
+4) Absolutely no idea how to market open source projects, which is why I'm here.
+
+>>>
+
