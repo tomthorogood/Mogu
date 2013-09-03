@@ -42,8 +42,7 @@ void Node_Editor::setup()
         db->flush();
     }
 
-    if ((prefix == Prefix::user || prefix == Prefix::group)
-        && type <= Mogu_Syntax::__NONE__.integer)
+    if (id_required())
     {
         type = get_policy_type();
         set_encrypted();
@@ -144,6 +143,12 @@ std::string Node_Editor::read()
 bool Node_Editor::set_encrypted()
 {
     set_policy();
+    policy->append_query("hexists policy.%s %d", node.c_str(), Mogu_Syntax::encrypted.integer);
+    if (!policy->yield_response<bool>())
+    {
+        encrypted = false;
+        return false;
+    }
     policy->append_query(
         "hget policy.%s %d", node.c_str(), Mogu_Syntax::encrypted.integer);
     std::string encryption_result {policy->yield_response <std::string>()};
