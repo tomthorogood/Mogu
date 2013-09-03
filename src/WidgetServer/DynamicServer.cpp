@@ -83,8 +83,8 @@ std::vector <std::string> Dynamic_Server::fill_data_list (
 void Dynamic_Server::sort(
         const Syntax_Def& direction, std::vector <Sortable>& v)
 {
-    auto sort_asc = [](const Sortable& a, const Sortable& b) { return a < b; };
-    auto sort_des = [](const Sortable& a, const Sortable& b) { return b < a; };
+    auto sort_asc = [](const Sortable& a, const Sortable& b) { return a > b; };
+    auto sort_des = [](const Sortable& a, const Sortable& b) { return b > a; };
 
     if (direction==Mogu_Syntax::decrement)
     {

@@ -15,13 +15,23 @@ void test(Moldable& broadcaster, Command_Value& v)
 
     bool result {false};
     Node_Value value {};
+    if (Mogu_Syntax::own==v.get(Command_Flags::object))
+    {
+        if (Mogu_Syntax::hidden==v.get(Command_Flags::arg))
+        {
+            broadcaster.get_attribute(Mogu_Syntax::hidden, value);
+            if (static_cast<bool>(value.get_int())) broadcaster.succeed().emit();
+            else broadcaster.fail().emit();
+            return;
+        }
+    }
 
     // This is a little bit of reverse engineering, because it undoes some of
     // tokenization that's already been done, which is inefficient, but it's
     // much easier to understand than the previous implementation.
     std::string state = v.join_state();
 
-    app->get_interpreter().give_input(state, value);
+    app->get_interpreter().give_input(state, value, &broadcaster);
     if (value.is_string())
         value.set_string(stripquotes(value.get_string()));
 

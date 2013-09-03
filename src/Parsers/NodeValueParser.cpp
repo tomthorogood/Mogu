@@ -162,6 +162,7 @@ void Node_Value_Parser::give_input(const std::string& i, Node_Value& nv, Moldabl
 
     /* As long as we have input that is reducable, keep reducing it.*/
 	while (Mogu_Syntax::TOKEN_DELIM == tm.current_token()
+	    && (!tm.fetch_string().empty())
 	    && (tm.fetch_string().at(0)!='"')
 	    && (tm.fetch_string().find_first_of(" ") != std::string::npos))
 	{
