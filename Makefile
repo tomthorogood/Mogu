@@ -128,7 +128,6 @@ uninstall:
 	if [ -h $(INSTALL_DIR)/bin/mogu ]; then sudo unlink $(INSTALL_DIR)/bin/mogu; fi;
 	@sudo pip uninstall --yes moguio 1> /dev/null|| echo "Moguio not installed, so not removed."
 	sudo rm -f $(INSTALL_DIR)/$(EXECUTABLE)
-	sudo rm -rf $(CONFIG_DIR)
 
 clean:
 	@echo "$(C_INFO)Removing generated syntax files...$(C_END)"
@@ -142,4 +141,5 @@ clean:
 	done
 
 purge: clean
+	sudo rm -rf $(CONFIG_DIR)
 	rm -rf bin/

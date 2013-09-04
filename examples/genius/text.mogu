@@ -1,16 +1,8 @@
-<<<prev
-Back
-<<<
-
-<<<next
-Next
->>>
-
 <<<introduction:hook
 
 ![Mogu: Bend the Web](/resources/images/mogu-logo.png)
 
-## No was written in the creation of this presentation.
+## No HTML was written in the creation of this presentation.
 
 ## No JavaScript, either.
 
@@ -94,54 +86,40 @@ but rapid runtime interpretation.
 
 >>>
 
-<<<language:example:button
+<<<language:example
 
-    widget say_hello
-        type    :   text
-        css     :   "mock_link"
-        text    :   "Say hello!"
+![Mogu in Action](/resources/mogu/images/code.png)
 
-        events
-            when clicked {
-                set widget empty text to "Hello, World!"
-            }
-        end events
-    end widget
+Mogu is meant to to be *read*, not examined.
 >>>
-
-<<<language:example:empty
-   
-    widget empty
-        type    :   text
-        text    :   " "
-    end widget
-
->>>
-
-<<<language:example:wrapper
-    
-    widget wrapper
-        type    :   container
-        children
-            say_hello
-            empty
-        end children
-    end widget
->>>
-
 
 <<<dynamic:hook
 
 Mogu also makes user management easy, with support for encryption, user groups,
 and easy reads/writes from the database. Here's some example syntax:
 
-    set user favorite color to "green"
+>>>
+<<<dynamic:ex1
+
+    set user favorite color to
+    "green"
+
+>>>
+<<<dynamic:ex2
 
     set widget favorite_color text to user favorite color
 
-    append user to group "Redis Fans"
+>>>
+<<<dynamic:ex3
 
-    set group slogan to "We <3 Redis!"
+    append user to group
+    "Redis Fans"
+
+>>>
+<<<dynamic:ex4
+
+    set group slogan to
+    "We <3 Redis!"
 
 >>>
 
@@ -157,9 +135,6 @@ naming the fields.
 Because Mogu aims to be easy to read, write, and learn, it does come at a cost:
 it's repetitive. To fix this, anyone with a "real" programming background
 can utilize the Python API to automate the creation of widgets.
-
-    w = ScriptWriter.WidgetWriter("say_hello", {"type" : "text", "css" : "mock_link"})
-    w.add_event("click", "set widget empty text to \"Hello, World!\")
 
 >>>
 
@@ -178,10 +153,10 @@ can utilize the Python API to automate the creation of widgets.
 
 <<<problems
 
-1) It's both open sourced and free. Those are only problems because:
-2) I'm just one guy, and it can't be my full-time job
-3) The world is awash in technologies already -- are people convinceable?
-4) Absolutely no idea how to market open source projects, which is why I'm here.
+1. It's both open sourced and free. Those are only problems because:
+2. I'm just one guy, and it can't be my full-time job
+3. The world is awash in technologies already -- are people convinceable?
+4. Absolutely no idea how to market open source projects, which is why I'm here.
 
 >>>
 

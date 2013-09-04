@@ -1,6 +1,7 @@
 <<<@include "text.mogu">>>
+
 <<<display
-display mock_link nextbutton
+display linkified nextbutton
 >>>
 
 template bigtext
@@ -8,12 +9,24 @@ template bigtext
     css     :   "EIGHTEENPT"
 end template
 
+template bigbullets
+    type    :   text
+    css     :   "EIGHTEENPT LJUSTIFY W750PX"
+end template
+
 template medtext
     type    :   text
     css     :   "FOURTEENPT"
+end template
+
+template bulletlist
+    type    :   text
+    css     :   "FOURTEENPT LJUSTIFY W750PX"
+end template
 
 widget wrapper
     type    :   container
+    css     :   "CENTERED CENTER PAD_TOP_50 BLOCK W750PX"
     children
         genius
         show:rewind
@@ -28,22 +41,9 @@ end widget
 
 template next
     type    :   text
-    css     :   "mock_link"
+    css     :   "linkified"
     text    :   "> > >"
 end template
-
-widget show:rewind
-    type    :   text
-    css     :   "display rewind"
-    text    :   "< < <"
-
-    events
-        when clicked {
-            decrement widget genius index
-            set widget show:advance css to "hidden"
-        }
-    end events
-end widget
 
 widget show:advance
     type    :   text
@@ -97,7 +97,7 @@ widget genius:introduction:nbullets
 end widget
 
 widget genius:introduction:bullets
-    template    :   medtext
+    template    : bulletlist
     text        :   @introduction:bullets
 end widget
 
@@ -126,8 +126,7 @@ widget genius:server:nbullets
 end widget
 
 widget genius:server:bullets
-    type    :   text
-    template    :   medtext
+    template    : bulletlist
     text    :   @server:bullets
 end widget
 
@@ -157,8 +156,7 @@ widget genius:database:nbullets
 end widget
 
 widget genius:database:bullets
-    type    :   text
-    template    :   medtext
+    template    : bulletlist
     text    :   @database:bullets
 end widget
 
@@ -167,6 +165,7 @@ widget genius:language
     children
         :1
         :2
+        :3
     end children
 end widget
 
@@ -213,16 +212,32 @@ widget genius:language:2:nbullets
     events
         when clicked {
             append widget genius:language:2:bullets to widget genius:language:2
-            set widget show:advance css to @display
+            append widget genius:language:2:nexample to widget genius:language:2
             remove widget genius:language:2:nbullets
         }
     end events
 end widget
 
 widget genius:language:2:bullets
-    type    :   text
-    template    :   medtext
+    template    : bulletlist
     text    :   @language:bullets
+end widget
+
+widget genius:language:2:nexample
+    template    :   next
+    events
+        when clicked {
+            increment widget genius:language index
+            set widget show:advance css to @display
+            remove widget genius:language:2:nexample
+        }
+    end events
+end widget
+
+
+widget genius:language:3
+    template    :   medtext
+    text        :   @language:example
 end widget
 
 widget genius:demo
@@ -237,7 +252,7 @@ widget say_hello
     type    :   text
     template    :   bigtext
     text    :   "Say hello!"
-    css     :   "mock_link"
+    css     :   "linkified"
 
     events
         when clicked {
@@ -258,8 +273,29 @@ widget genius:dynamic
     type    :   container
     children
         :hook
+        :ex1
+        :ex2
+        :ex3
+        :ex4
         :nbullets
     end children
+end widget
+
+widget genius:dynamic:ex1
+    template    : bulletlist
+    text    : @dynamic:ex1
+end widget
+widget genius:dynamic:ex2
+    template    : bulletlist
+    text    : @dynamic:ex2
+end widget
+widget genius:dynamic:ex3
+    template    : bulletlist
+    text    : @dynamic:ex3
+end widget
+widget genius:dynamic:ex4
+    template    : bulletlist
+    text    : @dynamic:ex4
 end widget
 
 widget genius:dynamic:hook
@@ -280,12 +316,11 @@ widget genius:dynamic:nbullets
 end widget
 
 widget genius:dynamic:bullets
-    type    :   text
-    template    :   medtext
+    template    : bulletlist
     text    :   @dynamic:bullets
 end widget
 
-widget genius:metaprograming
+widget genius:metaprogramming
     type    :   container
     children    
         :hook
@@ -294,8 +329,7 @@ widget genius:metaprograming
 end widget
 
 widget genius:metaprogramming:hook
-    type    :   text
-    template    :   medtext
+    template    :   bulletlist
     text    :   @metaprogramming:hook
 end widget
 
@@ -318,8 +352,7 @@ widget genius:future
 end widget
 
 widget genius:future:text
-    type    :   text
-    template    :   medtext
+    template    :   bigbullets
     text    :   @future
 end widget
 
@@ -328,20 +361,12 @@ widget genius:future:n
     events
         when clicked {
             set widget show:advance css to @display
-            remove widget genius:metaprogramming:n
+            remove widget genius:future:n
         }
     end events
 end widget
 
 widget genius:problems
-    type    :   container
-    children
-        :text
-    end children
-end widget
-
-widget genius:problems:text
-    type    :   text
-    template    :   medtext
-    text    :   @problems
+    template    :   bigbullets
+    text        :   @problems
 end widget
