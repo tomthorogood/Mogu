@@ -27,15 +27,10 @@ void increment (Moldable& broadcaster, Command_Value& v)
 
     Redis::Node_Editor node(p, id, &arg);
 
-    int value {};
-    if (v.test(Command_Flags::value))
+    int value
     {
-        value = v.get(Command_Flags::value).get_int();
-    }
-    else
-    {
-        value = 1;
-    }
+        v.test(Command_Flags::value) ? v.get(Command_Flags::value) : 1;
+    };
 
     const Syntax_Def& s {Mogu_Syntax::get(arg)};
     int i {};
@@ -54,8 +49,6 @@ void increment (Moldable& broadcaster, Command_Value& v)
 
         case Mogu_Syntax::group:{
             i = app->get_group();
-//          Group_Manager m {i};
-//          if (!m.has_write_access(id)) return;}
             node.set_id(i);
             incr_db_val(node,value);
             break;}
@@ -84,6 +77,7 @@ void increment (Moldable& broadcaster, Command_Value& v)
 
         case Mogu_Syntax::widget:{
             Moldable* w {app->get_widget(id)};
+            if (!w) break;
             w->get_attribute(s,current);
             if (current.is_string())
                 current.set_int(atoi(current.get_string().c_str()));

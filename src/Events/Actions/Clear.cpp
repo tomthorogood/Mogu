@@ -15,7 +15,8 @@ namespace Actions
 
 void clear(Moldable& broadcaster, Command_Value& v)
 {
-    switch(Mogu_Syntax::get(v.get(Command_Flags::object)).integer)
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
+    switch(o)
     {
     case Mogu_Syntax::own:
         broadcaster.clear();
@@ -23,7 +24,7 @@ void clear(Moldable& broadcaster, Command_Value& v)
     case Mogu_Syntax::widget:
     {
         mApp;
-        Moldable* w = app->get_widget(v.get_identifier());
+        Moldable* w {app->get_widget(v.get_identifier())};
         if (w) w->clear();
         break;
     }

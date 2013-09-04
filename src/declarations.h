@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <Config/inline_utils.h>
+#include <utilities.h>
 #include <iostream>
 
 #include <Config/forward_declarations.h>

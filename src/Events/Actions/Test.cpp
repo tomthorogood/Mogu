@@ -20,7 +20,8 @@ void test(Moldable& broadcaster, Command_Value& v)
         if (Mogu_Syntax::hidden==v.get(Command_Flags::arg))
         {
             broadcaster.get_attribute(Mogu_Syntax::hidden, value);
-            if (static_cast<bool>(value.get_int())) broadcaster.succeed().emit();
+            if (static_cast<bool>(value.get_int()))
+                broadcaster.succeed().emit();
             else broadcaster.fail().emit();
             return;
         }

@@ -89,7 +89,7 @@ void handle_value_to_attribute(Moldable& broadcaster, Command_Value& v)
     Moldable* curr_widget = app->get_widget(
             (std::string) v.get(Command_Flags::identifier));
     
-    if (curr_widget == nullptr) return;
+    if (!curr_widget) return;
 
     const Syntax_Def& attribute = 
         Mogu_Syntax::get(v.get(Command_Flags::arg));
@@ -105,49 +105,32 @@ void handle_value_to_attribute(Moldable& broadcaster, Command_Value& v)
  */
 void handle_value_to_field(Moldable& broadcaster, Command_Value& v)
 {
-    Node_Value arg;
+    Node_Value arg {};
+
     if (v.test(Command_Flags::arg))
         arg = v.get(Command_Flags::arg);
 
-    bool writeable = true;
-    Prefix obj {syntax_to_prefix(
-            Mogu_Syntax::get(v.get(Command_Flags::object)))};
-    std::string node = (std::string) v.get(Command_Flags::identifier);
+    const Syntax_Def& syn  = Mogu_Syntax::get(v.get(Command_Flags::object));
+    Prefix obj {syntax_to_prefix(syn)};
 
-//    if (Prefix::group == obj)
-//    {
-//        Group_Manager gm(app->get_group());
-//        writeable = gm.has_write_access(node);
-//    }
+    std::string node
+        {static_cast<std::string>(v.get(Command_Flags::identifier))};
 
-    if (!writeable) return;
+    Node_Value current_value {};
+    Redis::Node_Editor e {obj, node, &arg};
 
-    Node_Value current_value;
-    Redis::Node_Editor editor(obj, node, &arg);
-    if (editor.get_type() == Mogu_Syntax::string)
-    {
-        std::string cv = editor.read();
-        cv += (std::string) v.get(Command_Flags::value);
-        current_value.set_string(cv);
-    }
-    else
-    {
-        current_value.set_string(v.get(Command_Flags::value).get_string());
-    }
-    editor.write(current_value);
+    std::string cv {e.read()};
+    cv += v.get(Command_Flags::value);
+    current_value.set_string(cv);
+    e.write(current_value);
 }
 
 void handle_user_to_application(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    if (&broadcaster==nullptr)
-    {
-        Application::log.log(Log_Level::warn,__FILE__, " ", __LINE__,
-            ": Broadcaster is null.");
-    }
 
-    std::string p_username = app->get_slot_manager().get_slot("USERNAME");
-    std::string p_userauth = app->get_slot_manager().get_slot("USERAUTH");
+    std::string p_username {app->get_slot_manager().get_slot("USERNAME")};
+    std::string p_userauth {app->get_slot_manager().get_slot("USERAUTH")};
 
     if (p_username.empty())
         Application::log.log(Log_Level::error,__FILE__," ", __LINE__,
@@ -156,8 +139,8 @@ void handle_user_to_application(Moldable& broadcaster, Command_Value& v)
         Application::log.log(Log_Level::error, __FILE__," ", __LINE__,
             "Userauth is Empty \"", p_userauth, "\"");
 
-    Security_Status status = app->get_user_manager().register_user(
-        p_username,p_userauth);
+    Security_Status status
+        {app->get_user_manager().register_user(p_username,p_userauth)};
 
     if (status != Security_Status::ok_register)
         broadcaster.errorReported().emit();
@@ -170,13 +153,19 @@ void handle_user_to_group(Moldable& broadcaster, Command_Value& v)
     mApp;
     int user {app->get_user()};
     Group_Manager g {v.get(Command_Flags::identifier)};
-    if (g.is_valid()) g.add_user(user);
+    Security_Status s
+    {
+        g.is_valid ? g.add_user(user) : Security_Status::error_unknown
+    };
+
+    if (s != Security_Status::ok_register)
+        broadcaster.errorReported().emit();
 }
 
 void handle_group_to_application(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    std::string groupname = app->get_slot_manager().get_slot("GROUPNAME");
+    std::string groupname {app->get_slot_manager().get_slot("GROUPNAME")};
     Group_Manager g {};
     g.create_group(groupname, app->get_user());
     Node_Value k {g.get_key()};

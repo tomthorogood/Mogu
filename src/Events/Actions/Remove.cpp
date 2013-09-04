@@ -1,33 +1,32 @@
 #include "../Actions.h"
 #include "Includes.h"
-#include <Redis/NodeEditor.h>
-#include "../../Config/inline_utils.h"
+#include "../../utilities.h"
+#include "../../Redis/NodeEditor.h"
+
 namespace Actions {
 
 namespace {
 
-const uint8_t invalid_construct         =0;
-const uint8_t value_from_attribute      =1;
-const uint8_t attribute_from_object     =2;
-const uint8_t value_from_field          =3;
-const uint8_t object_from_application   =4;
+constexpr uint8_t invalid_construct         =0;
+constexpr uint8_t value_from_attribute      =1;
+constexpr uint8_t attribute_from_object     =2;
+constexpr uint8_t value_from_field          =3;
+constexpr uint8_t object_from_application   =4;
 
 const uint8_t get_construct(Command_Value& v)
 {
-    const Syntax_Def& o = Mogu_Syntax::get(v.get(Command_Flags::object));
-    bool has_arg = v.test(Command_Flags::arg);
-    bool has_r_object = v.test(Command_Flags::r_object);
-    bool has_value = v.test(Command_Flags::value);
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
+
+    bool has_arg {v.test(Command_Flags::arg)};
+    bool has_r_object {v.test(Command_Flags::r_object)};
+    bool has_value {v.test(Command_Flags::value)};
 
     if (! (has_arg || has_r_object)) 
         return object_from_application;
 
-    if (o == Mogu_Syntax::widget)
+    if (has_arg && (o == Mogu_Syntax::widget))
     {
-        if (has_arg && has_value) 
-            return value_from_attribute;
-        else if (has_arg) 
-            return attribute_from_object;
+        return has_value ? value_from_attribute : attribute_from_object;
     }
 
     return value_from_field;
@@ -46,14 +45,13 @@ void handle_value_from_attribute(Moldable& broadcaster, Command_Value& v)
 {
     Node_Value n {};
     Moldable* w {set_moldable_pointer(broadcaster,v)};
-    const Syntax_Def& attribute = Mogu_Syntax::get(v.get(Command_Flags::arg));
-
+    const Syntax_Def& attribute {Mogu_Syntax::get(v.get(Command_Flags::arg))};
     w->get_attribute(attribute, n);
 
     if (n.is_string())
     {
-        std::string new_value {n.get_string()};
-        std::string rm {v.get(Command_Flags::value).get_string()};
+        std::string new_value {n};
+        std::string rm {v.get(Command_Flags::value)};
         sreplace(new_value,rm);
         n.set_string(new_value);
     }
@@ -89,18 +87,21 @@ void handle_value_from_field(Moldable& broadcaster, Command_Value& v)
     Redis::Node_Editor e {p, id, &arg};
     
 
-    if (o == Mogu_Syntax::user)
-        e.set_id(app->get_user());
-    else if (o == Mogu_Syntax::group)
+    if (e.requires_id())
     {
-        int g {app->get_group()};
-//        Group_Manager m(group);
-//        if (!group_manager.has_write_access(id)) return;
-        e.set_id(g);
+        int i
+        {
+            o == Mogu_Syntax::user ? app->get_user() : app->get_group();
+        };
+        e.set_id(i);
     }
 
-    std::string val {v.get(Command_Flags::value).get_string()};
-    e.remove(val);
+    std::string val {v.get(Command_Flags::value)};
+
+    if (!val.empty())
+        e.remove(val);
+    else
+        e.remove();
 }
 
 /* This removes widgets from the widget tree, users and groups, or nodes from
@@ -110,8 +111,7 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
 
-    bool has_identifier = v.test(Command_Flags::identifier);
-    
+    bool has_identifier {v.test(Command_Flags::identifier)};
     const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
     Prefix p {syntax_to_prefix(o)};
    
@@ -126,28 +126,26 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
     } 
     else if (o == Mogu_Syntax::user && !has_identifier)
     {
-        //TODO : Securely remove all user data.
+        app->get_user_manager().remove_user();
     }
     else if (o == Mogu_Syntax::group && !has_identifier)
     {
-        //TODO: Securiely remove all group data.
+        int g {app->get_group()};
+        Group_Manager m {g};
+        m.remove_group();
     }
     else // We're dealing with a database node.
     {
         std::string id {v.get_identifier()};
         Redis::Node_Editor e {p,id};
-        if (o == Mogu_Syntax::group)
+        if (e.requires_id())
         {
-            int g {app->get_group()};
-//          Group_Manager m {g};
-//          if (!m.has_write_access(id)) return;
-            e.set_id(g);
+            int i
+            {
+                o == Mogu_Syntax::user ? app->get_user() : app->get_group()
+            };
+            e.set_id(i);
         }
-        else if (o==Mogu_Syntax::user)
-        {
-            e.set_id(app->get_user());
-        }
-
         e.remove();
     }
 }
