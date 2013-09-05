@@ -1,6 +1,5 @@
 from markdown import markdown
 from sets import Set
-from lex_functions import everything_until
 import re
 import os
 

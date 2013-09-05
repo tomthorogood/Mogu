@@ -3,7 +3,6 @@ from moguio.MoguString import MoguString
 from Lex import RootConsumer
 import SharedData
 import sys
-import re
 import os
 import Preprocessor
 current_file_input = None
@@ -21,42 +20,17 @@ def preprocess(text,verbal=False):
     assert(isinstance(text,list))
     text = [ line.strip() for line in text ]# Remove all leading/trailing whitespace from each line
     text = filter(nonempty,text)            # Only preserve nonempty lines
-    iterindex = 0
-    step = "Text to MoguString:Script"
-    try:
-        # Convert all strings to MoguStrings
-        for index,line in enumerate(text):
-            iterindex = index
-            ms = MoguString("script",line)
-            text[index] = ms
-    
-        step = "MoguString:Script to MoguString:Integral"
-
-        # Translate all strings to integral syntax
-        for index,line in enumerate(text):
-            assert(isinstance(line,MoguString))
-            iterindex = index
-            line.translate('integral')
-            line.active('integral')
-    except Exception as e:
-        errMsg = """
-    %s
-
-Could not parse text: 
-    %s
-
-MoguString Attributes:
-    String Literals: 
-        %s
-
-    Current Temp:
-        %s
-
-Step:
-    %s
-""" %(e, text[iterindex], text[iterindex].string_literals, text[iterindex].temp, step)
-        raise ImportError(errMsg)
-
+    # Convert all strings to MoguStrings
+    for index,line in enumerate(text):
+        ms = MoguString("script",line)
+        text[index] = ms
+        
+    # Translate all strings to integral syntax
+    for index,line in enumerate(text):
+        assert(isinstance(line,MoguString))
+        line.translate('integral')
+        line.active('integral')
+        
     assert(isinstance(text,list))
     text = [line.integral for line in text]
     text = "\n".join(text)
@@ -85,10 +59,9 @@ def import_raw(text, verbal=False):
         sys.stderr.write("Importing from raw input")
     try:
         return RootConsumer.parse(text)
-    except Exception as e:
+    except Exception:
         sys.stderr.write(
-                "\nCannot parse text. Import halted. No changes made.\n\n" % filename
-        )
+                "\nCannot parse text. Import halted. No changes made.\n\n")
         sys.stderr.flush()
         sys.exit(1)
 

@@ -1,5 +1,4 @@
 import sys
-import itertools
 
 
 def nonempty(obj):
@@ -43,7 +42,7 @@ def zipstring(*args):
         raise e
 
 def keyspace(prefix, inputstr, *args):
-    id = identifier(prefix, inputstr)
-    return zipstring(prefix,id, args)
+    identity = identifier(prefix, inputstr)
+    return zipstring(prefix,identity, args)
 
 

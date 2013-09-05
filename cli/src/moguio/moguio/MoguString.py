@@ -1,11 +1,14 @@
 from multistring import MultiString
 from lex_base import regexlib
-import SymbolRegistry
-import SharedData
-import string
 import syntax
 import re
 from sets import Set
+
+class UnrecognizedContextException(Exception):
+    def __init__(self,string):
+        self.value = string
+    def __str__(self):
+        return self.value
 
 class EscapeError(Exception):
     def __init__(self, needle, haystack):
@@ -49,27 +52,6 @@ class MoguString(MultiString):
     CompoundWords = [entry for entry in ReservedWords if len(entry.split(" ")) >1]
     Operators = syntax.MoguOperators.keys()
 
-    ReferencedTypes = [
-            syntax.as_integer('widget'),
-            syntax.as_integer('data'),
-            syntax.as_integer('user'),
-            syntax.as_integer('group')
-    ]
-
-    ReferenceTables = [
-            SymbolRegistry.widgetRegistry,
-            SymbolRegistry.dataRegistry,
-            SymbolRegistry.policyRegistry,
-            SymbolRegistry.policyRegistry
-    ]
-
-    @staticmethod
-    def reference(integral, symbol):
-        integral = int(integral)
-        for index,repr_type in enumerate(MoguString.ReferencedTypes):
-            if integral == repr_type:
-                MoguString.ReferenceTables[index][symbol].append(SharedData.ActiveFile)
-
     @staticmethod
     def filter_empty(item):
         res = re.search("[^\s]+",item)
@@ -85,9 +67,7 @@ class MoguString(MultiString):
             (17 + user dob year) becomes ( 17 + user dob year )
         """
         repl = ""
-        max_iter = len(expr)
-        iter = 0 
-        
+        max_iter = len(expr)        
         while iter < max_iter:
             char = expr[iter]
             if char in MoguString.Operators:
@@ -361,33 +341,8 @@ class MoguString(MultiString):
         raise SyntaxError(
                 "%d is not recognized as Mogu integral syntax." % integral)
 
-    def create_references(self):
-        if self.context == 'integral': 
-            return #integral context cannot create references
-
-        # Before we can create references, we must
-        # ensure that our tokens are properly spaced. This
-        # can be done by translating into integral and back again.
-        protected = MoguString('script', self.active())
-        protected.translate('integral')
-        protected.active('integral')
-        protected.translate('script', MoguString.OVERWRITE_STORED_VALUE)
-
-        
-        splitsafe = protected.separate_string_literals()
-        
-        # We have now ensured spacing and removed string literals.
-        tokens = splitsafe.split(' ')
-        for index,token in enumerate(tokens):
-            if (not MoguString.is_integer(token) and \
-                    MoguString.is_integer(tokens[index-1])) \
-                    and index != 0:
-                if (int(tokens[index-1]) in MoguString.ReferencedTypes):
-                    MoguString.reference(tokens[index-1],token)
-
 def importString(script):
     if not script: return script 
     mogustring = MoguString('script',script)
     integral = mogustring.translate('integral')
-    mogustring.create_references()
     return integral

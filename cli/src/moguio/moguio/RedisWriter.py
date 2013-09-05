@@ -2,8 +2,6 @@
 import sys
 import os
 import redis
-from sets import Set
-from collections import OrderedDict
 import RedisObjects
 
 # DEFAULT DBCONFIG.CONF LOCATION:
@@ -27,8 +25,6 @@ def parseDBConfig(filename):
         if len(string) <= 1 or string[0] == "#":
             return False
         return True
-
-    lines = None
 
     with open(filename,"r") as f:
         lines = f.readlines()
@@ -162,7 +158,7 @@ class RedisWriter(object):
             pipe.delete(k)
 
     def askflush(self, prefix):
-        if args.y:
+        if self.yes:
             return True
         
         user_input = raw_input("Do you wish to flush the %s prefix?\n[Y]es to continue, anything else to skip: ")

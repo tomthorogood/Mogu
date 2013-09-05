@@ -1,7 +1,7 @@
 # TODO : Read db info from dbconfig.conf
 import sys
 import PythonObjectConverter
-import SymbolRegistry
+import SharedData
 import FileImporter
 import PathImporter
 import RedisWriter
@@ -36,11 +36,7 @@ def mogu_import(args):
 
     # First, make sure that all symbols referenced are defined.
     for registry in [
-            SymbolRegistry.widgetRegistry,
-            SymbolRegistry.templateRegistry,
-            SymbolRegistry.dataRegistry,
-            SymbolRegistry.validatorRegistry,
-            SymbolRegistry.policyRegistry
+            SharedData.symbols
             ]:
         if not registry: # Returns false if a symbol in the registry is not defined
             sys.stderr.write(display_undefined_symbols(registry))

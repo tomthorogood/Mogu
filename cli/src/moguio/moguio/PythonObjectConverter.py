@@ -4,6 +4,7 @@ import syntax
 import lex_base
 import Lex
 import pyboro
+from sets import Set
 class PythonObjectConverter(object):
     """
     Each entry passed into this converter must be a tuple
@@ -168,10 +169,8 @@ class PythonObjectConverter(object):
         for param in params:
             o_dict = param[0]
             parsemap = param[1]
-            if parsemap is lex_base.POLICY_MODE:
-                master_dict[master_key][syntax.as_integer("mode")] = \
-                        o_dict["mode"]
-            elif parsemap is lex_base.POLICY_DATA:
+           
+            if parsemap is lex_base.POLICY_DATA:
                 master_dict[master_key][syntax.as_integer("type")] = \
                         o_dict["datatype"]
             elif parsemap is lex_base.POLICY_ENCRYPTION:
@@ -227,8 +226,6 @@ class PythonObjectConverter(object):
                 master_dict[master_key][syntax.as_integer("template")] = o_dict["template"]
             elif parsemap is lex_base.WIDGET_STYLE:
                 master_dict[master_key][syntax.as_integer("css")] = o_dict["css_classes"]
-            elif parsemap is lex_base.WIDGET_TOOLTIP:
-                master_dict[master_key][syntax.as_integer("tooltip")] = o_dict["tooltip"]
             elif parsemap is Lex.EVENT_BLOCK:
                 event_o_dict = self.convert_events(master_key, o_dict["block"])
                 master_dict.update(event_o_dict)

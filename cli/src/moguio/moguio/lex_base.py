@@ -1,7 +1,13 @@
-import re
 import pyboro
-from lex_functions import *
 import syntax
+from lex_functions import everything_until
+from lex_functions import trim
+from lex_functions import directive_start
+from lex_functions import add_definition
+from lex_functions import add_references
+from lex_functions import valid_options
+from lex_functions import reference_widget_list
+
 
 # Control of debugging vomit
 # Can be changed in higher level modules
@@ -82,18 +88,18 @@ regexlib["hash"] = syntax.as_integer("hash")
 #   data stringdata somestring
 #   user name first
 #
-regexlib["value"]       = "((%(hash)s )?%(object_set)s|%(string_literal)s|%(math_gen_expr)s|-?[0-9]+)" % regexlib 
+regexlib["value"] = "((%(hash)s )?%(object_set)s|%(string_literal)s|%(math_gen_expr)s|-?[0-9]+)" % regexlib 
 
 HASH_DEFINITION = pyboro.Lexer.ParseMap((
-        ("key",             everything_until(":")   ,   trim),
-        ("delim",           ":",                        IGNORE),
-        ("value",           everything_until(r"\n") ,   trim),
-        ("end",             r"\n\s*"                ,   IGNORE)
+    ("key",             everything_until(":")   ,   trim),
+    ("delim",           ":",                        IGNORE),
+    ("value",           everything_until(r"\n") ,   trim),
+    ("end",             r"\n\s*"                ,   IGNORE)
 ))
 
 LIST_DEFINITION = pyboro.Lexer.ParseMap([
-        ("entry",           everything_until(r"\n\s*"),     trim),
-        ("end",             r"\n\s*"                  ,     IGNORE)
+    ("entry",           everything_until(r"\n\s*"),     trim),
+    ("end",             r"\n\s*"                  ,     IGNORE)
 ])
 
 ########################
@@ -126,124 +132,88 @@ LIST_DEFINITION = pyboro.Lexer.ParseMap([
 # end widget
 
 WIDGET_TYPE = pyboro.Lexer.ParseMap((
-    ("begin",   DIRECTIVE_START(syntax.as_integer("type"))  , IGNORE),
+    ("begin",   directive_start(syntax.as_integer("type"))  , IGNORE),
     ("type",    regexlib["widget_types"]                    , LITERAL),
     ("end",     r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_SORT = pyboro.Lexer.ParseMap((
-    ("begin",   DIRECTIVE_START(syntax.as_integer("sort"))  , IGNORE),
+    ("begin",   directive_start(syntax.as_integer("sort"))  , IGNORE),
     ("declaration", r"[^\n]*"                               , trim),
     ("end",     r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_STYLE = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer("css"))   , IGNORE),
-    ("css_classes", regexlib['value']                           , trim),
+    ("begin",       directive_start(syntax.as_integer("css"))   , IGNORE),
+    ("css_classes", regexlib['value']                           , add_references),
     ("end",         r"\S*"                                      , IGNORE)
 ))
 
 
 WIDGET_CONTENT = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer("text"))  , IGNORE),
-    ("content",     r"[^\n]*"                                   , trim),
+    ("begin",       directive_start(syntax.as_integer("text"))  , IGNORE),
+    ("content",     r"[^\n]*"                                   , add_references),
     ("end",         r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_SOURCE = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer('source')), IGNORE),
-    ("source",      "[^\n]*"                                    , trim),
+    ("begin",       directive_start(syntax.as_integer('source')), IGNORE),
+    ("source",      "[^\n]*"                                    , add_references),
     ("end",         r"\S*"                                      , IGNORE)
 ))
 
 WIDGET_LOCATION = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer("location"))  , IGNORE),
-    ("location",    "[^\n]*"                                        , trim),
+    ("begin",       directive_start(syntax.as_integer("location"))  , IGNORE),
+    ("location",    "[^\n]*"                                        , add_references),
     ("end",         r"\S*"                                          , IGNORE)
 ))
 
 WIDGET_VALIDATOR = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer('validator')), IGNORE),
-    ("validator",    "[^\n]*"                                        , trim),
+    ("begin",       directive_start(syntax.as_integer('validator')), IGNORE),
+    ("validator",    "[^\n]*" ,\
+            lambda s: add_references("%d %s" % (syntax.as_integer("validator"), s))),
     ("end",          r"\S*"                                          , IGNORE)
 ))
 
 WIDGET_TEMPLATE = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer("template"))  , IGNORE),
-    ("template",    regexlib["identifier"]                          , reference_template),
+    ("begin",       directive_start(syntax.as_integer("template"))  , IGNORE),
+    ("template", regexlib["identifier"],\
+            lambda s: add_definition("%d %s" % (syntax.as_integer("template"),s))),
     ("end",         r"\S*"                                          , IGNORE)
-))
-
-WIDGET_TOOLTIP = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer("tooltip"))   , IGNORE),
-    ("tooltip",     "[^\n]*"                                        , trim),
-    ("end",         r"\S*"                                          , IGNORE)
-))
-
-POLICY_MODE  = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer("mode"))  , IGNORE),
-    ("mode",        "[0-9]+"                                    , LITERAL),
-    ("end",         r"\S*"                                      , IGNORE)
 ))
 
 POLICY_ENCRYPTION = pyboro.Lexer.ParseMap((
-    ("begin",       DIRECTIVE_START(syntax.as_integer("encrypted")), IGNORE),
+    ("begin",       directive_start(syntax.as_integer("encrypted")), IGNORE),
     ("encrypted",   "(yes|no)"                                     , trim),
     ("end",         r"\S*"                                         , IGNORE)
 ))
 
 POLICY_DEFAULT  =   pyboro.Lexer.ParseMap((
-    ("begin",   DIRECTIVE_START(syntax.as_integer("default"))   , IGNORE),
-    ("default", "[^\n]*"                                        , trim),
+    ("begin",   directive_start(syntax.as_integer("default"))   , IGNORE),
+    ("default", "[^\n]*"                                        , add_references),
     ("end",     r"\S*"                                          , IGNORE)
 ))
 
-# Data or type:
 t = "%d|%d" %(syntax.as_integer("data"),syntax.as_integer("type"))
 POLICY_DATA = pyboro.Lexer.ParseMap((
-        ("begin",       DIRECTIVE_START(t)  , IGNORE),
+        ("begin",       directive_start(t)  , IGNORE),
         ("datatype",    regexlib["datatype"]                        , trim),
         ("end",         r"\S*"                                      , IGNORE)
 ))
 
 VALIDATOR_TYPE = pyboro.Lexer.ParseMap((
-    ("begin",           DIRECTIVE_START(syntax.as_integer("type"))  , IGNORE),
-    ("type",            regexlib["validator_type"]                  , LITERAL),
+    ("begin",           directive_start(syntax.as_integer("type"))  , IGNORE),
+    ("type",            regexlib["validator_type"]                  , trim),
     ("end",             r"\S*"                                      , IGNORE)
 ))
 
 VALIDATOR_TEST = pyboro.Lexer.ParseMap((
-    ("begin",           DIRECTIVE_START(syntax.as_integer("test"))  , IGNORE),
-    ("test",            regexlib["string_literal"]                  , LITERAL),
+    ("begin",           directive_start(syntax.as_integer("test"))  , IGNORE),
+    ("test",            regexlib["string_literal"]                  , add_references),
     ("end",             r"\S*"                                      , IGNORE)
 ))
 
 NEWLINES = pyboro.Lexer.ParseMap([("newline",r"\n",IGNORE)])
-
-# Fundamentally, commands do one thing: They perform a 
-# single action on a single value. Therefore, every
-# command will have at LEAST this basic structure:
-# 
-#   action value
-#
-#
-# In almost all cases, 'value' can be substituted with
-# an object, or an object's attribute.
-#
-#   action [object]
-#   action [object] [attribute]
-#
-# Some commands (such as those that change values, or store them)
-# take a preposition and second value:
-#
-#   action [value] [to|at] [value]
-#   action [object] [to|at] [value]
-#   action [object][attribute] [to|at] [value]
-#   ...and so on.
-
-# Therefore, the first thing we have to do is get a list of 
-# valid actions.
-
 
 t = "children"
 CHILDREN_BLOCK = pyboro.Lexer.ParseMap((

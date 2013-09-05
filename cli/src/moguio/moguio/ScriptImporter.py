@@ -1,12 +1,9 @@
 import pyboro
 import PathImporter
 import PythonObjectConverter
-import RedisObjects
 import RedisWriter
 import SharedData
-import SymbolRegistry
 import sys
-import __main__
 
 class ScriptImporter(object):
     class RegistryError(Exception):
@@ -37,18 +34,17 @@ class ScriptImporter(object):
             paths = [paths,]
         elif not isinstance(paths,list):
             raise TypeError("Paths must be in list, tuple, or string format")
-        num_paths = len(paths)
         # Lex the files in each of the paths. 
-        for i,path in enumerate(paths):
+        for path in paths:
             self.results.extend(PathImporter.import_path(path))
 
         # Determine if any references have unmet dependencies
-        for registry in SymbolRegistry.registries:
+        for registry in SharedData.symbols:
             if not registry:
                 raise ScriptImporter.RegistryError(registry)
 
         # Raise a warning if there are unreferenced symbols:
-        for registry in SymbolRegistry.registries:
+        for registry in SharedData.symbols:
             if registry.nonreferenced():
                 for symbol in registry.nonreferenced():
                     sys.stderr.write(
@@ -71,30 +67,3 @@ def doImport(args):
 
     importer = ScriptImporter(args.command[1:],args)
     importer.write()
-
-if __name__ == "__main__":
-    from argparse import ArgumentParser
-    parser = ArgumentParser("Test the ScriptImporter")
-    parser.add_argument(
-            "-v", dest="verbal", action="store_true",default=False)
-    parser.add_argument(
-            nargs="+",dest="paths")
-    parser.add_argument(
-            "--flush", dest="flushdb", action="store_true",default=False)
-    parser.add_argument(
-            "--dbconfig", dest="dbconfig", default=None)
-    args = parser.parse_args()
-    print(args.paths)
-    importer = ScriptImporter(args.paths,args)
-    importer.write()
-elif not hasattr(__main__,"__file__"):
-    class Collection(object):
-        def __init__(self):
-            pass
-
-    args = Collection()
-    args.verbal = False
-    args.paths="/home/tom/dev/FinancialFirsts/newmogu/widgets"
-    args.flushdb=True
-    args.dbconfig=None
-    importer = ScriptImporter(args.paths,args)

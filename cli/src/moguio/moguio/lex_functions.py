@@ -1,35 +1,35 @@
 import syntax
 import SymbolRegistry
 import SharedData
+import ReferenceFinder
+from lex_base import regexlib
+import re
 
-def DIRECTIVE_START(token):
+def directive_start(token):
     d =  r"\s*(%s)\s*:\s*" % token
     return d
 
-def register_widget(string):
-    SymbolRegistry.widgetRegistry[string] = SharedData.ActiveFile
-    SharedData.ActiveIdentifier = string
+def add_references(string):
+    f = ReferenceFinder.ReferenceFinder(string)
+    for obj in f.refs:
+        if obj not in SharedData.symbols:
+            SharedData.symbols[obj] = SymbolRegistry.SymbolRegistry(
+                label=syntax.as_string(obj))
+        for symbol in f.refs[obj]:
+            SharedData.symbols[obj].reference(symbol, SharedData.ActiveFile)
     return string
 
-def register_template(string):
-    SymbolRegistry.templateRegistry[string]= SharedData.ActiveFile
-    return string
+def add_definition(obj, identifier):
+    if obj not in SharedData.symbols:
+        SharedData.symbols[obj] = SymbolRegistry.SymbolRegistry(
+            label = syntax.as_string(obj))
+    SharedData.symbols[obj][identifier] = SharedData.ActiveFile
+    return identifier
 
-def register_data(string):
-    SymbolRegistry.dataRegistry[string] = SharedData.ActiveFile
-    SharedData.ActiveIdentifier = string
-    return string
-
-def register_validator(string):
-    SymbolRegistry.validatorRegistry[string] = SharedData.ActiveFile
-    return string
-
-def register_policy(string):
-    SymbolRegistry.policyRegistry[string] = SharedData.ActiveFile
-    return string
-
-def reference_widget(string):
-    SymbolRegistry.widgetRegistry[string].append(SharedData.ActiveFile)
+def remove_string_literals(string):
+    found = re.findall(regexlib["string_literal"])
+    for literal in found:
+        string = string.replace(literal,"")
     return string
 
 def reference_widget_list(string):
@@ -39,31 +39,15 @@ def reference_widget_list(string):
             w_list[index] = SharedData.ActiveIdentifier+entry
             if SharedData.VERBAL: print("Expanded %s to %s" % (entry, w_list[index]))
     for w in w_list:
-        reference_widget(w)
+        SharedData.symbols[syntax.as_integer("widget")].reference(w, SharedData.ActiveFile)
     return w_list
-
-def reference_template(string):
-    SymbolRegistry.templateRegistry[string].append(SharedData.ActiveFile)
-    return string
-
-def reference_data(string):
-    SymbolRegistry.dataRegistry[string].append(SharedData.ActiveFile)
-    return string
-
-def reference_validator(string):
-    SymbolRegistry.validatorRegistry[string].append(SharedData.ActiveFile)
-    return string
-
-def reference_policy(string):
-    SymbolRegistry.policyRegistry[string].append(SharedData.ActiveFile)
-    return string
 
 def valid_options (string):
     """
         Returns valid integral representations of keywords.
     """
-    return [str(syntax.MoguSyntax[key][0]) for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
-#    return [key for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
+    return [str(syntax.MoguSyntax[key][0]) \
+            for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
 
 def trim(string):
     return string.strip()
