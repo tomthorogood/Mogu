@@ -120,7 +120,7 @@ void handle_value_to_field(Moldable& broadcaster, Command_Value& v)
     Redis::Node_Editor e {obj, node, &arg};
 
     std::string cv {e.read()};
-    cv += v.get(Command_Flags::value);
+    cv += v.get(Command_Flags::value).get_string();
     current_value.set_string(cv);
     e.write(current_value);
 }
@@ -129,8 +129,10 @@ void handle_user_to_application(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
 
-    std::string p_username {app->get_slot_manager().get_slot("USERNAME")};
-    std::string p_userauth {app->get_slot_manager().get_slot("USERAUTH")};
+    std::string p_username 
+        {app->get_slot_manager().get_slot("USERNAME").get_string()};
+    std::string p_userauth 
+        {app->get_slot_manager().get_slot("USERAUTH").get_string()};
 
     if (p_username.empty())
         Application::log.log(Log_Level::error,__FILE__," ", __LINE__,
@@ -155,7 +157,7 @@ void handle_user_to_group(Moldable& broadcaster, Command_Value& v)
     Group_Manager g {v.get(Command_Flags::identifier)};
     Security_Status s
     {
-        g.is_valid ? g.add_user(user) : Security_Status::err_unknown
+        g.is_valid() ? g.add_user(user) : Security_Status::err_unknown
     };
 
     if (s != Security_Status::ok_register)
@@ -165,7 +167,8 @@ void handle_user_to_group(Moldable& broadcaster, Command_Value& v)
 void handle_group_to_application(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    std::string groupname {app->get_slot_manager().get_slot("GROUPNAME")};
+    std::string groupname
+        {app->get_slot_manager().get_slot("GROUPNAME").get_string()};
     Group_Manager g {};
     g.create_group(groupname, app->get_user());
     Node_Value k {g.get_key()};

@@ -13,7 +13,7 @@
 #include <Wt/WApplication>
 #include <Wt/WValidator>
 #include <Wt/WRegExpValidator>
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 
 namespace Validators {

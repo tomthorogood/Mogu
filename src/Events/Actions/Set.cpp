@@ -1,6 +1,6 @@
 #include "Includes.h"
 #include "../Actions.h"
-#include "../../Config/inline_utils.h"
+#include "../../utilities.h"
 #include "../../Types/GroupManager.h"
 #include <Redis/NodeEditor.h>
 
@@ -20,7 +20,7 @@ constexpr uint8_t set_group_from_value  =5;
 
 inline const uint8_t logic_flags (Command_Value& v)
 {
-    Node_Value& o {v.get(Command_Flags::object)};
+    Node_Value& o = v.get(Command_Flags::object);
     if (Mogu_Syntax::user == o)
     {
         if (v.test(Command_Flags::identifier))
@@ -88,7 +88,7 @@ inline bool do_set_group_from_value(std::string& value)
 inline bool do_set_group_from_slot()
 {
     mApp;
-    std::string key {app->get_slot_manager().get_slot("GROUPKEY")};
+    std::string key {app->get_slot_manager().get_slot("GROUPKEY").get_string()};
     Group_Manager g {key};
     if (g.is_valid())
     {
@@ -183,7 +183,7 @@ void set (Moldable& broadcaster, Command_Value& v)
              Prefix p {syntax_to_prefix(o)};
              std::string id {v.get_identifier()};
              Redis::Node_Editor e {p, id, has_arg ? &arg : nullptr};
-             if (e.requires_id()) e.set_id(i);
+             if (e.id_required()) e.set_id(i);
              e.write(v.get(Command_Flags::value));
              break;
          }

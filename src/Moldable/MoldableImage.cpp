@@ -10,7 +10,7 @@
 #include <Redis/NodeEditor.h>
 #include <Mogu.h>
 #include <Types/WidgetAssembly.h>
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 Moldable_Image::Moldable_Image (Widget_Assembly& assembly)
 : Moldable(assembly, Mogu_Syntax::image)

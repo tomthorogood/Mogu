@@ -2,6 +2,7 @@
 #include "Includes.h"
 #include "../../utilities.h"
 #include "../../Redis/NodeEditor.h"
+#include "../../Types/GroupManager.h"
 
 namespace Actions {
 
@@ -50,8 +51,8 @@ void handle_value_from_attribute(Moldable& broadcaster, Command_Value& v)
 
     if (n.is_string())
     {
-        std::string new_value {n};
-        std::string rm {v.get(Command_Flags::value)};
+        std::string new_value {n.get_string()};
+        std::string rm {v.get(Command_Flags::value).get_string()};
         sreplace(new_value,rm);
         n.set_string(new_value);
     }
@@ -87,16 +88,16 @@ void handle_value_from_field(Moldable& broadcaster, Command_Value& v)
     Redis::Node_Editor e {p, id, &arg};
     
 
-    if (e.requires_id())
+    if (e.id_required())
     {
         int i
         {
-            o == Mogu_Syntax::user ? app->get_user() : app->get_group();
+            o == Mogu_Syntax::user ? app->get_user() : app->get_group()
         };
         e.set_id(i);
     }
 
-    std::string val {v.get(Command_Flags::value)};
+    std::string val {v.get(Command_Flags::value).get_string()};
 
     if (!val.empty())
         e.remove(val);
@@ -126,19 +127,19 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
     } 
     else if (o == Mogu_Syntax::user && !has_identifier)
     {
-        app->get_user_manager().remove_user();
+        app->get_user_manager().delete_user(app->get_user());
     }
     else if (o == Mogu_Syntax::group && !has_identifier)
     {
-        int g {app->get_group()};
-        Group_Manager m {g};
-        m.remove_group();
+        //int g {app->get_group()};
+        //Group_Manager m {g};
+        //m.remove_group();
     }
     else // We're dealing with a database node.
     {
         std::string id {v.get_identifier()};
         Redis::Node_Editor e {p,id};
-        if (e.requires_id())
+        if (e.id_required())
         {
             int i
             {

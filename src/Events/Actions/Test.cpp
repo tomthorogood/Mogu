@@ -1,7 +1,7 @@
 #include "../Actions.h"
 #include "Includes.h"
 #include <Types/MoguLogger.h>
-#include "../../Config/inline_utils.h"
+#include "../../utilities.h"
 
 namespace Application {
     extern Mogu_Logger log;

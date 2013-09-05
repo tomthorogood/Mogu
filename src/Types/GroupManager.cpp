@@ -2,7 +2,7 @@
 #include "../Types/Prefixes.h"
 #include "../Redis/QueryHandler/QueryHandler.h"
 #include "../hash.h"
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 #include <TurnLeftLib/Utils/randomcharset.h>
 #include <vector>
 #include <algorithm>

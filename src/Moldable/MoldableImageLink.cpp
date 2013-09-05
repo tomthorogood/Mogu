@@ -11,7 +11,7 @@
 #include <Wt/WImage>
 #include <Redis/NodeEditor.h>
 #include <Types/WidgetAssembly.h>
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 Moldable_Image_Link::Moldable_Image_Link(Widget_Assembly& assembly)
 : Moldable_Link(assembly)

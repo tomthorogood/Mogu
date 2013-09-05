@@ -10,7 +10,7 @@
 #include "../Types/CommandValue.h"
 #include <hash.h>
 #include <cctype>
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 //debug
 #include <iostream>

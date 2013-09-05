@@ -29,7 +29,7 @@ void increment (Moldable& broadcaster, Command_Value& v)
 
     int value
     {
-        v.test(Command_Flags::value) ? v.get(Command_Flags::value) : 1;
+        v.test(Command_Flags::value) ? v.get(Command_Flags::value).get_int() : 1
     };
 
     const Syntax_Def& s {Mogu_Syntax::get(arg)};

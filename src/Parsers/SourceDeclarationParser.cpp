@@ -1,14 +1,8 @@
 #include "SourceDeclarationParser.h"
 #include "NodeValueParser.h"
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 #include "../Types/syntax.h"
 #include <string.h>
-
-template <typename T>
-bool str_contains(const std::string& s, T v)
-{
-    return s.find(v) != std::string::npos;
-}
 
 Source_Declaration_Parser::Source_Declaration_Parser(const std::string& s)
 {

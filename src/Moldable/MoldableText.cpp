@@ -9,7 +9,7 @@
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
 #include <Types/WidgetAssembly.h>
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 Moldable_Text::Moldable_Text(Widget_Assembly& assembly) :
     Moldable(assembly, Mogu_Syntax::text)

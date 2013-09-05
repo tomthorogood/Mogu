@@ -28,6 +28,7 @@ public:
     ~Group_Manager() { if (db) delete db; }
     
     void create_group(const std::string& group_name, const int& founder);
+
     bool user_is_member(const int& user_id);
     bool user_is_admin(const int& user_id);
 

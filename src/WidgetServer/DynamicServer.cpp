@@ -1,15 +1,9 @@
 #include "../Mogu.h"
 #include "DynamicServer.h"
 #include "../Types/SyntaxDef.h"
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 namespace{
-
-template <class T>
-bool str_contains(const std::string& s, T v)
-{
-    return s.find(v) != std::string::npos;
-}
 
 std::tuple<const Syntax_Def&,int> parse_sort_definition (
         const std::string& s)

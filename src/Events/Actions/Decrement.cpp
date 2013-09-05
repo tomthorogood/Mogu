@@ -16,7 +16,7 @@ void decrement (Moldable& broadcaster, Command_Value& v)
     mApp;
     const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
     Prefix p {syntax_to_prefix(o)};
-    std::strig id 
+    std::string id 
         {static_cast<std::string>(v.get(Command_Flags::identifier))};
     
     Node_Value arg {};
@@ -24,7 +24,7 @@ void decrement (Moldable& broadcaster, Command_Value& v)
     std::string str {};
     int value
     {
-        v.test(Command_Flags::value) ? v.get(Command_Flags::value) : 1
+        v.test(Command_Flags::value) ? v.get(Command_Flags::value).get_int() : 1
     };
 
     if (v.test(Command_Flags::arg))

@@ -13,7 +13,7 @@
 #include <Events/EventHandler.h>
 #include <Wt/WAnchor>
 #include <Types/WidgetAssembly.h>
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 namespace Application {
     extern Mogu_Logger log;

@@ -10,7 +10,7 @@
 #include <Mogu.h>
 #include <Redis/NodeEditor.h>
 #include <Types/WidgetAssembly.h>
-#include "../Config/inline_utils.h"
+#include "../utilities.h"
 
 Moldable_Input::Moldable_Input (Widget_Assembly& assembly)
 : Moldable(assembly, Mogu_Syntax::input)
