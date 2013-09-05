@@ -155,7 +155,7 @@ void handle_user_to_group(Moldable& broadcaster, Command_Value& v)
     Group_Manager g {v.get(Command_Flags::identifier)};
     Security_Status s
     {
-        g.is_valid ? g.add_user(user) : Security_Status::error_unknown
+        g.is_valid ? g.add_user(user) : Security_Status::err_unknown
     };
 
     if (s != Security_Status::ok_register)

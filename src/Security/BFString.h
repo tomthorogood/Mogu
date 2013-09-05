@@ -35,12 +35,11 @@ public:
     }
 
 
-    operator bool() { return q.size() > 0; }
+    operator bool() { return static_cast<bool>(q.size()); }
 
     std::string yield()
     {
         std::string ret = q.front();
-        std::string dbg = ret;
         q.pop();
         return ret;
     }

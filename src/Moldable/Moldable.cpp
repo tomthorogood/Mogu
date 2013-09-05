@@ -121,14 +121,14 @@ bool Moldable::update_stack_index (size_t index)
     if (widget_type != Mogu_Syntax::stack) return false;
     Wt::WStackedWidget* stack {static_cast<Wt::WStackedWidget*>(widget(0))};
     size_t max_index = stack->children().size() -1;
-    Moldable* cur {(Moldable*) stack->currentWidget()};
+    Moldable* cur {static_cast<Moldable*>(stack->currentWidget())};
 
     // Ensure the index exists.
     if (index > max_index) return false;
 
 
     stack->setCurrentIndex(index);
-    Moldable* new_ {(Moldable*) stack->currentWidget()};
+    Moldable* new_ {static_cast<Moldable*>(stack->currentWidget())};
     cur->hiddenChanged().emit();
     new_->hiddenChanged().emit();
     return true;

@@ -189,59 +189,6 @@ void Node_Value_Parser::give_input(const std::string& i, Node_Value& nv, Moldabl
 
 }
 
-void Node_Value_Parser::set_command_value_object(Command_Value& cv, bool r_tokens)
-{
-    int curr_tok {};
-    Node_Value tmp {};
-
-    Command_Flags obj_flag {Command_Flags::object};
-    Command_Flags id_flag {Command_Flags::identifier};
-    Command_Flags arg_flag {Command_Flags::arg};
-
-    if (r_tokens)
-    {
-        obj_flag = Command_Flags::r_object;
-        id_flag = Command_Flags::r_identifier;
-        arg_flag = Command_Flags::r_arg;
-    }
-
-    // Fast forward to the next object token.
-    do {
-        curr_tok = tm.current_token();
-        tm.next();
-    } while (!is_object_token(curr_tok));
-    tm.prev();
-
-    cv.set(obj_flag, curr_tok);
-    tm.next();
-
-    // If the next token is a string, it is necessarily an identifier.
-    // It can also be another arbitrary token, however, representing a 
-    // state/attribute("own content", or "app path"). In the latter case,
-    // we need nothing more, though, so we return.
-    curr_tok = tm.current_token();
-    if (curr_tok == Mogu_Syntax::TOKEN_DELIM)
-    {
-        tmp.set_string(tm.fetch_string());
-        cv.set(id_flag, tmp);
-    }
-    else if (curr_tok != Mogu_Syntax::OUT_OF_RANGE_END)
-    {
-        tmp.set_int(curr_tok);
-        cv.set(arg_flag, tmp);
-        return;
-    }
-
-    // If we've reached this part, we're setting an arg, no ifs, ands, or buts.
-    tm.next();
-    curr_tok = tm.current_token();
-    if (curr_tok == Mogu_Syntax::TOKEN_DELIM)
-        tmp.set_string(tm.fetch_string());
-    else
-        tmp.set_int(curr_tok);
-    cv.set(arg_flag, tmp);
-}
-
 void Node_Value_Parser::handle_user_to_group(Command_Value& cv, Moldable* bc)
 {
     if (tm.current_token() != Mogu_Syntax::preposition) return;

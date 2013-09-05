@@ -92,9 +92,7 @@ class Token_Manager
 		//ALL ITERATORS ARE INVALIDATED AND THIS MANAGER BREAKS!!
 		//though we shouldn't have a reallocation because we only
 		//inject a token after we delete several tokens.
-		void delete_to_saved();
 		void delete_from_saved();
-		void truncate_head();
 
 		inline std::string stitch()
 		{

@@ -48,7 +48,6 @@ class Node_Value_Parser
 		size_t find_full_quote(std::string str);
         void handle_append_command(Command_Value&, Moldable*);
         void handle_user_to_group(Command_Value&, Moldable*);
-        void set_command_value_object(Command_Value&, bool r_object=false); 
 };
 
 }	// namespace Parsers

@@ -120,7 +120,7 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
         Moldable* x {app->get_widget(v.get_identifier())};
         if (x)
         {
-            Moldable* r {(Moldable*) x->parent()};
+            Moldable* r {static_cast<Moldable*>(x->parent())};
             r->removeChild(x);
         }
     } 
