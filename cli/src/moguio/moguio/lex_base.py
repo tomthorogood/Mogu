@@ -1,11 +1,11 @@
 import pyboro
 import syntax
+from RegexLib import regexlib
 from lex_functions import everything_until
 from lex_functions import trim
 from lex_functions import directive_start
 from lex_functions import add_definition
 from lex_functions import add_references
-from lex_functions import valid_options
 from lex_functions import reference_widget_list
 
 
@@ -15,80 +15,6 @@ pyboro.Lexer.VERBAL = False
 
 IGNORE = pyboro.Lexer.ParseMap.IGNORE #alias for ease of reading
 LITERAL = pyboro.Lexer.ParseMap.LITERAL #alias for ease of reading
-
-
-def option_list(grammar_type):
-    return "(%s)" % "|".join(valid_options(grammar_type))
-
-#STRLIT = r'''(?x)   # verbose mode
-#    (?<!\\)    # not preceded by a backslash
-#    "          # a literal double-quote
-#    .*?        # non-greedy 1-or-more characters
-#    (?<!\\)    # not preceded by a backslash
-#    "          # a literal double-quote
-#    ''' 
-
-regexlib = {
-    "identifier"    :   "[a-zA-Z:_][a-zA-Z:_0-9]*",
-    "string_literal":   r'''(?<!\\)".*?(?<!\\)"''',
-    "math_operator" :   r'''(\(|\)|\+|\-|\*|\/)''',
-    "math_begin"    :   r'''(\(|\-)''',
-    "math_end"      :   r'''(\))''',
-    "reserved"      :   "(%s)" % "|".join(syntax.MoguSyntax.keys()),
-    "event_triggers":   option_list("event trigger"),
-    "widget_types"  :   option_list("widget type"),
-    "datatype"      :   option_list("datatype"),
-    "validator_type":   option_list("validator type"),
-    "action"        :   option_list("action"),
-    "object"        :   option_list("object"),
-    "attribute"     :   option_list("attribute"),
-    "preposition"   :   option_list("preposition"),
-    "comment"       :   r"#.*\n",
-    "math_gen_expr" :   r"%d.*%d" % (syntax.MoguOperators["("],syntax.MoguOperators[")"]),
-#    "math_gen_expr" :   r"\(.*\)",
-    "comment"       :   "^#.*\n",
-    "location"      :   str(syntax.as_integer("location")),
-}
-
-regexlib["math_oper"] = "(%(*)d|%(+)d|%(-)d|%(/)d)" % syntax.MoguOperators
-regexlib["op_paren"] = str(syntax.MoguOperators["("])
-regexlib["cl_paren"] = str(syntax.MoguOperators[")"])
-
-# OBJECT SET
-#   An object set is a phrase which can resolve to an
-#   object within the system, consisting of an object
-#   type, an identifier, and an attribute of that object
-#
-#   There are some exceptions, for example the keyword 'own',
-#   which acts upon the object using it, and does not require
-#   an identifier.
-# Examples of valid object sets:
-#   data foo
-#   data foo bar
-#   widget foo css
-#   user foo bar
-#   group foo
-#   group foo bar
-#   own content
-
-regexlib["object_set"]  = "%(object)s(\s+%(identifier)s)?(\s+(%(attribute)s|%(identifier)s))?" % regexlib
-regexlib["object_set"]  = "(%(object_set)s\s*)+" % regexlib
-regexlib["signed_obj"] = "-?\s*(%(object_set)s|[0-9\.]+)" % regexlib
-regexlib["math_expr"] = "%(op_paren)s%(signed_obj)s\s*%(math_oper)s(%(signed_obj)s\s*%(math_oper)s\s*)*\s*%(signed_obj)s%(cl_paren)s" % regexlib
-regexlib["hash"] = syntax.as_integer("hash")
-
-# VALUE
-#   A value in Mogu can consist of any object set, string literal, or integer literal.
-#   The object set must resolve to something which can be turned into a string at runtime.
-#
-# Examples of valid values:
-#   17
-#   "a literal string!"
-#   own content
-#   data stringdata somestring
-#   user name first
-#
-regexlib["value"] = "((%(hash)s )?%(object_set)s|%(string_literal)s|%(math_gen_expr)s|-?[0-9]+)" % regexlib 
 
 HASH_DEFINITION = pyboro.Lexer.ParseMap((
     ("key",             everything_until(":")   ,   trim),
@@ -178,7 +104,7 @@ WIDGET_VALIDATOR = pyboro.Lexer.ParseMap((
 WIDGET_TEMPLATE = pyboro.Lexer.ParseMap((
     ("begin",       directive_start(syntax.as_integer("template"))  , IGNORE),
     ("template", regexlib["identifier"],\
-            lambda s: add_definition("%d %s" % (syntax.as_integer("template"),s))),
+            lambda s: add_references("%d %s" % (syntax.as_integer("template"), s))),
     ("end",         r"\S*"                                          , IGNORE)
 ))
 

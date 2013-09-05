@@ -3,7 +3,7 @@ from lex_functions import newline_list
 from lex_functions import add_definition
 from lex_functions import add_references
 
-from lex_base import regexlib
+from RegexLib import regexlib
 from lex_base import NEWLINES
 from lex_base import POLICY_DATA
 from lex_base import POLICY_DEFAULT
@@ -172,7 +172,7 @@ t = "policy"
 POLICY_BLOCK = Lexer.ParseMap((
     ("begin",           "\s*%s\s+"%t,                    IGNORE),
     ("identifier",      regexlib["identifier"],\
-            lambda s: add_definition(syntax.as_integer("policy"),s)),
+            lambda s: add_definition("policy",s)),
     ("policy_def",      everything_until(r"end\s+%s"%t), PolicyConsumer.parse),
     ("end",             r"end\s+%s"%t,                   IGNORE)
 ))

@@ -2,7 +2,6 @@ import syntax
 import SymbolRegistry
 import SharedData
 import ReferenceFinder
-from lex_base import regexlib
 import re
 
 def directive_start(token):
@@ -14,23 +13,18 @@ def add_references(string):
     for obj in f.refs:
         if obj not in SharedData.symbols:
             SharedData.symbols[obj] = SymbolRegistry.SymbolRegistry(
-                label=syntax.as_string(obj))
+                label= syntax.as_string(obj) if obj!="policy" else obj)
         for symbol in f.refs[obj]:
             SharedData.symbols[obj].reference(symbol, SharedData.ActiveFile)
     return string
 
 def add_definition(obj, identifier):
+    SharedData.ActiveIdentifier = identifier
     if obj not in SharedData.symbols:
         SharedData.symbols[obj] = SymbolRegistry.SymbolRegistry(
             label = syntax.as_string(obj))
     SharedData.symbols[obj][identifier] = SharedData.ActiveFile
     return identifier
-
-def remove_string_literals(string):
-    found = re.findall(regexlib["string_literal"])
-    for literal in found:
-        string = string.replace(literal,"")
-    return string
 
 def reference_widget_list(string):
     w_list = newline_list(string)
@@ -41,13 +35,6 @@ def reference_widget_list(string):
     for w in w_list:
         SharedData.symbols[syntax.as_integer("widget")].reference(w, SharedData.ActiveFile)
     return w_list
-
-def valid_options (string):
-    """
-        Returns valid integral representations of keywords.
-    """
-    return [str(syntax.MoguSyntax[key][0]) \
-            for key in syntax.MoguSyntax if string in syntax.MoguSyntax[key][1]]
 
 def trim(string):
     return string.strip()

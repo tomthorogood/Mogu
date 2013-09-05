@@ -1,5 +1,5 @@
 from multistring import MultiString
-from lex_base import regexlib
+from RegexLib import regexlib
 import syntax
 import re
 from sets import Set

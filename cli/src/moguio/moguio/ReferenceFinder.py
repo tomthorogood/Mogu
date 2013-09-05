@@ -1,5 +1,5 @@
 from sets import Set
-from lex_base import regexlib
+from RegexLib import regexlib
 import syntax
 import re
 
@@ -44,7 +44,7 @@ class ReferenceFinder(object):
         # Policies are never referred to directly, but inferred from field names
         # for user/group fields.
         if obj in (syntax.as_integer("user"),syntax.as_integer("group")):
-            obj = syntax.as_integer("policy")
+            obj = "policy"
         if obj not in self.refs:
             self.refs[obj] = Set() 
         self.refs[obj].add(identifier)
@@ -53,7 +53,11 @@ class ReferenceFinder(object):
         for index in indexes:
             token = int(tokens[index])
             if token in ReferenceFinder.referencable_objects:
-                self.add_reference(token,tokens[index+1])
+                try:
+                    self.add_reference(token,tokens[index+1])
+                except IndexError:
+                    if token not in (syntax.as_integer("group"),syntax.as_integer("user")):
+                        print ("WARNING: %s not follwed by identifier" % syntax.as_string(token))
 
     def parse_string(self, string):
         string = self.remove_string_literals(string)
