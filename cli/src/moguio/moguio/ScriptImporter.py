@@ -39,7 +39,7 @@ class ScriptImporter(object):
             self.results.extend(PathImporter.import_path(path))
 
         # Determine if any references have unmet dependencies
-        for registry in SharedData.symbols:
+        for registry in [SharedData.symbols[x] for x in SharedData.symbols]:
             if not registry:
                 raise ScriptImporter.RegistryError(registry)
 
