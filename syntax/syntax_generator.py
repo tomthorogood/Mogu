@@ -44,18 +44,22 @@ with open("cpp_template.cpp","r") as f:
 PY_ADDITIONS = """
 def as_integer(string):
     global MoguSyntax
+    if isinstance(string,int):
+        string = str(string)
     return MoguSyntax[string.strip()][0]
 
 def as_string(integer):
     global MoguSyntax
-    integer = integer.strip()
-    if int(integer) == 0:
+    if isinstance(integer,str):
+        integer = integer.strip()
+        integer = int(integer)
+    if integer == 0:
         return "0"
     reverseDict = dict.fromkeys(MoguSyntax,None)
     for key in MoguSyntax:
         ival = MoguSyntax[key][0]
         reverseDict[ival] = key
-    return reverseDict[int(integer)]
+    return reverseDict[integer]
 """
 
 OPERATORS=OrderedDict([

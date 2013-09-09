@@ -16,7 +16,12 @@ def add_references(string):
                 label= syntax.as_string(obj) if obj!="policy" else obj)
         for symbol in f.refs[obj]:
             SharedData.symbols[obj].reference(symbol, SharedData.ActiveFile)
-    return string
+    return string.strip()
+
+def temp_join(func, delim, ret_index, *args):
+    string = delim.join(args)
+    func(string)
+    return args[ret_index].strip()
 
 def add_definition(obj, identifier):
     SharedData.ActiveIdentifier = identifier
@@ -24,7 +29,7 @@ def add_definition(obj, identifier):
         SharedData.symbols[obj] = SymbolRegistry.SymbolRegistry(
             label = syntax.as_string(obj))
     SharedData.symbols[obj][identifier] = SharedData.ActiveFile
-    return identifier
+    return identifier.strip()
 
 def reference_widget_list(string):
     w_list = newline_list(string)

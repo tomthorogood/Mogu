@@ -7,6 +7,7 @@ from lex_functions import directive_start
 from lex_functions import add_definition
 from lex_functions import add_references
 from lex_functions import reference_widget_list
+from lex_functions import temp_join
 
 
 # Control of debugging vomit
@@ -97,14 +98,16 @@ WIDGET_LOCATION = pyboro.Lexer.ParseMap((
 WIDGET_VALIDATOR = pyboro.Lexer.ParseMap((
     ("begin",       directive_start(syntax.as_integer('validator')), IGNORE),
     ("validator",    "[^\n]*" ,\
-            lambda s: add_references("%d %s" % (syntax.as_integer("validator"), s))),
+        lambda s: temp_join(
+            add_references, " ", 1, "%d" % syntax.as_integer("validator"), s)),
     ("end",          r"\S*"                                          , IGNORE)
 ))
 
 WIDGET_TEMPLATE = pyboro.Lexer.ParseMap((
     ("begin",       directive_start(syntax.as_integer("template"))  , IGNORE),
     ("template", regexlib["identifier"],\
-            lambda s: add_references("%d %s" % (syntax.as_integer("template"), s))),
+        lambda s: temp_join(
+            add_references, " ", 1, "%d" % syntax.as_integer("template"), s)),
     ("end",         r"\S*"                                          , IGNORE)
 ))
 
