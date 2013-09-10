@@ -2,9 +2,11 @@ import os
 import FileImporter
 import sys
 import PythonObjectConverter
+import SharedData
+import ScriptImporter
 
 
-def import_path(pathname, verbal=False):
+def import_path(pathname, verbal=False, root=True):
     sys.stdout.write("\n")
     path_results = []
     mogu_files = []
@@ -22,7 +24,7 @@ def import_path(pathname, verbal=False):
     shortname = tail
     for directory in directories:
         path_results.extend(import_path(os.path.join(pathname,directory),
-            verbal))
+            verbal,False))
     for i,mogufile in enumerate(mogu_files):
         # Display nice progress information so the user doesn't think
         # something is wrong
@@ -41,14 +43,20 @@ def import_path(pathname, verbal=False):
             path_results.extend(
                     FileImporter.import_file(
                         os.path.join(pathname,mogufile),verbal))
-
-    sys.stdout.write("\n")
     # The results will be a list of tuples, each of which will contain two
     # entries:
     # index 0 will contain the OrderedDict of token names: tokens.
     # index 1 will contain the actual map used to parse the tokens
-
-
+    if root:
+        registries = SharedData.symbols.values()
+        for registry in registries:
+            if not registry:
+                raise ScriptImporter.RegistryError(registry)
+            if registry.nonreferenced():
+                for symbol in registry.nonreferenced():
+                    sys.stderr.write(
+                            "WARNING: %s is defined but never referenced\n" % \
+                            (symbol)) 
     return path_results
 
 def flatten(container):

@@ -36,7 +36,8 @@ def reference_widget_list(string):
     for index,entry in enumerate(w_list):
         if entry.startswith(":"):
             w_list[index] = SharedData.ActiveIdentifier+entry
-            if SharedData.VERBAL: print("Expanded %s to %s" % (entry, w_list[index]))
+            if SharedData.VERBAL:
+                sys.stdout.write("Expanded %s to %s\n" % (entry, w_list[index])
     for w in w_list:
         SharedData.symbols[syntax.as_integer("widget")].reference(w, SharedData.ActiveFile)
     return w_list

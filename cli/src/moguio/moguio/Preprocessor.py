@@ -2,6 +2,7 @@ from markdown import markdown
 from sets import Set
 import re
 import os
+import sys
 
 class Preprocessor(object):
 
@@ -14,7 +15,7 @@ class Preprocessor(object):
     def log(self, *args):
         if self.verbose:
             msg = " ".join(args)
-            print(msg)
+            sys.stderr.write("%s\n" %msg)
 
 
     def filename_from_include(self,string):

@@ -21,7 +21,7 @@ referenced.
 
 class SymbolRegistry(object):
     def __init__(self, label=None, initdict=None):
-        self.symbols = initdict if initdict else {}
+        self.symbols = initdict or {}
         self.label = label
 
     def __len__(self):

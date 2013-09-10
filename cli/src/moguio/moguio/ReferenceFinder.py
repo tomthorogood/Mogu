@@ -2,10 +2,12 @@ from sets import Set
 from RegexLib import regexlib
 import syntax
 import re
+import sys
 
 class ReferenceFinder(object):
     """Given a string, attempts to deduce references to Mogu objects."""
 
+    
 
     referencable_objects = (
         syntax.as_integer("widget"),
@@ -16,9 +18,10 @@ class ReferenceFinder(object):
         syntax.as_integer("group")
     )
 
-    def __init__(self, string):
+    def __init__(self, string, verbose=False):
         self.refs = {}
         self.parse_string(string)
+        self.verbose=verbose
 
     def remove_string_literals(self, string):
         found = re.findall(regexlib["string_literal"], string)
@@ -36,7 +39,7 @@ class ReferenceFinder(object):
 
     def is_identifier(self, string):
         m = re.match(regexlib["identifier"],string)
-        return True if m else False
+        return (m.group()==string) if m else False
 
     def add_reference(self, obj, identifier):
         if not self.is_identifier(identifier):
@@ -56,9 +59,12 @@ class ReferenceFinder(object):
                 try:
                     self.add_reference(token,tokens[index+1])
                 except IndexError:
-                    if token not in (syntax.as_integer("group"),syntax.as_integer("user")):
-                        print ("WARNING: %s not follwed by identifier" % syntax.as_string(token))
-
+                    if token not in (
+                            syntax.as_integer("group")
+                            ,syntax.as_integer("user")):
+                        sys.stderr.write(
+                            "WARNING: %s not followed by identifier\n" %\
+                                    syntax.as_string(token))
     def parse_string(self, string):
         string = self.remove_string_literals(string)
         tokens = string.split(" ")
