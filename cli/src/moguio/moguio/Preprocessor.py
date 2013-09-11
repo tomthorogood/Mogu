@@ -1,12 +1,14 @@
 from markdown import markdown
+import Loggable
 from sets import Set
 import re
 import os
 import sys
 
-class Preprocessor(object):
+class Preprocessor(Loggable.Loggable):
 
-    def __init__(self,verbose=False):
+    def __init__(self,verbose=0):
+        super(Preprocessor,self).__init__(verbose)
         self.verbose = verbose
         self.inputstream = None
         self.symbols = {}
@@ -15,8 +17,7 @@ class Preprocessor(object):
     def log(self, *args):
         if self.verbose:
             msg = " ".join(args)
-            sys.stderr.write("%s\n" %msg)
-
+            super(Preprocessor, self).log(Loggable.LogMessage(msg,5), self.OUT)
 
     def filename_from_include(self,string):
         quoted = re.search("\".+\"",string)

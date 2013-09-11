@@ -107,31 +107,3 @@ class SymbolRegistry(object):
             if len(self[key]) == 0:
                 nonrefs.append(key)
         return nonrefs
-
-# TESTING #
-if __name__ == "__main__":
-    import random
-    import string
-    def randomfilename():
-        name = "".join([random.choice(string.letters) for i in range(10)])
-
-        return name + ".mogu"
-    symbols = (
-            "singular_symbol_a",
-            "singular_symbol_b",
-            "singular_symyol_c",
-            "repeat_symbol"
-            )
-    testRegistry = SymbolRegistry()
-    for symbol in symbols:
-        testRegistry[symbol] = randomfilename()
-        for i in range(3):
-            testRegistry.reference(symbol, randomfilename())
-
-    bad = symbols[-1]
-    try:
-        testRegistry[bad] = randomfilename()
-    except Exception as e:
-        raise e
-    print(testRegistry)
-    print(repr(testRegistry))

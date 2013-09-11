@@ -4,7 +4,6 @@ from RegexLib import regexlib
 from lex_functions import everything_until
 from lex_functions import trim
 from lex_functions import directive_start
-from lex_functions import add_definition
 from lex_functions import add_references
 from lex_functions import reference_widget_list
 from lex_functions import temp_join

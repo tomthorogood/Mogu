@@ -1,13 +1,14 @@
 from sets import Set
 from RegexLib import regexlib
 import syntax
+from Loggable import Loggable
+from Loggable import LogMessage
 import re
 import sys
 
-class ReferenceFinder(object):
+class ReferenceFinder(Loggable):
     """Given a string, attempts to deduce references to Mogu objects."""
 
-    
 
     referencable_objects = (
         syntax.as_integer("widget"),
@@ -18,10 +19,10 @@ class ReferenceFinder(object):
         syntax.as_integer("group")
     )
 
-    def __init__(self, string, verbose=False):
+    def __init__(self, string, verbose=0):
+        super(ReferenceFinder,self).__init__(verbose)
         self.refs = {}
         self.parse_string(string)
-        self.verbose=verbose
 
     def remove_string_literals(self, string):
         found = re.findall(regexlib["string_literal"], string)
@@ -44,10 +45,14 @@ class ReferenceFinder(object):
     def add_reference(self, obj, identifier):
         if not self.is_identifier(identifier):
             return
+        self.log(
+            LogMessage("Found reference to symbol %s" % identifier,5),self.OUT)
         # Policies are never referred to directly, but inferred from field names
         # for user/group fields.
         if obj in (syntax.as_integer("user"),syntax.as_integer("group")):
             obj = "policy"
+        self.log(
+            LogMessage("Symbol is of type %s",str(obj)),self.OUT)
         if obj not in self.refs:
             self.refs[obj] = Set() 
         self.refs[obj].add(identifier)

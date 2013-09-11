@@ -2,18 +2,18 @@ import syntax
 import SymbolRegistry
 import SharedData
 import ReferenceFinder
-import re
+import sys
 
 def directive_start(token):
     d =  r"\s*(%s)\s*:\s*" % token
     return d
 
 def add_references(string):
-    f = ReferenceFinder.ReferenceFinder(string)
+    f = ReferenceFinder.ReferenceFinder(string,SharedData.verbose)
     for obj in f.refs:
         if obj not in SharedData.symbols:
             SharedData.symbols[obj] = SymbolRegistry.SymbolRegistry(
-                label= syntax.as_string(obj) if obj!="policy" else obj)
+                label= syntax.as_string(obj) if isinstance(obj,int) else obj)
         for symbol in f.refs[obj]:
             SharedData.symbols[obj].reference(symbol, SharedData.ActiveFile)
     return string.strip()
@@ -36,10 +36,8 @@ def reference_widget_list(string):
     for index,entry in enumerate(w_list):
         if entry.startswith(":"):
             w_list[index] = SharedData.ActiveIdentifier+entry
-            if SharedData.VERBAL:
-                sys.stdout.write("Expanded %s to %s\n" % (entry, w_list[index])
     for w in w_list:
-        SharedData.symbols[syntax.as_integer("widget")].reference(w, SharedData.ActiveFile)
+        add_references(w)
     return w_list
 
 def trim(string):

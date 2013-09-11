@@ -37,7 +37,7 @@ There is a problem with your escape sequences.
     %(needle)s should have been substituted, but was not in: 
 
     %(haystack)s
-"""
+""" % self.__dict_
 
 class MoguString(MultiString):
     ReverseLookup = {}

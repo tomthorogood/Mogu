@@ -4,6 +4,9 @@ import os
 import redis
 import RedisObjects
 
+from Loggable import Loggable
+from Loggable import LogMessage
+
 # DEFAULT DBCONFIG.CONF LOCATION:
 DB_CONFIG_PATH = "../../../../"
 DB_CONFIG_FILE = "dbconfig.conf"
@@ -48,7 +51,7 @@ def parseDBConfig(filename):
             confdict[prefix][attr] = value
     return confdict
 
-class RedisWriter(object):
+class RedisWriter(Loggable):
     def __init__(self,args=None):
         """
             args should be the results of the ArgumentParser module run when 
@@ -57,7 +60,7 @@ class RedisWriter(object):
                 verbal = True
         """
         self.dbconfig   = None  # Will be set in try...except below
-        self.verbal     = args.v if args else True
+        self.verbose     = args.v if args else True
         self.yes        = args.y if args else False
         self.flushdb    = args.flushdb if args else False
         self.flushrules = args.flushrules if args else None
@@ -209,8 +212,7 @@ class RedisWriter(object):
                 self.setWriter(obj)
 
         for pipe in self.pipes:
-            if self.verbal:
-                sys.stderr.write("Executing commands in the %s pipeline..." % pipe)
+            self.log(LogMessage(
+                "Executing commands in the %s pipeline...",5, False),self.OUT)
             self.pipes[pipe].execute()
-            if self.verbal:
-                sys.stderr.write("success!\n")
+            self.log(LogMessage("success!", 5),self.OUT)

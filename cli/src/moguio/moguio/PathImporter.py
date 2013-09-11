@@ -1,108 +1,95 @@
-import os
 import FileImporter
 import sys
 import PythonObjectConverter
 import SharedData
-import ScriptImporter
+import PathResolver
+import LineDisplay
+
+from MoguString import MoguString
+
+from Loggable import Loggable
+from Loggable import LogMessage
+
+from pyboro.src.Consumer import PyBoroSyntaxError
+
+class RegistryError(Exception):
+    def __init__(self, registry):
+        self.label = registry.label
+        self.symbols = registry.undefined()
+        self.references = [registry[s].references for s in self.symbols]
+        self.reg_info = str(registry)
+
+    def __str__(self):
+        strs = [str(s) for s in self.symbols]
+        strs = [MoguString("integral",s) for s in strs]
+        strs = [s.translate("script") for s in strs]
+        output = self.reg_info
+        for i,s in enumerate(strs):
+            refs = self.references[i]
+            refs_as_str = "\n\t".join(refs)
+            output += \
+                "\nSymbol %s undefined, found in:\n\t%s" % (s, refs_as_str)
+        return output
 
 
-def import_path(pathname, verbal=False, root=True):
-    sys.stdout.write("\n")
-    path_results = []
-    mogu_files = []
-    directories = []
-    single_file = pathname.endswith(".mogu")
-    
-    if not single_file:
-        mogu_files = [entry for entry in os.listdir(pathname) if \
-                entry.endswith(".mogu")]
-        directories = [entry for entry in os.listdir(pathname) if \
-                os.path.isdir(os.path.join(pathname,entry))]
-    else:
-        mogu_files = [pathname]
-    head,tail = os.path.split(pathname)
-    shortname = tail
-    for directory in directories:
-        path_results.extend(import_path(os.path.join(pathname,directory),
-            verbal,False))
-    for i,mogufile in enumerate(mogu_files):
-        # Display nice progress information so the user doesn't think
-        # something is wrong
-        sys.stdout.write("\r%s "%(" "*80))
-        sys.stdout.flush()
-        sys.stdout.write("\r%s Progress: %d%s (%s)" % (shortname, 
-            ((i+1.0)/float(len(mogu_files)))*100, "%", mogufile))
-        sys.stdout.flush()
+class PathImporter(Loggable):
+    def __init__(self, path, verbose=0):
+        super(PathImporter, self).__init__(verbose)
+        self.path_resolver = PathResolver.PathResolver(verbose)
+        self.files = self.path_resolver.get_files(path)
+        self.display = LineDisplay.LineDisplay()
+        SharedData.verbose = verbose
 
-        # Append lexed results to results
-        if single_file:
-            sys.stdout.write("Importing single file: %s" % mogufile)
-            sys.stdout.flush()
-            path_results.extend(FileImporter.import_file(mogufile))
-        else:
-            path_results.extend(
-                    FileImporter.import_file(
-                        os.path.join(pathname,mogufile),verbal))
-    # The results will be a list of tuples, each of which will contain two
-    # entries:
-    # index 0 will contain the OrderedDict of token names: tokens.
-    # index 1 will contain the actual map used to parse the tokens
-    if root:
+    def display_progress(self, filename):
+        # Get the "percentage complete" based on the current filename
+        i = self.files.index(filename)
+        p = int(( (i+1.0)/len(self.files)) * 100)
+
+        # Build a message and update the last_update_len so it can be 
+        # effectively cleared in the next round
+        message = "Progress: %d%% (%s)" % (p, filename)
+        self.display.clear().write(message)
+
+    def get_results(self):
+        results = []
+        for f in self.files:
+            try:
+                self.display_progress(f)
+                fi = FileImporter.FileImporter(f,self.verbose)
+                results.extend(fi.get_results())
+            except PyBoroSyntaxError as e:
+                # For imports, don't print the entire traceback.
+                # Instead, just print the syntax error.
+                sys.exit(str(e))
+
         registries = SharedData.symbols.values()
-        for registry in registries:
-            if not registry:
-                raise ScriptImporter.RegistryError(registry)
-            if registry.nonreferenced():
-                for symbol in registry.nonreferenced():
-                    sys.stderr.write(
-                            "WARNING: %s is defined but never referenced\n" % \
-                            (symbol)) 
-    return path_results
-
-def flatten(container):
-    def is_flat(container):
-        for entry in container:
-            if isinstance(entry,(list,tuple)):
-                return False
-        return True
-    flat = []
-    for entry in container:
-        if isinstance(entry,(list,tuple)):
-            flat.extend(entry)
-        else:
-            flat.append(entry)
-    while not is_flat(flat):
-        flatten(flat)
-    return flat
+        for r in registries:
+            if not r:
+                raise RegistryError(r)
+            if r.nonreferenced():
+                for sym in r.nonreferenced():
+                    self.log(LogMessage(
+                        "%s is defined but never referenced" % sym, 3), self.OUT)
+        return results
 
 
-def convert_results(results):
-    converter = PythonObjectConverter.PythonObjectConverter() 
-    conversions = []
-    num_conversions = 0
-    for result in results:
-        conversions.append(converter.convert(result))
-        num_conversions += 1
-        sys.stdout.write("\r%s "% (" "*80))
-        sys.stdout.flush()
-        sys.stdout.write("\rResults converted: %d/%d" % (num_conversions, len(results)))
-    sys.stdout.write("\n")
-    conversions = flatten(conversions)
-    return conversions
+    def flatten(self, container):
+        self.log(LogMessage("Flatting container...",5,newline=False),self.OUT)
+        flat = []
+        for i in container:
+            if isinstance(i,(list,tuple)):
+                flat.extend(self.flatten(i))
+            else:
+                flat.append(i)
+        self.log(LogMessage("DONE!",5,newline=True),self.OUT)
+        return flat
 
-if __name__ == "__main__":
-    from argparse import ArgumentParser
-    parser = ArgumentParser("Give me a path for testing. I'll only do one for right now.")
-    parser.add_argument(nargs="+",dest="path")
-    parser.add_argument("-v",action="store_true",default=False)
-    parser.add_argument("--flush", action="store_true", default=False, dest="flushdb")
-    parser.add_argument("--config", action="store", dest="dbconfig", help="The"
-            "absoltue path to your dbconfig.conf file")
-    parser.add_argument("-y", action="store_true", default=False, dest="y")
-    args = parser.parse_args()
-#    pyboro.Lexer.VERBAL=args.v
-    path = args.path[0]
-    results = import_path(path,args.v)
-#    conversions = convert_results(results)
-#    writer = RedisWriter.RedisWriter(args)
-#    writer.write(conversions)
+    def convert_results(self, results):
+        c = PythonObjectConverter.PythonObjectConverter(self.verbose)
+        conversions = []
+        for i,r in enumerate(results):
+            self.display.clear().write(
+                "Converting result %d/%d..." % (i+1,len(results)))
+            conversions.append(c.convert(r))
+        self.display.clear().write("\n")
+        return self.flatten(conversions)

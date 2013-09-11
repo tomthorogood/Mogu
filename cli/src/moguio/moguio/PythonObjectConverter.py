@@ -5,7 +5,9 @@ import lex_base
 import Lex
 import pyboro
 from sets import Set
-class PythonObjectConverter(object):
+
+from Loggable import Loggable
+class PythonObjectConverter(Loggable):
     """
     Each entry passed into this converter must be a tuple
     in the form of (OrderedDict, ParseMap), where
@@ -13,8 +15,8 @@ class PythonObjectConverter(object):
     the RootConsumer-valid block, and ParseMap will be 
     a reference to the actual ParseMap that lexed the block.
     """
-    def __init__(self):
-        pass
+    def __init__(self,verbose=0):
+        super(PythonObjectConverter,self).__init__(verbose)
 
     def convert_to_redis_object(self, obj_name, obj):
         if isinstance(obj, dict):

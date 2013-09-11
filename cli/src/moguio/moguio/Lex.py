@@ -1,5 +1,4 @@
 from lex_functions import everything_until
-from lex_functions import newline_list
 from lex_functions import add_definition
 from lex_functions import add_references
 

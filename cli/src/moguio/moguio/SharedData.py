@@ -1,4 +1,4 @@
 ActiveFile = None
 ActiveIdentifier = None
-VERBAL=False
+verbose = 0
 symbols = {}
