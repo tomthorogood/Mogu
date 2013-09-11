@@ -32,9 +32,9 @@ def getCLIArgs():
             help="Will assume yes to all questions. EXTRA CAREFUL!")
 
     parser.add_argument("-v", "--verbose",
-            dest="v", action="store_true",
-            default=config.get("cli options", "verbose").lower()=="true",
-            help="Will make the import command more verbose")
+            dest="v", action="store", type=int,
+            default=int(config.get("cli options", "verbose")),
+            help="Will make the import command more verbose (1-5)")
 
     args = parser.parse_args()
     args.dbroot = config.get("runtime options", "root")
