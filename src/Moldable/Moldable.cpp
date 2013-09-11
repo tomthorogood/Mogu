@@ -131,6 +131,7 @@ bool Moldable::update_stack_index (size_t index)
     Moldable* new_ {static_cast<Moldable*>(stack->currentWidget())};
     cur->hiddenChanged().emit();
     new_->hiddenChanged().emit();
+    indexChanged().emit();
     return true;
 }
 
