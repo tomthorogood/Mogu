@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from coloring import * 
 from os import system
 import sys
 import moguio.RedisWriter
