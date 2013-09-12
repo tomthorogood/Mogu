@@ -1,3 +1,16 @@
+<<<success
+Great! You're all registered!
+>>>
+
+<<<nomatch
+Your passwords don't match!
+>>>
+
+<<<error
+There was a problem with your registration. 
+Have you registered before?
+>>>
+
 widget example
     type    :   container
     children
@@ -43,22 +56,26 @@ widget example:user:submit
 
     events
         when clicked {
-            test widget example:user:password content at widget example:user:passconf content
+            test widget example:user:password text is widget example:user:passconf text
         }
 
         when succeeded test {
             set widget example:user:feedback to " "
-            set slot USERNAME to widget example:user:username content
-            set slot PASSWORD to widget example:user:password content
+            set slot USERNAME to widget example:user:username text
+            set slot USERAUTH to widget example:user:password text
             append user
-            set widget example:user:feedback content to "Ok! You're registered!"
+            set widget example:user:feedback text to @success
             remove widget example:user:username
             remove widget example:user:password
             remove widget example:user:passconf
         }
 
         when failed test {
-            set widget example:user:feedback content to "Woops. Your passwords don't match!"
+            set widget example:user:feedback text to @nomatch
+        }
+        
+        when error reported {
+            set widget example:user:feedback text to @error
         }
     end events
 end widget
