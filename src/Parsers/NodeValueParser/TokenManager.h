@@ -51,24 +51,43 @@ namespace Parsers {
          (int) Mogu_Syntax::key
 	};
 
+    const static std::unordered_set<int> trigger_tokens = {
+        (int) Mogu_Syntax::mouseover,
+        (int) Mogu_Syntax::mouseout,
+        (int) Mogu_Syntax::style_changed,
+        (int) Mogu_Syntax::keyup,
+        (int) Mogu_Syntax::fail,
+        (int) Mogu_Syntax::succeed,
+        (int) Mogu_Syntax::enter_pressed,
+        (int) Mogu_Syntax::hidden_changed,
+        (int) Mogu_Syntax::index_changed,
+        (int) Mogu_Syntax::onload,
+        (int) Mogu_Syntax::error_reported
+    };
+
 	inline bool is_state_token(int token) 
 	{
-	    return state_tokens.count( token) == 1;
+	    return state_tokens.count(token) == 1;
 	}
 
 	inline bool is_widget_token(int token) 
 	{
-		return widget_tokens.count( token) == 1;
+		return widget_tokens.count(token) == 1;
 	}
+
+    inline bool is_trigger_token(int token)
+    {
+        return trigger_tokens.count(token) == 1;
+    }
 
 	inline bool is_db_token(int token) 
 	{
-		return db_tokens.count( token) == 1;
+		return db_tokens.count(token) == 1;
 	}
 
 	inline bool is_object_token(int token) 
 	{
-		return object_tokens.count( token) == 1;
+		return object_tokens.count(token) == 1;
 	}
 
 	inline bool is_preposition_token(int token) 

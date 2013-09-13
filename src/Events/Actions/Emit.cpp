@@ -9,10 +9,10 @@ namespace Actions
 void emit(Moldable& broadcaster, Command_Value& v)
 {
     mApp;
-    const Syntax_Def& o {v.get(Command_Flags:object)};
+    const Syntax_Def& o {Mogu_Syntax::get(v.get(Command_Flags::object))};
     Moldable* emitter
     {
-        o == Mogu_Syntax::ownr
+        o == Mogu_Syntax::own
             ?  &broadcaster : 
         o == Mogu_Syntax::widget
             ? app->get_widget(
@@ -23,7 +23,7 @@ void emit(Moldable& broadcaster, Command_Value& v)
     switch(v.get(Command_Flags::arg))
     {
         case Mogu_Syntax::style_changed:
-            emitter->style_changed().emit();
+            emitter->styleChanged().emit();
             break;
         case Mogu_Syntax::succeed:
             emitter->succeed().emit();
@@ -38,16 +38,16 @@ void emit(Moldable& broadcaster, Command_Value& v)
             emitter->indexChanged().emit();
             break;
         case Mogu_Syntax::click:
-            emitter->clicked().emit();
+        {
+            Wt::JavaScriptEvent e {}; 
+            e.button=1;
+            Wt::WMouseEvent m{e};
+            emitter->clicked().emit(m);
             break;
-        case Mogu_Syntax::mouseover:
-            emitter->mouseWentOver().emit();
-            break;
+        }
         case Mogu_Syntax::error_reported:
             emitter->errorReported().emit();
             break;
-        case Mogu_Syntax::keyup:
-            emitter->keyWentUp().emit();
             break;
         case Mogu_Syntax::enter_pressed:
             emitter->enterPressed().emit();

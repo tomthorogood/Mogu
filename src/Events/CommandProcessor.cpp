@@ -37,6 +37,9 @@ void Command_Processor::process_command(Command_Value& v)
         case Mogu_Syntax::clear:
             Actions::clear(broadcaster,v);
             break;
+        case Mogu_Syntax::emit:
+            Actions::emit(broadcaster,v);
+            break;
         default:return;
     }
 }

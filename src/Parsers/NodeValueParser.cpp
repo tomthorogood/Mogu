@@ -434,7 +434,7 @@ void Node_Value_Parser::give_input(const std::string& i, Command_Value& cv,
                 cv.set(Command_Flags::arg, tmp);
             }
         }
-        else if (is_state_token(tok))
+        else if (is_state_token(tok) || is_trigger_token(tok))
         {
             tmp.set_int(tok);
             cv.set(Command_Flags::arg, tmp);
