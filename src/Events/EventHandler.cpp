@@ -73,6 +73,9 @@ void Event_Handler::process_trigger_map()
             broadcaster.keyWentUp().connect(this,
                 &Event_Handler::handle_trigger <Mogu_Syntax::keyup.integer>);
             break;
+        case Mogu_Syntax::enter_pressed:
+            broadcaster.enterPressed().connect(this,
+                &Event_Handler::handle_trigger <Mogu_Syntax::enter_pressed.integer>);
         default: continue; // just ignore bad input
         }
     }
@@ -111,6 +114,8 @@ void Event_Handler::process_command(Command_Value& v)
         case Mogu_Syntax::clear:
             Actions::clear(broadcaster,v);
             break;
+        case Mogu_Syntax::emit:
+            Actions::emit(broadcaster,v);
         default:return;
     }
 }

@@ -13,17 +13,18 @@
 namespace Actions
 {
 
-void set(Moldable& broadcaster, Command_Value& command);
-void increment(Moldable& broadcaster, Command_Value& command);
-void decrement(Moldable& broadcaster, Command_Value& command);
-void test(Moldable& broadcaster, Command_Value& command);
-void email(Moldable& broadcaster, Command_Value& command);
-void reload(Moldable& broadcaster, Command_Value& command);
-void append(Moldable& broadcaster, Command_Value& command);
-void reset(Moldable& broadcaster, Command_Value& command);
-void remove(Moldable& broadcaster, Command_Value& command);
-void javascript(Moldable& broadcaster, Command_Value& command);
-void clear(Moldable& broadcaster, Command_Value& command);
+void set        (Moldable&, Command_Value&);
+void increment  (Moldable&, Command_Value&);
+void decrement  (Moldable&, Command_Value&);
+void test       (Moldable&, Command_Value&);
+void email      (Moldable&, Command_Value&);
+void reload     (Moldable&, Command_Value&);
+void append     (Moldable&, Command_Value&);
+void reset      (Moldable&, Command_Value&);
+void remove     (Moldable&, Command_Value&);
+void javascript (Moldable&, Command_Value&);
+void clear      (Moldable&, Command_Value&);
+void emit       (Moldable&, Command_Value&);
 
 }//namespace Actions
 

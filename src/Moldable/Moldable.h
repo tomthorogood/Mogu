@@ -137,10 +137,7 @@ public:
         set_attribute(Mogu_Syntax::index,v);
     }
 
-    inline void increment(Node_Value& v)
-    {
-        increment(v.get_int());
-    }
+    inline void increment(Node_Value& v) { increment(v.get_int()); }
 
     inline void decrement(int amt=1)
     {
@@ -151,9 +148,7 @@ public:
         set_attribute(Mogu_Syntax::index,v);
     }
 
-    inline void decrement(Node_Value& val) {
-        decrement(val.get_int());
-    }
+    inline void decrement(Node_Value& val) { decrement(val.get_int()); }
 
     virtual void inline reload()
     {
@@ -164,20 +159,15 @@ public:
         flags -= (uint8_t)Moldable_Flags::allow_reload;
     }
 
-    inline void set_flag(Moldable_Flags f) 
-        { flags |= (uint8_t) f;}
+    inline void set_flag(Moldable_Flags f) { flags |= (uint8_t) f;}
 
-    inline void unset_flag(Moldable_Flags f)
-        { flags -= (uint8_t)f;}
+    inline void unset_flag(Moldable_Flags f) { flags -= (uint8_t)f;}
     
-    inline bool test_flag(Moldable_Flags f)
-        { return flags & (uint8_t) f; }
+    inline bool test_flag(Moldable_Flags f) { return flags & (uint8_t) f; }
 
-    inline void shun()
-        { set_flag(Moldable_Flags::shun); }
+    inline void shun() { set_flag(Moldable_Flags::shun); }
     
-    inline void unshun() 
-        { unset_flag(Moldable_Flags::shun); }
+    inline void unshun() { unset_flag(Moldable_Flags::shun); }
 
 };
 
