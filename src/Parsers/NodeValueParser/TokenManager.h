@@ -62,7 +62,8 @@ namespace Parsers {
         (int) Mogu_Syntax::hidden_changed,
         (int) Mogu_Syntax::index_changed,
         (int) Mogu_Syntax::onload,
-        (int) Mogu_Syntax::error_reported
+        (int) Mogu_Syntax::error_reported,
+        (int) Mogu_Syntax::click
     };
 
 	inline bool is_state_token(int token) 
