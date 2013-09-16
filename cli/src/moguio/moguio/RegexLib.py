@@ -26,6 +26,7 @@ regexlib = {
     "object"        :   option_list("object"),
     "attribute"     :   option_list("attribute"),
     "preposition"   :   option_list("preposition"),
+    "trait"         :   option_list("trait"),
     "comment"       :   r"#.*\n",
     "math_gen_expr" :   r"%d.*%d" % (syntax.MoguOperators["("],syntax.MoguOperators[")"]),
 #    "math_gen_expr" :   r"\(.*\)",
