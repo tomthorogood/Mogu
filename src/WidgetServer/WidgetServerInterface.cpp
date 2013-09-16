@@ -18,38 +18,50 @@ void Widget_Server_Interface::populate_map(
 void Widget_Server_Interface::unpack_node(
     Redis::Node_Editor* e
     , std::vector <std::string>& children
+    , std::vector <std::string>& traits
     , std::map <int,Node_Value>& attributes)
 {
     constexpr const char* ch {"children"};
+    constexpr const char* tr {Mogu_Syntax::properties.str};
 
     populate_map(e,attributes);
     e->set_sub(ch);
     e->read(children);
     e->clear_sub();
+    e->set_sub(tr);
+    e->read(traits);
+    e->clear_sub();
 }
 
-std::tuple 
-   <std::vector<std::string>, Trigger_Map, std::map<int,Node_Value>>
+std::tuple <
+    std::vector<std::string>    // Children
+    , Trigger_Map
+    , std::map<int,Node_Value>
+    , std::vector <std::string>> // Traits
 Widget_Server_Interface::merge_node_attributes (
     const std::string& node_name, std::string template_name)
 {
     Redis::Node_Editor w(Prefix::widget, node_name);
     std::vector <std::string> w_children {}, t_children {};
+    std::vector <std::string> w_traits {}, t_traits {};
     Attribute_Map attributes {};
     Trigger_Map* t_trigger_map {};
 
     if (!template_name.empty())
     {
         Redis::Node_Editor t(Prefix::template_, template_name);
-        unpack_node(&t, t_children, attributes);
+        unpack_node(&t, t_children, t_traits, attributes);
         t_trigger_map = new Trigger_Map {template_name, Prefix::template_};
     }
 
     Trigger_Map w_trigger_map {node_name, Prefix::widget};
-    unpack_node(&w, w_children, attributes);
+    unpack_node(&w, w_children, w_traits, attributes);
 
     if (!w_children.size() && t_children.size())
         w_children = std::move(t_children);
+
+    if (!w_traits.size() && t_traits.size())
+        w_traits = std::move(t_traits);
 
     if (t_trigger_map)
         t_trigger_map->extend(w_trigger_map);
@@ -57,7 +69,7 @@ Widget_Server_Interface::merge_node_attributes (
         t_trigger_map = &w_trigger_map;
 
     Trigger_Map&& m {*t_trigger_map};
-    return std::make_tuple(w_children, m, attributes);
+    return std::make_tuple(w_children, m, attributes, w_traits);
 }
 
 std::string Widget_Server_Interface::create_unique_node_name()

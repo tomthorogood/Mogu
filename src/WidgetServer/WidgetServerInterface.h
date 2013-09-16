@@ -15,10 +15,9 @@ class Widget_Server_Interface
 {
 public:
     using Attribute_Map = std::map<int,Node_Value>;
+    using String_Vec = std::vector <std::string>;
     using Attribute_Tuple = std::tuple <
-        std::vector<std::string>
-        , Trigger_Map
-        , Attribute_Map >;
+        String_Vec, Trigger_Map, Attribute_Map, String_Vec>;
     Widget_Server_Interface (){}
     virtual ~Widget_Server_Interface() {}
 
@@ -29,7 +28,8 @@ public:
 
     void unpack_node(
             Redis::Node_Editor*
-            , std::vector<std::string>&
+            , std::vector<std::string>& // Children
+            , std::vector<std::string>& // Traits
             , std::map <int, Node_Value>&);
 
     Attribute_Tuple merge_node_attributes(

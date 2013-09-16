@@ -45,6 +45,7 @@ Widget_Assembly Widget_Server::request(
     assembly.children = std::move(std::get<0>(t));
     assembly.trigger_map = std::move(std::get<1>(t));
     assembly.attrdict = std::move(std::get<2>(t));
+    assembly.traits = std::move(std::get<3>(t));
 
     if (resolve_map_values(assembly.attrdict)) ;//Application::global_cache.add(assembly);
 
