@@ -172,3 +172,43 @@ bool Moldable::set_attribute(const Syntax_Def& state, Node_Value& val)
 
     return true;
 }
+
+void Moldable::center_vertically()
+{
+    std::stringstream buf;
+    buf << 
+        "function getWindowHeight()"
+        "{"
+        "    var windowHeight = 0;"
+        "    if (typeof(window.innerHeight) == 'number')"
+        "    {"
+        "        windowHeight = window.innerHeight;"
+        "    }"
+        "    else if (document.documentElement && documentElement.clientHeight)"
+        "    {"
+        "        windowHeight = document.documentElement.clientHeight;"
+        "    }"
+        "    else if (document.body && document.body.clientHeight)"
+        "    {"
+        "        windowHeight = document.body.clientHeight;"
+        "    }"
+        "    return windowHeight;"
+        "}"
+        ""
+        "function setVerticallyCentered(element)"
+        "{"
+        "    var winHeight = getWindowHeight();"
+        "    if (winHeight > 0)"
+        "    {"
+        "        var current_height = element.offsetHeight;"
+        "        if (winHeight - current_height > 0)"
+        "        {"
+        "            element.style.top = "
+        "                ((winHeight/2) - (current_height/2)) + 'px';"
+        "        }"
+        "    }"
+        "}"
+        << "setVerticallyCentered(" << jsRef() << ");";
+    std::string js {buf.str()};
+    doJavaScript(js);
+}

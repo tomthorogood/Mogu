@@ -19,16 +19,17 @@
 class Event_Handler;
 class Widget_Assembly;
 
-enum class Moldable_Flags : unsigned char
+enum class Moldable_Flags : unsigned int
 {
-    is_templated        =1
-    , has_children      =2
-    , template_children =4
-    , has_events        =8
-    , template_events   =16
-    , is_cached         =32
-    , allow_reload      =64
-    , shun              =128
+    is_templated        =0x1
+    , has_children      =0x2
+    , template_children =0x4
+    , has_events        =0x8
+    , template_events   =0x10
+    , is_cached         =0x12
+    , allow_reload      =0x14
+    , shun              =0x18
+    , center_vertically =0x100
 };
 
 /* Simply an interface that can be implemented to expose widgets to 
@@ -69,6 +70,7 @@ class Moldable :
     const Syntax_Def&  widget_type;
 
     size_t num_triggers {};
+    int properties {};
 
     bool update_stack_index(size_t);
     void set_flags(Redis::Node_Editor&);
@@ -83,6 +85,7 @@ protected:
 
     virtual void init(Widget_Assembly&);
     void initialize_global_attributes();
+    void center_vertically();
 
 public:
 
@@ -116,6 +119,10 @@ public:
             if (!test_flag(Moldable_Flags::allow_reload)) return;
         }
         Wt::WContainerWidget::load();
+
+        if (test_flag(Moldable_Flags::center_vertically))
+            center_vertically();
+
         sig_loaded.emit();
     }
 
