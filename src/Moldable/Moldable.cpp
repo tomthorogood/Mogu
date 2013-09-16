@@ -55,6 +55,22 @@ void Moldable::init (Widget_Assembly& assembly)
     initialize_global_attributes();
     if (assembly.trigger_map.size() > 0)
         bindery = new Event_Handler(*this, assembly.trigger_map);
+
+    if (assembly.traits.size())
+    {
+        for (std::string t : assembly.traits)
+        {
+            const Mogu_Syntax& trait = Mogu_Syntax::get(t);
+            switch(t)
+            {
+            case Mogu_Syntax::center_v:
+                set_flag(Moldable_Flags::centered_vertically);
+                break;
+            default:
+                break;
+            }
+        }
+    }
 }
 
 void Moldable::initialize_global_attributes()
