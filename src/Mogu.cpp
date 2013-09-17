@@ -25,20 +25,36 @@ Mogu::Mogu(
     : Wt::WApplication(env)
     , moldable_factory()
 {
+    Redis::Node_Editor js_node(Prefix::meta, "javascript");
+    Redis::Node_Editor meta_root(Prefix::meta, "root");
 
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
+    internalPathChanged().connect(this, &Mogu::handle_path_change);
+
+    // Set up global javascript hooks
+    declareJavaScriptFunction("getWindowHeight", JavaScript::get_window_height);
+    declareJavaScriptFunction("setVerticallyCentered",
+        replace_js_refs(JavaScript::set_vertically_centered));
 
     std::string style_sheet("/resources/mogu/style.css");
     useStyleSheet(style_sheet);
 
-    Redis::Node_Editor node(Prefix::meta, "root");
-    std::string root_widget = node.read();
+    // Read custom javascript hooks from the database
+    std::map <std::string,std::string> js_decl {};
+    js_node.read(js_decl);
+    for (auto i : js_decl)
+    {
+        declareJavaScriptFunction(i.first, replace_js_refs(i.second));
+    }
 
+    // Create the base Mogu widget
+    std::string root_widget = meta_root.read();
     wrapper = moldable_factory.create_moldable_widget(root_widget);
     root()->addWidget(wrapper);
 
-    internalPathChanged().connect(this, &Mogu::handle_path_change);
 
+
+    // Mold the application based on the URL
     std::string entry_path = internalPath();
     if (entry_path != "/" && entry_path.length() > 0) {
         handle_path_change(entry_path);
@@ -47,11 +63,11 @@ Mogu::Mogu(
 
 void Mogu::handle_path_change(const std::string& path)
 {
-    std::vector <std::string> perspectives;
+    std::vector <std::string> perspectives {};
     split(path, '/', perspectives);
     for (std::string perspective : perspectives)
     {
-        Perspective_Handler p(*wrapper, perspective);
+        Perspective_Handler p {*wrapper, perspective};
         p.mold_perspective();
     }
 }

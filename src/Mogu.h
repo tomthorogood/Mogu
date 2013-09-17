@@ -23,6 +23,44 @@
 //Provides access to the user-specific instance of Mogu
 #define mApp Mogu* app = MoguApp
 
+namespace JavaScript {
+constexpr const char* get_window_height {
+    "function()"
+    "{"
+    "    var windowHeight = 0;"
+    "    if (typeof(window.innerHeight) == 'number')"
+    "    {"
+    "        windowHeight = window.innerHeight;"
+    "    }"
+    "    else if (document.documentElement && documentElement.clientHeight)"
+    "    {"
+    "        windowHeight = document.documentElement.clientHeight;"
+    "    }"
+    "    else if (document.body && document.body.clientHeight)"
+    "    {"
+    "        windowHeight = document.body.clientHeight;"
+    "    }"
+    "    return windowHeight;"
+    "}"
+};
+
+constexpr const char* set_vertically_centered {
+    "function(element)"
+    "{"
+    "    var winHeight = %MOGU%.getWindowHeight();"
+    "    if (winHeight > 0)"
+    "    {"
+    "        var current_height = element.offsetHeight;"
+    "        if (winHeight - current_height > 0)"
+    "        {"
+    "            element.style.top = "
+    "                ((winHeight/2) - (current_height/2)) + 'px';"
+    "        }"
+    "    }"
+    "}"
+};
+}
+
 class Mogu: public Wt::WApplication
 {
     int group {-1};
@@ -39,6 +77,9 @@ class Mogu: public Wt::WApplication
     Slot_Manager slot_manager;
 
     void handle_path_change (const std::string& path);
+
+    inline std::string replace_js_refs(const std::string& in)
+        { return sreplace(in, "%MOGU%", javaScriptClass()); }
 
 public:
     Mogu(const Wt::WEnvironment& env);
