@@ -17,6 +17,7 @@
 #include <Types/SlotManager.h>
 #include <Parsers/NodeValueParser.h>
 #include <Types/MoguLogger.h>
+#include "utilities.h"
 
 #define MoguApp static_cast<Mogu*>(wApp)
 

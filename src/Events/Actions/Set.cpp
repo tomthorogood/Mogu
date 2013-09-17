@@ -103,7 +103,6 @@ inline bool group_is_set(const uint8_t& f, Command_Value& v)
     if (f==set_group_from_value)
     {
         std::string val {v.get(Command_Flags::value).get_string()};
-        do_set_group_from_value(val);
         return true;
     }
     else if (f==set_group_from_slot)
@@ -169,7 +168,12 @@ void set (Moldable& broadcaster, Command_Value& v)
         {
             if (o==Mogu_Syntax::group)
             {
-                if (group_is_set(f,v)) break;
+                if (group_is_set(f,v))
+                {
+                    if (app->get_group()<=-1)
+                        broadcaster.errorReported().emit();
+                    break;
+                }
                 else
                     i = app->get_group();
             }

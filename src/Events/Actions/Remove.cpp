@@ -122,7 +122,7 @@ void handle_object_from_application(Moldable& broadcaster, Command_Value& v)
         if (x)
         {
             Moldable* r {static_cast<Moldable*>(x->parent())};
-            r->removeChild(x);
+            if (r) r->removeChild(x);
         }
     } 
     else if (o == Mogu_Syntax::user && !has_identifier)
