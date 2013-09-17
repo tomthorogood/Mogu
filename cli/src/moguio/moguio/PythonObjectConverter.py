@@ -233,7 +233,7 @@ class PythonObjectConverter(Loggable):
                 master_dict.update(event_o_dict)
             elif parsemap is Lex.WIDGET_TRAITS:
                 traits = o_dict["traits"].split()
-                trait_key = "%s.%d" % (master_key, syntax.as_integer("properties"))
+                trait_key = "%s.traits" % (master_key)
                 master_dict[trait_key] = traits
             elif parsemap is Lex.WIDGET_VALIDATOR:
                 master_dict[master_key][syntax.as_integer("validator")] = o_dict["validator"]

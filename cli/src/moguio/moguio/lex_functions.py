@@ -43,6 +43,10 @@ def reference_widget_list(string):
 def trim(string):
     return string.strip()
 
+def debug(string):
+    print(string)
+    return trim(string)
+
 def everything_until(string):
     return r"(.|\n)+?(?=%s)" % string
 

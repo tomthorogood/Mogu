@@ -85,7 +85,6 @@ protected:
 
     virtual void init(Widget_Assembly&);
     void initialize_global_attributes();
-    void center_vertically();
 
 public:
 
@@ -175,6 +174,8 @@ public:
     inline void shun() { set_flag(Moldable_Flags::shun); }
     
     inline void unshun() { unset_flag(Moldable_Flags::shun); }
+    
+    void center_vertically();
 
 };
 

@@ -22,7 +22,7 @@ void Widget_Server_Interface::unpack_node(
     , std::map <int,Node_Value>& attributes)
 {
     constexpr const char* ch {"children"};
-    constexpr const char* tr {Mogu_Syntax::properties.str};
+    constexpr const char* tr {"traits"};
 
     populate_map(e,attributes);
     e->set_sub(ch);

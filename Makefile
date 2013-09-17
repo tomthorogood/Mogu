@@ -7,8 +7,10 @@ INSTALL_DIR=/usr
 
 #== This is where the configuration files will live.
 #== Default: /usr/share/Mogu
-#CONFIG_DIR=%(CONFIG_DIR)s
 CONFIG_DIR=/usr/share/Mogu
+
+#== This is where the default resource directory, etc. will be stored.
+PROJECT_ROOT?=$(CONFIG_DIR)
 
 EXECUTABLE=bin/mogu-server
 
@@ -108,6 +110,7 @@ install: $(SYNTAX) $(EXECUTABLE) moguio
 	sudo cp $(CURDIR)/cli/src/*.py $(CONFIG_DIR)/src/
 	sudo cp -r $(CURDIR)/cli/src/cli $(CONFIG_DIR)/src/
 	sudo cp *.conf $(CONFIG_DIR)
+	sed -i "s:/usr/share/Mogu:$(PROJECT_ROOT):g" $(CONFIG_DIR)/mogu.conf
 
 refresh-cli:
 	@echo "Removing syntax files..."

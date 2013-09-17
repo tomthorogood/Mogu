@@ -96,8 +96,7 @@
 (   default                 ,   default_        ,   hashkey )
 (   meta                    ,   meta            ,   prefix )
 (   sort                    ,   sort            ,   hashkey         )
-(   properties              ,   properties      ,   hashkey )
-(   center-vertically       ,   center_v        ,   trait )
+(   center-vertically       ,   center_v        ,   trait action )
 
 # Keys are attached to groups. A given key value will correlate to 
 # at most one group ID, and can be used for reverse lookups of groups,

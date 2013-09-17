@@ -29,6 +29,7 @@ syn keyword moguReserved set reset remove clear script
 syn keyword moguReserved tooltip path regex slot source location
 syn keyword moguReserved content text contents member sort
 syn keyword moguReserved default key encrypted mode type ascending descending
+syn keyword moguReserved properties
 
 " Data Types
 syn keyword moguReserved list string hash
@@ -55,14 +56,15 @@ syn keyword subBlock events children
 syn match identifier "[a-zA-Z_:][a-zA-Z0-9:_]\+"
 syn match number "\d+(\.\d+)?"
 syn match preproc_ref "@[a-zA-Z_:][a-zA-Z0-9:_]\+"
+syn match special_kw "center-vertically"
 syn match comment "^#.*"
 syn region stringliteral start=+"+  end=+"+  skip=+\\"+
 syn region commandblock start="{" end="}" fold transparent contains=moguReserved,identifier,number,stringliteral,moguObject,comment,preproc_ref
 syn match md_internal ".+" contained
 syn region markdown start="<<<" end=">>>" contains=NONE
 
-
 hi def link moguReserved    Type
+hi def link special_kw      Type
 hi def link identifier      Identifier
 hi def link number          Constant
 hi def link stringliteral   Constant

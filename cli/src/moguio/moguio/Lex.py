@@ -34,7 +34,7 @@ from pyboro import Lexer
 import re
 
 def convert_to_script(s):
-    s = MoguString("integral", s)
+    s = MoguString.MoguString("integral", s)
     s = s.translate("script")
     maxlen = 80 if len(s) > 80 else len(s)
     return s[:maxlen]

@@ -25,6 +25,7 @@ void remove     (Moldable&, Command_Value&);
 void javascript (Moldable&, Command_Value&);
 void clear      (Moldable&, Command_Value&);
 void emit       (Moldable&, Command_Value&);
+void center_vertically (Moldable&, Command_Value&);
 
 }//namespace Actions
 

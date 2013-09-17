@@ -116,6 +116,10 @@ void Event_Handler::process_command(Command_Value& v)
             break;
         case Mogu_Syntax::emit:
             Actions::emit(broadcaster,v);
+            break;
+        case Mogu_Syntax::center_v:
+            Actions::center_vertically(broadcaster,v);
+            break;
         default:return;
     }
 }

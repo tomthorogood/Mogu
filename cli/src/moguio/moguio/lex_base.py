@@ -7,6 +7,7 @@ from lex_functions import directive_start
 from lex_functions import add_references
 from lex_functions import reference_widget_list
 from lex_functions import temp_join
+from lex_functions import debug
 
 
 # Control of debugging vomit
@@ -70,9 +71,9 @@ WIDGET_SORT = pyboro.Lexer.ParseMap((
 ))
 
 WIDGET_TRAITS = pyboro.Lexer.ParseMap((
-    ("begin",   directive_start(syntax.as_integer("properties")), IGNORE),
-    ("traits",  r"(%s)( (%s))*\n"\
-            % (regexlib["trait"],regexlib["trait"], trim),
+    ("begin",   directive_start("properties"), IGNORE),
+    ("traits",  r"(%s)( (%s))*"\
+            % (regexlib["trait"],regexlib["trait"]), trim),
     ("end",     r"\S*", IGNORE)
 ))
 

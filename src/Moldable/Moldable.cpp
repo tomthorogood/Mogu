@@ -60,11 +60,11 @@ void Moldable::init (Widget_Assembly& assembly)
     {
         for (std::string t : assembly.traits)
         {
-            const Mogu_Syntax& trait = Mogu_Syntax::get(t);
-            switch(t)
+            const Syntax_Def& trait = Mogu_Syntax::get(t);
+            switch(trait)
             {
             case Mogu_Syntax::center_v:
-                set_flag(Moldable_Flags::centered_vertically);
+                set_flag(Moldable_Flags::center_vertically);
                 break;
             default:
                 break;
