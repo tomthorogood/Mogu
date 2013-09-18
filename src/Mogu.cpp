@@ -1,5 +1,5 @@
 /*
-ed * preview.cpp
+ * Mogu.cpp
  *
  *  Created on: Jul 17, 2012
  *      Author: tom
@@ -20,6 +20,8 @@ ed * preview.cpp
 #include "Redis/NodeEditor.h"
 #include "utilities.h"
 
+#include <time.h>
+
 Mogu::Mogu(
     const Wt::WEnvironment& env)
     : Wt::WApplication(env)
@@ -27,6 +29,8 @@ Mogu::Mogu(
 {
     Redis::Node_Editor js_node(Prefix::meta, "javascript");
     Redis::Node_Editor meta_root(Prefix::meta, "root");
+    Node_Value t1 {static_cast<int>(time(nullptr))};
+    slot_manager.set_slot("SESSION_START", t1);
 
     setLoadingIndicator(new Wt::WOverlayLoadingIndicator());
     internalPathChanged().connect(this, &Mogu::handle_path_change);
@@ -80,5 +84,17 @@ Mogu::~Mogu()
     for (auto i = widget_register.begin() ; i != widget_register.end(); ++i)
     {
         if (i->second) i->second->shun();
+    }
+    
+    int t1 {slot_manager.get_slot("SESSION_START").get_int()};
+    // Report the session length in the user's meta fields.
+    if (t1 && get_user()>-1)
+    {
+        int t2 {static_cast<int>(time(nullptr))};
+        int len {t2-t1};
+        Node_Value arg {std::to_string(t2)};
+        Redis::Node_Editor e {Prefix::user, "__meta__.s", &arg};
+        e.set_id(get_user());
+        e.write(std::to_string(len));
     }
 }
