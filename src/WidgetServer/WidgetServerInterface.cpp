@@ -45,13 +45,13 @@ Widget_Server_Interface::merge_node_attributes (
     std::vector <std::string> w_children {}, t_children {};
     std::vector <std::string> w_traits {}, t_traits {};
     Attribute_Map attributes {};
-    Trigger_Map* t_trigger_map {};
+    Trigger_Map t_trigger_map {};
 
     if (!template_name.empty())
     {
         Redis::Node_Editor t(Prefix::template_, template_name);
         unpack_node(&t, t_children, t_traits, attributes);
-        t_trigger_map = new Trigger_Map {template_name, Prefix::template_};
+        t_trigger_map.fill(template_name, Prefix::template_);
     }
 
     Trigger_Map w_trigger_map {node_name, Prefix::widget};
@@ -63,13 +63,12 @@ Widget_Server_Interface::merge_node_attributes (
     if (!w_traits.size() && t_traits.size())
         w_traits = std::move(t_traits);
 
-    if (t_trigger_map)
-        t_trigger_map->extend(w_trigger_map);
+    if (t_trigger_map.size())
+        t_trigger_map.extend(w_trigger_map);
     else
-        t_trigger_map = &w_trigger_map;
+        t_trigger_map = std::move(w_trigger_map);
 
-    Trigger_Map&& m {*t_trigger_map};
-    return std::make_tuple(w_children, m, attributes, w_traits);
+    return std::make_tuple(w_children, t_trigger_map, attributes, w_traits);
 }
 
 std::string Widget_Server_Interface::create_unique_node_name()

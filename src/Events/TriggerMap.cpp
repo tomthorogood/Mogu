@@ -1,7 +1,11 @@
 #include "TriggerMap.h"
 #include "../Types/KeyGenerator.h"
 
-Trigger_Map::Trigger_Map(const std::string& n, const Prefix& p)
+Trigger_Map::Trigger_Map()
+{
+}
+
+void Trigger_Map::fill(const std::string& n, const Prefix& p)
 {
     Redis::Mogu_Query_Handler q {p};
     std::string prefix {prefix_to_string(p)};
@@ -14,6 +18,11 @@ Trigger_Map::Trigger_Map(const std::string& n, const Prefix& p)
 
     Events::Trigger_Map_Info info {num_triggers, c, v, n, q};
     fill_command_map(info);
+}
+
+Trigger_Map::Trigger_Map(const std::string& n, const Prefix& p)
+{
+    fill(n,p);
 }
 
 void Trigger_Map::fill_command_map(Events::Trigger_Map_Info& i)

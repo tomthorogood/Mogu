@@ -248,7 +248,8 @@ Security_Status User_Manager::delete_user(int userid)
 std::string User_Manager::sanitize_password(const std::string& password, const std::string& salt)
 {
     std::string spass = password + salt;
-    char c[1] = {salt[1]};
+    char c[1];
+    c[0] = {salt[1]};
     int iters = atoi(c) * 1000;
     for (int i=0; i < iters; ++i)
     {

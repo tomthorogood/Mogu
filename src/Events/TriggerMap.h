@@ -41,12 +41,13 @@ class Trigger_Map
     using Command_Queue = std::queue<std::string>;
 
 public:
-    Trigger_Map () {}
+    Trigger_Map ();
     Trigger_Map (const std::string& node, const Prefix& p);
     Trigger_Map (const Trigger_Map& t) : m(t.m) {}
     Trigger_Map (Trigger_Map && t) : m(t.m) { t.m.clear(); }
-
     Trigger_Map& extend (const Trigger_Map&);
+
+    void fill(const std::string&, const Prefix&);
 
     // Note: Do NOT return a reference! The return must be independently
     // mutable in order for the Trigger Map to be reused!
