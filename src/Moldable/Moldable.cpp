@@ -66,6 +66,8 @@ void Moldable::init (Widget_Assembly& assembly)
             case Mogu_Syntax::center_v:
                 set_flag(Moldable_Flags::center_vertically);
                 break;
+            case Mogu_Syntax::scale:
+                set_flag(Moldable_Flags::scale);
             default:
                 break;
             }

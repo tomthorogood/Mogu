@@ -11,6 +11,7 @@
 
 #include <Wt/WContainerWidget>
 #include <Wt/WSignal>
+#include <Wt/WImage>
 #include <Redis/NodeEditor.h>
 
 #include <Types/NodeValue.h>
@@ -26,10 +27,11 @@ enum class Moldable_Flags : unsigned int
     , template_children =0x4
     , has_events        =0x8
     , template_events   =0x10
-    , is_cached         =0x12
-    , allow_reload      =0x14
-    , shun              =0x18
+    , is_cached         =0x20
+    , allow_reload      =0x40
+    , shun              =0x80
     , center_vertically =0x100
+    , scale             =0x200
 };
 
 /* Simply an interface that can be implemented to expose widgets to 
@@ -79,7 +81,7 @@ class Moldable :
     std::string assembly_tooltip {};
 
 protected:
-    uint8_t flags {};
+    uint32_t flags {};
     std::string node {};
     std::string template_name {};
 
@@ -121,6 +123,10 @@ public:
 
         if (test_flag(Moldable_Flags::center_vertically))
             center_vertically();
+        if (test_flag(Moldable_Flags::scale))
+        {
+           widget(0)->addStyleClass("mogu_SCALED_IMAGE");
+        }
 
         sig_loaded.emit();
     }
@@ -165,11 +171,11 @@ public:
         flags -= (uint8_t)Moldable_Flags::allow_reload;
     }
 
-    inline void set_flag(Moldable_Flags f) { flags |= (uint8_t) f;}
+    inline void set_flag(Moldable_Flags f) { flags |= (uint32_t) f;}
 
-    inline void unset_flag(Moldable_Flags f) { flags -= (uint8_t)f;}
+    inline void unset_flag(Moldable_Flags f) { flags -= (uint32_t)f;}
     
-    inline bool test_flag(Moldable_Flags f) { return flags & (uint8_t) f; }
+    inline bool test_flag(Moldable_Flags f) { return flags & (uint32_t) f; }
 
     inline void shun() { set_flag(Moldable_Flags::shun); }
     

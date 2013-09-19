@@ -42,6 +42,10 @@ Mogu::Mogu(
 
     std::string style_sheet("/resources/mogu/style.css");
     useStyleSheet(style_sheet);
+    
+    Wt::WCssStyleSheet& css = styleSheet();
+    css.addRule(
+        ".mogu_SCALED_IMAGE, .mogu_SCALED_IMAGE *", "width:100%;", "scaledImages");
 
     // Read custom javascript hooks from the database
     std::map <std::string,std::string> js_decl {};
